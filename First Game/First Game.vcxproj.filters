@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main Game">
+      <UniqueIdentifier>{a613458d-33ce-46ef-80b5-4ff1d69975cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{a1323e0e-194d-4e3f-8e04-449a9d289ef9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logs">
+      <UniqueIdentifier>{baffc3e5-45fb-4afd-a53d-0d3844a665bf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Main Game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Colour Shading 2.fmsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Colour Shading 2.vtsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Logs\New Log">
+      <Filter>Logs</Filter>
+    </None>
+    <None Include="Shaders\Camera.fmsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Camera.vtsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Texture.fmsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Texture.vtsh">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Logs\imageLoader.log">
+      <Filter>Logs</Filter>
+    </Text>
+    <Text Include="Logs\ShaderLog.log">
+      <Filter>Logs</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
