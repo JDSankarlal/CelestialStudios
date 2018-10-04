@@ -120,10 +120,10 @@ void update()
 		if(Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
 
-		game.moveCameraPositionBy({p1.sticks[LS].x * move , p1.sticks[LS].y * move,0});//move camera
-		game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
-		game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
-		game.moveCameraPositionBy({0 , 0,p1.triggers[RT] * move});//move in
+		game.moveCameraPositionBy({p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move});//move camera
+		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
+		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
+		//game.moveCameraPositionBy({0 , 0,p1.triggers[RT] * move});//move in
 
 	}
 
