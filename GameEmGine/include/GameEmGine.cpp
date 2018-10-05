@@ -16,6 +16,10 @@ std::vector<SpriteInfo*> GameEmGine::m_sprites;
 
 float GameEmGine::m_fps;
 short GameEmGine::m_fpsLimit;
+
+//uniform vec4 LightPosition;
+//1uniform vec3 LightAmbient;
+
 #pragma endregion
 
 GameEmGine::GameEmGine()

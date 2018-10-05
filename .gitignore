@@ -42,3 +42,5 @@ First Game/Models/
 First Game/Win32/
 First Game/x64/
 *.mp3
+
+*.tlog
