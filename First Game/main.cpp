@@ -123,10 +123,11 @@ void update()
 		game.moveCameraPositionBy({p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move});//move camera
 		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
 		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
-		//game.moveCameraPositionBy({0 , 0,p1.triggers[RT] * move});//move in
+		
 
 	}
-
+	game.setCameraPosition({ 0,5000,0 });//move in
+	game.setCameraAngle(-45,{1,0,0});
 	//Rotate Model
 	if(rotUp)
 		mod[numModel]->getTransformer().rotateBy({ang,0,0});
