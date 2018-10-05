@@ -3,8 +3,8 @@
 
 #pragma region Static Variables
 void(*GameEmGine::m_compileShaders)(), (*GameEmGine::m_render)(), (*GameEmGine::m_gameLoop)();
-Camera3D *GameEmGine::m_mainCamera;
-std::vector<Camera3D *>GameEmGine::m_cameras;
+Camera *GameEmGine::m_mainCamera;
+std::vector<Camera *>GameEmGine::m_cameras;
 GLSLCompiler *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
@@ -39,7 +39,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_window = new WindowCreator(name, {(float) width,(float) height}, {(float) x,(float) y}, monitor, fullScreen, visable);
 	glfwSetFramebufferSizeCallback(m_window->getWindow(), changeViewport);
 	m_inputManager = new InputManager;
-	m_mainCamera = new Camera3D({(float) width,(float) height,500});
+	m_mainCamera = new Camera({(float) width,(float) height,500});
 
 	shaderInit();
 
@@ -284,7 +284,7 @@ void GameEmGine::removeSprite(SpriteInfo * sprite)
 	//			printf("This sprite has been removed!!\n\n");
 }
 
-void GameEmGine::addCamera(Camera3D *cam)
+void GameEmGine::addCamera(Camera *cam)
 {
 
 

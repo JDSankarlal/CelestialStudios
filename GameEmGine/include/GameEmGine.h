@@ -10,7 +10,7 @@
 //#include "Sprite.h"
 #include "GLSLCompiler.h"
 #include "WindowCreator.h"
-#include "Camera2D.h"
+#include "Camera.h"
 #include "Model.h"
 #include "SpriteBatch.h"
 #include "ModelBatch.h"
@@ -117,7 +117,7 @@ public:
 
 	void removeSprite(SpriteInfo* sprite);
 
-	void addCamera(Camera3D* camera);
+	void addCamera(Camera* camera);
 
 
 	void setFPSLimit(short limit);
@@ -147,8 +147,8 @@ private:
 	static void(*m_compileShaders)(), (*m_render)(), (*m_gameLoop)();
 	static WindowCreator *m_window;
 	static ColourRGBA m_colour;
-	static Camera3D *m_mainCamera;
-	static std::vector<Camera3D*> m_cameras;
+	static Camera *m_mainCamera;
+	static std::vector<Camera*> m_cameras;
 	static GLSLCompiler *m_cameraShader, *m_modelShader;
 	static ModelBatch* m_modelBatch;
 	static SpriteBatch* m_spriteBatch;

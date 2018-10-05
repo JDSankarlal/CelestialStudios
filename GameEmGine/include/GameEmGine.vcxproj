@@ -176,8 +176,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EmGineAudioPlayer.h" />
-    <ClInclude Include="Camera2D.h" />
-    <ClInclude Include="Camera3D.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="fileIO.h" />
     <ClInclude Include="GameEmGine.h" />
     <ClInclude Include="GLSLCompiler.h" />
@@ -200,8 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EmGineAudioPlayer.cpp" />
-    <ClCompile Include="Camera2D.cpp" />
-    <ClCompile Include="Camera3D.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="fileIO.cpp" />
     <ClCompile Include="GameEmGine.cpp" />
     <ClCompile Include="GLSLCompiler.cpp" />

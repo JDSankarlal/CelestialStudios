@@ -12,7 +12,7 @@ Model::Model(const char * path)
 Model::~Model()
 {}
 
-void Model::render(GLSLCompiler& shader, Camera3D& cam)
+void Model::render(GLSLCompiler& shader, Camera& cam)
 {
 	shader.enable();
 	// update the position of the object

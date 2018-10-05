@@ -32,7 +32,7 @@ void ModelBatch::end()
 	createRenderBatches();
 }
 
-void ModelBatch::render(GLSLCompiler & shader, Camera3D & cam)
+void ModelBatch::render(GLSLCompiler & shader, Camera & cam)
 {
 	shader.enable();
 	GLuint diffuseNr = 0, specularNr = 0;

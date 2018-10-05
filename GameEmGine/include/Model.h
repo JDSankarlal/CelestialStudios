@@ -6,7 +6,7 @@
 #include <assimp/postprocess.h>
 #include <vector>
 #include <map>
-#include "Camera3D.h"
+#include "Camera.h"
 #include "GLSLCompiler.h"
 #include "StructInfo.h"
 #include "Transformer.h"
@@ -23,7 +23,7 @@ public:
 	Model(const char* path);
 	~Model();
 
-	void render(GLSLCompiler& shader,Camera3D& cam);
+	void render(GLSLCompiler& shader,Camera& cam);
 
 	Transformer& getTransformer();
 

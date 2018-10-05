@@ -6,7 +6,7 @@
 #include <assimp/postprocess.h>
 #include <string>
 #include <vector>
-#include "Camera3D.h"
+#include "Camera.h"
 #include "Mesh.h"
 #include "Transformer.h"
 #include "StructInfo.h"
@@ -46,7 +46,7 @@ public:
 	void draw(const char* file, Transformer *transformation = new Transformer(), ColourRGBA colour = {});
 	void end();
 
-	void render(GLSLCompiler& shader, Camera3D& cam);
+	void render(GLSLCompiler& shader, Camera& cam);
 	void addGlyph(Glyph3D *glyph);
 	
 private:
