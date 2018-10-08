@@ -44,3 +44,11 @@ First Game/x64/
 *.mp3
 
 *.tlog
+
+GameEmGine/junck/
+
+*.ilk
+
+*.pdb
+
+First Game/junck/

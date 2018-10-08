@@ -21,6 +21,7 @@ void Camera::init(Size3D size, CAMERA_TYPE type)
 	{
 	case ORTHOGRAPHIC:
 		m_projMat = glm::ortho(0.f, m_size->width, 0.f, m_size->height, .001f, m_size->depth);
+		break;
 	case PERSPECTIVE:
 		m_projMat = glm::perspective(glm::radians(90.f), m_size->width / m_size->height, .001f, m_size->depth);
 	}
