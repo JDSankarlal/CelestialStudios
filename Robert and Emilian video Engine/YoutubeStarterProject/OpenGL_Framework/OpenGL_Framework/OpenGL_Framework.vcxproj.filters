@@ -15,6 +15,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{113fb131-d17c-40d1-8a77-c249d80dd21d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Bloom">
+      <UniqueIdentifier>{01fd6a6e-3487-4d3d-93f3-27831c6a61d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -78,7 +81,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\PassThrough.frag">
+    <None Include="Assets\Shaders\GreyScalePost.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Assets\Shaders\PassThrough.vert">
@@ -90,11 +93,23 @@
     <None Include="Assets\Shaders\PassThroughWhite.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Assets\Shaders\GreyScalePost.frag">
+    <None Include="Assets\Shaders\Phong.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Assets\Shaders\GreyScalePost.vert">
+    <None Include="Assets\Shaders\StaticGeometry.vert">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\Bloom\BloomHighPass.frag">
+      <Filter>Shaders\Bloom</Filter>
+    </None>
+    <None Include="Assets\Shaders\Bloom\BlurHorizontal.frag">
+      <Filter>Shaders\Bloom</Filter>
+    </None>
+    <None Include="Assets\Shaders\Bloom\BlurVertical.frag">
+      <Filter>Shaders\Bloom</Filter>
+    </None>
+    <None Include="Assets\Shaders\Bloom\BloomComposite.frag">
+      <Filter>Shaders\Bloom</Filter>
     </None>
   </ItemGroup>
 </Project>
