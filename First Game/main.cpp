@@ -2,6 +2,8 @@
 #include <EmGineAudioPlayer.h>
 #include <vector>
 
+
+
 using namespace std;
 
 float ang = 2;
@@ -159,6 +161,11 @@ SpriteInfo sp1, sp2;
 
 void main()
 {
+	ShaderCombiner thing;
+	thing.combine("Shaders/Model.vtsh", "Shaders/PassThrough.vert", "Shaders/");
+	
+	
+	
 	//Model Stuff
 	Model *floor;
 	Model *m1;
@@ -168,6 +175,8 @@ void main()
 	floor->getTransformer().setScale(50);
 	m1->getTransformer().setScale(.15);
 	m1->getTransformer().setPosition(500, 0, 1000);
+	
+
 
 
 	//engine stuff

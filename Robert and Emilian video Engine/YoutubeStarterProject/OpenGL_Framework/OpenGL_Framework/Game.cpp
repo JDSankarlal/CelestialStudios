@@ -31,7 +31,7 @@ void Game::initializeGame()
 		exit(0);
 	}
 
-	if (!PassThrough.Load("./Assets/Shaders/GreyScalePost.vert", "./Assets/Shaders/GreyScalePost.frag"))
+	if (!GreyScalePost.Load("./Assets/Shaders/GreyScalePost.vert", "./Assets/Shaders/GreyScalePost.frag"))
 	{
 		std::cout << "Shaders failed to initialize. \n";
 		system("pause");
@@ -72,7 +72,7 @@ void Game::update()
 
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
-	
+
 	MonkeyTransform.RotateY(deltaTime * 45.0f);
 }
 
@@ -109,7 +109,7 @@ void Game::draw()
 
 	MainBuffer.UnBind();
 	GrassTexture.UnBind();
-	
+
 	PassThrough.UnBind();
 
 	//MainBuffer.MoveToBackBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -124,12 +124,14 @@ void Game::draw()
 
 	GreyScalePost.UnBind();
 
+
+
 	glutSwapBuffers();
 }
 
 void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 {
-	switch(key)
+	switch (key)
 	{
 	case 27: // the escape key
 	case 'q': // the 'q' key
@@ -141,7 +143,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 
 void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 {
-	switch(key)
+	switch (key)
 	{
 	case 32: // the space bar
 		//Switch between cameras here
@@ -156,15 +158,15 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 
 void Game::mouseClicked(int button, int state, int x, int y)
 {
-	if(state == GLUT_DOWN) 
+	if (state == GLUT_DOWN)
 	{
-		switch(button)
+		switch (button)
 		{
 		case GLUT_LEFT_BUTTON:
 
 			break;
 		case GLUT_RIGHT_BUTTON:
-		
+
 			break;
 		case GLUT_MIDDLE_BUTTON:
 
@@ -181,7 +183,7 @@ void Game::mouseClicked(int button, int state, int x, int y)
  * mouseMoved(x,y)
  * - this occurs only when the mouse is pressed down
  *   and the mouse has moved.  you are given the x,y locations
- *   in window coordinates (from the top left corner) and thus 
+ *   in window coordinates (from the top left corner) and thus
  *   must be converted to screen coordinates using the screen to window pixels ratio
  *   and the y must be flipped to make the bottom left corner the origin.
  */

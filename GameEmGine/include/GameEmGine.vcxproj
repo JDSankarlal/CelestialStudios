@@ -190,6 +190,7 @@
     <ClInclude Include="Physics3D.h" />
     <ClInclude Include="Quat.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="ShaderCombiner.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteBatch.h" />
     <ClInclude Include="StructInfo.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="Physics3D.cpp" />
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="ShaderCombiner.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteBatch.cpp" />
     <ClCompile Include="Transformer.cpp" />

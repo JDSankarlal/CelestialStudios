@@ -4,7 +4,7 @@
 #define BUFFER_OFFSET(i) ((char *)0 + (i));
 
 GLuint _FullScreenQuadVAO = GL_NONE;
-GLuint _FullScreenQuadVBO = GL_NONE;
+GLuint m_FullScreenQuadVBO = GL_NONE;
 
 void InitFullScreenQuad()
 {
@@ -36,13 +36,13 @@ void InitFullScreenQuad()
 	glEnableVertexAttribArray(0); //Vertices
 	glEnableVertexAttribArray(1); // UV coordinates
 
-	glGenBuffers(1, &_FullScreenQuadVBO);
+	glGenBuffers(1, &m_FullScreenQuadVBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, _FullScreenQuadVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_FullScreenQuadVBO);
 	glBufferData(GL_ARRAY_BUFFER, vertexSize + texCoordSize, VBO_DATA, GL_STATIC_DRAW);
 
-	glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vertexSize));
+	glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, VBO_DATA + vertexSize);
 
 	glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
 	glBindVertexArray(GL_NONE);
