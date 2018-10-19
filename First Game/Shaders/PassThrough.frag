@@ -1,6 +1,7 @@
 #version 420
 
 uniform vec4 LightPosition;
+
 //color
 uniform vec3 LightAmbient;
 uniform vec3 LightDiffuse;
@@ -28,7 +29,7 @@ void main()
     //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
     outColor.rgb = LightAmbient;
     
-    //account for raterizer interpolating
+    //account for rasterizer interpolating
     vec3 normal = normalize(norm);
     
     vec3 lightVec = LightPosition.xyz - pos;
@@ -48,7 +49,7 @@ void main()
         outColor.rgb += LightDiffuse * NdotL * attenuation;
         
         //Blinn-Phong half vector
-        float NdotHV =  max(dot(normal, normalize(lightDir + normalize(- pos))), 0.0); 
+        float NdotHV =  max(dot(normal, normalize(lightDir + normalize(-pos))), 0.0); 
         
         //Calculate specular contribution
         outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
@@ -56,6 +57,5 @@ void main()
     
     vec4 textureColor = texture(uTex, texcoord);
     outColor.rgb *= textureColor.rgb;
-    outColor.a = textureColor.a;
-    
+    outColor.a = textureColor.a; 
 }

@@ -82,8 +82,9 @@ void Game::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	MainBuffer.Clear();
 
+	MainBuffer.Bind();
 	PassThrough.Bind();
-	//glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
 
 	PassThrough.SendUniformMat4("uModel", MonkeyTransform.data, true);
 	PassThrough.SendUniformMat4("uView", CameraTransform.GetInverse().data, true);
@@ -101,30 +102,27 @@ void Game::draw()
 	PassThrough.SendUniform("Attenuation_Quadratic", 0.01f);
 
 	GrassTexture.Bind();
-	MainBuffer.Bind();
 
 	glBindVertexArray(Monkey.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, Monkey.GetNumVertices());
 	glBindVertexArray(0);
 
-	MainBuffer.UnBind();
 	GrassTexture.UnBind();
 
 	PassThrough.UnBind();
+	MainBuffer.UnBind();
 
-	//MainBuffer.MoveToBackBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
+	MainBuffer.MoveToBackBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	//Moving data to the back buffer at the same time as our last post process
-	GreyScalePost.Bind();
-	GreyScalePost.SendUniform("uTex", 0);
-
-	glBindTexture(GL_TEXTURE_2D, MainBuffer.GetColorHandle(0));
-	DrawFullScreenQuad();
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-
-	GreyScalePost.UnBind();
-
-
+	////Moving data to the back buffer at the same time as our last post process
+	//GreyScalePost.Bind();
+	//GreyScalePost.SendUniform("uTex", 0);
+	//
+	//glBindTexture(GL_TEXTURE_2D, MainBuffer.GetColorHandle(0));
+	//DrawFullScreenQuad();
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//
+	//GreyScalePost.UnBind();
 
 	glutSwapBuffers();
 }

@@ -30,6 +30,8 @@ public:
 
 	Quat& getPosition();
 	float& getScale();
+	glm::mat4 getProjectionMatrix();
+	glm::mat4 getViewMatrix();
 	glm::mat4 getCameraMatrix();
 
 	glm::mat4 getObjectMatrix();

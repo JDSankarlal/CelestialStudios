@@ -9,7 +9,8 @@ GLSLCompiler *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
-ModelBatch *GameEmGine::m_modelBatch;
+//ModelBatch *GameEmGine::m_modelBatch;
+FrameBuffer GameEmGine::m_mainBuffer(1);
 SpriteBatch *GameEmGine::m_spriteBatch;
 std::vector<Model*> GameEmGine::m_models;
 std::vector<SpriteInfo*> GameEmGine::m_sprites;
@@ -48,7 +49,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	shaderInit();
 
 	m_spriteBatch = new SpriteBatch;
-	m_modelBatch = new ModelBatch;
+//	m_modelBatch = new ModelBatch;
 	//m_spriteBatch->init();
 
 	printf("created the window\n");
@@ -256,8 +257,8 @@ void GameEmGine::addModel(Model* model)
 
 void GameEmGine::addModelBatch(const char * model)
 {
-	m_modelBatch->draw(model);
-	m_modelBatch->end();
+//	m_modelBatch->draw(model);
+//	m_modelBatch->end();
 }
 
 void GameEmGine::addSprite(SpriteInfo* sprite)
@@ -300,14 +301,18 @@ void GameEmGine::update()
 {
 	glClearDepth(1.f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
+//	m_mainBuffer.Clear();
 	m_mainCamera->update();
+//	m_mainBuffer.Bind();
+
 	if(m_render != nullptr)
 		m_render();
 
 	//3D-Graphics 1
 	for(int a = 0; a < m_models.size(); a++)
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
+//	m_mainBuffer.UnBind();
+//	m_mainBuffer.MoveToBackBuffer(m_window->getScreenWidth(),m_window->getScreenHeight());
 
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
@@ -324,6 +329,7 @@ void GameEmGine::update()
 	//}
 	//m_spriteBatch->end();
 	//m_spriteBatch->render(*m_cameraShader,*m_mainCamera);
+
 
 	glfwPollEvents();//updates the event handelers
 

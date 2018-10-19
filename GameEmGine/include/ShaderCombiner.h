@@ -8,7 +8,7 @@ public:
 	ShaderCombiner();
 	~ShaderCombiner();
 
-	void combine(std::string base, std::string addition, std::string dir);
+	void combine(std::string base, std::string addition, std::string dir, std::string ending);
 
 	std::string getCombinedShaderLocation();
 

@@ -13,7 +13,7 @@ rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0;
 Coord2D leftM, rightM;
 EmGineAudioPlayer* omniPlayer;
 
-#define modSize 3 
+#define modSize 4 
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
 GLSLCompiler colourProgram, colourProgram2;
 Logger tlog = Logger("New Log:>");
@@ -61,19 +61,19 @@ void keyInputReleased(int key, int mod)
 	rotDown = (key == GLFW_KEY_DOWN ? false : rotDown);
 
 	//changes fps limit
-	if(key == GLFW_KEY_KP_6)
+	if (key == GLFW_KEY_KP_6)
 		game.setFPSLimit(game.getFPSLimit() + 1);
-	if(key == GLFW_KEY_KP_4)
+	if (key == GLFW_KEY_KP_4)
 		game.setFPSLimit(game.getFPSLimit() - 1);
 
-	if(key == GLFW_KEY_F)//Toggles Fullscreen
+	if (key == GLFW_KEY_F)//Toggles Fullscreen
 	{
 		static bool full;
 		game.getWindow()->setFullScreen(full = !full);
 		printf("Full Screen: %s\n", full ? "true" : "false");
 	}
 
-	if(key == GLFW_KEY_SPACE)//changes the model that is being moved
+	if (key == GLFW_KEY_SPACE)//changes the model that is being moved
 	{
 		Coord2D tmp = rightM - leftM;
 		float length = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
@@ -82,10 +82,10 @@ void keyInputReleased(int key, int mod)
 
 
 
-	if(key == 'R')//resets the camera
+	if (key == 'R')//resets the camera
 	{
-		game.setCameraAngle(0, {1,1,1});
-	//	game.setCameraPosition({0,0,0});
+		game.setCameraAngle(0, { 1,1,1 });
+		//	game.setCameraPosition({0,0,0});
 	}
 	printf("key RELEASED code: %d\n\n", key);
 }
@@ -93,25 +93,9 @@ void keyInputReleased(int key, int mod)
 
 void update()
 {
-	float move = 20;
+	float move = 5;
 
-	//Model Movement
-	if(m_in)
-		mod[numModel]->getTransformer().translateBy(0, 0, move);
-	else if(m_out)
-		mod[numModel]->getTransformer().translateBy(0, 0, -move);
-	if(m_up)
-		mod[numModel]->getTransformer().translateBy(0, move, 0);
-	else if(m_down)
-		mod[numModel]->getTransformer().translateBy(0, -move, 0);
-	if(m_right)
-		mod[numModel]->getTransformer().translateBy(move, 0, 0);
-	else if(m_left)
-		mod[numModel]->getTransformer().translateBy(-move, 0, 0);
-
-
-
-	if(game.isControllerConnected(0))
+	if (game.isControllerConnected(0))
 	{
 
 		Xinput p1 = game.getController(0);
@@ -119,26 +103,115 @@ void update()
 		p1.numButtons;
 		p1.numSticks;
 
-		if(Xinput::buttonPressed(p1.buttons.A))
+		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
 
-		game.moveCameraPositionBy({p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move});//move camera
+		mod[0]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
 		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
 		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
-		
+
 
 	}
-	game.setCameraPosition({ 0,5000,0 });//move in
-	game.setCameraAngle(-45,{1,0,0});
-	//Rotate Model
-	if(rotUp)
-		mod[numModel]->getTransformer().rotateBy({ang,0,0});
-	else if(rotDown)
-		mod[numModel]->getTransformer().rotateBy({-ang,0,0});
-	if(rotRight)
-		mod[numModel]->getTransformer().rotateBy({0,ang,0});
-	else if(rotLeft)
-		mod[numModel]->getTransformer().rotateBy({0,-ang,0});
+
+	if (game.isControllerConnected(1))
+	{
+
+		Xinput p1 = game.getController(1);
+
+		p1.numButtons;
+		p1.numSticks;
+
+		if (Xinput::buttonPressed(p1.buttons.A))
+			printf("%d\n", p1.buttons.A);
+
+		mod[1]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
+		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
+		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
+
+
+	}
+
+	if (game.isControllerConnected(2))
+	{
+
+		Xinput p1 = game.getController(2);
+
+		p1.numButtons;
+		p1.numSticks;
+
+		if (Xinput::buttonPressed(p1.buttons.A))
+			printf("%d\n", p1.buttons.A);
+
+		mod[2]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
+		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
+		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
+
+
+	}
+
+	if (game.isControllerConnected(3))
+	{
+
+		Xinput p1 = game.getController(3);
+
+		p1.numButtons;
+		p1.numSticks;
+
+		if (Xinput::buttonPressed(p1.buttons.A))
+			printf("%d\n", p1.buttons.A);
+
+		mod[3]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
+		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
+		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
+
+
+	}
+
+
+	////Model Movement
+	//if (m_in)
+	//	mod[numModel]->getTransformer().translateBy(0, 0, move);
+	//else if (m_out)
+	//	mod[numModel]->getTransformer().translateBy(0, 0, -move);
+	//if (m_up)
+	//	mod[numModel]->getTransformer().translateBy(0, move, 0);
+	//else if (m_down)
+	//	mod[numModel]->getTransformer().translateBy(0, -move, 0);
+	//if (m_right)
+	//	mod[numModel]->getTransformer().translateBy(move, 0, 0);
+	//else if (m_left)
+	//	mod[numModel]->getTransformer().translateBy(-move, 0, 0);
+	//
+	//
+	//
+	//if (game.isControllerConnected(0))
+	//{
+	//
+	//	Xinput p1 = game.getController(0);
+	//
+	//	p1.numButtons;
+	//	p1.numSticks;
+	//
+	//	if (Xinput::buttonPressed(p1.buttons.A))
+	//		printf("%d\n", p1.buttons.A);
+	//
+	//	game.moveCameraPositionBy({ p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move });//move camera
+	//	//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
+	//	//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
+	//
+	//
+	//}
+	//game.setCameraPosition({ 0,5000,0 });//move in
+	//game.setCameraAngle(-45, { 1,0,0 });
+	////Rotate Model
+	//if (rotUp)
+	//	mod[numModel]->getTransformer().rotateBy({ ang,0,0 });
+	//else if (rotDown)
+	//	mod[numModel]->getTransformer().rotateBy({ -ang,0,0 });
+	//if (rotRight)
+	//	mod[numModel]->getTransformer().rotateBy({ 0,ang,0 });
+	//else if (rotLeft)
+	//	mod[numModel]->getTransformer().rotateBy({ 0,-ang,0 });
 }
 
 
@@ -146,9 +219,9 @@ void update()
 void mouseButtonReleased(int button, int mod)
 {
 
-	if(button == LEFT_BUTTON)
+	if (button == LEFT_BUTTON)
 		leftM = InputManager::getMouseCursorPosition();
-	if(button == RIGHT_BUTTON)
+	if (button == RIGHT_BUTTON)
 		rightM = InputManager::getMouseCursorPosition();
 
 
@@ -161,26 +234,28 @@ SpriteInfo sp1, sp2;
 
 void main()
 {
-	ShaderCombiner thing;
-	thing.combine("Shaders/Model.vtsh", "Shaders/PassThrough.vert", "Shaders/");
-	
-	
-	
+	//ShaderCombiner thing;
+	//thing.combine("Shaders/Model.vtsh", "Shaders/PassThrough.vert", "Shaders/","vtsh");
+
 	//Model Stuff
 	Model *floor;
-	Model *m1;
-	game.addModel(floor = new Model("Models/Floor/placeholder_floor.obj"));
-	game.addModel(m1 = new Model("Models/crysis_nano_suit_2/scene.gltf"));
-	mod[0] = m1;
-	floor->getTransformer().setScale(50);
-	m1->getTransformer().setScale(.15);
-	m1->getTransformer().setPosition(500, 0, 1000);
-	
+	game.addModel(mod[0] = new Model("Models/suzane/untitled.obj"));
 
+	mod[0]->getTransformer().setScale(.15);
+	mod[0]->getTransformer().setPosition(0, 0, 1000);
+
+	mod[3] = new Model(*mod[0]);
+	mod[2] = new Model(*mod[0]);
+	mod[1] = new Model(*mod[0]);
+	game.addModel(mod[1]);
+
+	game.addModel(mod[2] );
+
+	game.addModel(mod[3] );
 
 
 	//engine stuff
-	
+
 	game.keyPressed(keyInputPressed);
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);

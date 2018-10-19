@@ -32,14 +32,23 @@ void ShaderCombiner::combine(std::string base, std::string addition, std::string
 
 	char  baseStr[255], addStr[255];
 	char* check;
+	bool inmain = false;
 	while (fgets(baseStr, 255, basef))
 	{
-		if (strstr(baseStr, "main()") || (addStr[0] != '{' || addStr[0] != '}'))
+		if (strstr(baseStr, "main()") || (( addStr[0] != '}') && inmain))
+		{
+			if (!inmain)
+				inmain = strstr(baseStr, "main()");
+			
 			while (fgets(addStr, 255, addf))
-				if (!strstr(addStr, "main()") && (addStr[0] != '{' || addStr[0] != '}'))
+				if (!strstr(addStr, "main()") && ((addStr[0] != '{' && addStr[0] != '}') && inmain))
 					fputs(addStr, combinef);
-
-		fputs(baseStr, combinef);
+				else
+					break;
+			fputs(baseStr, combinef);
+		}
+		else
+			fputs(baseStr, combinef);
 	}
 
 	fclose(basef);

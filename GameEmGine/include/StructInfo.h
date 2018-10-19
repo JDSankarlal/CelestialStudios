@@ -9,7 +9,7 @@ struct Coord2D
 	float& operator[](int index)
 	{
 		float *error = nullptr;
-		switch(index)
+		switch (index)
 		{
 		case 0:
 			return static_cast<float&>(x);
@@ -21,19 +21,19 @@ struct Coord2D
 
 	Coord2D operator+(Coord2D coord)
 	{
-		return {x + coord.x, y + coord.y};
+		return { x + coord.x, y + coord.y };
 	}
 	Coord2D operator-(Coord2D coord)
 	{
-		return {x - coord.x, y - coord.y};
+		return { x - coord.x, y - coord.y };
 	}
 	Coord2D operator/(Coord2D coord)
 	{
-		return {x / coord.x,y / coord.y};
+		return { x / coord.x,y / coord.y };
 	}
 	Coord2D operator/(float coord)
 	{
-		return {x / coord,y / coord};
+		return { x / coord,y / coord };
 	}
 	void operator-=(Coord2D coord)
 	{
@@ -81,6 +81,25 @@ struct Coord3D
 		this->y = y;
 	}
 
+	void set(Coord2D coord)
+	{
+		x = coord.x;
+		y = coord.y;
+	}
+
+	void set(float x, float y, float z)
+	{
+		this->x = x;
+		this->y = y;
+		this->z = z;
+	}
+
+	void set(float x, float y)
+	{
+		this->x = x;
+		this->y = y;
+	}
+
 	void normalize()
 	{
 		float norm = sqrt(x * x + y * y + z * z);
@@ -92,7 +111,7 @@ struct Coord3D
 	float& operator[] (int index)
 	{
 		float* error = nullptr;
-		switch(index)
+		switch (index)
 		{
 		case 0:
 			return const_cast<float&>(x);
@@ -106,19 +125,19 @@ struct Coord3D
 
 	Coord3D operator+(Coord3D coord)
 	{
-		return {x + coord.x, y + coord.y, z + coord.z};
+		return { x + coord.x, y + coord.y, z + coord.z };
 	}
 
 	Coord3D operator-(Coord3D coord)
 	{
-		return {x - coord.x, y - coord.y, z + coord.z};
+		return { x - coord.x, y - coord.y, z + coord.z };
 	}
-	
+
 	Coord3D operator*(Coord3D coord)
 	{
-		return {x * coord.x, y * coord.y, z * coord.z};
+		return { x * coord.x, y * coord.y, z * coord.z };
 	}
-	
+
 	void operator-=(Coord3D coord)
 	{
 		x -= coord.x;
@@ -147,7 +166,7 @@ struct Size2D
 	float& operator[](int index)
 	{
 		float *error = nullptr;
-		switch(index)
+		switch (index)
 		{
 		case 0:
 			return static_cast<float&>(width);
@@ -184,10 +203,29 @@ struct Size3D
 		this->height = h;
 	}
 
+	void set(Size2D size)
+	{
+		width = size.width;
+		height = size.height;
+	}
+
+	void set(float w, float h, float d)
+	{
+		this->width = w;
+		this->height = h;
+		this->depth = d;
+	}
+
+	void set(float w, float h)
+	{
+		this->width = w;
+		this->height = h;
+	}
+
 	float& operator[] (int index)
 	{
 		float* error = nullptr;
-		switch(index)
+		switch (index)
 		{
 		case 0:
 			return const_cast<float&>(width);
@@ -208,17 +246,56 @@ struct vboInfo3D
 
 struct ColourRGBA
 {
+	GLubyte r, g, b, a;
+
 	ColourRGBA() :r(255), g(255), b(255), a(255)
 	{}
-	ColourRGBA(GLubyte r, GLubyte g, GLubyte b) :r(r), g(g), b(b), a(255)
+
+	ColourRGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255) :r(r), g(g), b(b), a(a)
 	{}
-	ColourRGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a) :r(r), g(g), b(b), a(a)
-	{}
-	GLubyte r, g, b, a;
+
+	void set(ColourRGBA rgba)
+	{
+		set(
+			rgba.r,
+			rgba.g,
+			rgba.b,
+			rgba.a);
+	}
+
+	void set(GLubyte r, GLubyte g, GLubyte b)
+	{
+		this[0][0] = r;
+		this[0][1] = g;
+		this[0][2] = b;
+	}
+
+	void set(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
+	{
+		this[0][0] = r;
+		this[0][1] = g;
+		this[0][2] = b;
+		this[0][3] = a;
+	}
+
+	ColourRGBA operator*(ColourRGBA rgba)
+	{
+		return ColourRGBA{
+			GLubyte((int)r * (int)rgba.r / 255),
+			GLubyte((int)g * (int)rgba.g / 255),
+			GLubyte((int)b * (int)rgba.b / 255),
+			GLubyte((int)a * (int)rgba.a / 255) };
+	}
+
+	void operator*=(ColourRGBA rgba)
+	{
+		*this = *this * rgba;
+	}
+
 	GLubyte& operator[](int index)
 	{
 		GLubyte *error = nullptr;
-		switch(index)
+		switch (index)
 		{
 		case 0:
 			return static_cast<GLubyte&>(r);
@@ -235,12 +312,39 @@ struct ColourRGBA
 
 struct UV
 {
-	float u = 0, v = 0;
+	float u = 0, v = 0, w = 0;
+	void set(float u, float v, float w)
+	{
+		this->u = u;
+		this->v = v;
+		this->w = w;
+	}
+
+	void set(float u, float v)
+	{
+		this->u = u;
+		this->v = v;
+	}
+
+	float& operator[](int index)
+	{
+		switch (index)
+		{
+		case 0:
+			return static_cast<float&>(u);
+		case 1:
+			return static_cast<float&>(v);
+		case 2:
+			return static_cast<float&>(w);
+		}
+		float *error = nullptr;
+		return *error;
+	}
 };
 
 struct VboInfo2D
 {
-	VboInfo2D(Coord2D c = {0,0}, Size2D s = {0,0})
+	VboInfo2D(Coord2D c = { 0,0 }, Size2D s = { 0,0 })
 	{
 		position = c;
 		size = s;
@@ -288,11 +392,11 @@ struct Vertex2D
 
 struct Vertex3D
 {
-	Coord3D coord,norm;
+	Coord3D coord, norm;
 	ColourRGBA	colour;
 	UV uv;
 
-	void setCoord3D(float x, float y,float z)
+	void setCoord3D(float x, float y, float z)
 	{
 		coord.x = x;
 		coord.y = y;
@@ -315,7 +419,7 @@ struct Vertex3D
 
 	void print()
 	{
-		printf("Coord3D: (%f, %f, %f)\n", coord.x, coord.y,coord.z);
+		printf("Coord3D: (%f, %f, %f)\n", coord.x, coord.y, coord.z);
 		printf("Colour : (%d, %d, %d, %d)\n", colour.r, colour.g, colour.b, colour.a);
 		printf("UV     : (%f, %f)\n\n", uv.u, uv.v);
 	}
@@ -324,14 +428,14 @@ struct Vertex3D
 struct WindowInfo
 {
 	std::string *title = new std::string;
-	Size3D  *size;
-	Coord2D *position;
+	Size3D  *size = new Size3D;
+	Coord2D *position = new Coord2D;
 	int monitor;
 	void print()
 	{
 		printf("Title    : %s\n\n", title->c_str());
 		printf("Position : (%f, %f)\n", position->x, position->y);
-		printf("Size     : (%d, %d, %d)\n", size->width, size->height, size->depth);
+		printf("Size     : (%.0f, %.0f, %.0f)\n", size->width, size->height, size->depth);
 		printf("Monitor  : %d\n\n", monitor);
 	}
 };

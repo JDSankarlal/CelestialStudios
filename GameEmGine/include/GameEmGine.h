@@ -14,8 +14,9 @@
 #include "Camera.h"
 #include "Model.h"
 #include "SpriteBatch.h"
-#include "ModelBatch.h"
+//#include "ModelBatch.h"
 #include "InputManager.h"
+#include "FrameBuffer.h"
 //will get joystic input latter :>
 
 
@@ -151,7 +152,8 @@ private:
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
 	static GLSLCompiler *m_cameraShader, *m_modelShader;
-	static ModelBatch* m_modelBatch;
+//	static ModelBatch* m_modelBatch;
+	static FrameBuffer m_mainBuffer;
 	static SpriteBatch* m_spriteBatch;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;

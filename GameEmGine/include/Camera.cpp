@@ -101,6 +101,16 @@ float& Camera::getScale()
 	return m_scale;
 }
 
+glm::mat4 Camera::getProjectionMatrix() 
+{
+	return m_projMat;
+}
+
+glm::mat4 Camera::getViewMatrix() 
+{
+	return m_viewMat;
+}
+
 glm::mat4 Camera::getCameraMatrix()
 {
 	return m_cameraMat;
