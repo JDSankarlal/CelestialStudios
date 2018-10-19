@@ -93,24 +93,19 @@ void keyInputReleased(int key, int mod)
 
 void update()
 {
-	float move = 5;
+	float move = 2;
 
 	if (game.isControllerConnected(0))
 	{
 
 		Xinput p1 = game.getController(0);
 
-		p1.numButtons;
-		p1.numSticks;
-
 		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
-
+		
+		mod[0]->setColour(1, 0, 0);
 		mod[0]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
-		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
-		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
-
-
+	
 	}
 
 	if (game.isControllerConnected(1))
@@ -118,17 +113,12 @@ void update()
 
 		Xinput p1 = game.getController(1);
 
-		p1.numButtons;
-		p1.numSticks;
-
 		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
 
+		mod[1]->setColour(0, 1, 0);
 		mod[1]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
-		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
-		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
-
-
+	
 	}
 
 	if (game.isControllerConnected(2))
@@ -136,17 +126,12 @@ void update()
 
 		Xinput p1 = game.getController(2);
 
-		p1.numButtons;
-		p1.numSticks;
-
 		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
 
+		mod[2]->setColour(0, 0, 1);
 		mod[2]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
-		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
-		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
-
-
+	
 	}
 
 	if (game.isControllerConnected(3))
@@ -154,17 +139,11 @@ void update()
 
 		Xinput p1 = game.getController(3);
 
-		p1.numButtons;
-		p1.numSticks;
-
 		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
 
+		mod[3]->setColour(1, 1, 0);
 		mod[3]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
-		//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
-		//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
-
-
 	}
 
 
@@ -239,7 +218,7 @@ void main()
 
 	//Model Stuff
 	Model *floor;
-	game.addModel(mod[0] = new Model("Models/suzane/untitled.obj"));
+	game.addModel(mod[0] = new Model("Models/AssaultModel/AssaultModel.obj"));
 
 	mod[0]->getTransformer().setScale(.15);
 	mod[0]->getTransformer().setPosition(0, 0, 1000);
@@ -253,6 +232,11 @@ void main()
 
 	game.addModel(mod[3] );
 
+	EmGineAudioPlayer audio;
+
+	audio.createStream("Game Jam(Full).wav");
+
+	audio.play(true);
 
 	//engine stuff
 

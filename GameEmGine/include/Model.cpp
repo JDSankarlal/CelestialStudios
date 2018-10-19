@@ -27,7 +27,7 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 	glUniformMatrix4fv(shader.getUniformLocation("camera"), 1, GL_FALSE, &(cam.getCameraMatrix()[0][0]));
 	//glUniformMatrix4fv(shader.getUniformLocation("uProj"), 1, GL_FALSE, &(cam.getProjectionMatrix()[0][0]));
 	glUniformMatrix4fv(shader.getUniformLocation("object"), 1, GL_FALSE, &((cam.getObjectMatrix()*m_transform.getTransformation())[0][0]));
-	//glUniform4fv(shader.getUniformLocation("vertColour"), 1, colour);
+	glUniform4fv(shader.getUniformLocation("vertColour"), 1, colour);
 
 	////Robs Stuff
 	//
