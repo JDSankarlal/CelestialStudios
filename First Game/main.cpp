@@ -93,7 +93,7 @@ void keyInputReleased(int key, int mod)
 
 void update()
 {
-	float move = 2;
+	float move = 20;
 
 	if (game.isControllerConnected(0))
 	{
