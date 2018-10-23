@@ -19,6 +19,7 @@ public:
 	~Camera();
 
 	void init(Size3D = {}, CAMERA_TYPE = PERSPECTIVE);
+	void setType(CAMERA_TYPE type);
 	bool update();
 
 	void setPosition(Coord3D);
@@ -35,7 +36,7 @@ public:
 	glm::mat4 getCameraMatrix();
 
 	glm::mat4 getObjectMatrix();
-
+	Transformer& getTransformer();
 protected:
 	bool m_cameraUpdate;
 	float m_scale;

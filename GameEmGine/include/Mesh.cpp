@@ -1,7 +1,5 @@
 #include "Mesh.h"
-#include "Texture.h"
-#include "ResourceManager.h"
-
+#include <functional>
 Mesh::Mesh()
 {}
 
@@ -35,7 +33,7 @@ void cDir(char *dir)
 	if (strlen(dir) > 1)
 		while (dir[a])
 		{
-			if (std::string((const char *)dir + a - 1,(size_t) 2) == "//")
+			if (std::string((const char *)dir + a - 1, (size_t)2) == "//")
 			{
 				memmove_s(dir + a - 1, strlen(dir + a), dir + a, strlen(dir + a));
 				dir[strlen(dir) - 1] = 0;
@@ -82,7 +80,7 @@ void Mesh::loadMaterials(std::string path)
 		{
 			char str2[CHAR_BUFF_SIZE];
 			sscanf_s(str, "newmtl %s", str2, CHAR_BUFF_SIZE);
-			m_textures.push_back({ std::string(str2), Texture2D() });
+			m_textures.push_back({ std::string(str2), std::vector<Texture2D>() });
 
 			if (strstr(str, "None"))
 				return;
@@ -100,15 +98,21 @@ void Mesh::loadMaterials(std::string path)
 			//path.resize(path.c_str());
 			cDir(str2);
 			std::string tmpStr(path.substr(0, path.find_last_of('/') + 1) + str2);
-			m_textures.back().second.id = ResourceManager::getTexture2D(tmpStr.c_str()).id;
-			m_textures.back().second.type = TextureType::DIFFUSE;
+			m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
+			m_textures.back().second.back().type = TEXTURE_TYPE::DIFFUSE;
 
 		}
 		else if (strstr(str, "map_Ks"))
 		{
-			//float r, g, b;
-			//sscanf_s(str, "Kd %f %f %f", &r, &g, &b);
-			//textures.back().second.colourSpec.set(255 * r, 255 * g, 255 * b);
+			char str2[CHAR_BUFF_SIZE];
+			sscanf_s(str, "map_Ks %s", &str2, (unsigned)_countof(str2));
+			cDir((char *)path.c_str());
+			//path.resize(path.c_str());
+			cDir(str2);
+			std::string tmpStr(path.substr(0, path.find_last_of('/') + 1) + str2);
+			m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
+			m_textures.back().second.back().type = TEXTURE_TYPE::SPECULAR;
+
 		}
 		else if (strstr(str, "Ns"))
 		{
@@ -118,13 +122,17 @@ void Mesh::loadMaterials(std::string path)
 		{
 			float a[3];
 			sscanf_s(str, "Ka %f %f %f", &a[0], &a[1], &a[2]);
-			m_textures.back().second.colour.a = 255 * a[0] * a[1] * a[2];
+			for (auto &b : m_textures.back().second)
+
+				b.colour.a = 255 * a[0] * a[1] * a[2];
 		}
 		else if (strstr(str, "Kd"))
 		{
 			float r, g, b;
 			sscanf_s(str, "Kd %f %f %f", &r, &g, &b);
-			m_textures.back().second.colour.set(255 * r, 255 * g, 255 * b);
+			for (auto &a : m_textures.back().second)
+				if (a.type == TEXTURE_TYPE::DIFFUSE)
+					a.colour.set(r * 255, g * 255, b * 255);
 		}
 		else if (strstr(str, "Ks"))
 		{
@@ -218,75 +226,67 @@ bool Mesh::loadMesh(std::string path)
 
 				Vertex3D tmp;
 
-				if ([&]()->GLuint
+				char check = 0;
+				int counter = 0, count = 0;
+				while (check = inputBuff[counter++])
+					count += (check == '/');
+
+				count /= 2;
+				std::string	faceTmp[2][2]
+				{ { " %f/%f/%f"," %*f/%*f/%*f" },
+					{ " %f//%f"," %*f//%*f" } };
+
+				std::vector<std::string > format = std::vector<std::string>(count);
+				std::string formatStr;
+				std::function<void(int)> reformat = [&](int type) {
+					for (unsigned a = 0; a < count; a++)
+						if (a < 3)
+							format[a] = faceTmp[type][0];
+						else
+							format[a] = faceTmp[type][1];
+				};
+				short type = 0;
+				reformat(type);
+				formatStr = "f";
+				for (unsigned a = 0; a < count; a++)
+					formatStr += format[a];
+				sscanf_s(inputBuff, formatStr.c_str(),
+					&tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
+					&tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
+					&tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
+
+				if (!tmp.coord[1])
 				{
-					char tmp = ' ';
-						int counter = 0, count = 0;
-						while (tmp = inputBuff[counter++])
-							count += (tmp == '/');
-
-						return count;
-				}() == 6)
-				{
-					sscanf_s(inputBuff, "f %f/%f/%f %f/%f/%f %f/%f/%f",
-						&tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
-						&tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
-						&tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
-
-					if (!tmp.coord[1])
-						sscanf_s(inputBuff, "f %f//%f %f//%f %f//%f",
-							&tmp.coord[0], &tmp.norm[0],
-							&tmp.coord[1], &tmp.norm[1],
-							&tmp.coord[2], &tmp.norm[2]);
-
-					if (!tmp.coord[1])
-						sscanf_s(inputBuff, "f %f// %f// %f//",
-							&tmp.coord[0],
-							&tmp.coord[1],
-							&tmp.coord[2]);
-				}
-				else
-				{
-					sscanf_s(inputBuff, "f %f/%f/%f %f/%f/%f %f/%f/%f",
-						&tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
-						&tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
-						&tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
-
-					if (!tmp.coord[1])
-						sscanf_s(inputBuff, "f %f//%f %f//%f %f//%f",
-							&tmp.coord[0], &tmp.norm[0],
-							&tmp.coord[1], &tmp.norm[1],
-							&tmp.coord[2], &tmp.norm[2]);
-
-					if (!tmp.coord[1])
-						sscanf_s(inputBuff, "f %f// %f// %f//",
-							&tmp.coord[0],
-							&tmp.coord[1],
-							&tmp.coord[2]);
-
-					faces.back().second.push_back(tmp);
-
-					tmp = Vertex3D();
-					sscanf_s(inputBuff, "f %f/%f/%f %*f/%*f/%*f %f/%f/%f %f/%f/%f",
-						&tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
-						&tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
-						&tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
-
-					if (!tmp.coord[1])
-						sscanf_s(inputBuff, "f %f//%f %*f//%*f %f//%f %f//%f",
-							&tmp.coord[0], &tmp.norm[0],
-							&tmp.coord[1], &tmp.norm[1],
-							&tmp.coord[2], &tmp.norm[2]);
-
-					if (!tmp.coord[1])
-						sscanf_s(inputBuff, "f %f// %*f// %f// %f//",
-							&tmp.coord[0],
-							&tmp.coord[1],
-							&tmp.coord[2]);
-
+					reformat(++type);
+					formatStr = "f";
+					for (unsigned a = 0; a < count; a++)
+						formatStr += format[a];
+					sscanf_s(inputBuff, formatStr.c_str(),
+						&tmp.coord[0], &tmp.norm[0],
+						&tmp.coord[1], &tmp.norm[1],
+						&tmp.coord[2], &tmp.norm[2]);
 				}
 				faces.back().second.push_back(tmp);
 
+				for (unsigned a = 1; a < count - 2; a++)
+				{
+					formatStr = "f";
+					swap(format[a], format[a + 2]);
+					for (unsigned a = 0; a < count; a++)
+						formatStr += format[a];
+					if (type == 0)
+						sscanf_s(inputBuff, formatStr.c_str(),
+							&tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
+							&tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
+							&tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
+					else
+						sscanf_s(inputBuff, formatStr.c_str(),
+							&tmp.coord[0], &tmp.norm[0],
+							&tmp.coord[1], &tmp.norm[1],
+							&tmp.coord[2], &tmp.norm[2]);
+
+					faces.back().second.push_back(tmp);
+				}
 
 			}
 			else if (strchr(inputBuff, 'v'))
@@ -316,22 +316,25 @@ bool Mesh::loadMesh(std::string path)
 				Vertex3D tmp;
 
 				//set Verticies
-				tmp.coord.set(
+				tmp.setCoord(
 					verts[faces[a].second[c].coord[b] - 1].x,
 					verts[faces[a].second[c].coord[b] - 1].y,
 					verts[faces[a].second[c].coord[b] - 1].z);
 
 				//set UV's
-				if (faces[a].second[c].uv[b])
-					tmp.uv.set(uvs[faces[a].second[c].uv[b] - 1].u, uvs[faces[a].second[c].uv[b] - 1].v);
+				if (faces[a].second[c].uv[0])
+				{
+					tmp.setUV(uvs[faces[a].second[c].uv[b] - 1].u, uvs[faces[a].second[c].uv[b] - 1].v);
+				}
 
 				//set Normals
-				if (faces[a].second[c].norm[b])
-					tmp.norm.set(
+				if (faces[a].second[c].norm[0])
+				{
+					tmp.setNorm(
 						norms[faces[a].second[c].norm[b] - 1].x,
 						norms[faces[a].second[c].norm[b] - 1].y,
 						norms[faces[a].second[c].norm[b] - 1].z);
-
+				}
 
 				m_unpackedData.back().second.push_back(tmp);
 			}
@@ -360,29 +363,28 @@ void Mesh::render(GLSLCompiler& shader)
 		for (int b = 0; b < m_textures.size(); b++) {
 			if (m_textures[b].first == m_vaoID[a].first)
 			{
-				//glActiveTexture(GL_TEXTURE0 + c);
-		
-		
-				//if (m_textures[b].second.type == TextureType::DIFFUSE)
-					glUniform1i(shader.getUniformLocation("diffuseTexture"), 0);
-				//c++;
-		
-				glBindTexture(GL_TEXTURE_2D, m_textures[b].second.id);
+				glActiveTexture(GL_TEXTURE0 + c);
+
+				for (auto &d : m_textures[b].second)
+					if (d.type == TEXTURE_TYPE::DIFFUSE)
+						glUniform1i(shader.getUniformLocation("uTex"), c),
+						glBindTexture(GL_TEXTURE_2D, d.id);
+				//else if (d.type == TEXTURE_TYPE::SPECULAR)
+				//	glUniform1i(shader.getUniformLocation("specularTexture"), c),
+				//	glBindTexture(GL_TEXTURE_2D, d.id);
+
+
+				c++;
 			}
 		}
 
 		glBindVertexArray(m_vaoID[a].second);
 		glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
 		glBindVertexArray(0);
-		c = 0;
+		
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(0);
 
-		for (int b = 0; b < m_textures.size(); b++) {
-			if (m_textures[b].first == m_vaoID[a].first)
-			{
-			//	glActiveTexture(GL_TEXTURE0 + c++);
-				glBindTexture(GL_TEXTURE_2D, 0);
-			}
-		}
 	}
 }
 
@@ -433,9 +435,6 @@ void Mesh::init()
 
 		//vertex     atributes
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
-
-		////ColourRGBA atributes
-		//glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, m_colour));
 
 		//UV         atributes
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, uv));

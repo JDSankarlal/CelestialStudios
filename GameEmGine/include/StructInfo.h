@@ -6,6 +6,23 @@
 struct Coord2D
 {
 	float x = 0, y = 0;
+
+	float distance()
+	{
+		return sqrt(x * x + y * y);
+	}
+
+	static float distance(Coord2D v1, Coord2D v2)
+	{
+		Coord2D v3 = v2 - v1;
+		return sqrt(v3.x*v3.x + v3.y*v3.y);
+	}
+
+	Coord2D normal()
+	{
+		return *this / distance();
+	}
+
 	float& operator[](int index)
 	{
 		float *error = nullptr;
@@ -61,6 +78,22 @@ struct Coord3D
 
 	Coord3D()
 	{}
+
+	static float distance(Coord3D v1, Coord3D v2)
+	{
+		Coord3D v3 = v2 - v1;
+		return v3.distance();
+	}
+
+	float distance()
+	{
+		return sqrt(x * x + y * y + z * z);
+	}
+
+	Coord3D normal()
+	{
+		return *this / distance();
+	}
 
 	Coord3D(Coord2D coord)
 	{
@@ -137,6 +170,16 @@ struct Coord3D
 	{
 		return { x * coord.x, y * coord.y, z * coord.z };
 	}
+
+	Coord3D operator/(Coord3D coord)
+	{
+		return { x / coord.x,y / coord.y,z / coord.z };
+	}
+	Coord3D operator/(float coord)
+	{
+		return { x / coord,y / coord,z / coord };
+	}
+
 
 	void operator-=(Coord3D coord)
 	{
@@ -396,7 +439,7 @@ struct Vertex3D
 	ColourRGBA	colour;
 	UV uv;
 
-	void setCoord3D(float x, float y, float z)
+	void setCoord(float x, float y, float z)
 	{
 		coord.x = x;
 		coord.y = y;
@@ -415,6 +458,13 @@ struct Vertex3D
 	{
 		uv.u = u;
 		uv.v = v;
+	}
+
+	void setNorm(float x, float y, float z)
+	{
+		norm.x = x;
+		norm.y = y;
+		norm.z = z;
 	}
 
 	void print()

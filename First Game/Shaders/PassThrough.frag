@@ -21,13 +21,10 @@ in vec3 pos;
 
 out vec4 outColor;
 
-//in vec3 normal;
 
 void main()
 {
-    //outColor = vec4(normal, 1.0f);
-    //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
-    outColor.rgb = LightAmbient;
+     outColor.rgb = LightAmbient;
     
     //account for rasterizer interpolating
     vec3 normal = normalize(norm);
@@ -43,7 +40,7 @@ void main()
         //The light contributes to this surface
         
         //Calculate attenuation (falloff)
-        float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
+        float attenuation = 1.0 / (Attenuation_Constant + 0.1);
         
         //Calculate diffuse contribution
         outColor.rgb += LightDiffuse * NdotL * attenuation;
@@ -54,8 +51,11 @@ void main()
         //Calculate specular contribution
         outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
     }
-    
+   
     vec4 textureColor = texture(uTex, texcoord);
     outColor.rgb *= textureColor.rgb;
     outColor.a = textureColor.a; 
+
+
+  // outColor = texture(uTex, texcoord);
 }

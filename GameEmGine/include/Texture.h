@@ -3,7 +3,7 @@
 #include <string>
 #include "StructInfo.h"
 
- enum class TextureType
+enum class TEXTURE_TYPE
 {
 	NONE,
 	DIFFUSE,
@@ -14,7 +14,26 @@ struct Texture2D
 	GLuint id;
 	ColourRGBA colour;
 	int width, height;
-	TextureType type;
+	TEXTURE_TYPE type;
+
+	void deleteTexture()
+	{
+		if (id)
+		{
+			glDeleteTextures(1, &id);
+			id = 0;
+		}
+	}
+
+	void bindTexture()
+	{
+		glBindTexture(GL_TEXTURE_2D, id);
+	}	  
+
+	static void unbindTexture()
+	{
+		glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	}
 
 	bool operator==(Texture2D arg)
 	{

@@ -37,5 +37,5 @@ private:
 		m_numFaces, m_numVerts;
 
 	std::vector< std::pair<std::string, std::vector<Vertex3D>>> m_unpackedData;
-	std::vector<std::pair<std::string, Texture2D>>m_textures;
+	std::vector<std::pair<std::string, std::vector<Texture2D>>>m_textures;
 };

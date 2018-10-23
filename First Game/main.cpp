@@ -1,8 +1,7 @@
+#define _USE_MATH_DEFINES // for C++
 #include <GameEmGine.h>
 #include <EmGineAudioPlayer.h>
 #include <vector>
-
-
 
 using namespace std;
 
@@ -11,13 +10,13 @@ int numModel = 0;
 bool m_left = 0, m_right = 0, m_in = 0, m_out = 0, m_up = 0, m_down = 0,
 rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0;
 Coord2D leftM, rightM;
-EmGineAudioPlayer* omniPlayer;
+EmGineAudioPlayer *omniPlayer;
 
-#define modSize 4 
+#define modSize 4
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
 GLSLCompiler colourProgram, colourProgram2;
 Logger tlog = Logger("New Log:>");
-Model* mod[modSize];
+Model *mod[modSize];
 
 void shaderInit()
 {
@@ -42,7 +41,6 @@ void keyInputPressed(int key, int mod)
 	rotUp = (key == GLFW_KEY_UP ? true : rotUp);
 	rotDown = (key == GLFW_KEY_DOWN ? true : rotDown);
 
-
 	printf("key PRESED code: %d\n\n", key);
 }
 
@@ -66,34 +64,36 @@ void keyInputReleased(int key, int mod)
 	if (key == GLFW_KEY_KP_4)
 		game.setFPSLimit(game.getFPSLimit() - 1);
 
-	if (key == GLFW_KEY_F)//Toggles Fullscreen
+	if (key == GLFW_KEY_F) //Toggles Fullscreen
 	{
 		static bool full;
 		game.getWindow()->setFullScreen(full = !full);
 		printf("Full Screen: %s\n", full ? "true" : "false");
 	}
 
-	if (key == GLFW_KEY_SPACE)//changes the model that is being moved
+	if (key == GLFW_KEY_SPACE) //changes the model that is being moved
 	{
-		Coord2D tmp = rightM - leftM;
-		float length = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
-		printf("%f\n\n", length);
+		//Coord2D tmp = rightM - leftM;
+		//float length = sqrt(tmp.x * tmp.x + tmp.y * tmp.y);
+		//printf("%f\n\n", length);
+		static CAMERA_TYPE type = PERSPECTIVE;
+		game.setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 	}
 
-
-
-	if (key == 'R')//resets the camera
+	if (key == 'R') //resets the camera
 	{
-		game.setCameraAngle(0, { 1,1,1 });
+		game.setCameraAngle(0, { 1, 1, 1 });
 		//	game.setCameraPosition({0,0,0});
 	}
 	printf("key RELEASED code: %d\n\n", key);
 }
 
-
 void update()
 {
 	float move = 20;
+
+	//mod[1]->getTransformer().translateBy(mod[1]->getTransformer().);
+
 
 	if (game.isControllerConnected(0))
 	{
@@ -102,10 +102,22 @@ void update()
 
 		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
-		
-		mod[0]->setColour(1, 0, 0);
-		mod[0]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
-	
+
+		mod[0]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
+
+		float angle = 0;
+		if (p1.sticks[LS].x)
+		{
+			angle = acos(p1.sticks[LS].x /
+				sqrt(p1.sticks[LS].x*p1.sticks[LS].x
+					+ p1.sticks[LS].y*p1.sticks[LS].y)) * (180 / M_PI);
+			angle += (p1.sticks[LS].y < 0 ? (180 - angle) * 2 : 0) + 90;
+		}
+
+		mod[0]->getTransformer().setRotation({ 0,angle	,0 });
+
+		mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
+		mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 	}
 
 	if (game.isControllerConnected(1))
@@ -116,9 +128,7 @@ void update()
 		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
 
-		mod[1]->setColour(0, 1, 0);
-		mod[1]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
-	
+		mod[1]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
 	}
 
 	if (game.isControllerConnected(2))
@@ -129,9 +139,7 @@ void update()
 		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
 
-		mod[2]->setColour(0, 0, 1);
-		mod[2]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
-	
+		mod[2]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
 	}
 
 	if (game.isControllerConnected(3))
@@ -142,10 +150,8 @@ void update()
 		if (Xinput::buttonPressed(p1.buttons.A))
 			printf("%d\n", p1.buttons.A);
 
-		mod[3]->setColour(1, 1, 0);
-		mod[3]->getTransformer().translateBy(p1.sticks[LS].x * move, 0 * move, p1.sticks[LS].y * move);//move camera
+		mod[3]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
 	}
-
 
 	////Model Movement
 	//if (m_in)
@@ -165,7 +171,6 @@ void update()
 	//
 	//if (game.isControllerConnected(0))
 	//{
-	//
 	//	Xinput p1 = game.getController(0);
 	//
 	//	p1.numButtons;
@@ -175,12 +180,10 @@ void update()
 	//		printf("%d\n", p1.buttons.A);
 	//
 	//	game.moveCameraPositionBy({ p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move });//move camera
-	//	//game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
-	//	//game.moveCameraPositionBy({0 , 0,p1.triggers[LT] * -move});//move out
-	//
-	//
+	//	game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), { p1.sticks[RS].y  ,p1.sticks[RS].x, 0 });//rotate camera
+	//	game.moveCameraPositionBy({ 0 , 0, p1.triggers[LT] * -move });//move out
 	//}
-	//game.setCameraPosition({ 0,5000,0 });//move in
+	//game.setCameraPosition({ 0,0,-2000 });//move in
 	//game.setCameraAngle(-45, { 1,0,0 });
 	////Rotate Model
 	//if (rotUp)
@@ -193,8 +196,6 @@ void update()
 	//	mod[numModel]->getTransformer().rotateBy({ 0,-ang,0 });
 }
 
-
-
 void mouseButtonReleased(int button, int mod)
 {
 
@@ -202,44 +203,50 @@ void mouseButtonReleased(int button, int mod)
 		leftM = InputManager::getMouseCursorPosition();
 	if (button == RIGHT_BUTTON)
 		rightM = InputManager::getMouseCursorPosition();
-
-
 }
 
 void render()
-{}
+{
+}
 
 SpriteInfo sp1, sp2;
 
 void main()
 {
-	//ShaderCombiner thing;
-	//thing.combine("Shaders/Model.vtsh", "Shaders/PassThrough.vert", "Shaders/","vtsh");
-
 	//Model Stuff
-	Model *floor;
-	game.addModel(mod[0] = new Model("Models/AssaultModel/AssaultModel.obj"));
+	//Model *floor;
+	//game.addModel(floor = new Model("models/floor/placeholder_floor.obj"));
+	//floor->getTransformer().setScale(500);
+
+	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj"));
+	//game.addModel(mod[0] = new Model("models/suzane/untitled.obj"));
 
 	mod[0]->getTransformer().setScale(.15);
-	mod[0]->getTransformer().setPosition(0, 0, 1000);
+	mod[0]->getTransformer().setPosition(0, 0, 2000);
 
 	mod[3] = new Model(*mod[0]);
 	mod[2] = new Model(*mod[0]);
 	mod[1] = new Model(*mod[0]);
-	game.addModel(mod[1]);
 
-	game.addModel(mod[2] );
+	mod[0]->setColour(1, 0, 0);
+	mod[1]->setColour(0, 1, 0);
+	mod[2]->setColour(0, 0, 1);
+	mod[3]->setColour(1, 1, 0);
 
-	game.addModel(mod[3] );
+	//game.addModel(mod[1]);
+	//
+	//game.addModel(mod[2]);
+	//
+	//game.addModel(mod[3]);
 
 	EmGineAudioPlayer audio;
 
 	audio.createStream("Game Jam(Full).wav");
 
-	audio.play(true);
+	//audio.play(true);
 
 	//engine stuff
-
+	game.setFPSLimit(60);
 	game.keyPressed(keyInputPressed);
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);

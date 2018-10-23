@@ -12,12 +12,9 @@ out vec2 texcoord;
 out vec3 norm;
 out vec3 pos;
 
-//out vec3 normal;
-
 void main()
 {
-    //normal = (uModel * vec4(in_normal, 0.0f)).xyz;
-    texcoord = in_uv;
+     texcoord = in_uv;
     norm = mat3(uView) * mat3(uModel) * in_normal;
     
     vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f); 

@@ -18,8 +18,6 @@ public:
 	Model(const char* path);
 	~Model();
 
-	std::vector<std::pair<std::string, Texture2D>>& loadMaterials(std::string path);
-
 	void render(GLSLCompiler& shader,Camera& cam);
 
 	Transformer& getTransformer();

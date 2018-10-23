@@ -89,6 +89,8 @@ public:
 	*/
 	int getWindowHeight();
 
+	void setCameraType(CAMERA_TYPE type);
+
 	/*
 	moves the camera position in pixles
 	*/
@@ -127,6 +129,8 @@ public:
 
 	/*enables/disables V-sync*/
 	void vsync(bool enable);
+
+	void updateControllerConnections();
 
 	WindowCreator * getWindow();
 

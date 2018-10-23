@@ -23,40 +23,27 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 {
 	shader.enable();
 	float colour[4]{ (float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255 };
+
 	// update the position of the object
-	glUniformMatrix4fv(shader.getUniformLocation("camera"), 1, GL_FALSE, &(cam.getCameraMatrix()[0][0]));
-	//glUniformMatrix4fv(shader.getUniformLocation("uProj"), 1, GL_FALSE, &(cam.getProjectionMatrix()[0][0]));
-	glUniformMatrix4fv(shader.getUniformLocation("object"), 1, GL_FALSE, &((cam.getObjectMatrix()*m_transform.getTransformation())[0][0]));
-	glUniform4fv(shader.getUniformLocation("vertColour"), 1, colour);
 
-	////Robs Stuff
-	//
-	//glUniformMatrix4fv(shader.getUniformLocation("uModel"), .data, true);
-	//glUniformMatrix4fv(shader.getUniformLocation("uView"), CameraTransform.GetInverse().data, true);
-	//glUniformMatrix4fv(shader.getUniformLocation("uProj"), CameraProjection.data, true);
-	//
-	//glUniform1f(shader.getUniformLocation("uTex"), 0);
-	//glm::mat4 thing(1);
-	//thing = glm::translate(thing,glm::vec3(50.f,0.f,0.f))
-	//
-	//glUniformMatrix4fv(shader.getUniformLocation("LightPosition"),1,true,&((cam.getCameraMatrix() * thing)[0][0]));
-	//glUniform3f(shader.getUniformLocation("LightAmbient"), 0.15f, 0.15f, 0.15f);
-	//glUniform3f(shader.getUniformLocation("LightDiffuse"),0.7f, 0.1f, 0.2f);
-	//glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.1f, 0.1f);
-	//glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 50.0f);
-	//glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f);
-	//glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
-	//glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01f);
+	
+	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
 
+	glUniform4f(shader.getUniformLocation("LightPosition"), 0,0,0,0);
+	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.40f, 0.40f, 0.40f);
+	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.7f, 0.1f, 0.2f);
+	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.1f, 0.1f);
+	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 50.0f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), .01f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.01f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01f);
+
+	//glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
+	
+	//render the mesh
 	m_mesh.render(shader);
 
-	//for(GLuint a = 0; a < meshes.size(); a++)
-	//{
-	//
-	//	//render the m_mesh
-	//	meshes[a].render(shader);
-	//}
 	shader.disable();
 }
 

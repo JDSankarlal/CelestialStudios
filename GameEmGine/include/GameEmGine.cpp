@@ -64,12 +64,13 @@ void GameEmGine::run()
 	//glfwSwapInterval(1);//vsync
 
 	glEnable(GL_DEPTH_TEST);
-	glClearColor((float) m_colour.r / 255, (float) m_colour.g / 255, (float) m_colour.b / 255, (float) m_colour.a / 255);//BG colour
+	glEnable(GL_TEXTURE_2D);
 
 	glm::mat4 proj = glm::perspective(45.f, (float) m_window->getScreenWidth() / m_window->getScreenHeight(), 1.f, 1000.f);
 
 	while(!glfwWindowShouldClose(m_window->getWindow()))//update loop
 	{
+	glClearColor((float) m_colour.r / 255, (float) m_colour.g / 255, (float) m_colour.b / 255, (float) m_colour.a / 255);//BG colour
 		//EmGineAudioPlayer::update();
 
 		if(true)//fps calculation
@@ -109,6 +110,11 @@ void GameEmGine::vsync(bool enable)
 	glfwSwapInterval(enable);
 }
 
+void GameEmGine::updateControllerConnections()
+{
+	m_inputManager->controllerUpdate();
+}
+
 int GameEmGine::controllersConnected()
 {
 	return m_inputManager->controllersConnected();
@@ -134,7 +140,7 @@ void GameEmGine::shaderInit()
 	m_cameraShader = new GLSLCompiler;
 	m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
 	m_modelShader = new GLSLCompiler;
-	m_modelShader->create("Shaders/Model.vtsh", "Shaders/Model.fmsh");
+	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 }
 
 void GameEmGine::calculateFPS()
@@ -227,6 +233,11 @@ int GameEmGine::getWindowHeight()
 	return m_window->getScreenHeight();
 }
 
+void GameEmGine::setCameraType(CAMERA_TYPE type)
+{
+	m_mainCamera->setType(type);
+}
+
 void GameEmGine::moveCameraPositionBy(Coord3D pos)
 {
 	m_mainCamera->movePositionBy(pos);
@@ -308,6 +319,11 @@ void GameEmGine::update()
 	if(m_render != nullptr)
 		m_render();
 
+	if (m_mainCamera->getTransformer().isUpdated())
+	{
+		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix()*m_mainCamera->getViewMatrix())[0][0]));
+		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
+	}
 	//3D-Graphics 1
 	for(int a = 0; a < m_models.size(); a++)
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
