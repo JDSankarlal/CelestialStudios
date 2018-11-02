@@ -13,13 +13,13 @@ void main()
 	//the weights add up to 1
 	outColor = vec3(0.0, 0.0, 0.0);
 
-	outColor += texture(uTex, vec2(texcoord.x - 4.0 * pixelSize, texcoord.y)).rgb *0.06;
-	outColor += texture(uTex, vec2(texcoord.x - 3.0 * pixelSize, texcoord.y)).rgb *0.09;
-	outColor += texture(uTex, vec2(texcoord.x - 2.0 * pixelSize, texcoord.y)).rgb *0.12;
-	outColor += texture(uTex, vec2(texcoord.x -		  pixelSize, texcoord.y)).rgb *0.15;
-	outColor += texture(utex, vec2(texcoord.x,					textcoord.y)).rgb *0.16;
-	outColor += texture(uTex, vec2(texcoord.x +		   ixelSize, texcoord.y)).rgb *0.15;
-	outColor += texture(uTex, vec2(texcoord.x + 2.0 * pixelSize, texcoord.y)).rgb *0.12;
-	outColor += texture(uTex, vec2(texcoord.x + 3.0 * pixelSize, texcoord.y)).rgb *0.09;
-	outColor += texture(uTex, vec2(texcoord.x + 4.0 * pixelSize, texcoord.y)).rgb *0.06;
+	outColor += texture(uTex, vec2(texcoord.x - 4.0 * uPixelSize, texcoord.y)).rgb *0.06;
+	outColor += texture(uTex, vec2(texcoord.x - 3.0 * uPixelSize, texcoord.y)).rgb *0.09;
+	outColor += texture(uTex, vec2(texcoord.x - 2.0 * uPixelSize, texcoord.y)).rgb *0.12;
+	outColor += texture(uTex, vec2(texcoord.x -		  uPixelSize, texcoord.y)).rgb *0.15;
+	outColor += texture(uTex, vec2(texcoord.x,					  texcoord.y)).rgb *0.16;
+	outColor += texture(uTex, vec2(texcoord.x +		  uPixelSize, texcoord.y)).rgb *0.15;
+	outColor += texture(uTex, vec2(texcoord.x + 2.0 * uPixelSize, texcoord.y)).rgb *0.12;
+	outColor += texture(uTex, vec2(texcoord.x + 3.0 * uPixelSize, texcoord.y)).rgb *0.09;
+	outColor += texture(uTex, vec2(texcoord.x + 4.0 * uPixelSize, texcoord.y)).rgb *0.06;
 }

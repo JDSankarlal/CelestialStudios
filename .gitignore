@@ -42,3 +42,9 @@ First Game/Models/
 First Game/Win32/
 First Game/x64/
 *.mp3
+
+GameEmGine/junck/
+
+First Game/junck/Debug/Win32/
+
+First Game/Debug/Win32/

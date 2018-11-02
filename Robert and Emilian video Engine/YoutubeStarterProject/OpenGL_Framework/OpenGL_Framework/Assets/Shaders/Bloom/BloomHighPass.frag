@@ -9,7 +9,7 @@ out vec3 outColor;
 
 void main()
 {
-	vec3 color texture(uTex, texcoord).rgb;
+	vec3 color = texture(uTex, texcoord).rgb;
 
 	float luminance = (color.r + color.g + color.b) / 3.0;
 

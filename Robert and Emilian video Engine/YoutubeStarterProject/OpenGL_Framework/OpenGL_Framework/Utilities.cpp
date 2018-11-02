@@ -41,8 +41,8 @@ void InitFullScreenQuad()
 	glBindBuffer(GL_ARRAY_BUFFER, _FullScreenQuadVBO);
 	glBufferData(GL_ARRAY_BUFFER, vertexSize + texCoordSize, VBO_DATA, GL_STATIC_DRAW);
 
-	glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vertexSize));
+	glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, (0));
+	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(vertexSize));
 
 	glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
 	glBindVertexArray(GL_NONE);
