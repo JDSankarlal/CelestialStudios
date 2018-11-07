@@ -253,11 +253,12 @@ void main()
 	//floor->getTransformer().setScale(500);
 
 	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj"));
+	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj"));
 	//game.addModel(mod[4] = new Model("models/Bruce+Lee+obj/Bruce Lee.obj"));
 
-	mod[0]->getTransformer().setScale(.15);
-	mod[0]->getTransformer().setPosition(0, 0, 0);
+	mod[0]->getTransformer().setScale(.15), mod[0]->getTransformer().setPosition(0, 0, 0);
 	//mod[4]->getTransformer().setScale(.2);
+	mod[5]->getTransformer().setRotation({ 0, 60, 0}), mod[5]->getTransformer().setPosition(7,0,4), mod[5]->getTransformer().setScale(2,1,1);
 
 	mod[3] = new Model(*mod[0]);
 	mod[2] = new Model(*mod[0]);
