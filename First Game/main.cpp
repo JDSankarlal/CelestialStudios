@@ -276,18 +276,12 @@ void main()
 	//game.addModel (mod[5] = new Model ("models/placeholderwalls/PlaceholderBox.obj"));//Walls
 
 	/// - Load Models into Scene - ///
-	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj"));
-	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj"));
-	//game.addModel(mod[4] = new Model("models/Bruce+Lee+obj/Bruce Lee.obj"));
 
-	/// - Sets Model Transform - ///
-
-
-	//mod[4]->getTransformer().setScale(.2);
-
+	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
+	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 
 	/// - Make New Models From Existing Models - ///
-
 	//Players
 	mod[3] = new Model(*mod[0]);
 	mod[2] = new Model(*mod[0]);
@@ -295,38 +289,41 @@ void main()
 
 	//Placeholder Walls
 	mod[6] = new Model(*mod[5]);
+	mod[7] = new Model(*mod[5]);
 
-	mod[0]->getTransformer().setScale(.15),
-		mod[0]->getTransformer().setPosition(1, 0, 0),
+	/// - Set Model Transforms - ///
+	//Player Transforms
+	mod[0]->getTransformer().setScale(.15), mod[0]->getTransformer().setPosition(1, 0, 0),
 		mod[1]->getTransformer().setScale(.15), mod[1]->getTransformer().setPosition(-1, 0, 0),
 		mod[2]->getTransformer().setScale(.15), mod[2]->getTransformer().setPosition(2, 0, 0),
 		mod[3]->getTransformer().setScale(.15), mod[3]->getTransformer().setPosition(-2, 0, 0);
 
-	mod[5]->getTransformer().setRotation({ 0, 60, 0 }), mod[5]->getTransformer().setPosition(7, 0, 4), mod[5]->getTransformer().setScale(2, 1, 1),
-		mod[6]->getTransformer().setRotation({ 0, -60, 0 }), mod[6]->getTransformer().setPosition(-7, 0, 4), mod[6]->getTransformer().setScale(2, 1, 1);
+	//Wall Transforms
+	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 0, 7), mod[5]->getTransformer().setScale(3, 1, 1),
+		mod[6]->getTransformer().setRotation({ 0, 90, 0 }), mod[6]->getTransformer().setPosition(-15, 0, 7), mod[6]->getTransformer().setScale(3, 1, 1),
+		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 0, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
+	
+	//Boss Transforms
+	mod[8]->getTransformer().setRotation({ 0,90,0 }), mod[8]->getTransformer().setPosition(0,0,10), mod[8]->getTransformer().setScale(2);
 
 
 	/// - Set Model Colour - ///
 
 	mod[0]->setColour(1, 0, 0);
-	mod[1]->setColour(0, 1, 0);
-	mod[2]->setColour(0, 0, 1);
+	mod[1]->setColour(0, 0, 1);
+	mod[2]->setColour(0, 1, 0);
 	mod[3]->setColour(1, 1, 0);
 
-	//Camera settings
-	game.setCameraPosition({ 0,3,-20 });
-	game.setCameraAngle(-45, { 1,0,0 });
+	/// Add Duplicate Models ///
 
 	game.addModel(mod[1]);
-
 	game.addModel(mod[2]);
-
 	game.addModel(mod[3]);
-
 	game.addModel(mod[6]);
+	game.addModel(mod[7]);
 
-	game.setCameraPosition({ 0,3,-20 });
-	game.setCameraAngle(-45, { 1,0,0 });
+	game.setCameraPosition({ 0,8,-20 });
+	game.setCameraAngle(-65, { 1,0,0 });
 
 	EmGineAudioPlayer audio;
 	audio.createStream("Game Jam(Full).wav");
