@@ -38,13 +38,23 @@ Thumbs.db
 # Custum Ignores #
 ##################
 .vs/
-First Game/Models/
 First Game/Win32/
 First Game/x64/
 *.mp3
 
+*.tlog
+
 GameEmGine/junck/
 
-First Game/junck/Debug/Win32/
+*.ilk
 
-First Game/Debug/Win32/
+*.pdb
+
+First Game/junck/
+First Game/Models/crysis_nano_suit_2/
+
+GameEmGine/lib/
+
+Project1/
+
+Robert and Emilian video Engine/

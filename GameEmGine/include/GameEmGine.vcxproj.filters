@@ -31,12 +31,6 @@
     <ClInclude Include="Quat.h">
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
-    <ClInclude Include="Camera3D.h">
-      <Filter>EmGine\Game Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera2D.h">
-      <Filter>EmGine\Game Engine</Filter>
-    </ClInclude>
     <ClInclude Include="StructInfo.h">
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
@@ -58,9 +52,17 @@
     <ClInclude Include="Texture.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Transformer.h" />
-    <ClInclude Include="ModelBatch.h" />
     <ClInclude Include="Physics3D.h" />
+    <ClInclude Include="Camera.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Transformer.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderCombiner.h" />
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
@@ -93,12 +95,6 @@
     <ClCompile Include="Quat.cpp">
       <Filter>EmGine\Data Types</Filter>
     </ClCompile>
-    <ClCompile Include="Camera3D.cpp">
-      <Filter>EmGine\Game Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera2D.cpp">
-      <Filter>EmGine\Game Engine</Filter>
-    </ClCompile>
     <ClCompile Include="SpriteBatch.cpp">
       <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
@@ -114,9 +110,17 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>EmGine\Resource Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Transformer.cpp" />
-    <ClCompile Include="ModelBatch.cpp" />
     <ClCompile Include="Physics3D.cpp" />
+    <ClCompile Include="Camera.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Transformer.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderCombiner.cpp" />
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EmGine">

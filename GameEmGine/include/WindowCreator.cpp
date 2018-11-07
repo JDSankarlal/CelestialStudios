@@ -27,8 +27,10 @@ int WindowCreator::createWindow(std::string name, Size3D size, Coord2D position,
 	else
 		_monitor = glfwGetPrimaryMonitor();
 
-	_info->size = &size;
-	_info->position = &position;
+
+
+	*_info->size = size;
+	*_info->position = position;
 
 
 	m_window = glfwCreateWindow(size.width, size.height, (*(_info->title) = name).c_str(), nullptr, nullptr);

@@ -3,30 +3,42 @@
 #include <GLFW/glfw3.h>
 #include <assimp/mesh.h>
 #include <vector>
+#include <map>
 #include "Transformer.h"
 #include "GLSLCompiler.h"
 #include "StructInfo.h"
 #include "ResourceManager.h"
 
+#define CHAR_BUFF_SIZE 125
+
 class Mesh
 {
 public:
 	Mesh();
-	Mesh(std::vector<Vertex3D>verts,
-			   std::vector<GLuint>indicies,
-			   std::vector<Texture2D>textures);
+	Mesh(Mesh & mesh);
 	~Mesh();
 
-	////just a test
-	//void updateVerts(Transformer& transform);
+	bool loadMesh(std::string);
+
 	void render(GLSLCompiler& shader);
 
-	std::vector<Vertex3D> m_verts;
-	std::vector<GLuint>   m_indicies;
-	std::vector<Texture2D> m_textures;
+	void unload();
+
+	GLuint getNumFaces(int index)const;
+	GLuint getNumVerticies(int index)const;
+
+	float top = 0, bottom = 0, left = 0, right = 0, front = 0, back = 0;
+
 private:
+	void loadMaterials(std::string path);
+
 	void init();
 
-	GLuint m_vboID, m_vaoID, m_iboID;
-};
 
+	std::vector< std::pair<std::string, GLuint>>  m_vaoID;
+	std::vector<GLuint> m_vboID,
+		m_numFaces, m_numVerts;
+
+	std::vector< std::pair<std::string, std::vector<Vertex3D>>> m_unpackedData;
+	std::vector<std::pair<std::string, std::vector<Texture2D>>>m_textures;
+};

@@ -14,6 +14,7 @@ public:
 
 	static void init(int channels = 36);
 
+
 	void createSound(const char* file);
 
 	void createStream(const char* file);

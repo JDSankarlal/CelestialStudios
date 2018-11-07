@@ -15,13 +15,13 @@ public:
 
 	/*SET ROTATION*/
 
-	void setRotation(Coord3D direction, Coord3D forward = {1,0,0});
-	void rotateBy(Coord3D direction, Coord3D forward = {1,0,0});
+	void setRotation(Coord3D direction, Coord3D forward = { 1,0,0 });
+	void rotateBy(Coord3D direction, Coord3D forward = { 1,0,0 });
 
 	/*SET POSITION*/
 
-	void setPosition(float x, float y, float z, Coord3D forward = {1,0,0});
-	void translateBy(float x, float y, float z, Coord3D forward = {1,0,0});
+	void setPosition(float x, float y, float z, Coord3D forward = { 1,0,0 });
+	void translateBy(float x, float y, float z, Coord3D forward = { 1,0,0 });
 
 	/*SET SCALE*/
 
@@ -31,7 +31,7 @@ public:
 	void scaleBy(float x, float y, float z);
 
 	/*GETERS*/
-
+	Coord3D getPosition();
 	glm::mat4& getRotationMatrix();
 	glm::mat4& getScaleMatrix();
 	glm::mat4& getTranslationMatrix();
@@ -41,13 +41,15 @@ public:
 
 	bool isUpdated();
 private:
-	Coord3D m_pos,m_angles;
+	Coord3D m_pos, m_angles;
 	glm::mat4
 		m_translate,
 		m_rotate,
-		m_scale,
-		m_transform;
-	bool m_updated = false;
+		m_scale;
+
+	bool  m_updatedRot = true,
+		m_updatedTrans= true,
+		m_updatedScale= true;
 
 };
 

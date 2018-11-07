@@ -41,7 +41,7 @@ void SpriteBatch::draw(VboInfo2D* info, float depth, GLuint texture, const Colou
 	//delete colour;
 }
 
-void SpriteBatch::render(GLSLCompiler& shader, Camera3D& cam)
+void SpriteBatch::render(GLSLCompiler& shader, Camera& cam)
 {
 	shader.enable();
 	glActiveTexture(GL_TEXTURE0);

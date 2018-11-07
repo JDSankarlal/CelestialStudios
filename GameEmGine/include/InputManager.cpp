@@ -131,7 +131,7 @@ Xinput& InputManager::getController(unsigned int index)
 
 void InputManager::controllerUpdate()
 {
-
+							
 	for(int a = 0; a < GLFW_JOYSTICK_LAST; a++)
 		if(glfwJoystickPresent(a))
 		{

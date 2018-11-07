@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
-#include "Camera3D.h"
+#include "Camera.h"
 #include "GLSLCompiler.h"
 #include "StructInfo.h"
 #include "ResourceManager.h"
@@ -87,7 +87,7 @@ public:
 	void end();
 
 	void draw(VboInfo2D* info, float depth, GLuint texture, const ColourRGBA* colour = new ColourRGBA);
-	void render(GLSLCompiler & shader, Camera3D & cam);
+	void render(GLSLCompiler & shader, Camera & cam);
 
 private:
 	void createRenderBatches();
