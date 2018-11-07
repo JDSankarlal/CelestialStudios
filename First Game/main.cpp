@@ -247,16 +247,12 @@ SpriteInfo sp1, sp2;
 
 void main()
 {
-	//Model Stuff
-	//Model *floor;
-	//game.addModel(floor = new Model("models/floor/placeholder_floor.obj"));
-	//floor->getTransformer().setScale(500);
-
 	/// - Load Models into Scene - ///
 
 	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
+	//game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 
 	/// - Make New Models From Existing Models - ///
 	//Players
@@ -290,13 +286,15 @@ void main()
 	mod[2]->setColour(0, 1, 0);
 	mod[3]->setColour(1, 1, 0);
 
-	/// Add Duplicate Models ///
+	/// - Add Duplicate Models - ///
 
 	game.addModel(mod[1]);
 	game.addModel(mod[2]);
 	game.addModel(mod[3]);
 	game.addModel(mod[6]);
 	game.addModel(mod[7]);
+
+	/// - Set Camera - ///
 
 	game.setCameraPosition({ 0,8,-20 });
 	game.setCameraAngle(-65, { 1,0,0 });
@@ -305,7 +303,7 @@ void main()
 
 	audio.createStream("Game Jam(Full).wav");
 
-	//audio.play(true);
+	audio.play(true);
 
 	//engine stuff
 	game.setFPSLimit(60);
