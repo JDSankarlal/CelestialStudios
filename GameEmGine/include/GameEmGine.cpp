@@ -8,8 +8,9 @@ std::vector<Camera *>GameEmGine::m_cameras;
 GLSLCompiler *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
-ColourRGBA GameEmGine::m_colour{123,123,123};
-ModelBatch *GameEmGine::m_modelBatch;
+ColourRGBA GameEmGine::m_colour{ 123,123,123 };
+//ModelBatch *GameEmGine::m_modelBatch;
+FrameBuffer GameEmGine::m_mainBuffer(1);
 SpriteBatch *GameEmGine::m_spriteBatch;
 std::vector<Model*> GameEmGine::m_models;
 std::vector<SpriteInfo*> GameEmGine::m_sprites;
@@ -40,16 +41,16 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	glfwInit();//initilize GLFW before ANYTHING
 
 	printf("Trying to create the window\n");
-	m_window = new WindowCreator(name, {(float) width,(float) height}, {(float) x,(float) y}, monitor, fullScreen, visable);
+	m_window = new WindowCreator(name, { (float)width,(float)height }, { (float)x,(float)y }, monitor, fullScreen, visable);
 	glfwSetFramebufferSizeCallback(m_window->getWindow(), changeViewport);
 	m_inputManager = new InputManager;
-	m_mainCamera = new Camera({(float) width,(float) height,500});
+	m_mainCamera = new Camera({ (float)width,(float)height,500 });
 
 	shaderInit();
 
 	m_spriteBatch = new SpriteBatch;
-	m_modelBatch = new ModelBatch;
-	//m_spriteBatch->init();
+	//	m_modelBatch = new ModelBatch;
+		//m_spriteBatch->init();
 
 	printf("created the window\n");
 	//m_fpsLimit = 0;
@@ -63,15 +64,16 @@ void GameEmGine::run()
 	//glfwSwapInterval(1);//vsync
 
 	glEnable(GL_DEPTH_TEST);
-	glClearColor((float) m_colour.r / 255, (float) m_colour.g / 255, (float) m_colour.b / 255, (float) m_colour.a / 255);//BG colour
+	glEnable(GL_TEXTURE_2D);
 
-	glm::mat4 proj = glm::perspective(45.f, (float) m_window->getScreenWidth() / m_window->getScreenHeight(), 1.f, 1000.f);
+	glm::mat4 proj = glm::perspective(45.f, (float)m_window->getScreenWidth() / m_window->getScreenHeight(), 1.f, 1000.f);
 
-	while(!glfwWindowShouldClose(m_window->getWindow()))//update loop
+	while (!glfwWindowShouldClose(m_window->getWindow()))//update loop
 	{
-		//EmGineAudioPlayer::update();
+		glClearColor((float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);//BG colour
+			//EmGineAudioPlayer::update();
 
-		if(true)//fps calculation
+		if (true)//fps calculation
 		{
 			calculateFPS();
 			char str[20];
@@ -108,6 +110,11 @@ void GameEmGine::vsync(bool enable)
 	glfwSwapInterval(enable);
 }
 
+void GameEmGine::updateControllerConnections()
+{
+	m_inputManager->controllerUpdate();
+}
+
 int GameEmGine::controllersConnected()
 {
 	return m_inputManager->controllersConnected();
@@ -130,10 +137,10 @@ WindowCreator* GameEmGine::getWindow()
 
 void GameEmGine::shaderInit()
 {
-	m_cameraShader = new GLSLCompiler;
-	m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
+	//m_cameraShader = new GLSLCompiler;
+	//m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
 	m_modelShader = new GLSLCompiler;
-	m_modelShader->create("Shaders/Model.vtsh", "Shaders/Model.fmsh");
+	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 }
 
 void GameEmGine::calculateFPS()
@@ -143,11 +150,11 @@ void GameEmGine::calculateFPS()
 	static float frameTimes[SAMPLE];
 
 	frameTimes[count++] = 1 / glfwGetTime();
-	if(count == SAMPLE)
+	if (count == SAMPLE)
 	{
 		count = 0;
 		m_fps = 0;
-		for(auto &a : frameTimes)
+		for (auto &a : frameTimes)
 			m_fps += a;
 		m_fps /= SAMPLE;
 	}
@@ -162,10 +169,10 @@ void GameEmGine::fpsLimiter()
 
 
 	//way 1: 
-	if(enter)
-		if(m_fpsLimit > 0)
-			while((CLOCKS_PER_SEC / m_fpsLimit) > (clock() - frameStart));
-	
+	if (enter)
+		if (m_fpsLimit > 0)
+			while ((CLOCKS_PER_SEC / m_fpsLimit) > (clock() - frameStart));
+
 	////way 2: puts the thread to sleep 
 	//if(enter)
 	//	if(m_fpsLimit > 0)
@@ -213,7 +220,7 @@ void GameEmGine::gameLoopUpdate(void update())
 
 void GameEmGine::backgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-	m_colour = {GLubyte(r * 255),GLubyte(g * 255),GLubyte(b * 255),GLubyte(a * 255)};
+	m_colour = { GLubyte(r * 255),GLubyte(g * 255),GLubyte(b * 255),GLubyte(a * 255) };
 }
 
 int GameEmGine::getWindowWidth()
@@ -224,6 +231,11 @@ int GameEmGine::getWindowWidth()
 int GameEmGine::getWindowHeight()
 {
 	return m_window->getScreenHeight();
+}
+
+void GameEmGine::setCameraType(CAMERA_TYPE type)
+{
+	m_mainCamera->setType(type);
 }
 
 void GameEmGine::moveCameraPositionBy(Coord3D pos)
@@ -254,10 +266,21 @@ void GameEmGine::addModel(Model* model)
 	m_models.push_back(model);
 }
 
+void GameEmGine::removeModel(Model* model)
+{
+
+	for (unsigned a = 0; a < m_models.size(); a++)
+		if (m_models[a] == model)
+		{
+			delete m_models[a];
+			m_models.erase(m_models.begin() + a);
+		}
+}
+
 void GameEmGine::addModelBatch(const char * model)
 {
-	m_modelBatch->draw(model);
-	m_modelBatch->end();
+	//	m_modelBatch->draw(model);
+	//	m_modelBatch->end();
 }
 
 void GameEmGine::addSprite(SpriteInfo* sprite)
@@ -300,34 +323,44 @@ void GameEmGine::update()
 {
 	glClearDepth(1.f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
+	//	m_mainBuffer.Clear();
 	m_mainCamera->update();
-	if(m_render != nullptr)
+	//	m_mainBuffer.Bind();
+
+	if (m_render != nullptr)
 		m_render();
 
+	if (m_mainCamera->getTransformer().isUpdated())
+	{
+		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix()*m_mainCamera->getViewMatrix())[0][0]));
+		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
+	}
 	//3D-Graphics 1
-	for(int a = 0; a < m_models.size(); a++)
+	for (int a = 0; a < m_models.size(); a++)
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
+	//	m_mainBuffer.UnBind();
+	//	m_mainBuffer.MoveToBackBuffer(m_window->getScreenWidth(),m_window->getScreenHeight());
 
-	////3D-Graphics 2
-	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
+		////3D-Graphics 2
+		//m_modelBatch->render(*m_modelShader, *m_mainCamera);
 
 
-	////2D-Graphics 
-	//m_spriteBatch->begin();
-	//for(int a = 0; a < m_sprites.size(); a++)
-	//{
-	//	m_spriteBatch->draw(&m_sprites[a]->objectInfo, m_sprites[a]->depth, m_sprites[a]->texture);
-	//	if(a + 1 < m_sprites.size())
-	//		a++,
-	//		m_spriteBatch->draw(&m_sprites[a]->objectInfo, m_sprites[a]->depth, m_sprites[a]->texture);
-	//}
-	//m_spriteBatch->end();
-	//m_spriteBatch->render(*m_cameraShader,*m_mainCamera);
+		////2D-Graphics 
+		//m_spriteBatch->begin();
+		//for(int a = 0; a < m_sprites.size(); a++)
+		//{
+		//	m_spriteBatch->draw(&m_sprites[a]->objectInfo, m_sprites[a]->depth, m_sprites[a]->texture);
+		//	if(a + 1 < m_sprites.size())
+		//		a++,
+		//		m_spriteBatch->draw(&m_sprites[a]->objectInfo, m_sprites[a]->depth, m_sprites[a]->texture);
+		//}
+		//m_spriteBatch->end();
+		//m_spriteBatch->render(*m_cameraShader,*m_mainCamera);
+
 
 	glfwPollEvents();//updates the event handelers
 
-	if(m_gameLoop != nullptr)
+	if (m_gameLoop != nullptr)
 		m_gameLoop();
 }
 

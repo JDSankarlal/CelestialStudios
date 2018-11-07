@@ -38,7 +38,6 @@ Thumbs.db
 # Custum Ignores #
 ##################
 .vs/
-First Game/Models/
 First Game/Win32/
 First Game/x64/
 *.mp3
@@ -52,3 +51,10 @@ GameEmGine/junck/
 *.pdb
 
 First Game/junck/
+First Game/Models/crysis_nano_suit_2/
+
+GameEmGine/lib/
+
+Project1/
+
+Robert and Emilian video Engine/

@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(Size3D size, CAMERA_TYPE type) :m_scale(1), m_projMat(1), m_rotMat(1), m_objMat(1), m_cameraUpdate(true), m_position(new Quat {0,0,0,0})
+Camera::Camera(Size3D size, CAMERA_TYPE type) :m_scale(1), m_projMat(1), m_rotMat(1), m_objMat(1), m_cameraUpdate(true), m_position(new Quat{ 0,0,0,0 })
 {
 	//m_position = new Coord3D{-.25,-.5,0};
 	init(size, type);
@@ -17,7 +17,12 @@ void Camera::init(Size3D size, CAMERA_TYPE type)
 	size.height /= h;
 	*m_size = size;
 
-	switch(type)
+	setType(type);
+
+}
+void Camera::setType(CAMERA_TYPE type)
+{
+	switch (type)
 	{
 	case ORTHOGRAPHIC:
 		m_projMat = glm::ortho(0.f, m_size->width, 0.f, m_size->height, .001f, m_size->depth);
@@ -25,18 +30,17 @@ void Camera::init(Size3D size, CAMERA_TYPE type)
 	case PERSPECTIVE:
 		m_projMat = glm::perspective(glm::radians(90.f), m_size->width / m_size->height, .001f, m_size->depth);
 	}
-	m_viewMat = glm::lookAt(glm::vec3 {m_position->x,m_position->y,m_position->z}, glm::vec3 {m_position->x,m_position->y,m_position->z - .1}, glm::vec3 {0.f,1.f,0.f});
+	m_cameraUpdate = true;
 }
-
 bool Camera::update()
 {
-	if(m_cameraUpdate)
+	if (m_cameraUpdate)
 	{
-		//m_viewMat = glm::lookAt(glm::vec3{m_position->x,m_position->y,m_position->z + .1}, glm::vec3{m_position->x,m_position->y,m_position->z}, glm::vec3{0.f,1.f,0.f});
+		m_viewMat = glm::lookAt(glm::vec3{ m_position->x,m_position->y,m_position->z + .1 }, glm::vec3{ m_position->x,m_position->y,m_position->z }, glm::vec3{ 0.f,1.f,0.f });
 
-		m_transform.setPosition(-m_position->x, -m_position->y, m_position->z);
+		m_transform.setPosition(m_position->x, m_position->y, m_position->z);
 		m_transform.setScale(m_scale);
-		m_objMat = m_transform.getTranslationMatrix() * m_transform.getScaleMatrix();
+		m_objMat = m_rotMat * glm::inverse(m_transform.getTranslationMatrix())* m_transform.getScaleMatrix();
 
 		m_cameraMat = m_projMat * m_viewMat * m_rotMat;
 		m_cameraUpdate = false;
@@ -48,14 +52,14 @@ bool Camera::update()
 
 void Camera::setPosition(Coord3D position)
 {
-	*m_position = Quat {position.x,position.y,position.z};
+	*m_position = Quat{ position.x, position.y, position.z };
 
 	m_cameraUpdate = true;
 }
 
 void  Camera::movePositionBy(Coord3D position)
 {
-	*m_position += Quat {position.x,position.y,position.z};
+	*m_position += Quat{ position.x,position.y,position.z };
 
 	m_cameraUpdate = true;
 }
@@ -85,7 +89,7 @@ void Camera::moveAngleBy(float angle, Coord3D direction)
 	//	m_rotMat = glm::rotate(m_rotMat, glm::radians(-angle), glm::vec3(direction.x, direction.y, direction.z));
 
 	//my rotation
-	if(angle != 0)
+	if (angle != 0)
 		m_rotMat *= Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
 
 	m_cameraUpdate = true;
@@ -101,6 +105,16 @@ float& Camera::getScale()
 	return m_scale;
 }
 
+glm::mat4 Camera::getProjectionMatrix()
+{
+	return m_projMat;
+}
+
+glm::mat4 Camera::getViewMatrix()
+{
+	return m_viewMat;
+}
+
 glm::mat4 Camera::getCameraMatrix()
 {
 	return m_cameraMat;
@@ -109,4 +123,9 @@ glm::mat4 Camera::getCameraMatrix()
 glm::mat4 Camera::getObjectMatrix()
 {
 	return m_objMat;
+}
+
+Transformer& Camera::getTransformer()
+{
+	return m_transform;
 }

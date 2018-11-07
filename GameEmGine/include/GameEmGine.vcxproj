@@ -178,6 +178,7 @@
     <ClInclude Include="EmGineAudioPlayer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="fileIO.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameEmGine.h" />
     <ClInclude Include="GLSLCompiler.h" />
     <ClInclude Include="ImageLoader.h" />
@@ -186,10 +187,10 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="ModelBatch.h" />
     <ClInclude Include="Physics3D.h" />
     <ClInclude Include="Quat.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="ShaderCombiner.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteBatch.h" />
     <ClInclude Include="StructInfo.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="EmGineAudioPlayer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="fileIO.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameEmGine.cpp" />
     <ClCompile Include="GLSLCompiler.cpp" />
     <ClCompile Include="ImageLoader.cpp" />
@@ -209,10 +211,10 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="ModelBatch.cpp" />
     <ClCompile Include="Physics3D.cpp" />
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="ShaderCombiner.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteBatch.cpp" />
     <ClCompile Include="Transformer.cpp" />

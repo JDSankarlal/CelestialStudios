@@ -10,8 +10,12 @@ public:
 	GLSLCompiler();
 	~GLSLCompiler();
 
+	void refresh();
+
 	//compiles and links shaders
 	void create(const std::string& vertFilePath, const std::string& fragFilePath);
+
+	void createDefault();
 
 	//compiles shaders into code
 	void compileShaders(const std::string& vertFilePath, const std::string& fragFilePath);
@@ -37,10 +41,10 @@ private:
 		FG_SHADER
 	};
 
-	void compileShader(Shaders shadNum, const std::string filePath, GLuint id);
+	bool compileShader(Shaders shadNum, const std::string filePath, GLuint id);
 	void findAtributes();
 
-	std::string m_vtsh;
+	std::string m_vtsh,m_vtPath,m_fmPath;
 	int m_attribNum = 0;
 	bool m_enabled = false;
 	GLuint

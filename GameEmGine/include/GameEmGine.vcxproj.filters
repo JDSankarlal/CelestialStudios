@@ -52,10 +52,15 @@
     <ClInclude Include="Texture.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Transformer.h" />
-    <ClInclude Include="ModelBatch.h" />
     <ClInclude Include="Physics3D.h" />
     <ClInclude Include="Camera.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Transformer.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderCombiner.h" />
+    <ClInclude Include="FrameBuffer.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,10 +110,15 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>EmGine\Resource Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Transformer.cpp" />
-    <ClCompile Include="ModelBatch.cpp" />
     <ClCompile Include="Physics3D.cpp" />
     <ClCompile Include="Camera.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Transformer.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderCombiner.cpp" />
+    <ClCompile Include="FrameBuffer.cpp">
       <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
   </ItemGroup>

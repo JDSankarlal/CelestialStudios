@@ -1,33 +1,46 @@
 #pragma once
 #include <GL\glew.h>
 #include <string>
-#include <vector>
+#include "StructInfo.h"
+
+enum class TEXTURE_TYPE
+{
+	NONE,
+	DIFFUSE,
+	SPECULAR
+};
 
 struct Texture2D
 {
 	GLuint id;
+	ColourRGBA colour;
 	int width, height;
-	std::string type="",path="";
-	
+	TEXTURE_TYPE type;
+
+	void deleteTexture()
+	{
+		if (id)
+		{
+			glDeleteTextures(1, &id);
+			id = 0;
+		}
+	}
+
+	void bindTexture()
+	{
+		glBindTexture(GL_TEXTURE_2D, id);
+	}	  
+
+	static void unbindTexture()
+	{
+		glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	}
+
 	bool operator==(Texture2D arg)
 	{
 		return id == arg.id;
 	}
-
-	//template <class T> friend bool operator==(vector<T> a,vector<T> b)
-	//{
-	//	if(a.size() != b.size())
-	//		return false;
-	//	for(int c = 0; c < a.size(); c++)
-	//	{
-	//		if(a[c] != b[c])
-	//			return false;
-	//	}
-	//	return true;
-	//}
 };
-
-
 
 struct Texture3D
 {

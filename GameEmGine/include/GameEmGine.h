@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <thread>
+#include "ShaderCombiner.h"
 #include "Logger.h"
 //#include "EmGineAudioPlayer.h"
 //#include "Sprite.h"
@@ -13,8 +14,9 @@
 #include "Camera.h"
 #include "Model.h"
 #include "SpriteBatch.h"
-#include "ModelBatch.h"
+//#include "ModelBatch.h"
 #include "InputManager.h"
+#include "FrameBuffer.h"
 //will get joystic input latter :>
 
 
@@ -87,6 +89,8 @@ public:
 	*/
 	int getWindowHeight();
 
+	void setCameraType(CAMERA_TYPE type);
+
 	/*
 	moves the camera position in pixles
 	*/
@@ -108,6 +112,8 @@ public:
 
 	void addModel(Model* model);
 
+	void removeModel(Model * model);
+
 	/*does not work!!!!*/
 	void addModelBatch(const char *model);
 
@@ -126,6 +132,8 @@ public:
 	/*enables/disables V-sync*/
 	void vsync(bool enable);
 
+	void updateControllerConnections();
+
 	WindowCreator * getWindow();
 
 	/*Controller input*/
@@ -136,6 +144,7 @@ public:
 
 	Xinput& getController(int index);
 
+	static GLSLCompiler *m_cameraShader, *m_modelShader;
 
 private:
 	void shaderInit();
@@ -149,8 +158,8 @@ private:
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
-	static GLSLCompiler *m_cameraShader, *m_modelShader;
-	static ModelBatch* m_modelBatch;
+//	static ModelBatch* m_modelBatch;
+	static FrameBuffer m_mainBuffer;
 	static SpriteBatch* m_spriteBatch;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;
