@@ -32,7 +32,7 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	glUniform4f(shader.getUniformLocation("LightPosition"), 0,0,0,0);
 	
-	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.6f, .6f, .6f);
+	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.8f, .8f, .8f);
 	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.7f, 0.1f, 0.2f);
 	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.1f, 0.1f);
 	
