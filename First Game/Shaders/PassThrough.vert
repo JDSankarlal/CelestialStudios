@@ -3,6 +3,7 @@
 uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProj;
+uniform float utime;
 
 layout(location = 0) in vec3 in_vert;
 layout(location = 1) in vec2 in_uv;
@@ -14,12 +15,12 @@ out vec3 pos;
 
 void main()
 {
-     texcoord = in_uv;
+    texcoord = in_uv;
     norm = mat3(uView) * mat3(uModel) * in_normal;
     
     vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f); 
-    
-    gl_Position = uProj * viewSpace;
-    
+     
+    gl_Position = uProj * viewSpace ;
+     
     pos = viewSpace.xyz;
 }

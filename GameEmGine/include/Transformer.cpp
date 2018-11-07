@@ -1,7 +1,7 @@
 #include "Transformer.h"
 
 
-Transformer::Transformer() :m_translate(1), m_rotate(1), m_scale(1)
+Transformer::Transformer():m_translate(1), m_rotate(1), m_scale(1)
 {}
 
 Transformer::~Transformer()
@@ -11,17 +11,17 @@ void Transformer::setRotation(Coord3D angles, Coord3D forward)
 {
 	m_updatedRot = true;
 
-	if (angles.z)
+	if(angles.z)
 	{
 		m_rotate = Quat::quatRotationMat(glm::radians(angles.z), 0, 0, 1);
 		m_angles.z = angles.z;
 	}
-	if (angles.y)
+	if(angles.y)
 	{
 		m_rotate = Quat::quatRotationMat(glm::radians(angles.y), 0, 1, 0);
 		m_angles.y = angles.y;
 	}
-	if (angles.x)
+	if(angles.x)
 	{
 		m_rotate = Quat::quatRotationMat(glm::radians(angles.x), 1, 0, 0);
 		m_angles.x = angles.x;
@@ -43,8 +43,9 @@ void Transformer::setPosition(float x, float y, float z, Coord3D forward)
 	m_updatedTrans = true;
 	int w, h;
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
-
-	m_translate = glm::translate(glm::mat4(1), glm::vec3(x / w - .1f, y / h - .1f, -z / 500));
+	float aspect = (float) w / h;
+	m_pos = Coord3D(x * aspect, y * aspect, z * aspect);
+	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.x, m_pos.y, -m_pos.z));
 }
 
 void Transformer::translateBy(float x, float y, float z, Coord3D forward)
@@ -53,7 +54,9 @@ void Transformer::translateBy(float x, float y, float z, Coord3D forward)
 	int w, h;
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
 
-	m_translate = glm::translate(m_translate, glm::vec3(x / w - 1 / 10, y / h - 1 / 10, -z / 500));
+	float aspect = (float)w / h;
+	m_pos = Coord3D(x / aspect, y / aspect, z / aspect);
+	m_translate = glm::translate(m_translate, glm::vec3(m_pos.x, m_pos.y,- m_pos.z));
 }
 
 void Transformer::setScale(float scale)
@@ -80,6 +83,11 @@ void Transformer::scaleBy(float x, float y, float z)
 	m_scale = glm::scale(m_scale, glm::vec3(x, y, z));
 }
 
+Coord3D Transformer::getPosition()
+{
+	return m_pos;
+}
+
 glm::mat4 & Transformer::getRotationMatrix()
 {
 	m_updatedRot = false;
@@ -100,12 +108,12 @@ glm::mat4 & Transformer::getTranslationMatrix()
 
 glm::mat4 Transformer::getTransformation()
 {
-	m_updatedRot = m_updatedTrans 
+	m_updatedRot = m_updatedTrans
 		= m_updatedScale = false;
 	return   m_translate * m_rotate * m_scale;
 }
 
 bool Transformer::isUpdated()
 {
-	return m_updatedRot||m_updatedTrans||m_updatedScale;
+	return m_updatedRot || m_updatedTrans || m_updatedScale;
 }

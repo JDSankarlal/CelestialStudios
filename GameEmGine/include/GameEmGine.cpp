@@ -137,8 +137,8 @@ WindowCreator* GameEmGine::getWindow()
 
 void GameEmGine::shaderInit()
 {
-	m_cameraShader = new GLSLCompiler;
-	m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
+	//m_cameraShader = new GLSLCompiler;
+	//m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
 	m_modelShader = new GLSLCompiler;
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 }

@@ -1,6 +1,6 @@
 #include "Model.h" 
 #include "ResourceManager.h"
-
+#include <ctime>
 Model::Model()
 {}
 
@@ -31,15 +31,20 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 
 	glUniform4f(shader.getUniformLocation("LightPosition"), 0,0,0,0);
-	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.40f, 0.40f, 0.40f);
+	
+	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.6f, .6f, .6f);
 	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.7f, 0.1f, 0.2f);
 	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.1f, 0.1f);
+	
 	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 50.0f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), .01f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.01f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), .0000001f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), .0000001f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), .0000001f);
 
-	//glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
+	
+	glUniform1f(shader.getUniformLocation("utime"), (float)clock() / 1000);
+
+	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 	
 	//render the mesh
 	m_mesh.render(shader);

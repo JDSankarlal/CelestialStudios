@@ -9,6 +9,7 @@ enum class TEXTURE_TYPE
 	DIFFUSE,
 	SPECULAR
 };
+
 struct Texture2D
 {
 	GLuint id;

@@ -142,6 +142,7 @@ public:
 
 	Xinput& getController(int index);
 
+	static GLSLCompiler *m_cameraShader, *m_modelShader;
 
 private:
 	void shaderInit();
@@ -155,7 +156,6 @@ private:
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
-	static GLSLCompiler *m_cameraShader, *m_modelShader;
 //	static ModelBatch* m_modelBatch;
 	static FrameBuffer m_mainBuffer;
 	static SpriteBatch* m_spriteBatch;

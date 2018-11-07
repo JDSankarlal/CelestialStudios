@@ -27,10 +27,13 @@ public:
 	GLuint getNumFaces(int index)const;
 	GLuint getNumVerticies(int index)const;
 
+	float top = 0, bottom = 0, left = 0, right = 0, front = 0, back = 0;
+
 private:
 	void loadMaterials(std::string path);
 
 	void init();
+
 
 	std::vector< std::pair<std::string, GLuint>>  m_vaoID;
 	std::vector<GLuint> m_vboID,

@@ -31,7 +31,7 @@ public:
 	void scaleBy(float x, float y, float z);
 
 	/*GETERS*/
-
+	Coord3D getPosition();
 	glm::mat4& getRotationMatrix();
 	glm::mat4& getScaleMatrix();
 	glm::mat4& getTranslationMatrix();
@@ -45,8 +45,7 @@ private:
 	glm::mat4
 		m_translate,
 		m_rotate,
-		m_scale,
-		m_transform;
+		m_scale;
 
 	bool  m_updatedRot = true,
 		m_updatedTrans= true,
