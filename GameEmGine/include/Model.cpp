@@ -37,9 +37,9 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.1f, 0.1f);
 	
 	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 50.0f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), .0000001f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), .0000001f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), .0000001f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 5.f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 5.0f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 5.f);
 
 	
 	glUniform1f(shader.getUniformLocation("utime"), (float)clock() / 1000);

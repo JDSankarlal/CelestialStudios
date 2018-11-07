@@ -112,6 +112,8 @@ public:
 
 	void addModel(Model* model);
 
+	void removeModel(Model * model);
+
 	/*does not work!!!!*/
 	void addModelBatch(const char *model);
 

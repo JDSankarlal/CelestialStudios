@@ -2,204 +2,206 @@
 
 GLuint *GLSLCompiler::m_programs = new GLuint[0], *GLSLCompiler::m_attribs = new GLuint[0], GLSLCompiler::m_num;
 
-GLSLCompiler::GLSLCompiler()
+GLSLCompiler::GLSLCompiler ()
 {
-	glewInit();
+	glewInit ();
 }
 
-GLSLCompiler::~GLSLCompiler()
+GLSLCompiler::~GLSLCompiler ()
 {
-	if (m_programID)
-		glDeleteProgram(m_programID);
+	if(m_programID)
+		glDeleteProgram (m_programID);
 }
 
-void GLSLCompiler::refresh()
+void GLSLCompiler::refresh ()
 {
-	create(m_vtPath, m_fmPath);
+	create (m_vtPath, m_fmPath);
 }
 
-void GLSLCompiler::create(const std::string & vertFilePath, const std::string & fragFilePath)
+void GLSLCompiler::create (const std::string & vertFilePath, const std::string & fragFilePath)
 {
-	compileShaders(vertFilePath, fragFilePath);
-	linkShaders();
+	compileShaders (vertFilePath, fragFilePath);
+	linkShaders ();
 }
 
-void GLSLCompiler::createDefault()
+void GLSLCompiler::createDefault ()
 {
 	//create("Shaders/error.vert", "Shaders/error.frag");
-	
-	
-	if (m_programID)
-		glDeleteProgram(m_programID);
-	
-	if (m_fragID)
-		glDeleteShader(m_fragID);
-	if (m_vertID)
-		glDeleteShader(m_vertID);
-	
-	
-	m_programID = glCreateProgram();
-	m_vertID = glCreateShader(GL_VERTEX_SHADER);
-	m_fragID = glCreateShader(GL_FRAGMENT_SHADER);
-	
+
+
+	if(m_programID)
+		glDeleteProgram (m_programID);
+
+	if(m_fragID)
+		glDeleteShader (m_fragID);
+	if(m_vertID)
+		glDeleteShader (m_vertID);
+
+	m_programID = m_vertID = m_fragID = 0;
+
+
+	m_programID = glCreateProgram ();
+	m_vertID = glCreateShader (GL_VERTEX_SHADER);
+	m_fragID = glCreateShader (GL_FRAGMENT_SHADER);
+
 
 	std::string tmpFileContent =
-		"#version 330\n"
-	
+		"#version 420\n"
+
 		"uniform mat4 uModel;\n"
 		"uniform mat4 uView;\n"
 		"uniform mat4 uProj;\n"
-	
+
 		"layout(location = 0) in vec3 in_vert;\n"
 		"layout(location = 1) in vec2 in_uv;\n"
 		"layout(location = 2) in vec3 in_normal;\n"
-	
+
 		"out vec2 texcoord;\n"
 		"out vec3 norm;\n"
 		"out vec3 pos;\n"
-	
+
 		"void main()\n"
 		"{\n"
 		"texcoord = in_uv;\n"
 		"norm = mat3(uView) * mat3(uModel) * in_normal;\n"
-	
+
 		"pos = (uView * uModel * vec4(in_vert, 1.0f)).xyz;\n"
-	
+
 		"gl_Position = uProj * vec4(pos, 1.0f);\n"
 		"}\n"
 		;
-	
+
 	m_vtsh = tmpFileContent;
-	const char * tmp = tmpFileContent.c_str();
-	m_vertID = glCreateShader(GL_VERTEX_SHADER);
+	const char * tmp = tmpFileContent.c_str ();
 	
-	glShaderSource(m_vertID, 1, &tmp, nullptr);
-	glCompileShader(m_vertID);
-	
-	
+	glShaderSource (m_vertID, 1, &tmp, nullptr);
+	glCompileShader (m_vertID);
+
+
 	tmpFileContent =
-		"#version 330\n"
-	
+		"#version 420\n"
+
 		"in vec2 texcoord;\n"
 		"in vec3 norm;\n"
 		"in vec3 pos;\n"
-	
+
 		"out vec4 outColor;\n"
-	
+
 		"void main()\n"
 		"{\n"
 		"outColor = vec4(1, 0, 1, 1);\n"
 		"}\n"
 		;
-	tmp = tmpFileContent.c_str();
-	
-	m_fragID = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(m_fragID, 1, &tmp, nullptr);
-	glCompileShader(m_fragID);
-	
-	linkShaders();
+	tmp = tmpFileContent.c_str ();
+
+	glShaderSource (m_fragID, 1, &tmp, nullptr);
+	glCompileShader (m_fragID);
+
+	//linkShaders ();
 	//delete tmpFileContent;
 }
 
-void GLSLCompiler::compileShaders(const std::string & vertFilePath, const std::string & fragFilePath)
+void GLSLCompiler::compileShaders (const std::string & vertFilePath, const std::string & fragFilePath)
 {
 	m_vtPath = vertFilePath;
 	m_fmPath = fragFilePath;
 
 
-	if (m_programID)
-		glDeleteProgram(m_programID);
+	if(m_programID)
+		glDeleteProgram (m_programID);
 
-	m_programID = glCreateProgram();
-	m_vertID = glCreateShader(GL_VERTEX_SHADER);
-	compileShader(VT_SHADER, vertFilePath, m_vertID);
+	m_programID = glCreateProgram ();
+	m_vertID = glCreateShader (GL_VERTEX_SHADER);
+	m_fragID = glCreateShader (GL_FRAGMENT_SHADER);
 
-	m_fragID = glCreateShader(GL_FRAGMENT_SHADER);
-	compileShader(FG_SHADER, fragFilePath, m_fragID);
+	if(!compileShader (VT_SHADER, vertFilePath, m_vertID))return;
+	if(!compileShader (FG_SHADER, fragFilePath, m_fragID))return;
 }
 
-void GLSLCompiler::linkShaders()
+void GLSLCompiler::linkShaders ()
 {
-	glAttachShader(m_programID, m_vertID);
-	glAttachShader(m_programID, m_fragID);
+	glAttachShader (m_programID, m_vertID);
+	glAttachShader (m_programID, m_fragID);
 
-	glLinkProgram(m_programID);
+	glLinkProgram (m_programID);
 
 	GLint isLinked = 0;
-	glGetProgramiv(m_programID, GL_LINK_STATUS, (int *)&isLinked);
-	if (isLinked == GL_FALSE)
+	glGetProgramiv (m_programID, GL_LINK_STATUS, (int *)&isLinked);
+	if(isLinked == GL_FALSE)
 	{
 		GLint maxLength = 0;
-		glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetProgramiv (m_programID, GL_INFO_LOG_LENGTH, &maxLength);
 
 		// The maxLength includes the NULL character
 		char* infoLog = new char[maxLength];
-		glGetProgramInfoLog(m_programID, maxLength, &maxLength, infoLog);
+		glGetProgramInfoLog (m_programID, maxLength, &maxLength, infoLog);
 
 		// We don't need the program anymore.
-		glDeleteProgram(m_programID);
+		glDeleteProgram (m_programID);
 		// Don't leak shaders either.
-		glDeleteShader(m_vertID);
-		glDeleteShader(m_fragID);
+		glDeleteShader (m_vertID);
+		glDeleteShader (m_fragID);
+
+		m_programID = m_vertID = m_fragID = 0;
 
 		// Use the infoLog as you see fit.
-		m_log->writeLog(infoLog + '\n');
+		m_log->writeLog (infoLog + '\n');
 		// In this simple program, we'll just leave
 		return;
 	}
-	glDetachShader(m_programID, m_vertID);
-	glDetachShader(m_programID, m_fragID);
-	glDeleteShader(m_vertID);
-	glDeleteShader(m_fragID);
+	glDetachShader (m_programID, m_vertID);
+	glDetachShader (m_programID, m_fragID);
+	glDeleteShader (m_vertID);
+	glDeleteShader (m_fragID);
 }
 
-void GLSLCompiler::addAtribute(const std::string attributeName, short attribSize)
+void GLSLCompiler::addAtribute (const std::string attributeName, short attribSize)
 {
-	glBindAttribLocation(m_programID, m_attribNum, attributeName.c_str());
+	glBindAttribLocation (m_programID, m_attribNum, attributeName.c_str ());
 	m_attribNum += attribSize;
 }
 
-GLint GLSLCompiler::getUniformLocation(const char * uniform)
+GLint GLSLCompiler::getUniformLocation (const char * uniform)
 {
-	return glGetUniformLocation(m_programID, uniform);
+	return glGetUniformLocation (m_programID, uniform);
 }
 
-void GLSLCompiler::enable()
+void GLSLCompiler::enable ()
 {
-	glUseProgram(m_programID);
-		
-	if (!m_enabled)
+	//glUseProgram (m_programID);
+
+	if(!m_enabled)
 	{
-		m_attribs = (GLuint*)realloc(m_attribs, ++m_num * sizeof(GLuint));
-		m_programs = (GLuint*)realloc(m_programs, m_num * sizeof(GLuint));
-	
+		m_attribs = (GLuint*)realloc (m_attribs, ++m_num * sizeof (GLuint));
+		m_programs = (GLuint*)realloc (m_programs, m_num * sizeof (GLuint));
+
 		m_programs[m_num - 1] = m_programID;
-		findAtributes();
+		findAtributes ();
 		m_attribs[m_num - 1] = m_attribNum;
-	
-		glUseProgram(m_programID);
-		for (int a = 0; a < m_attribNum; a++)
-			glEnableVertexAttribArray(a);
+
+		glUseProgram (m_programID);
+		for(int a = 0; a < m_attribNum; a++)
+			glEnableVertexAttribArray (a);
 		m_enabled = true;
 	}
 }
 
-void GLSLCompiler::disable()
+void GLSLCompiler::disable ()
 {
-	if (m_enabled)
+	if(m_enabled)
 	{
-		for (int a = 0; a < m_attribNum; a++)
-			glDisableVertexAttribArray(a);
-	
-		if (m_num - 1 > 0)
+		for(int a = 0; a < m_attribNum; a++)
+			glDisableVertexAttribArray (a);
+
+		if(m_num - 1 > 0)
 		{
-			glUseProgram(m_programs[--m_num - 1]);
-			for (int a = 0; a < m_attribs[m_num - 1]; a++)
-				glEnableVertexAttribArray(a);
+			glUseProgram (m_programs[--m_num - 1]);
+			for(int a = 0; a < m_attribs[m_num - 1]; a++)
+				glEnableVertexAttribArray (a);
 			m_enabled = false;
 		} else
-			glUseProgram(0);
-	
+			glUseProgram (0);
+
 		m_enabled = !m_enabled;
 	}
 
@@ -207,48 +209,50 @@ void GLSLCompiler::disable()
 
 }
 
-void GLSLCompiler::compileShader(Shaders shadType, const std::string filePath, GLuint id)
+bool GLSLCompiler::compileShader (Shaders shadType, const std::string filePath, GLuint id)
 {
 	std::ifstream
-		shader(filePath);
+		shader (filePath);
 
 	std::string fileContent = "", line;
 
-	while (std::getline(shader, line))
+	while(std::getline (shader, line))
 		fileContent += line + '\n';
-	shader.close();
+	shader.close ();
 
-	if (shadType == VT_SHADER) //stores vtsh
+	if(shadType == VT_SHADER) //stores vtsh
 		m_vtsh = fileContent;
 
-	const char* tmpFileContent = fileContent.c_str();
-	glShaderSource(id, 1, &tmpFileContent, nullptr);
-	glCompileShader(id);
+	const char* tmpFileContent = fileContent.c_str ();
+	glShaderSource (id, 1, &tmpFileContent, nullptr);
+	glCompileShader (id);
 	//delete tmpFileContent;
 
 	GLint success = 0;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+	glGetShaderiv (id, GL_COMPILE_STATUS, &success);
 
-	if (success == GL_FALSE)
+	if(success == GL_FALSE)
 	{
 		GLint maxLength = 0;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetShaderiv (id, GL_INFO_LOG_LENGTH, &maxLength);
 
 		char* errorLog = new char[maxLength];
-		glGetShaderInfoLog(id, maxLength, &maxLength, errorLog);
+		glGetShaderInfoLog (id, maxLength, &maxLength, errorLog);
 
-		m_log->writeLog(errorLog + '\n');
+		m_log->writeLog (errorLog + '\n');
 
-		createDefault();
+		createDefault ();
+		return false;
 	}
+	return true;
 }
 
-void GLSLCompiler::findAtributes()
+void GLSLCompiler::findAtributes ()
 {
 	unsigned short count = 0;
-	for (int a = 0; a < m_vtsh.size(); a++)
+	for(int a = 0; a < m_vtsh.size (); a++)
 	{
-		if (m_vtsh.substr(a, 3) == "in ")
+		if(m_vtsh.substr (a, 3) == "in ")
 		{
 			count++;
 			a += 3;

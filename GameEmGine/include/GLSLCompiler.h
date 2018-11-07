@@ -41,7 +41,7 @@ private:
 		FG_SHADER
 	};
 
-	void compileShader(Shaders shadNum, const std::string filePath, GLuint id);
+	bool compileShader(Shaders shadNum, const std::string filePath, GLuint id);
 	void findAtributes();
 
 	std::string m_vtsh,m_vtPath,m_fmPath;
