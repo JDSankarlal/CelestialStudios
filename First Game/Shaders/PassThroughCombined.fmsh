@@ -1,3 +1,4 @@
+<<<<<<< HEAD:First Game/Shaders/PassThroughCombined.fmsh
 #version 410
 
 layout (location  = 0) in vec3 vertPos;
@@ -24,11 +25,20 @@ layout(location = 2) in vec3 in_normal;
 out vec2 texcoord;
 out vec3 norm;
 out vec3 pos;
+=======
+#version 420
+
+layout(location = 0) in vec3 in_vert;
+layout(location = 1) in vec2 in_uv;
+
+out vec2 texcoord;
+>>>>>>> RobDevelop:Robert and Emilian video Engine/YoutubeStarterProject/OpenGL_Framework/OpenGL_Framework/Assets/Shaders/PassThrough.vert
 
 //out vec3 normal;
 
 void main()
 {
+<<<<<<< HEAD:First Game/Shaders/PassThroughCombined.fmsh
     //normal = (uModel * vec4(in_normal, 0.0f)).xyz;
     texcoord = in_uv;
     norm = mat3(uView) * mat3(uModel) * in_normal;
@@ -43,4 +53,8 @@ void main()
 	
 	
 	fragUV =  vertUV; 
+=======
+    texcoord = in_uv;
+    gl_Position = vec4(in_vert, 1.0f);
+>>>>>>> RobDevelop:Robert and Emilian video Engine/YoutubeStarterProject/OpenGL_Framework/OpenGL_Framework/Assets/Shaders/PassThrough.vert
 }
