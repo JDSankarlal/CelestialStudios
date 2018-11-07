@@ -281,7 +281,7 @@ void main()
 		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 0, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
 	
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0,90,0 }), mod[8]->getTransformer().setPosition(0,0,10), mod[8]->getTransformer().setScale(2);
+	mod[8]->getTransformer().setRotation({ 0,90,0 }), mod[8]->getTransformer().setPosition(0,0,10), mod[8]->getTransformer().setScale(2.25);
 
 	/// - Set Model Colour - ///
 
