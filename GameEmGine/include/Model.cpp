@@ -26,9 +26,9 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	// update the position of the object
 
-	
-	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
+	/// - Lighting Variables - ///
 
+	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
 	glUniform4f(shader.getUniformLocation("LightPosition"), 0,0,0,0);
 	
