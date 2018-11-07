@@ -12,24 +12,24 @@ rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0;
 Coord2D leftM, rightM;
 EmGineAudioPlayer *omniPlayer;
 
-#define modSize 5
-GameEmGine game ("The Real Game", 1000, 800, 0, 0, 0, false);
+#define modSize 20
+GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
 GLSLCompiler colourProgram, colourProgram2;
-Logger tlog = Logger ("New Log:>");
+Logger tlog = Logger("New Log:>");
 Model *mod[modSize];
 
 //shader initialization
-void shaderInit ()
+void shaderInit()
 {
 	//shader initialization
-	colourProgram.compileShaders ("Shaders/Colour Shading.vtsh", "Shaders/Colour Shading.fmsh");
-	colourProgram.linkShaders ();
-	colourProgram2.compileShaders ("Shaders/Colour Shading 2.vtsh", "Shaders/Colour Shading 2.fmsh");
-	colourProgram2.linkShaders ();
+	colourProgram.compileShaders("Shaders/Colour Shading.vtsh", "Shaders/Colour Shading.fmsh");
+	colourProgram.linkShaders();
+	colourProgram2.compileShaders("Shaders/Colour Shading 2.vtsh", "Shaders/Colour Shading 2.fmsh");
+	colourProgram2.linkShaders();
 }
 
 //instance key is pressed
-void keyInputPressed (int key, int mod)
+void keyInputPressed(int key, int mod)
 {
 	m_left = (key == 'A' ? true : m_left);
 	m_right = (key == 'D' ? true : m_right);
@@ -43,11 +43,11 @@ void keyInputPressed (int key, int mod)
 	rotUp = (key == GLFW_KEY_UP ? true : rotUp);
 	rotDown = (key == GLFW_KEY_DOWN ? true : rotDown);
 
-	printf ("key PRESED code: %d\n\n", key);
+	printf("key PRESED code: %d\n\n", key);
 }
 
 //instace key is released
-void keyInputReleased (int key, int mod)
+void keyInputReleased(int key, int mod)
 {
 	m_left = (key == 'A' ? false : m_left);
 	m_right = (key == 'D' ? false : m_right);
@@ -63,15 +63,15 @@ void keyInputReleased (int key, int mod)
 
 	//changes fps limit
 	if(key == GLFW_KEY_KP_6)
-		game.setFPSLimit (game.getFPSLimit () + 1);
+		game.setFPSLimit(game.getFPSLimit() + 1);
 	if(key == GLFW_KEY_KP_4)
-		game.setFPSLimit (game.getFPSLimit () - 1);
+		game.setFPSLimit(game.getFPSLimit() - 1);
 
 	if(key == GLFW_KEY_F) //Toggles Fullscreen
 	{
 		static bool full;
-		game.getWindow ()->setFullScreen (full = !full);
-		printf ("Full Screen: %s\n", full ? "true" : "false");
+		game.getWindow()->setFullScreen(full = !full);
+		printf("Full Screen: %s\n", full ? "true" : "false");
 	}
 
 	if(key == GLFW_KEY_SPACE) //changes the model that is being moved
@@ -80,119 +80,138 @@ void keyInputReleased (int key, int mod)
 		//float length = sqrt(tmp.x * tmp.x + tmp.y * tmp.y);
 		//printf("%f\n\n", length);
 		static CAMERA_TYPE type = PERSPECTIVE;
-		game.setCameraType (type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
+		game.setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 	}
 
 	if(key == 'R') //resets the camera
 	{
-		GameEmGine::m_modelShader->refresh ();
+		GameEmGine::m_modelShader->refresh();
 
 		//game.setCameraAngle(0, { 1, 1, 1 });
 		//	game.setCameraPosition({0,0,0});
 	}
-	printf ("key RELEASED code: %d\n\n", key);
+	printf("key RELEASED code: %d\n\n", key);
 }
 
 //updates within game loop
-void update ()
+void update()
 {
 	float move = .1;
 
 	//mod[1]->getTransformer().translateBy(mod[0]->getTransformer().get);
+	static Model* bullets[4];
 
-
-	if(game.isControllerConnected (0))
+	if(game.isControllerConnected(0))
 	{
 
-		Xinput p1 = game.getController (0);
+		Xinput p1 = game.getController(0);
 
-		if(Xinput::buttonPressed (p1.buttons.A))
-			printf ("%d\n", p1.buttons.A);
+		if(Xinput::buttonPressed(p1.buttons.A))
+		{
+			if(bullets[0])
+			{
+				game.removeModel(bullets[0]);
+			//	delete bullets[0];
+			}
 
-		mod[0]->getTransformer ().translateBy (p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
+			game.addModel(bullets[0] = new Model(*mod[0]));
+			Coord3D pos = mod[0]->getTransformer().getPosition();
+			bullets[0]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
+			bullets[0]->getTransformer().setScale(.05);
+		}
+
+
+		mod[0]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
 
 		float angle = 0;
 		if(p1.sticks[RS].x)
 		{
-			angle = acos (p1.sticks[RS].x /
-						  sqrt (p1.sticks[RS].x*p1.sticks[RS].x
-						  + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
+			angle = acos(p1.sticks[RS].x /
+						 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
+						 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
 			angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
 		}
 
-		mod[0]->getTransformer ().setRotation ({ 0,angle	,0 });
+		mod[0]->getTransformer().setRotation({ 0,angle	,0 });
+
+		if(bullets[0])
+		{
+
+			bullets[0]->getTransformer().translateBy(sin(angle)*move * 2, 0, -cos(angle) * move * 2);
+
+		}
 
 		//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 		//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 	}
-	//
-	//if (game.isControllerConnected(1))
-	//{
-	//
-	//	Xinput p1 = game.getController(1);
-	//
-	//	if (Xinput::buttonPressed(p1.buttons.A))
-	//		printf("%d\n", p1.buttons.A);
-	//
-	//	float angle = 0;
-	//	if (p1.sticks[RS].x)
-	//	{
-	//		angle = acos(p1.sticks[RS].x /
-	//					 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-	//					 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
-	//		angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
-	//	}
-	//
-	//	mod[1]->getTransformer().setRotation({ 0,angle	,0 });
-	//	mod[1]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
-	//
-	////	mod[1]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
-	////	mod[1]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
-	//
-	//}
-	//
-	//if (game.isControllerConnected(2))
-	//{
-	//
-	//	Xinput p1 = game.getController(2);
-	//
-	//	if (Xinput::buttonPressed(p1.buttons.A))
-	//		printf("%d\n", p1.buttons.A);
-	//
-	//	float angle = 0;
-	//	if (p1.sticks[RS].x)
-	//	{
-	//		angle = acos(p1.sticks[RS].x /
-	//					 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-	//					 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
-	//		angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
-	//	}
-	//
-	//	mod[2]->getTransformer().setRotation({ 0,angle	,0 });
-	//	mod[2]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
-	//}
-	//
-	//if (game.isControllerConnected(3))
-	//{
-	//
-	//	Xinput p1 = game.getController(3);
-	//
-	//	if (Xinput::buttonPressed(p1.buttons.A))
-	//		printf("%d\n", p1.buttons.A);
-	//
-	//	float angle = 0;
-	//	if (p1.sticks[RS].x)
-	//	{
-	//		angle = acos(p1.sticks[RS].x /
-	//					 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-	//					 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
-	//		angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
-	//	}
-	//
-	//	mod[3]->getTransformer().setRotation({ 0,angle	,0 });
-	//
-	//	mod[3]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
-	//}
+
+	if(game.isControllerConnected(1))
+	{
+
+		Xinput p1 = game.getController(1);
+
+		if(Xinput::buttonPressed(p1.buttons.A))
+			printf("%d\n", p1.buttons.A);
+
+		float angle = 0;
+		if(p1.sticks[RS].x)
+		{
+			angle = acos(p1.sticks[RS].x /
+						 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
+						 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
+			angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
+		}
+
+		mod[1]->getTransformer().setRotation({ 0,angle	,0 });
+		mod[1]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
+
+	//	mod[1]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
+	//	mod[1]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
+
+	}
+
+	if(game.isControllerConnected(2))
+	{
+
+		Xinput p1 = game.getController(2);
+
+		if(Xinput::buttonPressed(p1.buttons.A))
+			printf("%d\n", p1.buttons.A);
+
+		float angle = 0;
+		if(p1.sticks[RS].x)
+		{
+			angle = acos(p1.sticks[RS].x /
+						 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
+						 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
+			angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
+		}
+
+		mod[2]->getTransformer().setRotation({ 0,angle	,0 });
+		mod[2]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
+	}
+
+	if(game.isControllerConnected(3))
+	{
+
+		Xinput p1 = game.getController(3);
+
+		if(Xinput::buttonPressed(p1.buttons.A))
+			printf("%d\n", p1.buttons.A);
+
+		float angle = 0;
+		if(p1.sticks[RS].x)
+		{
+			angle = acos(p1.sticks[RS].x /
+						 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
+						 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
+			angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
+		}
+
+		mod[3]->getTransformer().setRotation({ 0,angle	,0 });
+
+		mod[3]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
+	}
 
 	////Model Movement
 	//if (m_in)
@@ -235,29 +254,26 @@ void update ()
 	//	mod[numModel]->getTransformer().rotateBy({ 0,-ang,0 });
 }
 
-void mouseButtonReleased (int button, int mod)
+void mouseButtonReleased(int button, int mod)
 {
 
 	if(button == LEFT_BUTTON)
-		leftM = InputManager::getMouseCursorPosition ();
+		leftM = InputManager::getMouseCursorPosition();
 	if(button == RIGHT_BUTTON)
-		rightM = InputManager::getMouseCursorPosition ();
+		rightM = InputManager::getMouseCursorPosition();
 }
 
-void render ()
+void render()
 {}
 
 SpriteInfo sp1, sp2;
 
-void main ()
+void main()
 {
 	//Model Stuff
-	game.addModel (mod[0] = new Model ("Models/crysis-nano-suit-2(OBJ)/scene.obj"));//crysis guy
-	game.addModel (mod[1]);//^
-	game.addModel (mod[2]);//^
-	game.addModel (mod[3]);//^
-	game.addModel (mod[4] = new Model ("models/Bruce+Lee+obj/Bruce Lee.obj"));//Bruce Lee!!!!!!!
-	game.addModel (mod[5] = new Model ("models/placeholderwalls/PlaceholderBox.obj"));//Walls
+	//game.addModel (mod[0] = new Model ("Models/crysis-nano-suit-2(OBJ)/scene.obj"));//crysis guy
+	//game.addModel (mod[4] = new Model ("models/Bruce+Lee+obj/Bruce Lee.obj"));//Bruce Lee!!!!!!!
+	//game.addModel (mod[5] = new Model ("models/placeholderwalls/PlaceholderBox.obj"));//Walls
 
 	/// - Load Models into Scene - ///
 	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj"));
@@ -266,9 +282,9 @@ void main ()
 
 	/// - Sets Model Transform - ///
 
-	
+
 	//mod[4]->getTransformer().setScale(.2);
-	
+
 
 	/// - Make New Models From Existing Models - ///
 
@@ -280,14 +296,15 @@ void main ()
 	//Placeholder Walls
 	mod[6] = new Model(*mod[5]);
 
-	mod[0]->getTransformer().setScale(.15), mod[0]->getTransformer().setPosition(1, 0, 0),
+	mod[0]->getTransformer().setScale(.15),
+		mod[0]->getTransformer().setPosition(1, 0, 0),
 		mod[1]->getTransformer().setScale(.15), mod[1]->getTransformer().setPosition(-1, 0, 0),
 		mod[2]->getTransformer().setScale(.15), mod[2]->getTransformer().setPosition(2, 0, 0),
 		mod[3]->getTransformer().setScale(.15), mod[3]->getTransformer().setPosition(-2, 0, 0);
 
 	mod[5]->getTransformer().setRotation({ 0, 60, 0 }), mod[5]->getTransformer().setPosition(7, 0, 4), mod[5]->getTransformer().setScale(2, 1, 1),
 		mod[6]->getTransformer().setRotation({ 0, -60, 0 }), mod[6]->getTransformer().setPosition(-7, 0, 4), mod[6]->getTransformer().setScale(2, 1, 1);
-	
+
 
 	/// - Set Model Colour - ///
 
@@ -297,8 +314,10 @@ void main ()
 	mod[3]->setColour(1, 1, 0);
 
 	//Camera settings
-	game.setCameraPosition ({ 0,3,-20 });
-	game.setCameraAngle (-45, { 1,0,0 });
+	game.setCameraPosition({ 0,3,-20 });
+	game.setCameraAngle(-45, { 1,0,0 });
+
+	game.addModel(mod[1]);
 
 	game.addModel(mod[2]);
 
@@ -310,16 +329,16 @@ void main ()
 	game.setCameraAngle(-45, { 1,0,0 });
 
 	EmGineAudioPlayer audio;
-	audio.createStream ("Game Jam(Full).wav");
+	audio.createStream("Game Jam(Full).wav");
 	//audio.play(true);
 
 	//engine stuff
-	game.setFPSLimit (60);
-	game.keyPressed (keyInputPressed);
-	game.keyReleased (keyInputReleased);
-	game.mouseButtonReleased (mouseButtonReleased);
-	game.gameLoopUpdate (update);
-	game.run ();//this one is pretty important
+	game.setFPSLimit(60);
+	game.keyPressed(keyInputPressed);
+	game.keyReleased(keyInputReleased);
+	game.mouseButtonReleased(mouseButtonReleased);
+	game.gameLoopUpdate(update);
+	game.run();//this one is pretty important
 
 	//the game ended... why are you here?... leave
 }

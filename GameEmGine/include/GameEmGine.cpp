@@ -129,7 +129,7 @@ void InitOpenGlCallback ()
 	//GLDEBUGPROC J = OpenGLDebugCallback;
 	
 	glEnable (GL_DEBUG_OUTPUT);
-	glDebugMessageCallback (OpenGLDebugCallback, NULL);
+	//glDebugMessageCallback (OpenGLDebugCallback, NULL);
 }
 
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)

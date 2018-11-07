@@ -1,7 +1,7 @@
 #include "Transformer.h"
 
 
-Transformer::Transformer():m_translate(1), m_rotate(1), m_scale(1)
+Transformer::Transformer() :m_translate(1), m_rotate(1), m_scale(1)
 {}
 
 Transformer::~Transformer()
@@ -43,7 +43,7 @@ void Transformer::setPosition(float x, float y, float z, Coord3D forward)
 	m_updatedTrans = true;
 	int w, h;
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
-	float aspect = (float) w / h;
+	float aspect = (float)w / h;
 	m_pos = Coord3D(x * aspect, y * aspect, z * aspect);
 	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.x, m_pos.y, -m_pos.z));
 }
@@ -55,8 +55,9 @@ void Transformer::translateBy(float x, float y, float z, Coord3D forward)
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
 
 	float aspect = (float)w / h;
-	m_pos = Coord3D(x / aspect, y / aspect, z / aspect);
-	m_translate = glm::translate(m_translate, glm::vec3(m_pos.x, m_pos.y,- m_pos.z));
+	 
+	m_translate = glm::translate(m_translate, glm::vec3(x* aspect, y* aspect, -z* aspect));
+	m_pos+= Coord3D(x * aspect, y *aspect, z *aspect);
 }
 
 void Transformer::setScale(float scale)

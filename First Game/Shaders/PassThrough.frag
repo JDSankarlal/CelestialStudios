@@ -59,7 +59,6 @@ void main()
         outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
     }
     
-    if()
     vec4 textureColor = texture(uTex, texcoord);
     outColor.rgb *= textureColor.rgb;
     outColor.a = textureColor.a;
