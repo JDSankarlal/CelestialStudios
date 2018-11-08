@@ -57,7 +57,8 @@ void Transformer::translateBy(float x, float y, float z, Coord3D forward)
 	float aspect = (float)w / h;
 	 
 	m_translate = glm::translate(m_translate, glm::vec3(x* aspect, y* aspect, -z* aspect));
-	m_pos+= Coord3D(x * aspect, y *aspect, z *aspect);
+	glm::vec4 tmp = m_translate * glm::vec4(glm::vec3(x* aspect, y* aspect, -z * aspect),1);
+	m_pos = Coord3D(tmp.x,tmp.y,-tmp.z);
 }
 
 void Transformer::setScale(float scale)
