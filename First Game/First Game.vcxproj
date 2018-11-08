@@ -149,12 +149,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Logs\New Log" />
-    <None Include="Shaders\Camera.fmsh" />
-    <None Include="Shaders\Camera.vtsh" />
-    <None Include="Shaders\Colour Shading 2.fmsh" />
-    <None Include="Shaders\Colour Shading 2.vtsh" />
-    <None Include="Shaders\Texture.fmsh" />
-    <None Include="Shaders\Texture.vtsh" />
+    <None Include="Shaders\PassThrough.frag" />
+    <None Include="Shaders\PassThrough.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Logs\imageLoader.log" />

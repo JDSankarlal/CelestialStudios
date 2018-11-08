@@ -286,7 +286,7 @@ void main()
 	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(2.25);
 
 	//Floor Scale
-	mod[9]->getTransformer().setScale(1.2, 1, 1.3);
+	mod[9]->getTransformer().setScale(1.3, 1, 1.3);
 
 	/// - Set Model Colour - ///
 	//Players
