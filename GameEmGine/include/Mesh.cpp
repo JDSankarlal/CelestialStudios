@@ -12,7 +12,7 @@ Mesh::Mesh(Mesh &mesh) :
 
 Mesh::~Mesh()
 {
-	printf("Deleated Mesh\n");
+	printf("Deleted Mesh\n");
 	unload();
 }
 

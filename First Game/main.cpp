@@ -257,7 +257,8 @@ void main()
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 
-	mod[5]->setColour(0.65, 0.65, 0.7);
+	//Wall Colour
+	mod[5]->setColour(0.35, 0.35, 0.4);
 
 	/// - Make New Models From Existing Models - ///
 	//Players
@@ -271,19 +272,21 @@ void main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(.15), mod[0]->getTransformer().setPosition(1, 0, 0),
-		mod[1]->getTransformer().setScale(.15), mod[1]->getTransformer().setPosition(-1, 0, 0),
-		mod[2]->getTransformer().setScale(.15), mod[2]->getTransformer().setPosition(2, 0, 0),
-		mod[3]->getTransformer().setScale(.15), mod[3]->getTransformer().setPosition(-2, 0, 0);
+	mod[0]->getTransformer().setScale(.15), mod[0]->getTransformer().setPosition(1, 1, 0),
+		mod[1]->getTransformer().setScale(.15), mod[1]->getTransformer().setPosition(-1, 1, 0),
+		mod[2]->getTransformer().setScale(.15), mod[2]->getTransformer().setPosition(2, 1, 0),
+		mod[3]->getTransformer().setScale(.15), mod[3]->getTransformer().setPosition(-2, 1, 0);
 
 	//Wall Transforms
-	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 0, 7), mod[5]->getTransformer().setScale(3, 1, 1),
-		mod[6]->getTransformer().setRotation({ 0, 90, 0 }), mod[6]->getTransformer().setPosition(-15, 0, 7), mod[6]->getTransformer().setScale(3, 1, 1),
-		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 0, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
+	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 1.8, 7), mod[5]->getTransformer().setScale(3, 1, 1),
+		mod[6]->getTransformer().setRotation({ 0, 90, 0 }), mod[6]->getTransformer().setPosition(-15, 1.8, 7), mod[6]->getTransformer().setScale(3, 1, 1),
+		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 1.8, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0,90,0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(2.25);
+	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(2.25);
 
+	//Floor Scale
+	mod[9]->getTransformer().setScale(1.2, 1, 1.3);
 
 	/// - Set Model Colour - ///
 	//Players
@@ -294,8 +297,6 @@ void main()
 
 	//Floor
 	mod[9]->setColour((float)196 / 255, (float)167 / 255, (float)113 / 255);
-
-
 
 	/// - Add Duplicate Models - ///
 
