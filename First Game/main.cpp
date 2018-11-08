@@ -10,7 +10,7 @@ int numModel = 0;
 bool m_left = 0, m_right = 0, m_in = 0, m_out = 0, m_up = 0, m_down = 0,
 rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0;
 Coord2D leftM, rightM;
-EmGineAudioPlayer *omniPlayer;
+EmGineAudioPlayer audio;
 
 #define modSize 20
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
@@ -62,19 +62,19 @@ void keyInputReleased(int key, int mod)
 	rotDown = (key == GLFW_KEY_DOWN ? false : rotDown);
 
 	//changes fps limit
-	if(key == GLFW_KEY_KP_6)
+	if (key == GLFW_KEY_KP_6)
 		game.setFPSLimit(game.getFPSLimit() + 1);
-	if(key == GLFW_KEY_KP_4)
+	if (key == GLFW_KEY_KP_4)
 		game.setFPSLimit(game.getFPSLimit() - 1);
 
-	if(key == GLFW_KEY_F) //Toggles Fullscreen
+	if (key == GLFW_KEY_F) //Toggles Fullscreen
 	{
 		static bool full;
 		game.getWindow()->setFullScreen(full = !full);
 		printf("Full Screen: %s\n", full ? "true" : "false");
 	}
 
-	if(key == GLFW_KEY_SPACE) //changes the model that is being moved
+	if (key == GLFW_KEY_SPACE) //changes the model that is being moved
 	{
 		//Coord2D tmp = rightM - leftM;
 		//float length = sqrt(tmp.x * tmp.x + tmp.y * tmp.y);
@@ -83,7 +83,7 @@ void keyInputReleased(int key, int mod)
 		game.setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 	}
 
-	if(key == 'R') //resets the camera
+	if (key == 'R') //resets the camera
 	{
 		GameEmGine::m_modelShader->refresh();
 
@@ -93,6 +93,20 @@ void keyInputReleased(int key, int mod)
 	printf("key RELEASED code: %d\n\n", key);
 }
 
+/// - Collision Class - ///
+bool collisions(Model *l, Model *k)
+{
+	//if distance between models in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	float distancex = l->getCenter().x - k->getCenter().x,
+		distancey = l->getCenter().z - k->getCenter().z;
+
+	if (std::abs((l->getCenter().x - k->getCenter().x)) < l->getWidth() / 2 + k->getWidth() / 2)
+		if (std::abs((l->getCenter().z - k->getCenter().z)) < l->getDepth() / 2 + k->getDepth() / 2)
+			return true;
+
+	return false;
+}
+
 //updates within game loop
 void update()
 {
@@ -100,27 +114,30 @@ void update()
 
 	static Model* bullets[4];
 	static Coord3D velocity[4];
-
-	for(int a = 0; a < 4; a++)
-		if(game.isControllerConnected(a))
+	static bool makeShitLessCancer[4];
+	for (int a = 0; a < 4; a++)
+		if (game.isControllerConnected(a))
 		{
 			Xinput p1 = game.getController(a);
 
 
 			static float angle[4] = { 0,0,0,0 };
-			if(p1.sticks[RS].x || p1.sticks[RS].y)
+			if (p1.sticks[RS].x || p1.sticks[RS].y)
 			{
 
 				angle[a] = acos(p1.sticks[RS].x /
-								sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-								+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
+					sqrt(p1.sticks[RS].x*p1.sticks[RS].x
+						+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
 				angle[a] += (p1.sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 				angle[a] = fmodf(angle[a], 360);
 			}
 
-			if(p1.triggers[RT] >= .95)
+
+			if (p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 			{
-				if(bullets[a])
+				makeShitLessCancer[a] = true;
+
+				if (bullets[a])
 				{
 					game.removeModel(bullets[a]);
 					//	delete bullets[0];
@@ -128,22 +145,40 @@ void update()
 
 				game.addModel(bullets[a] = new Model(*mod[a]));
 				Coord3D pos = mod[a]->getTransformer().getPosition();
-				bullets[a]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
-				bullets[a]->getTransformer().setScale(.05);
+				bullets[a]->getTransformer().setPosition(pos.x, pos.y+.1, pos.z );
+				bullets[a]->getTransformer().setScale(.025);
 
-				bullets[a]->getTransformer().setRotation({ 90 , 0, angle[a] });
-				//bullets[a]->getTransformer().rotateBy({ 90 , 0, 0 });
-
+				bullets[a]->getTransformer().setRotation({ 90 , angle[a] ,0 });
+				
 
 				float cosVal = cos(fmodf(angle[a] - 90, 360)*(M_PI / 180));
 				float sinVal = sin(fmodf(angle[a] - 90, 360)*(M_PI / 180));
 
 				velocity[a] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
+				audio.createStream("pew.wav");
+				audio.play();
 			}
-			if(bullets[a])
-			{
+			else if (p1.triggers[RT] < .95 && makeShitLessCancer[a])
+				makeShitLessCancer[a] = false;
 
+			if (bullets[a])
+			{
 				bullets[a]->getTransformer().translateBy(velocity[a].x, velocity[a].y, velocity[a].z);
+				if (collisions(bullets[a], mod[8]))
+				{
+					game.removeModel(bullets[a]);
+					printf("Hit this shit\n\n");
+				}
+				for (int i = 5; i < 8; i++)
+				{
+					if (collisions(bullets[a], mod[i]))
+					{
+						game.removeModel(bullets[a]);
+						printf("Hit this Mccoys\n\n");
+						break;
+					}
+				}
+
 			}
 
 
@@ -300,9 +335,9 @@ void update()
 void mouseButtonReleased(int button, int mod)
 {
 
-	if(button == LEFT_BUTTON)
+	if (button == LEFT_BUTTON)
 		leftM = InputManager::getMouseCursorPosition();
-	if(button == RIGHT_BUTTON)
+	if (button == RIGHT_BUTTON)
 		rightM = InputManager::getMouseCursorPosition();
 }
 
@@ -374,7 +409,7 @@ void main()
 	game.setCameraPosition({ 0,7,-20 });
 	game.setCameraAngle(-45, { 1,0,0 });
 
-	EmGineAudioPlayer audio;
+
 	audio.createStream("Game Jam(Full).wav");
 
 	audio.play(true);
