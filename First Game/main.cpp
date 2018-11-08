@@ -100,32 +100,20 @@ void update()
 
 	//mod[1]->getTransformer().translateBy(mod[0]->getTransformer().get);
 	static Model* bullets[4];
-
+	static Coord3D velocity[4];
 	if(game.isControllerConnected(0))
 	{
 
 		Xinput p1 = game.getController(0);
 
-		if(Xinput::buttonPressed(p1.buttons.A))
-		{
-			if(bullets[0])
-			{
-				game.removeModel(bullets[0]);
-			//	delete bullets[0];
-			}
-
-			game.addModel(bullets[0] = new Model(*mod[0]));
-			Coord3D pos = mod[0]->getTransformer().getPosition();
-			bullets[0]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
-			bullets[0]->getTransformer().setScale(.05);
-		}
 
 
 		mod[0]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
 
-		float angle = 0;
+		static float angle = 0;
 		if(p1.sticks[RS].x)
 		{
+			
 			angle = acos(p1.sticks[RS].x /
 						 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
 						 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
@@ -137,9 +125,26 @@ void update()
 		if(bullets[0])
 		{
 
-			bullets[0]->getTransformer().translateBy(sin(angle)*move * 2, 0, -cos(angle) * move * 2);
-
+			bullets[0]->getTransformer().translateBy(velocity[0].x, velocity[0].y, velocity[0].z);
 		}
+
+		if(Xinput::buttonPressed(p1.buttons.A))
+		{
+			if(bullets[0])
+			{
+				game.removeModel(bullets[0]);
+				//	delete bullets[0];
+			}
+
+			game.addModel(bullets[0] = new Model(*mod[0]));
+			Coord3D pos = mod[0]->getTransformer().getPosition();
+			bullets[0]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
+			bullets[0]->getTransformer().setScale(.05);
+			velocity[0] = Coord3D(p1.sticks[RS].x,0, p1.sticks[RS].y);
+			velocity[0].normalize();
+			velocity[0] *= move;
+		}
+
 
 		//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 		//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
@@ -252,6 +257,8 @@ void main()
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 
+	mod[5]->setColour(0.65, 0.65, 0.7);
+
 	/// - Make New Models From Existing Models - ///
 	//Players
 	mod[3] = new Model(*mod[0]);
@@ -273,9 +280,9 @@ void main()
 	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 0, 7), mod[5]->getTransformer().setScale(3, 1, 1),
 		mod[6]->getTransformer().setRotation({ 0, 90, 0 }), mod[6]->getTransformer().setPosition(-15, 0, 7), mod[6]->getTransformer().setScale(3, 1, 1),
 		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 0, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
-	
+
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0,90,0 }), mod[8]->getTransformer().setPosition(0,0,10), mod[8]->getTransformer().setScale(2.25);
+	mod[8]->getTransformer().setRotation({ 0,90,0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(2.25);
 
 
 	/// - Set Model Colour - ///
@@ -286,7 +293,7 @@ void main()
 	mod[3]->setColour(1, 1, 0);
 
 	//Floor
-	mod[9]->setColour(196, 167, 113);
+	mod[9]->setColour((float)196 / 255, (float)167 / 255, (float)113 / 255);
 
 
 
