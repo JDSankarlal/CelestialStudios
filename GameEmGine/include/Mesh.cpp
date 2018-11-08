@@ -12,7 +12,7 @@ Mesh::Mesh(Mesh &mesh) :
 
 Mesh::~Mesh()
 {
-	printf("Deleated Mesh\n");
+	printf("Deleted Mesh\n");
 	unload();
 }
 
@@ -355,6 +355,7 @@ void Mesh::render(GLSLCompiler& shader)
 {
 	for (int a = 0; a < m_vaoID.size(); a++)
 	{
+		bool textured = false;
 		int c = 0;
 		for (int b = 0; b < m_textures.size(); b++)
 		{
@@ -364,6 +365,7 @@ void Mesh::render(GLSLCompiler& shader)
 
 				for (auto &d : m_textures[b].second)
 					if (d.type == TEXTURE_TYPE::DIFFUSE)
+						textured =true,
 						glUniform1i(shader.getUniformLocation("uTex"), c),
 						glBindTexture(GL_TEXTURE_2D, d.id);
 				//else if (d.type == TEXTURE_TYPE::SPECULAR)
@@ -374,7 +376,9 @@ void Mesh::render(GLSLCompiler& shader)
 				c++;
 			}
 		}
-
+		
+		glUniform1i(shader.getUniformLocation("textured"), textured);
+		
 		glBindVertexArray(m_vaoID[a].second);
 		glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
 		glBindVertexArray(0);

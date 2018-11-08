@@ -30,6 +30,8 @@ void main()
     
     //outColor = vec4(normal, 1.0f);
     //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
+    if(!textured)
+      outColor = colourMod; 
     outColor.rgb = LightAmbient;
     outColor *= colourMod; 
     
@@ -59,7 +61,12 @@ void main()
         outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
     }
     
-    vec4 textureColor = texture(uTex, texcoord);
-    outColor.rgb *= textureColor.rgb;
-    outColor.a = textureColor.a;
+    if(textured)
+    {       
+        vec4 textureColor = texture(uTex, texcoord);
+        outColor.rgb *= textureColor.rgb;
+        outColor.a = textureColor.a;
+    }
+  
+      
 }

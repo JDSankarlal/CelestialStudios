@@ -26,20 +26,20 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	// update the position of the object
 
-	
+	/// - Lighting Variables - ///
+
 	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
-
-	glUniform4f(shader.getUniformLocation("LightPosition"), 0,0,0,0);
+	glUniform4f(shader.getUniformLocation("LightPosition"), 2.0f,0.0f,0.0f,1.0f);
 	
-	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.8f, .8f, .8f);
-	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.7f, 0.1f, 0.2f);
-	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.1f, 0.1f);
+	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.6f, 0.6f, 0.6f);
+	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.0f, 0.0f, 1.0f);
+	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.2f, 0.2f);
 	
 	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 50.0f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 5.f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 5.0f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 5.f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01);
 
 	
 	glUniform1f(shader.getUniformLocation("utime"), (float)clock() / 1000);
