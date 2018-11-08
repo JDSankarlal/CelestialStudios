@@ -15,7 +15,6 @@ EmGineAudioPlayer *omniPlayer;
 #define modSize 20
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
 GLSLCompiler colourProgram, colourProgram2;
-Logger tlog = Logger("New Log:>");
 Model *mod[modSize];
 
 void shaderInit()

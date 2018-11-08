@@ -2,7 +2,6 @@
 #include <GL\glew.h>
 #include <string>
 #include <fstream>
-#include "Logger.h"
 
 class GLSLCompiler
 {
@@ -53,7 +52,6 @@ private:
 		m_fragID = 0;
 	static GLuint *m_programs, *m_attribs, m_num;
 
-	Logger *m_log = new Logger("ShaderLog");
 };
 
 

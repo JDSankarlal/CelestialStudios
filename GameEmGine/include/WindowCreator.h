@@ -27,8 +27,8 @@ public:
 
 	std::string& getTitle();
 	Size3D& getScreenSize();
-	int& getScreenWidth();
-	int& getScreenHeight();
+	int getScreenWidth();
+	int getScreenHeight();
 
 private:
 	GLFWwindow * m_window;

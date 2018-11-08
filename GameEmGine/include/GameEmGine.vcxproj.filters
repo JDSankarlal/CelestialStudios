@@ -10,9 +10,6 @@
     <ClInclude Include="ImageLoader.h">
       <Filter>EmGine\FileIO</Filter>
     </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>EmGine\FileIO</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix.h">
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
@@ -72,9 +69,6 @@
       <Filter>EmGine\Shader Stuff</Filter>
     </ClCompile>
     <ClCompile Include="ImageLoader.cpp">
-      <Filter>EmGine\FileIO</Filter>
-    </ClCompile>
-    <ClCompile Include="Logger.cpp">
       <Filter>EmGine\FileIO</Filter>
     </ClCompile>
     <ClCompile Include="Matrix.cpp">

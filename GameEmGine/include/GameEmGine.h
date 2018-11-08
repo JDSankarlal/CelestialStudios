@@ -6,7 +6,6 @@
 #include <string>
 #include <thread>
 #include "ShaderCombiner.h"
-#include "Logger.h"
 //#include "EmGineAudioPlayer.h"
 //#include "Sprite.h"
 #include "GLSLCompiler.h"
