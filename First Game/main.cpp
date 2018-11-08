@@ -18,6 +18,7 @@ GLSLCompiler colourProgram, colourProgram2;
 Logger tlog = Logger("New Log:>");
 Model *mod[modSize];
 
+//shader initialization
 void shaderInit()
 {
 	//shader initialization
@@ -27,6 +28,7 @@ void shaderInit()
 	colourProgram2.linkShaders();
 }
 
+//instance key is pressed
 void keyInputPressed(int key, int mod)
 {
 	m_left = (key == 'A' ? true : m_left);
@@ -44,6 +46,7 @@ void keyInputPressed(int key, int mod)
 	printf("key PRESED code: %d\n\n", key);
 }
 
+//instace key is released
 void keyInputReleased(int key, int mod)
 {
 	m_left = (key == 'A' ? false : m_left);
@@ -59,19 +62,19 @@ void keyInputReleased(int key, int mod)
 	rotDown = (key == GLFW_KEY_DOWN ? false : rotDown);
 
 	//changes fps limit
-	if (key == GLFW_KEY_KP_6)
+	if(key == GLFW_KEY_KP_6)
 		game.setFPSLimit(game.getFPSLimit() + 1);
-	if (key == GLFW_KEY_KP_4)
+	if(key == GLFW_KEY_KP_4)
 		game.setFPSLimit(game.getFPSLimit() - 1);
 
-	if (key == GLFW_KEY_F) //Toggles Fullscreen
+	if(key == GLFW_KEY_F) //Toggles Fullscreen
 	{
 		static bool full;
 		game.getWindow()->setFullScreen(full = !full);
 		printf("Full Screen: %s\n", full ? "true" : "false");
 	}
 
-	if (key == GLFW_KEY_SPACE) //changes the model that is being moved
+	if(key == GLFW_KEY_SPACE) //changes the model that is being moved
 	{
 		//Coord2D tmp = rightM - leftM;
 		//float length = sqrt(tmp.x * tmp.x + tmp.y * tmp.y);
@@ -80,7 +83,7 @@ void keyInputReleased(int key, int mod)
 		game.setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 	}
 
-	if (key == 'R') //resets the camera
+	if(key == 'R') //resets the camera
 	{
 		GameEmGine::m_modelShader->refresh();
 
@@ -90,35 +93,61 @@ void keyInputReleased(int key, int mod)
 	printf("key RELEASED code: %d\n\n", key);
 }
 
+//updates within game loop
 void update()
 {
 	float move = .1;
 
 	//mod[1]->getTransformer().translateBy(mod[0]->getTransformer().get);
-
-
-	if (game.isControllerConnected(0))
+	static Model* bullets[4];
+	static Coord3D velocity[4];
+	if(game.isControllerConnected(0))
 	{
-	
+
 		Xinput p1 = game.getController(0);
-	
-		if (Xinput::buttonPressed(p1.buttons.A))
-			printf("%d\n", p1.buttons.A);
-	
+
+
+
 		mod[0]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
-	
-		float angle = 0;
-		if (p1.sticks[RS].x) {
+
+		static float angle = 0;
+		if(p1.sticks[RS].x)
+		{
+			
 			angle = acos(p1.sticks[RS].x /
-				sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-					+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
+						 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
+						 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
 			angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
 		}
-	
+
 		mod[0]->getTransformer().setRotation({ 0,angle	,0 });
-	
-	//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
-	//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
+
+		if(bullets[0])
+		{
+
+			bullets[0]->getTransformer().translateBy(velocity[0].x, velocity[0].y, velocity[0].z);
+		}
+
+		if(Xinput::buttonPressed(p1.buttons.A))
+		{
+			if(bullets[0])
+			{
+				game.removeModel(bullets[0]);
+				//	delete bullets[0];
+			}
+
+			game.addModel(bullets[0] = new Model(*mod[0]));
+			Coord3D pos = mod[0]->getTransformer().getPosition();
+			bullets[0]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
+			bullets[0]->getTransformer().setScale(.05);
+			velocity[0] = Coord3D(p1.sticks[RS].x,0, p1.sticks[RS].y);
+			velocity[0].normalize();
+			velocity[0] *= move;
+		}
+
+
+		//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
+		//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 	}
 	//
 	//if (game.isControllerConnected(1))
@@ -208,15 +237,14 @@ void update()
 void mouseButtonReleased(int button, int mod)
 {
 
-	if (button == LEFT_BUTTON)
+	if(button == LEFT_BUTTON)
 		leftM = InputManager::getMouseCursorPosition();
-	if (button == RIGHT_BUTTON)
+	if(button == RIGHT_BUTTON)
 		rightM = InputManager::getMouseCursorPosition();
 }
 
 void render()
-{
-}
+{}
 
 SpriteInfo sp1, sp2;
 
@@ -228,6 +256,8 @@ void main()
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
+
+	mod[5]->setColour(0.65, 0.65, 0.7);
 
 	/// - Make New Models From Existing Models - ///
 	//Players
@@ -250,9 +280,10 @@ void main()
 	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 0, 7), mod[5]->getTransformer().setScale(3, 1, 1),
 		mod[6]->getTransformer().setRotation({ 0, 90, 0 }), mod[6]->getTransformer().setPosition(-15, 0, 7), mod[6]->getTransformer().setScale(3, 1, 1),
 		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 0, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
-	
+
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0,90,0 }), mod[8]->getTransformer().setPosition(0,0,10), mod[8]->getTransformer().setScale(2.25);
+	mod[8]->getTransformer().setRotation({ 0,90,0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(2.25);
+
 
 	/// - Set Model Colour - ///
 	//Players
@@ -262,7 +293,7 @@ void main()
 	mod[3]->setColour(1, 1, 0);
 
 	//Floor
-	mod[9]->setColour(196, 167, 113);
+	mod[9]->setColour((float)196 / 255, (float)167 / 255, (float)113 / 255);
 
 
 
@@ -280,7 +311,6 @@ void main()
 	game.setCameraAngle(-65, { 1,0,0 });
 
 	EmGineAudioPlayer audio;
-
 	audio.createStream("Game Jam(Full).wav");
 
 	audio.play(true);
@@ -291,7 +321,7 @@ void main()
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);
 	game.gameLoopUpdate(update);
-	game.run();
+	game.run();//this one is pretty important
 
 	//the game ended... why are you here?... leave
 }
