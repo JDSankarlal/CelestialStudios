@@ -12,7 +12,7 @@ Mesh::Mesh(Mesh &mesh) :
 
 Mesh::~Mesh()
 {
-	printf("Deleated Mesh\n");
+	printf("Deleted Mesh\n");
 	unload();
 }
 
@@ -49,9 +49,9 @@ void Mesh::loadMaterials(std::string path)
 	char* check;
 
 	while (check = fgets(str, CHAR_BUFF_SIZE, f),
-		   //this part takes out the '\n' from the string
+		//this part takes out the '\n' from the string
 		(str == nullptr ? "" : (str[strlen(str) - 1] = (str[strlen(str) - 1] == '\n' ? '\0' : str[strlen(str) - 1]), str)),
-		   check)
+		check)
 		if (strstr(str, "mtllib"))
 		{
 			char str2[CHAR_BUFF_SIZE];
@@ -67,9 +67,9 @@ void Mesh::loadMaterials(std::string path)
 
 
 	while (check = fgets(str, CHAR_BUFF_SIZE, f),
-		   //this part takes out the '\n' from the string
+		//this part takes out the '\n' from the string
 		(str == nullptr ? "" : (str[strlen(str) - 1] = (str[strlen(str) - 1] == '\n' ? '\0' : str[strlen(str) - 1]), str)),
-		   check)
+		check)
 	{
 
 		if (strchr(str, '#'))
@@ -88,7 +88,8 @@ void Mesh::loadMaterials(std::string path)
 		else if (strstr(str, "illum"))
 		{
 			continue;
-		} else if (strstr(str, "map_Kd"))
+		}
+		else if (strstr(str, "map_Kd"))
 		{
 			char str2[CHAR_BUFF_SIZE];
 			sscanf_s(str, "map_Kd %s", &str2, (unsigned)_countof(str2));
@@ -99,7 +100,8 @@ void Mesh::loadMaterials(std::string path)
 			m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
 			m_textures.back().second.back().type = TEXTURE_TYPE::DIFFUSE;
 
-		} else if (strstr(str, "map_Ks"))
+		}
+		else if (strstr(str, "map_Ks"))
 		{
 			char str2[CHAR_BUFF_SIZE];
 			sscanf_s(str, "map_Ks %s", &str2, (unsigned)_countof(str2));
@@ -110,33 +112,40 @@ void Mesh::loadMaterials(std::string path)
 			m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
 			m_textures.back().second.back().type = TEXTURE_TYPE::SPECULAR;
 
-		} else if (strstr(str, "Ns"))
+		}
+		else if (strstr(str, "Ns"))
 		{
 			continue;
-		} else if (strstr(str, "Ka"))
+		}
+		else if (strstr(str, "Ka"))
 		{
 			float a[3];
 			sscanf_s(str, "Ka %f %f %f", &a[0], &a[1], &a[2]);
 			for (auto &b : m_textures.back().second)
 
 				b.colour.a = 255 * a[0] * a[1] * a[2];
-		} else if (strstr(str, "Kd"))
+		}
+		else if (strstr(str, "Kd"))
 		{
 			float r, g, b;
 			sscanf_s(str, "Kd %f %f %f", &r, &g, &b);
 			for (auto &a : m_textures.back().second)
 				if (a.type == TEXTURE_TYPE::DIFFUSE)
 					a.colour.set(r * 255, g * 255, b * 255);
-		} else if (strstr(str, "Ks"))
+		}
+		else if (strstr(str, "Ks"))
 		{
 			continue;
-		} else if (strstr(str, "Ke"))
+		}
+		else if (strstr(str, "Ke"))
 		{
 			continue;
-		} else if (strstr(str, "Ni"))
+		}
+		else if (strstr(str, "Ni"))
 		{
 			continue;
-		} else if (strchr(str, 'd'))
+		}
+		else if (strchr(str, 'd'))
 		{
 			continue;
 		}
@@ -175,9 +184,9 @@ bool Mesh::loadMesh(std::string path)
 
 	char *check = nullptr;
 	while (check = fgets(inputBuff, CHAR_BUFF_SIZE, f),
-		   //this part takes out the '\n' from the string
+		//this part takes out the '\n' from the string
 		(inputBuff == nullptr ? "" : (inputBuff[strlen(inputBuff) - 1] = (inputBuff[strlen(inputBuff) - 1] == '\n' ? ' ' : inputBuff[strlen(inputBuff) - 1]), inputBuff)),
-		   check)
+		check)
 	{
 
 		if (strchr(inputBuff, '#'))
@@ -190,7 +199,8 @@ bool Mesh::loadMesh(std::string path)
 			sscanf_s(inputBuff, "usemtl %s", str, CHAR_BUFF_SIZE);
 			faces.push_back({ std::string(str),std::vector< Vertex3D>() });
 			//colours = loadMaterials(newPath);
-		} else
+		}
+		else
 			if (strstr(inputBuff, "vt"))
 			{
 				//UV Dat
@@ -198,13 +208,15 @@ bool Mesh::loadMesh(std::string path)
 				UV tmp;
 				sscanf_s(inputBuff, "vt %f %f", &tmp.u, &tmp.v);
 				uvs.push_back(tmp);
-			} else if (strstr(inputBuff, "vn"))
+			}
+			else if (strstr(inputBuff, "vn"))
 			{
 				//Normal data
 				Coord3D tmp;
 				sscanf_s(inputBuff, "vt %f %f %f", &tmp.x, &tmp.y, &tmp.z);
 				norms.push_back(tmp);
-			} else if (strchr(inputBuff, 'o'))
+			}
+			else if (strchr(inputBuff, 'o'))
 				continue;
 			else if (strchr(inputBuff, 's'))
 				continue;
@@ -240,9 +252,9 @@ bool Mesh::loadMesh(std::string path)
 				for (unsigned a = 0; a < count; a++)
 					formatStr += format[a];
 				sscanf_s(inputBuff, formatStr.c_str(),
-						 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
-						 &tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
-						 &tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
+					&tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
+					&tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
+					&tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
 
 				if (!tmp.coord[1])
 				{
@@ -251,9 +263,9 @@ bool Mesh::loadMesh(std::string path)
 					for (unsigned a = 0; a < count; a++)
 						formatStr += format[a];
 					sscanf_s(inputBuff, formatStr.c_str(),
-							 &tmp.coord[0], &tmp.norm[0],
-							 &tmp.coord[1], &tmp.norm[1],
-							 &tmp.coord[2], &tmp.norm[2]);
+						&tmp.coord[0], &tmp.norm[0],
+						&tmp.coord[1], &tmp.norm[1],
+						&tmp.coord[2], &tmp.norm[2]);
 				}
 				faces.back().second.push_back(tmp);
 
@@ -265,32 +277,33 @@ bool Mesh::loadMesh(std::string path)
 						formatStr += format[a];
 					if (type == 0)
 						sscanf_s(inputBuff, formatStr.c_str(),
-								 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
-								 &tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
-								 &tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
+							&tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
+							&tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
+							&tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
 					else
 						sscanf_s(inputBuff, formatStr.c_str(),
-								 &tmp.coord[0], &tmp.norm[0],
-								 &tmp.coord[1], &tmp.norm[1],
-								 &tmp.coord[2], &tmp.norm[2]);
+							&tmp.coord[0], &tmp.norm[0],
+							&tmp.coord[1], &tmp.norm[1],
+							&tmp.coord[2], &tmp.norm[2]);
 
 					faces.back().second.push_back(tmp);
 				}
 
-			} else if (strchr(inputBuff, 'v'))
+			}
+			else if (strchr(inputBuff, 'v'))
 			{
-				//Vertex Dat
+				//Vertex Datae
 
 				Coord3D tmp;
 				sscanf_s(inputBuff, "v %f %f %f", &tmp.x, &tmp.y, &tmp.z);
 				verts.push_back(tmp);
-				
-				front = tmp.z > front ? tmp.z : front;
-				back = tmp.z < back ? tmp.z : back;
-				left = tmp.x < left ? tmp.x : left;
-				right = tmp.x > right ? tmp.x : right;
-				top = tmp.y > top ? tmp.y : top;
-				bottom = tmp.y < bottom ? tmp.y : bottom;
+
+				front = tmp.z > front.z ? tmp : front;
+				back = tmp.z < back.z ? tmp : back;
+				left = tmp.x < left.x ? tmp : left;
+				right = tmp.x > right.x ? tmp : right;
+				top = tmp.y > top.y ? tmp : top;
+				bottom = tmp.y < bottom.y ? tmp : bottom;
 			}
 
 	}
@@ -365,7 +378,7 @@ void Mesh::render(GLSLCompiler& shader)
 
 				for (auto &d : m_textures[b].second)
 					if (d.type == TEXTURE_TYPE::DIFFUSE)
-						textured =true,
+						textured = true,
 						glUniform1i(shader.getUniformLocation("uTex"), c),
 						glBindTexture(GL_TEXTURE_2D, d.id);
 				//else if (d.type == TEXTURE_TYPE::SPECULAR)
@@ -376,9 +389,9 @@ void Mesh::render(GLSLCompiler& shader)
 				c++;
 			}
 		}
-		
+
 		glUniform1i(shader.getUniformLocation("textured"), textured);
-		
+
 		glBindVertexArray(m_vaoID[a].second);
 		glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
 		glBindVertexArray(0);

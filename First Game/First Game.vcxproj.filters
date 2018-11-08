@@ -17,25 +17,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Colour Shading 2.fmsh">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Colour Shading 2.vtsh">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="Logs\New Log">
       <Filter>Logs</Filter>
     </None>
-    <None Include="Shaders\Camera.fmsh">
+    <None Include="Shaders\PassThrough.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\Camera.vtsh">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Texture.fmsh">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Texture.vtsh">
+    <None Include="Shaders\PassThrough.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
