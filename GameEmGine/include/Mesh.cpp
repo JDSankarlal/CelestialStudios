@@ -119,14 +119,14 @@ void Mesh::loadMaterials(std::string path)
 			sscanf_s(str, "Ka %f %f %f", &a[0], &a[1], &a[2]);
 			for (auto &b : m_textures.back().second)
 
-				b.colour.colorA = 255 * a[0] * a[1] * a[2];
+				b.colour.colorA = (GLubyte)(255 * a[0] * a[1] * a[2]);
 		} else if (strstr(str, "Kd"))
 		{
 			float r, g, b;
 			sscanf_s(str, "Kd %f %f %f", &r, &g, &b);
 			for (auto &a : m_textures.back().second)
 				if (a.type == TEXTURE_TYPE::DIFFUSE)
-					a.colour.set(r * 255, g * 255, b * 255);
+					a.colour.set((GLubyte)r * 255, (GLubyte)g * 255, (GLubyte)b * 255);
 		} else if (strstr(str, "Ks"))
 		{
 			continue;
@@ -261,8 +261,8 @@ bool Mesh::loadMesh(std::string path)
 				{
 					formatStr = "f";
 					swap(format[a], format[a + 2]);
-					for (unsigned a = 0; a < count; a++)
-						formatStr += format[a];
+					for (unsigned i = 0; i < count; i++)
+						formatStr += format[i];
 					if (type == 0)
 						sscanf_s(inputBuff, formatStr.c_str(),
 								 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
@@ -334,8 +334,8 @@ bool Mesh::loadMesh(std::string path)
 
 				m_unpackedData.back().second.push_back(tmp);
 			}
-		m_numFaces.push_back(faces[a].second.size());
-		m_numVerts.push_back(m_numFaces[a] * 3);
+		m_numFaces.push_back((unsigned int)faces[a].second.size());
+		m_numVerts.push_back((unsigned int)m_numFaces[a] * 3);
 	}
 
 

@@ -59,12 +59,12 @@ Transformer& Model::getTransformer()
 
 void Model::setColour(float r, float g, float b, float a)
 {
-	m_colour.set(255 * r, 255 * g, 255 * b, 255 * a);
+	m_colour.set(255 * (GLubyte)r, 255 * (GLubyte)g, 255 * (GLubyte)b, 255 * (GLubyte)a);
 }
 
 void Model::setColour(float r, float g, float b)
 {
-	m_colour.set(255 * r, 255 * g, 255 * b);
+	m_colour.set(255 * (GLubyte)r, 255 * (GLubyte)g, 255 * (GLubyte)b);
 }
 
 bool Model::loadModel(const char * path)

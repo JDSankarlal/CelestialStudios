@@ -28,11 +28,11 @@ Quat & Quat::rotation(float a_ang, float a_dirX, float a_dirY, float a_dirZ)
 {
 
 	float
-		unit(sqrt(pow(a_dirX, 2) + pow(a_dirY, 2) + pow(a_dirZ, 2))),
-		rotX = cos(a_ang / 2),
+		unit(sqrt(pow(a_dirX, 2) + pow(a_dirY, 2) + pow(a_dirZ, 2)));
+		/*rotX = cos(a_ang / 2),
 		rotY = sin(a_ang / 2)*  (a_dirX / unit),
 		rotZ = sin(a_ang / 2)*  (a_dirY / unit),
-		rotW = sin(a_ang / 2)*  (a_dirZ / unit);
+		rotW = sin(a_ang / 2)*  (a_dirZ / unit);*/
 
 	Quat
 		q{cos(a_ang / 2),sin(a_ang / 2)*  (a_dirX / unit),sin(a_ang / 2)*  (a_dirY / unit),sin(a_ang / 2)*  (a_dirY / unit)},//rotation quaternion

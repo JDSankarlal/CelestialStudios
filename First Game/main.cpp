@@ -95,7 +95,7 @@ void keyInputReleased(int key, int _mod)
 //updates within game loop
 void update()
 {
-	float move = .1;
+	float move = .1f;
 
 	static Model* bullets[4];
 	static Coord3D velocity[4];
@@ -110,9 +110,9 @@ void update()
 			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 			{
 
-				angle[a] = acos(p1.Coord2D_sticks[RS].x /
+				angle[a] = acosf(p1.Coord2D_sticks[RS].x /
 								sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-								+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / M_PI);
+								+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 /(float)M_PI);
 				angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 				angle[a] = fmodf(angle[a], 360);
 			}
@@ -128,7 +128,7 @@ void update()
 				game.addModel(bullets[a] = new Model(*mod[a]));
 				Coord3D pos = mod[a]->getTransformer().getPosition();
 				bullets[a]->getTransformer().setPosition(pos.coordX, pos.coordY + 1, pos.coordZ);
-				bullets[a]->getTransformer().setScale(.05);
+				bullets[a]->getTransformer().setScale(.05f);
 
 				bullets[a]->getTransformer().setRotation({ 90 , 0, angle[a] });
 				//bullets[a]->getTransformer().rotateBy({ 90 , 0, 0 });
@@ -318,7 +318,7 @@ int main()
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 
-	mod[5]->setColour(0.65, 0.65, 0.7);
+	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
 	/// - Make New Models From Existing Models - ///
 	//Players
@@ -332,10 +332,10 @@ int main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(.15), mod[0]->getTransformer().setPosition(1, 0, 0),
-		mod[1]->getTransformer().setScale(.15), mod[1]->getTransformer().setPosition(-1, 0, 0),
-		mod[2]->getTransformer().setScale(.15), mod[2]->getTransformer().setPosition(2, 0, 0),
-		mod[3]->getTransformer().setScale(.15), mod[3]->getTransformer().setPosition(-2, 0, 0);
+	mod[0]->getTransformer().setScale(.15f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, 0.0f),
+		mod[1]->getTransformer().setScale(.15f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, 0.0f),
+		mod[2]->getTransformer().setScale(.15f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, 0.0f),
+		mod[3]->getTransformer().setScale(.15f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, 0.0f);
 
 	//Wall Transforms
 	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 0, 7), mod[5]->getTransformer().setScale(3, 1, 1),

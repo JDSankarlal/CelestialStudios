@@ -168,16 +168,16 @@ uint EmGineAudioPlayer::getPosition(uint index)
 {
 	uint pos;
 	m_channels[0][index]->getPosition(&pos, FMOD_TIMEUNIT_MS);
-	return pos;
 	cleanup();
+	return pos;
 }
 
 bool EmGineAudioPlayer::isStoped(uint index)
 {
 	bool play;
 	m_channels[0][index]->isPlaying(&play);
-	return !play;
 	cleanup();
+	return !play;
 }
 
 bool EmGineAudioPlayer::isPaused(uint index)
@@ -269,19 +269,19 @@ void EmGineAudioPlayer::cleanup()
 	}
 }
 
-// for later reference
-FMOD_RESULT mycallback(FMOD_CHANNELCONTROL *chanCtrl, FMOD_CHANNELCONTROL_TYPE ctrlType, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbackType, void *commandData1, void *commandData2)
-{
-	if(ctrlType == FMOD_CHANNELCONTROL_CHANNEL)
-	{
-		Channel *channel = (Channel *) chanCtrl;
-		// Channel specific functions here...
-	} else
-	{
-		//	ChannelGroup *group = (ChannelGroup *) chanCtrl;
-			// ChannelGroup specific functions here...
-	}
-
-	// ChannelControl generic functions here...
-	return FMOD_OK;
-}
+//// for later reference
+//FMOD_RESULT mycallback(FMOD_CHANNELCONTROL *chanCtrl, FMOD_CHANNELCONTROL_TYPE ctrlType, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbackType, void *commandData1, void *commandData2)
+//{
+//	if(ctrlType == FMOD_CHANNELCONTROL_CHANNEL)
+//	{
+//		Channel *channel = (Channel *) chanCtrl;
+//		// Channel specific functions here...
+//	} else
+//	{
+//		//	ChannelGroup *group = (ChannelGroup *) chanCtrl;
+//			// ChannelGroup specific functions here...
+//	}
+//
+//	// ChannelControl generic functions here...
+//	return FMOD_OK;
+//}
