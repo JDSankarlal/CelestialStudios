@@ -28,7 +28,7 @@ void shaderInit()
 }
 
 //instance key is pressed
-void keyInputPressed(int key, int mod)
+void keyInputPressed(int key, int _mod)
 {
 	m_left = (key == 'A' ? true : m_left);
 	m_right = (key == 'D' ? true : m_right);
@@ -46,7 +46,7 @@ void keyInputPressed(int key, int mod)
 }
 
 //instace key is released
-void keyInputReleased(int key, int mod)
+void keyInputReleased(int key, int _mod)
 {
 	m_left = (key == 'A' ? false : m_left);
 	m_right = (key == 'D' ? false : m_right);
@@ -107,13 +107,13 @@ void update()
 
 
 			static float angle[4] = { 0,0,0,0 };
-			if(p1.sticks[RS].x || p1.sticks[RS].y)
+			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 			{
 
-				angle[a] = acos(p1.sticks[RS].x /
-								sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-								+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
-				angle[a] += (p1.sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
+				angle[a] = acos(p1.Coord2D_sticks[RS].x /
+								sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+								+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / M_PI);
+				angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 				angle[a] = fmodf(angle[a], 360);
 			}
 
@@ -134,8 +134,8 @@ void update()
 				//bullets[a]->getTransformer().rotateBy({ 90 , 0, 0 });
 
 
-				float cosVal = cos(fmodf(angle[a] - 90, 360)*(M_PI / 180));
-				float sinVal = sin(fmodf(angle[a] - 90, 360)*(M_PI / 180));
+				float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+				float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 
 				velocity[a] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
 			}
@@ -147,7 +147,7 @@ void update()
 
 
 			mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
-			mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
+			mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move camera
 			//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 			//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 		}
@@ -296,7 +296,7 @@ void update()
 	//}
 }
 
-void mouseButtonReleased(int button, int mod)
+void mouseButtonReleased(int button, int _mod)
 {
 
 	if(button == LEFT_BUTTON)

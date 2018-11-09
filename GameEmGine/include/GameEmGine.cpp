@@ -36,98 +36,98 @@ GameEmGine::~GameEmGine()
 	glfwTerminate();
 }
 
-static void OpenGLDebugCallback (
-	GLenum source, GLenum type, GLuint id, GLenum severity,
-	GLsizei length, const GLchar *msg, const void *data)
-{
-	std::cout << "CALLBACK\n";
-	char buffer[9] = { '\0' };
-	sprintf (buffer, "%.8x", id);
-
-	std::string message ("OpenGL(0x");
-	message += buffer;
-	message += "): ";
-
-	switch(type)
-	{
-	case GL_DEBUG_TYPE_ERROR:
-	message += "Error:";
-	break;
-	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-	message += "Depricated behavior";
-	break;
-	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-	message += "Undefined Behavior";
-	break;
-	case GL_DEBUG_TYPE_PORTABILITY:
-	message += "portability issue";
-	break;
-	case GL_DEBUG_TYPE_MARKER:
-	message += "Stream annotation";
-	break;
-	case GL_DEBUG_TYPE_OTHER:
-	default:
-	message += "Other";
-	}
-
-	message += "\nSource: ";
-	switch(source)
-	{
-	case GL_DEBUG_SOURCE_API:
-	message += "API";
-	break;
-	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-	message += "Window System";
-	break;
-	case GL_DEBUG_SOURCE_SHADER_COMPILER:
-	message += "Shader Compiler";
-	break;
-	case GL_DEBUG_SOURCE_THIRD_PARTY:
-	message += "Third Party";
-	break;
-	case GL_DEBUG_SOURCE_APPLICATION:
-	message += "Application";
-	break;
-	case GL_DEBUG_SOURCE_OTHER:
-	message += "Other";
-	}
-
-	message += "/nSeverity: ";
-	switch(severity)
-	{
-	case GL_DEBUG_SEVERITY_HIGH:
-	message += "HIGH";
-	break;
-	case GL_DEBUG_SEVERITY_MEDIUM:
-	message += "Medium";
-	break;
-	case GL_DEBUG_SEVERITY_LOW:
-	message += "Low";
-	break;
-	case GL_DEBUG_SEVERITY_NOTIFICATION:
-	message += "NOT AN ERROR, IT'S A NOTIFICATION";
-	default:
-	message += "Josh is a loser";
-	}
-
-	message += "\n";
-	message += msg;
-	message += "\n";
-
-	if(type == GL_DEBUG_TYPE_ERROR)
-		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 12);
-	else
-		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 7);
-	std::cout << message << std::endl;
-}
-
-void InitOpenGlCallback ()
-{
-	//GLDEBUGPROC J = OpenGLDebugCallback;
-	
-	glEnable (GL_DEBUG_OUTPUT);
-	//glDebugMessageCallback (OpenGLDebugCallback, NULL);
-}
+//static void OpenGLDebugCallback (
+//	GLenum source, GLenum type, GLuint id, GLenum severity,
+//	GLsizei length, const GLchar *msg, const void *data)
+//{
+//	std::cout << "CALLBACK\n";
+//	char buffer[9] = { '\0' };
+//	sprintf (buffer, "%.8x", id);
+//
+//	std::string message ("OpenGL(0x");
+//	message += buffer;
+//	message += "): ";
+//
+//	switch(type)
+//	{
+//	case GL_DEBUG_TYPE_ERROR:
+//	message += "Error:";
+//	break;
+//	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+//	message += "Depricated behavior";
+//	break;
+//	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+//	message += "Undefined Behavior";
+//	break;
+//	case GL_DEBUG_TYPE_PORTABILITY:
+//	message += "portability issue";
+//	break;
+//	case GL_DEBUG_TYPE_MARKER:
+//	message += "Stream annotation";
+//	break;
+//	case GL_DEBUG_TYPE_OTHER:
+//	default:
+//	message += "Other";
+//	}
+//
+//	message += "\nSource: ";
+//	switch(source)
+//	{
+//	case GL_DEBUG_SOURCE_API:
+//	message += "API";
+//	break;
+//	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+//	message += "Window System";
+//	break;
+//	case GL_DEBUG_SOURCE_SHADER_COMPILER:
+//	message += "Shader Compiler";
+//	break;
+//	case GL_DEBUG_SOURCE_THIRD_PARTY:
+//	message += "Third Party";
+//	break;
+//	case GL_DEBUG_SOURCE_APPLICATION:
+//	message += "Application";
+//	break;
+//	case GL_DEBUG_SOURCE_OTHER:
+//	message += "Other";
+//	}
+//
+//	message += "/nSeverity: ";
+//	switch(severity)
+//	{
+//	case GL_DEBUG_SEVERITY_HIGH:
+//	message += "HIGH";
+//	break;
+//	case GL_DEBUG_SEVERITY_MEDIUM:
+//	message += "Medium";
+//	break;
+//	case GL_DEBUG_SEVERITY_LOW:
+//	message += "Low";
+//	break;
+//	case GL_DEBUG_SEVERITY_NOTIFICATION:
+//	message += "NOT AN ERROR, IT'S A NOTIFICATION";
+//	default:
+//	message += "Josh is a loser";
+//	}
+//
+//	message += "\n";
+//	message += msg;
+//	message += "\n";
+//
+//	if(type == GL_DEBUG_TYPE_ERROR)
+//		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 12);
+//	else
+//		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 7);
+//	std::cout << message << std::endl;
+//}
+//
+//void InitOpenGlCallback ()
+//{
+//	//GLDEBUGPROC J = OpenGLDebugCallback;
+//	
+//	glEnable (GL_DEBUG_OUTPUT);
+//	//glDebugMessageCallback (OpenGLDebugCallback, NULL);
+//}
 
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
@@ -151,9 +151,9 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 void GameEmGine::run()
 {
 
-#ifdef _DEBUG
-	InitOpenGlCallback ();
-#endif
+//#ifdef _DEBUG
+//	InitOpenGlCallback ();
+//#endif
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);

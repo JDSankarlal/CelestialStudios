@@ -46,12 +46,12 @@ void Mesh::loadMaterials(std::string path)
 	FILE* f;
 	fopen_s(&f, path.c_str(), "r");
 	char str[CHAR_BUFF_SIZE];
-	char* check;
+	char* MeshCheck;
 
-	while (check = fgets(str, CHAR_BUFF_SIZE, f),
+	while (MeshCheck = fgets(str, CHAR_BUFF_SIZE, f),
 		   //this part takes out the '\n' from the string
 		(str == nullptr ? "" : (str[strlen(str) - 1] = (str[strlen(str) - 1] == '\n' ? '\0' : str[strlen(str) - 1]), str)),
-		   check)
+		   MeshCheck)
 		if (strstr(str, "mtllib"))
 		{
 			char str2[CHAR_BUFF_SIZE];
@@ -66,10 +66,10 @@ void Mesh::loadMaterials(std::string path)
 
 
 
-	while (check = fgets(str, CHAR_BUFF_SIZE, f),
+	while (MeshCheck = fgets(str, CHAR_BUFF_SIZE, f),
 		   //this part takes out the '\n' from the string
 		(str == nullptr ? "" : (str[strlen(str) - 1] = (str[strlen(str) - 1] == '\n' ? '\0' : str[strlen(str) - 1]), str)),
-		   check)
+		   MeshCheck)
 	{
 
 		if (strchr(str, '#'))
@@ -173,11 +173,11 @@ bool Mesh::loadMesh(std::string path)
 
 	std::vector < std::pair<std::string, std::vector<Vertex3D>>> faces;
 
-	char *check = nullptr;
-	while (check = fgets(inputBuff, CHAR_BUFF_SIZE, f),
+	char *MeshCheck = nullptr;
+	while (MeshCheck = fgets(inputBuff, CHAR_BUFF_SIZE, f),
 		   //this part takes out the '\n' from the string
 		(inputBuff == nullptr ? "" : (inputBuff[strlen(inputBuff) - 1] = (inputBuff[strlen(inputBuff) - 1] == '\n' ? ' ' : inputBuff[strlen(inputBuff) - 1]), inputBuff)),
-		   check)
+		   MeshCheck)
 	{
 
 		if (strchr(inputBuff, '#'))
