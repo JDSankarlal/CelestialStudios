@@ -147,7 +147,7 @@ void update()
 				game.addModel(bullets[a] = new Model(*mod[a]));
 				Coord3D pos = mod[a]->getTransformer().getPosition();
 				bullets[a]->getTransformer().setPosition(pos.x, pos.y+.1, pos.z );
-				bullets[a]->getTransformer().setScale(.025);
+				bullets[a]->getTransformer().setScale(0.25);
 
 				bullets[a]->getTransformer().setRotation({ 90 , angle[a] ,0 });
 				
@@ -190,14 +190,14 @@ void update()
 				if (collisions(bullets[a], mod[8]))
 				{
 					game.removeModel(bullets[a]);
-					printf("Hit this shit\n\n");
+					printf("Hit BOSS\n\n");
 				}
 				for (int i = 5; i < 8; i++)
 				{
 					if (collisions(bullets[a], mod[i]))
 					{
 						game.removeModel(bullets[a]);
-						printf("Hit this Mccoys\n\n");
+						printf("Hit Wall??\n\n");
 						break;
 					}
 				}
@@ -372,7 +372,8 @@ void main()
 {
 	/// - Load Models into Scene - ///
 
-	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
@@ -392,10 +393,10 @@ void main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(.15), mod[0]->getTransformer().setPosition(1, 1, 0),
-		mod[1]->getTransformer().setScale(.15), mod[1]->getTransformer().setPosition(-1, 1, 0),
-		mod[2]->getTransformer().setScale(.15), mod[2]->getTransformer().setPosition(2, 1, 0),
-		mod[3]->getTransformer().setScale(.15), mod[3]->getTransformer().setPosition(-2, 1, 0);
+	mod[0]->getTransformer().setScale(1), mod[0]->getTransformer().setPosition(1, 1, 0),
+		mod[1]->getTransformer().setScale(1), mod[1]->getTransformer().setPosition(-1, 1, 0),
+		mod[2]->getTransformer().setScale(1), mod[2]->getTransformer().setPosition(2, 1, 0),
+		mod[3]->getTransformer().setScale(1), mod[3]->getTransformer().setPosition(-2, 1, 0);
 
 	//Wall Transforms
 	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 1.8, 7), mod[5]->getTransformer().setScale(3, 1, 1),
