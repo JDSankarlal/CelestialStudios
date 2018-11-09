@@ -28,7 +28,6 @@ Model::Model(const char * path)
 Model::~Model()
 {}
 
-
 void Model::render(GLSLCompiler& shader, Camera& cam)
 {
 	shader.enable();
@@ -43,7 +42,7 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	glUniform4f(shader.getUniformLocation("LightPosition"), 2.0f, 3.0f, 0.01f, 1.0f);
 
-	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.6f, 0.6f, 0.6f);
+	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.5f, 0.5f, 0.5f);
 	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.0f, 0.0f, 1.0f);
 	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.2f, 0.2f);
 
@@ -51,7 +50,6 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f);
 	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
 	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01f);
-
 
 	glUniform1f(shader.getUniformLocation("utime"), (float)clock() / 1000);
 

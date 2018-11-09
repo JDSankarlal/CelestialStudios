@@ -14,7 +14,7 @@ rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0;
 Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 
-#define modSize 20
+#define modSize 20 //Number of Models that can exist
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
 GLSLCompiler colourProgram, colourProgram2;
 Model *mod[modSize];
@@ -91,6 +91,7 @@ void keyInputReleased(int key, int _mod)
 		//game.setCameraAngle(0, { 1, 1, 1 });
 		//	game.setCameraPosition({0,0,0});
 	}
+
 	printf("key RELEASED code: %d\n\n", key);
 }
 
@@ -152,8 +153,8 @@ void update()
 				game.addModel(bullets[a] = new Model(*mod[a]));
 				bullets[a]->getTransformer().reset();
 				Coord3D pos = mod[a]->getTransformer().getPosition();
-				bullets[a]->getTransformer().setPosition(pos.coordX, pos.coordY + 1, pos.coordZ);
-				bullets[a]->getTransformer().setScale(.05f);
+				bullets[a]->getTransformer().setPosition(pos.x, pos.y+.1, pos.z );
+				bullets[a]->getTransformer().setScale(0.25);
 
 				bullets[a]->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
@@ -166,30 +167,48 @@ void update()
 				audio.play();
 			} else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
 				makeShitLessCancer[a] = false;
-			
-			if(bullets[a])
+
+			/// - Button Presses on controller - ///
+
+			if (p1.buttonPressed(p1.buttons.START))
+			{
+				printf("\nExiting Game\n");
+				exit(0);
+			}
+			if (p1.buttonPressed(p1.buttons.X))
+			{
+				printf("RELOADING!!!\n");
+			}
+			if (p1.buttonPressed(p1.buttons.Y))
+			{
+				printf("SPECIAL ABILITY\n");
+			}
+			if (p1.triggers[LT])
+			{
+				printf("Dash\n");
+			}
+
+			/// - Bullet Collisions - ///
+
+			if (bullets[a])
 			{
 				bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
 				if(collisions(bullets[a], mod[8]))
 				{
 					game.removeModel(bullets[a]);
-				//	bullets[a] = nullptr;
-					printf("Hit this shit\n\n");
-				} else
-					for(int i = 5; i < 8; i++)
+					printf("Hit BOSS\n\n");
+				}
+				for (int i = 5; i < 8; i++)
+				{
+					if (collisions(bullets[a], mod[i]))
 					{
-						if(collisions(bullets[a], mod[i]))
-						{
-							game.removeModel(bullets[a]);
-						//	bullets[a] = nullptr;
-							printf("Hit this Mccoys\n\n");
-							break;
-						}
+						game.removeModel(bullets[a]);
+						printf("Hit Wall??\n\n");
+						break;
 					}
 
 				bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
 			}
-
 
 			mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
 			mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move camera
@@ -357,7 +376,8 @@ int main()
 {
 	/// - Load Models into Scene - ///
 
-	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
@@ -376,10 +396,10 @@ int main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(.15f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, 0.0f),
-		mod[1]->getTransformer().setScale(.15f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, 0.0f),
-		mod[2]->getTransformer().setScale(.15f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, 0.0f),
-		mod[3]->getTransformer().setScale(.15f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, 0.0f);
+	mod[0]->getTransformer().setScale(1), mod[0]->getTransformer().setPosition(1, 1, 0),
+		mod[1]->getTransformer().setScale(1), mod[1]->getTransformer().setPosition(-1, 1, 0),
+		mod[2]->getTransformer().setScale(1), mod[2]->getTransformer().setPosition(2, 1, 0),
+		mod[3]->getTransformer().setScale(1), mod[3]->getTransformer().setPosition(-2, 1, 0);
 
 	//Wall Transforms
 	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), mod[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
@@ -387,7 +407,7 @@ int main()
 		mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(0.0f, 1.8f, 20.5f), mod[7]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 10.0f), mod[8]->getTransformer().setScale(2.25f);
+	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(3);
 
 	//Floor Scale
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
