@@ -14,10 +14,7 @@ WindowCreator *GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{ 123,123,123 };
 //ModelBatch *GameEmGine::m_modelBatch;
 FrameBuffer GameEmGine::m_mainBuffer(1);
-SpriteBatch *GameEmGine::m_spriteBatch;
 std::vector<Model*> GameEmGine::m_models;
-std::vector<SpriteInfo*> GameEmGine::m_sprites;
-
 float GameEmGine::m_fps;
 short GameEmGine::m_fpsLimit;
 
@@ -147,7 +144,6 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 	shaderInit();
 
-	m_spriteBatch = new SpriteBatch;
 	
 	printf("created the window\n");
 }
@@ -373,39 +369,7 @@ void GameEmGine::removeModel(Model* model)
 		}
 }
 
-void GameEmGine::addModelBatch(const char * model)
-{
-	//	m_modelBatch->draw(model);
-	//	m_modelBatch->end();
-}
 
-void GameEmGine::addSprite(SpriteInfo* sprite)
-{
-	m_sprites.push_back(sprite);
-
-	//m_sprites = (SpriteInfo**) realloc(m_sprites, sizeof(SpriteInfo*)*++_numSprites);
-	//m_sprites[_numSprites - 1] = sprite;
-}
-
-void GameEmGine::removeSprite(int index)
-{
-	m_sprites.erase(m_sprites.begin() + index);
-
-	//if(index < _numSprites)
-	//{
-	//	memmove(m_sprites + index, m_sprites + index + 1, sizeof(SpriteInfo*)*(_numSprites - 1 - index));
-	//	delete m_sprites[--_numSprites];
-	//}
-}
-
-void GameEmGine::removeSprite(SpriteInfo * sprite)
-{
-	//	for(int a = 0; a < _tmpNumSprites; a++)
-	//		if(_tmpSpriteArr[0][a] == sprite)
-	//			_tmpSpriteArr->erase(a),
-	//			_tmpNumSprites--,
-	//			printf("This sprite has been removed!!\n\n");
-}
 
 void GameEmGine::addCamera(Camera *cam)
 {

@@ -192,7 +192,6 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderCombiner.h" />
     <ClInclude Include="Sprite.h" />
-    <ClInclude Include="SpriteBatch.h" />
     <ClInclude Include="StructInfo.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformer.h" />
@@ -215,7 +214,6 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ShaderCombiner.cpp" />
     <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="SpriteBatch.cpp" />
     <ClCompile Include="Transformer.cpp" />
     <ClCompile Include="WindowCreator.cpp" />
   </ItemGroup>

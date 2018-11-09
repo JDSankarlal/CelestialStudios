@@ -31,9 +31,6 @@
     <ClInclude Include="StructInfo.h">
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteBatch.h">
-      <Filter>EmGine\Game Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
@@ -88,9 +85,6 @@
     </ClCompile>
     <ClCompile Include="Quat.cpp">
       <Filter>EmGine\Data Types</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteBatch.cpp">
-      <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>EmGine\Game Engine</Filter>
