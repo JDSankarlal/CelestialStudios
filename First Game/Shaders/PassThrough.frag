@@ -15,6 +15,7 @@ uniform float Attenuation_Quadratic;
 
 uniform sampler2D uTex;
 uniform vec4 colourMod;
+uniform bool textured;
 
 in vec2 texcoord;
 in vec3 norm;
@@ -29,6 +30,8 @@ void main()
     
     //outColor = vec4(normal, 1.0f);
     //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
+    if(!textured)
+      outColor = colourMod; 
     outColor.rgb = LightAmbient;
     outColor *= colourMod; 
     
@@ -58,7 +61,12 @@ void main()
         outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
     }
     
-    vec4 textureColor = texture(uTex, texcoord);
-    outColor.rgb *= textureColor.rgb;
-    outColor.a = textureColor.a;
+    if(textured)
+    {       
+        vec4 textureColor = texture(uTex, texcoord);
+        outColor.rgb *= textureColor.rgb;
+        outColor.a = textureColor.a;
+    }
+  
+      
 }

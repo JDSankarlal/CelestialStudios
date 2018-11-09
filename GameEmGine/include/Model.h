@@ -27,9 +27,18 @@ public:
 	void setColour(float r, float g, float b);
 
 	bool loadModel(const char* path);
+
+
+	float getWidth();
+	float getHeight();
+	float getDepth();
+
+	Coord3D getCenter();
+
 private:
 	Transformer m_transform;
 	//Physics3D *physics;
+	void transformedUpdate();
 
 	Mesh m_mesh;
 	ColourRGBA m_colour;

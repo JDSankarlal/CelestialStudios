@@ -14,10 +14,10 @@ enum  KeyState
 
 enum ModKey
 {
-	MOD_SHIFT = 1,
-	MOD_CONTROL = 2,
-	MOD_ALT = 4,
-	MOD_SUPER = 8
+	MODI_SHIFT = 1,
+	MODI_CONTROL = 2,
+	MODI_ALT = 4,
+	MODI_SUPER = 8
 };
 
 enum MouseState

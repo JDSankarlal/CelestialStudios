@@ -27,7 +27,9 @@ public:
 	GLuint getNumFaces(int index)const;
 	GLuint getNumVerticies(int index)const;
 
-	float top = 0, bottom = 0, left = 0, right = 0, front = 0, back = 0;
+
+
+	Coord3D top , bottom , left, right , front, back;
 
 private:
 	void loadMaterials(std::string path);
