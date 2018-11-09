@@ -133,8 +133,8 @@ void update()
 			{
 
 				angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-								sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-								+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 /(float)M_PI);
+								 sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+								 + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
 				angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 				angle[a] = fmodf(angle[a], 360);
 			}
@@ -153,7 +153,7 @@ void update()
 				game.addModel(bullets[a] = new Model(*mod[a]));
 				bullets[a]->getTransformer().reset();
 				Coord3D pos = mod[a]->getTransformer().getPosition();
-				bullets[a]->getTransformer().setPosition(pos.x, pos.y+.1, pos.z );
+				bullets[a]->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
 				bullets[a]->getTransformer().setScale(0.25);
 
 				bullets[a]->getTransformer().setRotation({ 90 , angle[a] ,0 });
@@ -170,27 +170,27 @@ void update()
 
 			/// - Button Presses on controller - ///
 
-			if (p1.buttonPressed(p1.buttons.START))
+			if(p1.buttonPressed(p1.buttons.START))
 			{
 				printf("\nExiting Game\n");
 				exit(0);
 			}
-			if (p1.buttonPressed(p1.buttons.X))
+			if(p1.buttonPressed(p1.buttons.X))
 			{
 				printf("RELOADING!!!\n");
 			}
-			if (p1.buttonPressed(p1.buttons.Y))
+			if(p1.buttonPressed(p1.buttons.Y))
 			{
 				printf("SPECIAL ABILITY\n");
 			}
-			if (p1.triggers[LT])
+			if(p1.triggers[LT])
 			{
 				printf("Dash\n");
 			}
 
 			/// - Bullet Collisions - ///
 
-			if (bullets[a])
+			if(bullets[a])
 			{
 				bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
 				if(collisions(bullets[a], mod[8]))
@@ -198,24 +198,24 @@ void update()
 					game.removeModel(bullets[a]);
 					printf("Hit BOSS\n\n");
 				}
-				for (int i = 5; i < 8; i++)
+				for(int i = 5; i < 8; i++)
 				{
-					if (collisions(bullets[a], mod[i]))
+					if(collisions(bullets[a], mod[i]))
 					{
 						game.removeModel(bullets[a]);
 						printf("Hit Wall??\n\n");
 						break;
 					}
 
-				bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
+					bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
+				}
 			}
-
-			mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
-			mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move camera
-			//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
-			//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
-		}
-
+				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
+				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move camera
+				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
+				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
+			}
+		
 	//if(game.isControllerConnected(1))
 	//{
 	//
