@@ -127,7 +127,7 @@ void update()
 
 				game.addModel(bullets[a] = new Model(*mod[a]));
 				Coord3D pos = mod[a]->getTransformer().getPosition();
-				bullets[a]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
+				bullets[a]->getTransformer().setPosition(pos.coordX, pos.coordY + 1, pos.coordZ);
 				bullets[a]->getTransformer().setScale(.05);
 
 				bullets[a]->getTransformer().setRotation({ 90 , 0, angle[a] });
@@ -142,7 +142,7 @@ void update()
 			if(bullets[a])
 			{
 
-				bullets[a]->getTransformer().translateBy(velocity[a].x, velocity[a].y, velocity[a].z);
+				bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
 			}
 
 

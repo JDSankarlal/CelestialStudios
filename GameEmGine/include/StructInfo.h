@@ -74,7 +74,7 @@ struct Coord2D
 
 struct Coord3D
 {
-	float x = 0.0f, y = 0.0f, z = 0.0f;
+	float coordX = 0.0f, coordY = 0.0f, coordZ = 0.0f;
 
 	Coord3D()
 	{}
@@ -87,7 +87,7 @@ struct Coord3D
 
 	float distance()
 	{
-		return sqrt(x * x + y * y + z * z);
+		return sqrt(coordX * coordX + coordY * coordY + coordZ * coordZ);
 	}
 
 	Coord3D normal()
@@ -97,48 +97,48 @@ struct Coord3D
 
 	Coord3D(Coord2D coord)
 	{
-		x = coord.x;
-		y = coord.y;
+		coordX = coord.x;
+		coordY = coord.y;
 	}
 
 	Coord3D(float x, float y, float z)
 	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
+		this->coordX = x;
+		this->coordY = y;
+		this->coordZ = z;
 	}
 
 	Coord3D(float x, float y)
 	{
-		this->x = x;
-		this->y = y;
+		this->coordX = x;
+		this->coordY = y;
 	}
 
 	void set(Coord2D coord)
 	{
-		x = coord.x;
-		y = coord.y;
+		coordX = coord.x;
+		coordY = coord.y;
 	}
 
 	void set(float x, float y, float z)
 	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
+		this->coordX = x;
+		this->coordY = y;
+		this->coordZ = z;
 	}
 
 	void set(float x, float y)
 	{
-		this->x = x;
-		this->y = y;
+		this->coordX = x;
+		this->coordY = y;
 	}
 
 	void normalize()
 	{
-		float norm = sqrt(x * x + y * y + z * z);
-		x *= norm;
-		y *= norm;
-		z *= norm;
+		float norm = sqrt(coordX * coordX + coordY * coordY + coordZ * coordZ);
+		coordX *= norm;
+		coordY *= norm;
+		coordZ *= norm;
 	}
 
 	float& operator[] (int index)
@@ -147,66 +147,66 @@ struct Coord3D
 		switch (index)
 		{
 		case 0:
-			return const_cast<float&>(x);
+			return const_cast<float&>(coordX);
 		case 1:
-			return const_cast<float&>(y);
+			return const_cast<float&>(coordY);
 		case 2:
-			return const_cast<float&>(z);
+			return const_cast<float&>(coordZ);
 		}
 		return *error;
 	}
 
 	Coord3D operator+(Coord3D coord)
 	{
-		return { x + coord.x, y + coord.y, z + coord.z };
+		return { coordX + coord.coordX, coordY + coord.coordY, coordZ + coord.coordZ };
 	}
 
 	Coord3D operator-(Coord3D coord)
 	{
-		return { x - coord.x, y - coord.y, z + coord.z };
+		return { coordX - coord.coordX, coordY - coord.coordY, coordZ + coord.coordZ };
 	}
 
 	Coord3D operator*(Coord3D coord)
 	{
-		return { x * coord.x, y * coord.y, z * coord.z };
+		return { coordX * coord.coordX, coordY * coord.coordY, coordZ * coord.coordZ };
 	}
 
 	Coord3D operator/(Coord3D coord)
 	{
-		return { x / coord.x,y / coord.y,z / coord.z };
+		return { coordX / coord.coordX,coordY / coord.coordY,coordZ / coord.coordZ };
 	}
 	Coord3D operator/(float coord)
 	{
-		return { x / coord,y / coord,z / coord };
+		return { coordX / coord,coordY / coord,coordZ / coord };
 	}
 
 
 	void operator-=(Coord3D coord)
 	{
-		x -= coord.x;
-		y -= coord.y;
-		z -= coord.z;
+		coordX -= coord.coordX;
+		coordY -= coord.coordY;
+		coordZ -= coord.coordZ;
 	}
 
 	void operator+=(Coord3D coord)
 	{
-		x += coord.x;
-		y += coord.y;
-		z += coord.z;
+		coordX += coord.coordX;
+		coordY += coord.coordY;
+		coordZ += coord.coordZ;
 	}
 
 	void operator*=(Coord3D coord)
 	{
-		x *= coord.x;
-		y *= coord.y;
-		z *= coord.z;
+		coordX *= coord.coordX;
+		coordY *= coord.coordY;
+		coordZ *= coord.coordZ;
 	}
 
 	void operator*=(float coord)
 	{
-		x *= coord;
-		y *= coord;
-		z *= coord;
+		coordX *= coord;
+		coordY *= coord;
+		coordZ *= coord;
 	}
 };
 
@@ -296,21 +296,21 @@ struct vboInfo3D
 
 struct ColourRGBA
 {
-	GLubyte r, g, b, a;
+	GLubyte colorR, colorG, colorB, colorA;
 
-	ColourRGBA() :r(255), g(255), b(255), a(255)
+	ColourRGBA() :colorR(255), colorG(255), colorB(255), colorA(255)
 	{}
 
-	ColourRGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255) :r(r), g(g), b(b), a(a)
+	ColourRGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255) :colorR(r), colorG(g), colorB(b), colorA(a)
 	{}
 
 	void set(ColourRGBA rgba)
 	{
 		set(
-			rgba.r,
-			rgba.g,
-			rgba.b,
-			rgba.a);
+			rgba.colorR,
+			rgba.colorG,
+			rgba.colorB,
+			rgba.colorA);
 	}
 
 	void set(GLubyte r, GLubyte g, GLubyte b)
@@ -331,10 +331,10 @@ struct ColourRGBA
 	ColourRGBA operator*(ColourRGBA rgba)
 	{
 		return ColourRGBA{
-			GLubyte((int)r * (int)rgba.r / 255),
-			GLubyte((int)g * (int)rgba.g / 255),
-			GLubyte((int)b * (int)rgba.b / 255),
-			GLubyte((int)a * (int)rgba.a / 255) };
+			GLubyte((int)colorR * (int)rgba.colorR / 255),
+			GLubyte((int)colorG * (int)rgba.colorG / 255),
+			GLubyte((int)colorB * (int)rgba.colorB / 255),
+			GLubyte((int)colorA * (int)rgba.colorA / 255) };
 	}
 
 	void operator*=(ColourRGBA rgba)
@@ -348,13 +348,13 @@ struct ColourRGBA
 		switch (index)
 		{
 		case 0:
-			return static_cast<GLubyte&>(r);
+			return static_cast<GLubyte&>(colorR);
 		case 1:
-			return static_cast<GLubyte&>(g);
+			return static_cast<GLubyte&>(colorG);
 		case 2:
-			return static_cast<GLubyte&>(b);
+			return static_cast<GLubyte&>(colorB);
 		case 3:
-			return static_cast<GLubyte&>(a);
+			return static_cast<GLubyte&>(colorA);
 		}
 		return *error;
 	}
@@ -362,18 +362,18 @@ struct ColourRGBA
 
 struct UV
 {
-	float u = 0, v = 0, w = 0;
+	float uv_u = 0, uv_v = 0, uv_w = 0;
 	void set(float u, float v, float w)
 	{
-		this->u = u;
-		this->v = v;
-		this->w = w;
+		this->uv_u = u;
+		this->uv_v = v;
+		this->uv_w = w;
 	}
 
 	void set(float u, float v)
 	{
-		this->u = u;
-		this->v = v;
+		this->uv_u = u;
+		this->uv_v = v;
 	}
 
 	float& operator[](int index)
@@ -381,11 +381,11 @@ struct UV
 		switch (index)
 		{
 		case 0:
-			return static_cast<float&>(u);
+			return static_cast<float&>(uv_u);
 		case 1:
-			return static_cast<float&>(v);
+			return static_cast<float&>(uv_v);
 		case 2:
-			return static_cast<float&>(w);
+			return static_cast<float&>(uv_w);
 		}
 		float *error = nullptr;
 		return *error;
@@ -420,23 +420,23 @@ struct Vertex2D
 	//uses the 0-255 representation instead of 0-1
 	void setColour(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255)
 	{
-		colour.r = r;
-		colour.g = g;
-		colour.b = b;
-		colour.a = a;
+		colour.colorR = r;
+		colour.colorG = g;
+		colour.colorB = b;
+		colour.colorA = a;
 	}
 	//sets uv
 	void setUV(float u, float v)
 	{
-		uv.u = u;
-		uv.v = v;
+		uv.uv_u = u;
+		uv.uv_v = v;
 	}
 
 	void print()
 	{
 		printf("Coord2D: (%f, %f)\n", coord.x, coord.y);
-		printf("Colour : (%d, %d, %d, %d)\n", colour.r, colour.g, colour.b, colour.a);
-		printf("UV     : (%f, %f)\n\n", uv.u, uv.v);
+		printf("Colour : (%d, %d, %d, %d)\n", colour.colorR, colour.colorG, colour.colorB, colour.colorA);
+		printf("UV     : (%f, %f)\n\n", uv.uv_u, uv.uv_v);
 	}
 };
 
@@ -448,37 +448,37 @@ struct Vertex3D
 
 	void setCoord(float x, float y, float z)
 	{
-		coord.x = x;
-		coord.y = y;
-		coord.z = z;
+		coord.coordX = x;
+		coord.coordY = y;
+		coord.coordZ = z;
 	}
 	//uses the 0-255 representation instead of 0-1
 	void setColour(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255)
 	{
-		colour.r = r;
-		colour.g = g;
-		colour.b = b;
-		colour.a = a;
+		colour.colorR = r;
+		colour.colorG = g;
+		colour.colorB = b;
+		colour.colorA = a;
 	}
 	//sets uv
 	void setUV(float u, float v)
 	{
-		uv.u = u;
-		uv.v = v;
+		uv.uv_u = u;
+		uv.uv_v = v;
 	}
 
 	void setNorm(float x, float y, float z)
 	{
-		norm.x = x;
-		norm.y = y;
-		norm.z = z;
+		norm.coordX = x;
+		norm.coordY = y;
+		norm.coordZ = z;
 	}
 
 	void print()
 	{
-		printf("Coord3D: (%f, %f, %f)\n", coord.x, coord.y, coord.z);
-		printf("Colour : (%d, %d, %d, %d)\n", colour.r, colour.g, colour.b, colour.a);
-		printf("UV     : (%f, %f)\n\n", uv.u, uv.v);
+		printf("Coord3D: (%f, %f, %f)\n", coord.coordX, coord.coordY, coord.coordZ);
+		printf("Colour : (%d, %d, %d, %d)\n", colour.colorR, colour.colorG, colour.colorB, colour.colorA);
+		printf("UV     : (%f, %f)\n\n", uv.uv_u, uv.uv_v);
 	}
 };
 

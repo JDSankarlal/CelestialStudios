@@ -11,20 +11,20 @@ void Transformer::setRotation(Coord3D angles, Coord3D forward)
 {
 	m_updatedRot = true;
 
-	if(angles.z)
+	if(angles.coordZ)
 	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.z), 0, 0, 1);
-		m_angles.z = angles.z;
+		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordZ), 0, 0, 1);
+		m_angles.coordZ = angles.coordZ;
 	}
-	if(angles.y)
+	if(angles.coordY)
 	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.y), 0, 1, 0);
-		m_angles.y = angles.y;
+		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordY), 0, 1, 0);
+		m_angles.coordY = angles.coordY;
 	}
-	if(angles.x)
+	if(angles.coordX)
 	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.x), 1, 0, 0);
-		m_angles.x = angles.x;
+		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordX), 1, 0, 0);
+		m_angles.coordX = angles.coordX;
 	}
 }
 
@@ -33,9 +33,9 @@ void Transformer::rotateBy(Coord3D angles, Coord3D forward)
 	m_updatedRot = true;
 	m_angles += angles;
 
-	m_rotate = Quat::quatRotationMat(glm::radians(m_angles.x), 1, 0, 0);
-	m_rotate *= Quat::quatRotationMat(glm::radians(m_angles.y), 0, 1, 0);
-	m_rotate *= Quat::quatRotationMat(glm::radians(m_angles.z), 0, 0, 1);
+	m_rotate = Quat::quatRotationMat(glm::radians(m_angles.coordX), 1, 0, 0);
+	m_rotate *= Quat::quatRotationMat(glm::radians(m_angles.coordY), 0, 1, 0);
+	m_rotate *= Quat::quatRotationMat(glm::radians(m_angles.coordZ), 0, 0, 1);
 }
 
 void Transformer::setPosition(float x, float y, float z, Coord3D forward)
@@ -45,7 +45,7 @@ void Transformer::setPosition(float x, float y, float z, Coord3D forward)
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
 	float aspect = (float)w / h;
 	m_pos = Coord3D(x * aspect, y * aspect, z * aspect);
-	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.x, m_pos.y, -m_pos.z));
+	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.coordX, m_pos.coordY, -m_pos.coordZ));
 }
 
 void Transformer::translateBy(float x, float y, float z, Coord3D forward)

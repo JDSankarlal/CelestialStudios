@@ -22,7 +22,7 @@ Model::~Model()
 void Model::render(GLSLCompiler& shader, Camera& cam)
 {
 	shader.enable();
-	float colour[4]{ (float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255 };
+	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
 	// update the position of the object
 

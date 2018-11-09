@@ -166,7 +166,7 @@ void GameEmGine::run()
 
 	while (!glfwWindowShouldClose(m_window->getWindow()))//update loop
 	{
-		glClearColor((float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);//BG colour
+		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
 		
 		if (true)//fps calculation
 		{

@@ -119,7 +119,7 @@ void Mesh::loadMaterials(std::string path)
 			sscanf_s(str, "Ka %f %f %f", &a[0], &a[1], &a[2]);
 			for (auto &b : m_textures.back().second)
 
-				b.colour.a = 255 * a[0] * a[1] * a[2];
+				b.colour.colorA = 255 * a[0] * a[1] * a[2];
 		} else if (strstr(str, "Kd"))
 		{
 			float r, g, b;
@@ -196,13 +196,13 @@ bool Mesh::loadMesh(std::string path)
 				//UV Dat
 
 				UV tmp;
-				sscanf_s(inputBuff, "vt %f %f", &tmp.u, &tmp.v);
+				sscanf_s(inputBuff, "vt %f %f", &tmp.uv_u, &tmp.uv_v);
 				uvs.push_back(tmp);
 			} else if (strstr(inputBuff, "vn"))
 			{
 				//Normal data
 				Coord3D tmp;
-				sscanf_s(inputBuff, "vt %f %f %f", &tmp.x, &tmp.y, &tmp.z);
+				sscanf_s(inputBuff, "vt %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
 				norms.push_back(tmp);
 			} else if (strchr(inputBuff, 'o'))
 				continue;
@@ -282,15 +282,15 @@ bool Mesh::loadMesh(std::string path)
 				//Vertex Dat
 
 				Coord3D tmp;
-				sscanf_s(inputBuff, "v %f %f %f", &tmp.x, &tmp.y, &tmp.z);
+				sscanf_s(inputBuff, "v %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
 				verts.push_back(tmp);
 				
-				front = tmp.z > front ? tmp.z : front;
-				back = tmp.z < back ? tmp.z : back;
-				left = tmp.x < left ? tmp.x : left;
-				right = tmp.x > right ? tmp.x : right;
-				top = tmp.y > top ? tmp.y : top;
-				bottom = tmp.y < bottom ? tmp.y : bottom;
+				front = tmp.coordZ > front ? tmp.coordZ : front;
+				back = tmp.coordZ < back ? tmp.coordZ : back;
+				left = tmp.coordX < left ? tmp.coordX : left;
+				right = tmp.coordX > right ? tmp.coordX : right;
+				top = tmp.coordY > top ? tmp.coordY : top;
+				bottom = tmp.coordY < bottom ? tmp.coordY : bottom;
 			}
 
 	}
@@ -313,23 +313,23 @@ bool Mesh::loadMesh(std::string path)
 
 				//set Verticies
 				tmp.setCoord(
-					verts[faces[a].second[c].coord[b] - 1].x,
-					verts[faces[a].second[c].coord[b] - 1].y,
-					verts[faces[a].second[c].coord[b] - 1].z);
+					verts[faces[a].second[c].coord[b] - 1].coordX,
+					verts[faces[a].second[c].coord[b] - 1].coordY,
+					verts[faces[a].second[c].coord[b] - 1].coordZ);
 
 				//set UV's
 				if (faces[a].second[c].uv[0])
 				{
-					tmp.setUV(uvs[faces[a].second[c].uv[b] - 1].u, uvs[faces[a].second[c].uv[b] - 1].v);
+					tmp.setUV(uvs[faces[a].second[c].uv[b] - 1].uv_u, uvs[faces[a].second[c].uv[b] - 1].uv_v);
 				}
 
 				//set Normals
 				if (faces[a].second[c].norm[0])
 				{
 					tmp.setNorm(
-						norms[faces[a].second[c].norm[b] - 1].x,
-						norms[faces[a].second[c].norm[b] - 1].y,
-						norms[faces[a].second[c].norm[b] - 1].z);
+						norms[faces[a].second[c].norm[b] - 1].coordX,
+						norms[faces[a].second[c].norm[b] - 1].coordY,
+						norms[faces[a].second[c].norm[b] - 1].coordZ);
 				}
 
 				m_unpackedData.back().second.push_back(tmp);
