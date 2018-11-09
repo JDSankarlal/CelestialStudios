@@ -55,7 +55,7 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 50.0f);
 	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f);
 	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01);
+	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01f);
 
 
 	glUniform1f(shader.getUniformLocation("utime"), (float)clock() / 1000);
@@ -94,27 +94,27 @@ float Model::getWidth()
 {
 	//	transformedUpdate();
 
-	return std::abs(m_right.x - m_left.x);
+	return std::abs(m_right.coordX - m_left.coordX);
 }
 
 float Model::getHeight()
 {
 
 	//transformedUpdate();
-	return std::abs(m_top.y - m_bottom.y);
+	return std::abs(m_top.coordY - m_bottom.coordY);
 }
 
 float Model::getDepth()
 {
 	//transformedUpdate();
-	return std::abs(m_front.z - m_back.z);
+	return std::abs(m_front.coordZ - m_back.coordZ);
 }
 
 Coord3D Model::getCenter()
 {
 	//if(m_transform.isUpdated())
 	//transformedUpdate();
-	glm::vec4 tmp = m_transform.getTranslationMatrix() *  glm::vec4((m_right.x + m_left.x) / 2, (m_top.y + m_bottom.y) / 2, (m_front.z + m_back.z) / 2, 1);
+	glm::vec4 tmp = m_transform.getTranslationMatrix() *  glm::vec4((m_right.coordX + m_left.coordX) / 2, (m_top.coordY + m_bottom.coordY) / 2, (m_front.coordZ + m_back.coordZ) / 2, 1);
 
 	return { tmp.x, tmp.y, tmp.z };
 }
@@ -124,9 +124,9 @@ void Model::transformedUpdate()
 
 	std::vector<glm::vec4  > thing
 	{
-	glm::vec4(m_right.x, m_right.y, m_right.z, 1), glm::vec4(m_left.x,   m_left.y,   m_left.z, 1),
-	glm::vec4(m_top.x,   m_top.y,   m_top.z, 1),   glm::vec4(m_bottom.x, m_bottom.y, m_bottom.z, 1),
-	glm::vec4(m_front.x, m_front.y, m_front.z, 1), glm::vec4(m_back.x,   m_back.y,   m_back.z, 1)
+	glm::vec4(m_right.coordX, m_right.coordY, m_right.coordZ, 1), glm::vec4(m_left.coordX,   m_left.coordY,   m_left.coordZ, 1),
+	glm::vec4(m_top.coordX,   m_top.coordY,   m_top.coordZ, 1),   glm::vec4(m_bottom.coordX, m_bottom.coordY, m_bottom.coordZ, 1),
+	glm::vec4(m_front.coordX, m_front.coordY, m_front.coordZ, 1), glm::vec4(m_back.coordX,   m_back.coordY,   m_back.coordZ, 1)
 	};
 
 
@@ -137,12 +137,12 @@ void Model::transformedUpdate()
 		if(m_transform.isRotationUpdated())
 			a = m_transform.getRotationMatrix() * a;
 
-		m_front = a.z > m_front.z ? Coord3D(a.x, a.y, a.z) : m_front;
-		m_back = a.z < m_back.z ? Coord3D(a.x, a.y, a.z) : m_back;
-		m_left = a.x < m_left.x ? Coord3D(a.x, a.y, a.z) : m_left;
-		m_right = a.x > m_right.x ? Coord3D(a.x, a.y, a.z) : m_right;
-		m_top = a.y > m_top.y ? Coord3D(a.x, a.y, a.z) : m_top;
-		m_bottom = a.y < m_bottom.y ? Coord3D(a.x, a.y, a.z) : m_bottom;
+		m_front = a.z > m_front.coordZ ? Coord3D(a.x, a.y, a.z) : m_front;
+		m_back = a.z < m_back.coordZ ? Coord3D(a.x, a.y, a.z) : m_back;
+		m_left = a.x < m_left.coordX ? Coord3D(a.x, a.y, a.z) : m_left;
+		m_right = a.x > m_right.coordX ? Coord3D(a.x, a.y, a.z) : m_right;
+		m_top = a.y > m_top.coordY ? Coord3D(a.x, a.y, a.z) : m_top;
+		m_bottom = a.y < m_bottom.coordY ? Coord3D(a.x, a.y, a.z) : m_bottom;
 	}
 }
 

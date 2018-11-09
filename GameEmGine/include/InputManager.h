@@ -74,10 +74,10 @@ struct Xinput
 	{
 		struct
 		{
-			unsigned char	A, B, X, Y, LB, RB, SELECT, START, L_STICK_BUTTON, R_STICK_BUTTON, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, DPAD_LEFT=' ';
+			unsigned char	A, B, X, Y, LB, RB, SELECT, START, L_STICK_BUTTON, R_STICK_BUTTON, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, DPAD_LEFT;
 		};
 		unsigned char data[14];
-	};
+	}buttons;
 
 	//counter variables
 	int numSticks = 0, numTriggers = 0, numButtons = 0;

@@ -396,7 +396,7 @@ void GameEmGine::update()
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
 	}
 	//3D-Graphics 1
-	for (int a = 0; a < m_models.size(); a++)
+	for (unsigned a = 0; a < m_models.size(); a++)
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
 	//	m_mainBuffer.UnBind();
 	//	m_mainBuffer.MoveToBackBuffer(m_window->getScreenWidth(),m_window->getScreenHeight());

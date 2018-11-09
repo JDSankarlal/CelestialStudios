@@ -98,11 +98,11 @@ bool collisions(Model *l, Model *k)
 	//if distance between models in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 	Coord3D thing = l->getCenter() - k->getCenter();
 
-	float distanceX = thing.x;
-	float distanceY = thing.z;
+	float distanceX = thing.coordX;
+	float distanceY = thing.coordZ;
 
-	float capW = l->getWidth() / 2 + k->getWidth() / 2;
-	float capD = l->getDepth() / 2 + k->getDepth() / 2;
+	//float capW = l->getWidth() / 2 + k->getWidth() / 2;
+	//float capD = l->getDepth() / 2 + k->getDepth() / 2;
 
 	if(std::abs(distanceX) < l->getWidth() / 2 + k->getWidth() / 2)
 		if(std::abs(distanceY) < l->getDepth() / 2 + k->getDepth() / 2)
@@ -167,7 +167,7 @@ void update()
 			
 			if(bullets[a])
 			{
-				bullets[a]->getTransformer().translateBy(velocity[a].x, velocity[a].y, velocity[a].z);
+				bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
 				if(collisions(bullets[a], mod[8]))
 				{
 					game.removeModel(bullets[a]);
@@ -380,15 +380,15 @@ int main()
 		mod[3]->getTransformer().setScale(.15f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, 0.0f);
 
 	//Wall Transforms
-	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 1.8, 7), mod[5]->getTransformer().setScale(3, 1, 1),
-		mod[6]->getTransformer().setRotation({ 0, 90, 0 }), mod[6]->getTransformer().setPosition(-15, 1.8, 7), mod[6]->getTransformer().setScale(3, 1, 1),
-		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 1.8, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
+	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), mod[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
+		mod[6]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 1.8f, 7.0f), mod[6]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
+		mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(0.0f, 1.8f, 20.5f), mod[7]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(2.25);
+	mod[8]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 10.0f), mod[8]->getTransformer().setScale(2.25f);
 
 	//Floor Scale
-	mod[9]->getTransformer().setScale(1.3, 1, 1.3);
+	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
 
 	/// - Set Model Colour - ///
 	//Players
