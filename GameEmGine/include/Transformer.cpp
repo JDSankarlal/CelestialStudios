@@ -7,6 +7,11 @@ Transformer::Transformer() :m_translate(1), m_rotate(1), m_scale(1)
 Transformer::~Transformer()
 {}
 
+void Transformer::reset()
+{
+	m_translate = m_rotate = m_scale = glm::mat4(1);
+}
+
 void Transformer::setRotation(Coord3D angles, Coord3D forward)
 {
 	m_updatedRot = true;
@@ -55,10 +60,10 @@ void Transformer::translateBy(float x, float y, float z, Coord3D forward)
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
 
 	float aspect = (float)w / h;
-	 
-	m_translate = glm::translate(m_translate, glm::vec3(x* aspect, y* aspect, -z* aspect));
-	glm::vec4 tmp = m_translate * glm::vec4(glm::vec3(x* aspect, y* aspect, -z * aspect),1);
-	m_pos = Coord3D(tmp.x,tmp.y,-tmp.z);
+
+	m_translate = glm::translate(m_translate, glm::vec3(x* aspect, y* aspect, -z * aspect));
+	glm::vec4 tmp = m_translate * glm::vec4(glm::vec3(x* aspect, y* aspect, -z * aspect), 1);
+	m_pos = Coord3D(tmp.x, tmp.y, -tmp.z);
 }
 
 void Transformer::setScale(float scale)
@@ -92,30 +97,51 @@ Coord3D Transformer::getPosition()
 
 glm::mat4 & Transformer::getRotationMatrix()
 {
-	m_updatedRot = false;
+	//	m_updatedRot = false;
 	return m_rotate;
 }
 
 glm::mat4 & Transformer::getScaleMatrix()
 {
-	m_updatedScale = false;
+	//	m_updatedScale = false;
 	return m_scale;
 }
 
 glm::mat4 & Transformer::getTranslationMatrix()
 {
-	m_updatedTrans = false;
+	//	m_updatedTrans = false;
 	return m_translate;
 }
 
 glm::mat4 Transformer::getTransformation()
 {
+	//	m_updatedRot = m_updatedTrans
+	//		= m_updatedScale = false;
+	return   m_translate * m_rotate * m_scale;
+}
+
+void Transformer::resetUpdated()
+{
 	m_updatedRot = m_updatedTrans
 		= m_updatedScale = false;
-	return   m_translate * m_rotate * m_scale;
 }
 
 bool Transformer::isUpdated()
 {
 	return m_updatedRot || m_updatedTrans || m_updatedScale;
+}
+
+bool Transformer::isScaleUpdated()
+{
+	return m_updatedScale;
+}
+
+bool Transformer::isRotationUpdated()
+{
+	return m_updatedRot;
+}
+
+bool Transformer::isTranslatinUpdated()
+{
+	return m_updatedTrans;
 }

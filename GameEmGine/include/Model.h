@@ -39,7 +39,7 @@ private:
 	Transformer m_transform;
 	//Physics3D *physics;
 	void transformedUpdate();
-
+	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back;
 	Mesh m_mesh;
 	ColourRGBA m_colour;
 	//std::vector <Texture2D> loadedTextures;

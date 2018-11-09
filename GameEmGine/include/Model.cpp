@@ -8,11 +8,26 @@ Model::Model(Model& model) :
 	m_transform(model.m_transform),
 	m_mesh(model.m_mesh),
 	m_colour(model.m_colour)
-{}
+{
+	m_left = m_mesh.left;
+	m_right = m_mesh.right;
+	m_top = m_mesh.top;
+	m_bottom = m_mesh.bottom;
+	m_front = m_mesh.front;
+	m_back = m_mesh.back;
+}
 
 Model::Model(const char * path)
 {
-	loadModel(path);
+	if(loadModel(path))
+	{
+		m_left = m_mesh.left;
+		m_right = m_mesh.right;
+		m_top = m_mesh.top;
+		m_bottom = m_mesh.bottom;
+		m_front = m_mesh.front;
+		m_back = m_mesh.back;
+	}
 }
 
 Model::~Model()
@@ -25,7 +40,8 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 	float colour[4]{ (float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255 };
 
 	// update the position of the object
-
+	if(m_transform.isScaleUpdated() || m_transform.isRotationUpdated())
+		transformedUpdate();
 	/// - Lighting Variables - ///
 
 	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
@@ -46,13 +62,12 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
-	//if (m_transform.isUpdated())
-	transformedUpdate();
 
 	//render the mesh
 	m_mesh.render(shader);
 
 	shader.disable();
+	m_transform.resetUpdated();
 }
 
 Transformer& Model::getTransformer()
@@ -77,43 +92,57 @@ bool Model::loadModel(const char * path)
 
 float Model::getWidth()
 {
-	return m_mesh.right.x - m_mesh.left.x;
+	//	transformedUpdate();
+
+	return std::abs(m_right.x - m_left.x);
 }
 
 float Model::getHeight()
 {
 
-	return m_mesh.top.y - m_mesh.bottom.y;
+	//transformedUpdate();
+	return std::abs(m_top.y - m_bottom.y);
 }
 
 float Model::getDepth()
 {
-	return m_mesh.front.z - m_mesh.back.z;
+	//transformedUpdate();
+	return std::abs(m_front.z - m_back.z);
 }
 
 Coord3D Model::getCenter()
 {
-	return Coord3D((m_mesh.right.x + m_mesh.left.x )/2, (m_mesh.top.y + m_mesh.bottom.y)/2, (m_mesh.front.z + m_mesh.back.z)/2);
+	//if(m_transform.isUpdated())
+	//transformedUpdate();
+	glm::vec4 tmp = m_transform.getTranslationMatrix() *  glm::vec4((m_right.x + m_left.x) / 2, (m_top.y + m_bottom.y) / 2, (m_front.z + m_back.z) / 2, 1);
+
+	return { tmp.x, tmp.y, tmp.z };
 }
 
 void Model::transformedUpdate()
 {
 
-	std::vector<glm::vec4  > thing{
-		glm::vec4(m_mesh.right.x, m_mesh.right.y, m_mesh.right.z, 1), glm::vec4(m_mesh.left.x, m_mesh.left.y, m_mesh.left.z, 1),
-			glm::vec4(m_mesh.top.x, m_mesh.top.y, m_mesh.top.z, 1), glm::vec4(m_mesh.bottom.x, m_mesh.bottom.y, m_mesh.bottom.z, 1),
-			glm::vec4(m_mesh.front.x, m_mesh.front.y, m_mesh.front.z, 1), glm::vec4(m_mesh.back.x, m_mesh.back.y, m_mesh.back.z, 1) };
-
-	for (auto &a : thing)
+	std::vector<glm::vec4  > thing
 	{
-		a = m_transform.getTransformation() *a;
+	glm::vec4(m_right.x, m_right.y, m_right.z, 1), glm::vec4(m_left.x,   m_left.y,   m_left.z, 1),
+	glm::vec4(m_top.x,   m_top.y,   m_top.z, 1),   glm::vec4(m_bottom.x, m_bottom.y, m_bottom.z, 1),
+	glm::vec4(m_front.x, m_front.y, m_front.z, 1), glm::vec4(m_back.x,   m_back.y,   m_back.z, 1)
+	};
 
-		m_mesh.front = a.z > m_mesh.front.z ? Coord3D(a.x, a.y, a.z) : m_mesh.front;
-		m_mesh.back = a.z < m_mesh.back.z ? Coord3D(a.x, a.y, a.z) : m_mesh.back;
-		m_mesh.left = a.x < m_mesh.left.x ? Coord3D(a.x, a.y, a.z) : m_mesh.left;
-		m_mesh.right = a.x > m_mesh.right.x ? Coord3D(a.x, a.y, a.z) : m_mesh.right;
-		m_mesh.top = a.y > m_mesh.top.y ? Coord3D(a.x, a.y, a.z) : m_mesh.top;
-		m_mesh.bottom = a.y < m_mesh.bottom.y ? Coord3D(a.x, a.y, a.z) : m_mesh.bottom;
+
+	for(auto &a : thing)
+	{
+		if(m_transform.isScaleUpdated())
+			a = m_transform.getScaleMatrix() * a;
+		if(m_transform.isRotationUpdated())
+			a = m_transform.getRotationMatrix() * a;
+
+		m_front = a.z > m_front.z ? Coord3D(a.x, a.y, a.z) : m_front;
+		m_back = a.z < m_back.z ? Coord3D(a.x, a.y, a.z) : m_back;
+		m_left = a.x < m_left.x ? Coord3D(a.x, a.y, a.z) : m_left;
+		m_right = a.x > m_right.x ? Coord3D(a.x, a.y, a.z) : m_right;
+		m_top = a.y > m_top.y ? Coord3D(a.x, a.y, a.z) : m_top;
+		m_bottom = a.y < m_bottom.y ? Coord3D(a.x, a.y, a.z) : m_bottom;
 	}
 }
 
