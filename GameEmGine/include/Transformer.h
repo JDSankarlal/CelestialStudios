@@ -13,6 +13,8 @@ public:
 	Transformer();
 	~Transformer();
 
+	void reset();
+
 	/*SET ROTATION*/
 
 	void setRotation(Coord3D direction, Coord3D forward = { 1,0,0 });
@@ -39,7 +41,12 @@ public:
 	/*Gets a combination of the rotation, scale, and translation matricies*/
 	glm::mat4 getTransformation();
 
+	void resetUpdated();
+
 	bool isUpdated();
+	bool isScaleUpdated();
+	bool isRotationUpdated();
+	bool isTranslatinUpdated();
 private:
 	Coord3D m_pos, m_angles;
 	glm::mat4

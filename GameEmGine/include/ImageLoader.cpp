@@ -1,5 +1,4 @@
 #include "ImageLoader.h"
-Logger ImageLoader::m_imageLoader = ("imageLoader");
 Texture2D ImageLoader::loadImage2D(const char * path)
 {
 	Texture2D texture;
@@ -9,7 +8,7 @@ Texture2D ImageLoader::loadImage2D(const char * path)
 
 	if (image == nullptr)
 	{
-		m_imageLoader.writeLog("Image returned with null pointer\n");
+		printf("Image returned with null pointer\n");
 		return texture;
 	}
 

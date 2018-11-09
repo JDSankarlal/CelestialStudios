@@ -145,7 +145,7 @@ void GLSLCompiler::linkShaders ()
 		m_programID = m_vertID = m_fragID = 0;
 
 		// Use the infoLog as you see fit.
-		m_log->writeLog (infoLog + '\n');
+		printf(infoLog + '\n');
 		// In this simple program, we'll just leave
 		return;
 	}
@@ -196,7 +196,7 @@ void GLSLCompiler::disable ()
 		if(m_num - 1 > 0)
 		{
 			glUseProgram (m_programs[--m_num - 1]);
-			for(int a = 0; a < m_attribs[m_num - 1]; a++)
+			for(unsigned a = 0; a < m_attribs[m_num - 1]; a++)
 				glEnableVertexAttribArray (a);
 			m_enabled = false;
 		} else
@@ -239,7 +239,7 @@ bool GLSLCompiler::compileShader (Shaders shadType, const std::string filePath, 
 		char* errorLog = new char[maxLength];
 		glGetShaderInfoLog (id, maxLength, &maxLength, errorLog);
 
-		m_log->writeLog (errorLog + '\n');
+		printf(errorLog + '\n');
 
 		createDefault ();
 		return false;
@@ -250,7 +250,7 @@ bool GLSLCompiler::compileShader (Shaders shadType, const std::string filePath, 
 void GLSLCompiler::findAtributes ()
 {
 	unsigned short count = 0;
-	for(int a = 0; a < m_vtsh.size (); a++)
+	for(unsigned a = 0; a < m_vtsh.size (); a++)
 	{
 		if(m_vtsh.substr (a, 3) == "in ")
 		{
