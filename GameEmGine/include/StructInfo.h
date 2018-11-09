@@ -74,7 +74,7 @@ struct Coord2D
 
 struct Coord3D
 {
-	float x = 0, y = 0, z = 0;
+	float x = 0.0f, y = 0.0f, z = 0.0f;
 
 	Coord3D()
 	{}
