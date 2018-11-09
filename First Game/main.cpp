@@ -12,11 +12,11 @@ rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0;
 Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 
-#define modSize 20
+#define modSize 20 //Number of Models that can exist
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
 GLSLCompiler colourProgram, colourProgram2;
 Logger tlog = Logger("New Log:>");
-Model *mod[modSize];
+Model *mod[modSize]; // See 4 lines above
 
 //shader initialization
 void shaderInit()
@@ -90,6 +90,7 @@ void keyInputReleased(int key, int mod)
 		//game.setCameraAngle(0, { 1, 1, 1 });
 		//	game.setCameraPosition({0,0,0});
 	}
+
 	printf("key RELEASED code: %d\n\n", key);
 }
 
@@ -161,6 +162,28 @@ void update()
 			else if (p1.triggers[RT] < .95 && makeShitLessCancer[a])
 				makeShitLessCancer[a] = false;
 
+			/// - Button Presses on controller - ///
+
+			if (p1.buttonPressed(p1.buttons.START))
+			{
+				printf("\nExiting Game\n");
+				exit(0);
+			}
+			if (p1.buttonPressed(p1.buttons.X))
+			{
+				printf("RELOADING!!!\n");
+			}
+			if (p1.buttonPressed(p1.buttons.Y))
+			{
+				printf("SPECIAL ABILITY\n");
+			}
+			if (p1.triggers[LT])
+			{
+				printf("Dash\n");
+			}
+
+			/// - Bullet Collisions - ///
+
 			if (bullets[a])
 			{
 				bullets[a]->getTransformer().translateBy(velocity[a].x, velocity[a].y, velocity[a].z);
@@ -180,7 +203,6 @@ void update()
 				}
 
 			}
-
 
 			mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
 			mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
@@ -381,7 +403,7 @@ void main()
 		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 1.8, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(2.25);
+	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(3);
 
 	//Floor Scale
 	mod[9]->getTransformer().setScale(1.3, 1, 1.3);
