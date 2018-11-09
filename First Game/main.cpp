@@ -404,7 +404,7 @@ void main()
 		mod[7]->getTransformer().setRotation({ 0, 0, 0 }), mod[7]->getTransformer().setPosition(0, 1.8, 20.5), mod[7]->getTransformer().setScale(3, 1, 1);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 10), mod[8]->getTransformer().setScale(3);
+	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(3);
 
 	//Floor Scale
 	mod[9]->getTransformer().setScale(1.3, 1, 1.3);
