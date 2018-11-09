@@ -313,23 +313,23 @@ bool Mesh::loadMesh(std::string path)
 
 				//set Verticies
 				tmp.setCoord(
-					verts[faces[a].second[c].coord[b] - 1].coordX,
-					verts[faces[a].second[c].coord[b] - 1].coordY,
-					verts[faces[a].second[c].coord[b] - 1].coordZ);
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordX,
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordY,
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordZ);
 
 				//set UV's
 				if (faces[a].second[c].uv[0])
 				{
-					tmp.setUV(uvs[faces[a].second[c].uv[b] - 1].uv_u, uvs[faces[a].second[c].uv[b] - 1].uv_v);
+					tmp.setUV(uvs[(unsigned int)(faces[a].second[c].uv[b] - 1)].uv_u, uvs[(unsigned int)(faces[a].second[c].uv[b] - 1)].uv_v);
 				}
 
 				//set Normals
 				if (faces[a].second[c].norm[0])
 				{
 					tmp.setNorm(
-						norms[faces[a].second[c].norm[b] - 1].coordX,
-						norms[faces[a].second[c].norm[b] - 1].coordY,
-						norms[faces[a].second[c].norm[b] - 1].coordZ);
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordX,
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordY,
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordZ);
 				}
 
 				m_unpackedData.back().second.push_back(tmp);

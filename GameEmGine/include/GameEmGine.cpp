@@ -241,7 +241,7 @@ void GameEmGine::calculateFPS()
 	static short count;
 	static float frameTimes[SAMPLE];
 
-	frameTimes[count++] = 1 / glfwGetTime();
+	frameTimes[count++] = 1 / float(glfwGetTime());
 	if (count == SAMPLE)
 	{
 		count = 0;

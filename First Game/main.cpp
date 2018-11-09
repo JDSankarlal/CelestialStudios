@@ -308,9 +308,8 @@ void mouseButtonReleased(int button, int mod)
 void render()
 {}
 
-SpriteInfo sp1, sp2;
 
-void main()
+int main()
 {
 	/// - Load Models into Scene - ///
 
@@ -386,4 +385,5 @@ void main()
 	game.run();//this one is pretty important
 
 	//the game ended... why are you here?... leave
+	return 0;
 }
