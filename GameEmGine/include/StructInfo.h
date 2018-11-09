@@ -201,6 +201,13 @@ struct Coord3D
 		y *= coord.y;
 		z *= coord.z;
 	}
+
+	void operator*=(float coord)
+	{
+		x *= coord;
+		y *= coord;
+		z *= coord;
+	}
 };
 
 struct Size2D

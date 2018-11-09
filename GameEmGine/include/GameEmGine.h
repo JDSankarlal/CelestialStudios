@@ -150,6 +150,9 @@ private:
 	void calculateFPS();
 	void fpsLimiter();
 
+	/*static void InitOpenGlCallback ();
+	static void OpenGLDebugCallback (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * data);
+	*/
 	static void update();
 	static void changeViewport(GLFWwindow * win, int w, int h);
 	static void(*m_compileShaders)(), (*m_render)(), (*m_gameLoop)();

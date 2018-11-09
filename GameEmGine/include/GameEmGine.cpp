@@ -1,3 +1,6 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <windows.h>
+
 #include "GameEmGine.h"
 #include "EmGineAudioPlayer.h"
 
@@ -36,32 +39,125 @@ GameEmGine::~GameEmGine()
 	glfwTerminate();
 }
 
+static void OpenGLDebugCallback (
+	GLenum source, GLenum type, GLuint id, GLenum severity,
+	GLsizei length, const GLchar *msg, const void *data)
+{
+	std::cout << "CALLBACK\n";
+	char buffer[9] = { '\0' };
+	sprintf (buffer, "%.8x", id);
+
+	std::string message ("OpenGL(0x");
+	message += buffer;
+	message += "): ";
+
+	switch(type)
+	{
+	case GL_DEBUG_TYPE_ERROR:
+	message += "Error:";
+	break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+	message += "Depricated behavior";
+	break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+	message += "Undefined Behavior";
+	break;
+	case GL_DEBUG_TYPE_PORTABILITY:
+	message += "portability issue";
+	break;
+	case GL_DEBUG_TYPE_MARKER:
+	message += "Stream annotation";
+	break;
+	case GL_DEBUG_TYPE_OTHER:
+	default:
+	message += "Other";
+	}
+
+	message += "\nSource: ";
+	switch(source)
+	{
+	case GL_DEBUG_SOURCE_API:
+	message += "API";
+	break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+	message += "Window System";
+	break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER:
+	message += "Shader Compiler";
+	break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:
+	message += "Third Party";
+	break;
+	case GL_DEBUG_SOURCE_APPLICATION:
+	message += "Application";
+	break;
+	case GL_DEBUG_SOURCE_OTHER:
+	message += "Other";
+	}
+
+	message += "/nSeverity: ";
+	switch(severity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:
+	message += "HIGH";
+	break;
+	case GL_DEBUG_SEVERITY_MEDIUM:
+	message += "Medium";
+	break;
+	case GL_DEBUG_SEVERITY_LOW:
+	message += "Low";
+	break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION:
+	message += "NOT AN ERROR, IT'S A NOTIFICATION";
+	default:
+	message += "Josh is a loser";
+	}
+
+	message += "\n";
+	message += msg;
+	message += "\n";
+
+	if(type == GL_DEBUG_TYPE_ERROR)
+		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 12);
+	else
+		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 7);
+	std::cout << message << std::endl;
+}
+
+void InitOpenGlCallback ()
+{
+	//GLDEBUGPROC J = OpenGLDebugCallback;
+	
+	glEnable (GL_DEBUG_OUTPUT);
+	//glDebugMessageCallback (OpenGLDebugCallback, NULL);
+}
+
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	glfwInit();//initilize GLFW before ANYTHING
 
 	printf("Trying to create the window\n");
+	
 	m_window = new WindowCreator(name, { (float)width,(float)height }, { (float)x,(float)y }, monitor, fullScreen, visable);
+	
 	glfwSetFramebufferSizeCallback(m_window->getWindow(), changeViewport);
+	
 	m_inputManager = new InputManager;
 	m_mainCamera = new Camera({ (float)width,(float)height,500 });
 
 	shaderInit();
 
 	m_spriteBatch = new SpriteBatch;
-	//	m_modelBatch = new ModelBatch;
-		//m_spriteBatch->init();
-
+	
 	printf("created the window\n");
-	//m_fpsLimit = 0;
-	//EmGineAudioPlayer::init();
 }
 
 void GameEmGine::run()
 {
 
-
-	//glfwSwapInterval(1);//vsync
+#ifdef _DEBUG
+	InitOpenGlCallback ();
+#endif
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
@@ -71,8 +167,7 @@ void GameEmGine::run()
 	while (!glfwWindowShouldClose(m_window->getWindow()))//update loop
 	{
 		glClearColor((float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);//BG colour
-			//EmGineAudioPlayer::update();
-
+		
 		if (true)//fps calculation
 		{
 			calculateFPS();
@@ -80,6 +175,7 @@ void GameEmGine::run()
 			sprintf_s(str, "fps: %.2f", m_fps);
 			glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
 		}
+		
 		glDepthFunc(GL_LEQUAL);
 		InputManager::controllerUpdate();
 		update();
