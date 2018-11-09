@@ -158,7 +158,7 @@ void EmGineAudioPlayer::stop(uint index)
 void EmGineAudioPlayer::stopAll()
 {
 	//ChannelGroup* cg;
-	for(int a = 0; a < m_channels->size();a++)
+	for(unsigned a = 0; a < m_channels->size();a++)
 		m_channels[0][a]->stop();
 	//cg->stop();
 	cleanup();
@@ -255,7 +255,7 @@ void EmGineAudioPlayer::cleanup()
 {
 	bool play;
 
-	for(int a = 0; a < m_channels->size(); a++)
+	for(unsigned a = 0; a < m_channels->size(); a++)
 	{
 		m_channels[0][a]->isPlaying(&play);
 		if(!play)

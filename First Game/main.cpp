@@ -1,4 +1,6 @@
-#define _USE_MATH_DEFINES // for C++
+#define _USE_MATH_DEFINES 
+//#define 
+
 #include <GameEmGine.h>
 #include <EmGineAudioPlayer.h>
 #include <vector>

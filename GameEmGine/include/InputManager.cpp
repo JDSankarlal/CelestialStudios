@@ -138,7 +138,7 @@ void InputManager::controllerUpdate()
 			m_controllers[a].name = glfwGetJoystickName(a);
 			unsigned char* tmp = (unsigned char*) glfwGetJoystickButtons(a, &m_controllers[a].numButtons);
 			for(int b = 0; b < m_controllers[a].numButtons; b++)
-				m_controllers[a].buttons.data[b] = tmp[a];
+				m_controllers[a].buttons.data[b] = tmp[b];
 			m_controllers[a].updateSticks(a);
 			m_controllers[a].triggers = (float*) glfwGetJoystickAxes(a, &m_controllers[a].numSticks) + m_controllers[a].numSticks - 2;
 			m_controllers[a].numSticks -= 2;

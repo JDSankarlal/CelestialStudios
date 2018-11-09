@@ -298,10 +298,10 @@ struct ColourRGBA
 {
 	GLubyte colorR, colorG, colorB, colorA;
 
-	ColourRGBA() :colorR(255), colorG(255), colorB(255), colorA(255)
+	ColourRGBA() :colorR((GLubyte)255), colorG((GLubyte)255), colorB((GLubyte)255), colorA((GLubyte)255)
 	{}
 
-	ColourRGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255) :colorR(r), colorG(g), colorB(b), colorA(a)
+	ColourRGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a = (GLubyte)255) :colorR(r), colorG(g), colorB(b), colorA(a)
 	{}
 
 	void set(ColourRGBA rgba)
@@ -331,10 +331,10 @@ struct ColourRGBA
 	ColourRGBA operator*(ColourRGBA rgba)
 	{
 		return ColourRGBA{
-			GLubyte((int)colorR * (int)rgba.colorR / 255),
-			GLubyte((int)colorG * (int)rgba.colorG / 255),
-			GLubyte((int)colorB * (int)rgba.colorB / 255),
-			GLubyte((int)colorA * (int)rgba.colorA / 255) };
+			GLubyte(colorR * (float)rgba.colorR / 255),
+			GLubyte(colorG * (float)rgba.colorG / 255),
+			GLubyte(colorB * (float)rgba.colorB / 255),
+			GLubyte(colorA * (float)rgba.colorA / 255) };
 	}
 
 	void operator*=(ColourRGBA rgba)

@@ -196,7 +196,7 @@ void GLSLCompiler::disable ()
 		if(m_num - 1 > 0)
 		{
 			glUseProgram (m_programs[--m_num - 1]);
-			for(int a = 0; a < m_attribs[m_num - 1]; a++)
+			for(unsigned a = 0; a < m_attribs[m_num - 1]; a++)
 				glEnableVertexAttribArray (a);
 			m_enabled = false;
 		} else
@@ -250,7 +250,7 @@ bool GLSLCompiler::compileShader (Shaders shadType, const std::string filePath, 
 void GLSLCompiler::findAtributes ()
 {
 	unsigned short count = 0;
-	for(int a = 0; a < m_vtsh.size (); a++)
+	for(unsigned a = 0; a < m_vtsh.size (); a++)
 	{
 		if(m_vtsh.substr (a, 3) == "in ")
 		{

@@ -359,11 +359,11 @@ bool Mesh::loadMesh(std::string path)
 
 void Mesh::render(GLSLCompiler& shader)
 {
-	for(int a = 0; a < m_vaoID.size(); a++)
+	for(unsigned a = 0; a < m_vaoID.size(); a++)
 	{
 		bool textured = false;
 		int c = 0;
-		for(int b = 0; b < m_textures.size(); b++)
+		for(unsigned b = 0; b < m_textures.size(); b++)
 		{
 			if(m_textures[b].first == m_vaoID[a].first)
 			{
@@ -397,7 +397,7 @@ void Mesh::render(GLSLCompiler& shader)
 
 void Mesh::unload()
 {
-	for(int a = 0; a < m_numFaces.size(); a++)
+	for(unsigned a = 0; a < m_numFaces.size(); a++)
 	{
 		if(m_vboID[a])
 			glDeleteBuffers(1, &m_vboID[a]);
@@ -422,7 +422,7 @@ GLuint Mesh::getNumVerticies(int index) const
 
 void Mesh::init()
 {
-	for(int a = 0; a < m_numFaces.size(); a++)
+	for(unsigned a = 0; a < m_numFaces.size(); a++)
 	{
 		m_vaoID.push_back({ m_unpackedData[a].first ,0 });
 		m_vboID.push_back(0);

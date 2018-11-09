@@ -10,7 +10,7 @@ FrameBuffer::FrameBuffer(unsigned numColorAttachments)
 
 	//Bufs is required as a parameter for glDrawBuffers()
 	_Bufs = new GLenum[_NumColorAttachments];
-	for (int i = 0; i < _NumColorAttachments; i++)
+	for (unsigned i = 0; i < _NumColorAttachments; i++)
 	{
 		_Bufs[i] = GL_COLOR_ATTACHMENT0 + i;
 	}
@@ -83,7 +83,7 @@ void FrameBuffer::Unload()
 
 	if (_ColorAttachments != nullptr)
 	{
-		for (int i = 0; i < _NumColorAttachments; i++)
+		for (unsigned i = 0; i < _NumColorAttachments; i++)
 		{
 			glDeleteTextures(1, &_ColorAttachments[i]);
 		}
