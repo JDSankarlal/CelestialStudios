@@ -148,8 +148,8 @@ void InputManager::controllerUpdate()
 			//Stick Dead Zone application
 			for(int b = 0; b < m_controllers[a].numSticks; b++)
 				for(int c = 0; c < 2; c++)
-					if((abs(m_controllers[a].sticks[b][c])) <= m_controllers[a].getStickDeadZone())
-						m_controllers[a].sticks[b][c] = 0;
+					if((abs(m_controllers[a].Coord2D_sticks[b][c])) <= m_controllers[a].getStickDeadZone())
+						m_controllers[a].Coord2D_sticks[b][c] = 0;
 
 			//modify trigger values
 			m_controllers[a].triggers[0] = (m_controllers[a].triggers[0] + 1) * .5f;//triggers have values from 0 -> 1

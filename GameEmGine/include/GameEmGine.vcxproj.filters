@@ -10,9 +10,6 @@
     <ClInclude Include="ImageLoader.h">
       <Filter>EmGine\FileIO</Filter>
     </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>EmGine\FileIO</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix.h">
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
@@ -33,9 +30,6 @@
     </ClInclude>
     <ClInclude Include="StructInfo.h">
       <Filter>EmGine\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteBatch.h">
-      <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>EmGine\Game Engine</Filter>
@@ -74,9 +68,6 @@
     <ClCompile Include="ImageLoader.cpp">
       <Filter>EmGine\FileIO</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>EmGine\FileIO</Filter>
-    </ClCompile>
     <ClCompile Include="Matrix.cpp">
       <Filter>EmGine\Data Types</Filter>
     </ClCompile>
@@ -94,9 +85,6 @@
     </ClCompile>
     <ClCompile Include="Quat.cpp">
       <Filter>EmGine\Data Types</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteBatch.cpp">
-      <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>EmGine\Game Engine</Filter>

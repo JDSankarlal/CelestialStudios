@@ -52,13 +52,13 @@ void Mesh::loadMaterials(std::string path)
 	FILE* f;
 	fopen_s(&f, path.c_str(), "r");
 	char str[CHAR_BUFF_SIZE];
-	char* check;
+	char* MeshCheck;
 
-	while(check = fgets(str, CHAR_BUFF_SIZE, f),
-		  //this part takes out the '\n' from the string
+	while (MeshCheck = fgets(str, CHAR_BUFF_SIZE, f),
+		   //this part takes out the '\n' from the string
 		(str == nullptr ? "" : (str[strlen(str) - 1] = (str[strlen(str) - 1] == '\n' ? '\0' : str[strlen(str) - 1]), str)),
-		  check)
-		if(strstr(str, "mtllib"))
+		   MeshCheck)
+		if (strstr(str, "mtllib"))
 		{
 			char str2[CHAR_BUFF_SIZE];
 			memcpy_s(str2, CHAR_BUFF_SIZE, str + 7, CHAR_BUFF_SIZE - 7);
@@ -72,10 +72,10 @@ void Mesh::loadMaterials(std::string path)
 
 
 
-	while(check = fgets(str, CHAR_BUFF_SIZE, f),
-		  //this part takes out the '\n' from the string
+	while (MeshCheck = fgets(str, CHAR_BUFF_SIZE, f),
+		   //this part takes out the '\n' from the string
 		(str == nullptr ? "" : (str[strlen(str) - 1] = (str[strlen(str) - 1] == '\n' ? '\0' : str[strlen(str) - 1]), str)),
-		  check)
+		   MeshCheck)
 	{
 
 		if(strchr(str, '#'))
@@ -125,15 +125,15 @@ void Mesh::loadMaterials(std::string path)
 			sscanf_s(str, "Ka %f %f %f", &a[0], &a[1], &a[2]);
 			for(auto &b : m_textures.back().second)
 
-				b.colour.a = 255 * a[0] * a[1] * a[2];
-		} else if(strstr(str, "Kd"))
+				b.colour.colorA = (GLubyte)(255 * a[0] * a[1] * a[2]);
+		} else if (strstr(str, "Kd"))
 		{
 			float r, g, b;
 			sscanf_s(str, "Kd %f %f %f", &r, &g, &b);
-			for(auto &a : m_textures.back().second)
-				if(a.type == TEXTURE_TYPE::DIFFUSE)
-					a.colour.set(r * 255, g * 255, b * 255);
-		} else if(strstr(str, "Ks"))
+			for (auto &a : m_textures.back().second)
+				if (a.type == TEXTURE_TYPE::DIFFUSE)
+					a.colour.set((GLubyte)r * 255, (GLubyte)g * 255, (GLubyte)b * 255);
+		} else if (strstr(str, "Ks"))
 		{
 			continue;
 		} else if(strstr(str, "Ke"))
@@ -179,11 +179,11 @@ bool Mesh::loadMesh(std::string path)
 
 	std::vector < std::pair<std::string, std::vector<Vertex3D>>> faces;
 
-	char *check = nullptr;
-	while(check = fgets(inputBuff, CHAR_BUFF_SIZE, f),
-		  //this part takes out the '\n' from the string
+	char *MeshCheck = nullptr;
+	while (MeshCheck = fgets(inputBuff, CHAR_BUFF_SIZE, f),
+		   //this part takes out the '\n' from the string
 		(inputBuff == nullptr ? "" : (inputBuff[strlen(inputBuff) - 1] = (inputBuff[strlen(inputBuff) - 1] == '\n' ? ' ' : inputBuff[strlen(inputBuff) - 1]), inputBuff)),
-		  check)
+		   MeshCheck)
 	{
 
 		if(strchr(inputBuff, '#'))
@@ -202,13 +202,13 @@ bool Mesh::loadMesh(std::string path)
 				//UV Dat
 
 				UV tmp;
-				sscanf_s(inputBuff, "vt %f %f", &tmp.u, &tmp.v);
+				sscanf_s(inputBuff, "vt %f %f", &tmp.uv_u, &tmp.uv_v);
 				uvs.push_back(tmp);
 			} else if(strstr(inputBuff, "vn"))
 			{
 				//Normal data
 				Coord3D tmp;
-				sscanf_s(inputBuff, "vt %f %f %f", &tmp.x, &tmp.y, &tmp.z);
+				sscanf_s(inputBuff, "vt %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
 				norms.push_back(tmp);
 			} else if(strchr(inputBuff, 'o'))
 				continue;
@@ -267,9 +267,9 @@ bool Mesh::loadMesh(std::string path)
 				{
 					formatStr = "f";
 					swap(format[a], format[a + 2]);
-					for(unsigned a = 0; a < count; a++)
-						formatStr += format[a];
-					if(type == 0)
+					for (unsigned i = 0; i < count; i++)
+						formatStr += format[i];
+					if (type == 0)
 						sscanf_s(inputBuff, formatStr.c_str(),
 								 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
 								 &tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
@@ -288,15 +288,15 @@ bool Mesh::loadMesh(std::string path)
 				//Vertex Datae
 
 				Coord3D tmp;
-				sscanf_s(inputBuff, "v %f %f %f", &tmp.x, &tmp.y, &tmp.z);
+				sscanf_s(inputBuff, "v %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
 				verts.push_back(tmp);
-
-				front = tmp.z > front.z ? tmp : front;
-				back = tmp.z < back.z ? tmp : back;
-				left = tmp.x < left.x ? tmp : left;
-				right = tmp.x > right.x ? tmp : right;
-				top = tmp.y > top.y ? tmp : top;
-				bottom = tmp.y < bottom.y ? tmp : bottom;
+				
+				front = tmp.coordZ > front ? tmp.coordZ : front;
+				back = tmp.coordZ < back ? tmp.coordZ : back;
+				left = tmp.coordX < left ? tmp.coordX : left;
+				right = tmp.coordX > right ? tmp.coordX : right;
+				top = tmp.coordY > top ? tmp.coordY : top;
+				bottom = tmp.coordY < bottom ? tmp.coordY : bottom;
 			}
 
 	}
@@ -319,29 +319,29 @@ bool Mesh::loadMesh(std::string path)
 
 				//set Verticies
 				tmp.setCoord(
-					verts[faces[a].second[c].coord[b] - 1].x,
-					verts[faces[a].second[c].coord[b] - 1].y,
-					verts[faces[a].second[c].coord[b] - 1].z);
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordX,
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordY,
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordZ);
 
 				//set UV's
 				if(faces[a].second[c].uv[0])
 				{
-					tmp.setUV(uvs[faces[a].second[c].uv[b] - 1].u, uvs[faces[a].second[c].uv[b] - 1].v);
+					tmp.setUV(uvs[(unsigned int)(faces[a].second[c].uv[b] - 1)].uv_u, uvs[(unsigned int)(faces[a].second[c].uv[b] - 1)].uv_v);
 				}
 
 				//set Normals
 				if(faces[a].second[c].norm[0])
 				{
 					tmp.setNorm(
-						norms[faces[a].second[c].norm[b] - 1].x,
-						norms[faces[a].second[c].norm[b] - 1].y,
-						norms[faces[a].second[c].norm[b] - 1].z);
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordX,
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordY,
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordZ);
 				}
 
 				m_unpackedData.back().second.push_back(tmp);
 			}
-		m_numFaces.push_back(faces[a].second.size());
-		m_numVerts.push_back(m_numFaces[a] * 3);
+		m_numFaces.push_back((unsigned int)faces[a].second.size());
+		m_numVerts.push_back((unsigned int)m_numFaces[a] * 3);
 	}
 
 

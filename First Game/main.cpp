@@ -15,7 +15,6 @@ EmGineAudioPlayer audio;
 #define modSize 20
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
 GLSLCompiler colourProgram, colourProgram2;
-Logger tlog = Logger("New Log:>");
 Model *mod[modSize];
 
 //shader initialization
@@ -29,7 +28,7 @@ void shaderInit()
 }
 
 //instance key is pressed
-void keyInputPressed(int key, int mod)
+void keyInputPressed(int key, int _mod)
 {
 	m_left = (key == 'A' ? true : m_left);
 	m_right = (key == 'D' ? true : m_right);
@@ -47,7 +46,7 @@ void keyInputPressed(int key, int mod)
 }
 
 //instace key is released
-void keyInputReleased(int key, int mod)
+void keyInputReleased(int key, int _mod)
 {
 	m_left = (key == 'A' ? false : m_left);
 	m_right = (key == 'D' ? false : m_right);
@@ -115,7 +114,7 @@ bool collisions(Model *l, Model *k)
 //updates within game loop
 void update()
 {
-	float move = .1;
+	float move = .1f;
 
 	static Model* bullets[4];
 	static Coord3D velocity[4];
@@ -127,13 +126,13 @@ void update()
 
 
 			static float angle[4] = { 0,0,0,0 };
-			if(p1.sticks[RS].x || p1.sticks[RS].y)
+			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 			{
 
-				angle[a] = acos(p1.sticks[RS].x /
-								sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-								+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
-				angle[a] += (p1.sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
+				angle[a] = acosf(p1.Coord2D_sticks[RS].x /
+								sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+								+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 /(float)M_PI);
+				angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 				angle[a] = fmodf(angle[a], 360);
 			}
 
@@ -151,14 +150,14 @@ void update()
 				game.addModel(bullets[a] = new Model(*mod[a]));
 				bullets[a]->getTransformer().reset();
 				Coord3D pos = mod[a]->getTransformer().getPosition();
-				bullets[a]->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-				bullets[a]->getTransformer().setScale(.025);
+				bullets[a]->getTransformer().setPosition(pos.coordX, pos.coordY + 1, pos.coordZ);
+				bullets[a]->getTransformer().setScale(.05f);
 
 				bullets[a]->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
 
-				float cosVal = cos((angle[a] - 90)*(M_PI / 180));
-				float sinVal = sin((angle[a] - 90)*(M_PI / 180));
+				float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+				float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 
 				velocity[a] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
 				audio.createStream("pew.wav");
@@ -186,11 +185,12 @@ void update()
 						}
 					}
 
+				bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
 			}
 
 
 			mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
-			mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
+			mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move camera
 			//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 			//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 		}
@@ -339,7 +339,7 @@ void update()
 	//}
 }
 
-void mouseButtonReleased(int button, int mod)
+void mouseButtonReleased(int button, int _mod)
 {
 	if(button == LEFT_BUTTON)
 		leftM = InputManager::getMouseCursorPosition();
@@ -350,9 +350,8 @@ void mouseButtonReleased(int button, int mod)
 void render()
 {}
 
-SpriteInfo sp1, sp2;
 
-void main()
+int main()
 {
 	/// - Load Models into Scene - ///
 
@@ -361,8 +360,7 @@ void main()
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 
-	//Wall Colour
-	mod[5]->setColour(0.35, 0.35, 0.4);
+	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
 	/// - Make New Models From Existing Models - ///
 	//Players
@@ -376,10 +374,10 @@ void main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(.15), mod[0]->getTransformer().setPosition(1, 1, 0),
-		mod[1]->getTransformer().setScale(.15), mod[1]->getTransformer().setPosition(-1, 1, 0),
-		mod[2]->getTransformer().setScale(.15), mod[2]->getTransformer().setPosition(2, 1, 0),
-		mod[3]->getTransformer().setScale(.15), mod[3]->getTransformer().setPosition(-2, 1, 0);
+	mod[0]->getTransformer().setScale(.15f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, 0.0f),
+		mod[1]->getTransformer().setScale(.15f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, 0.0f),
+		mod[2]->getTransformer().setScale(.15f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, 0.0f),
+		mod[3]->getTransformer().setScale(.15f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, 0.0f);
 
 	//Wall Transforms
 	mod[5]->getTransformer().setRotation({ 0, 90, 0 }), mod[5]->getTransformer().setPosition(15, 1.8, 7), mod[5]->getTransformer().setScale(3, 1, 1),
@@ -429,4 +427,5 @@ void main()
 	game.run();//this one is pretty important
 
 	//the game ended... why are you here?... leave
+	return 0;
 }

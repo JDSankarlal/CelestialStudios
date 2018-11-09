@@ -37,7 +37,7 @@ Model::~Model()
 void Model::render(GLSLCompiler& shader, Camera& cam)
 {
 	shader.enable();
-	float colour[4]{ (float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255 };
+	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
 	// update the position of the object
 	if(m_transform.isScaleUpdated() || m_transform.isRotationUpdated())
@@ -77,12 +77,12 @@ Transformer& Model::getTransformer()
 
 void Model::setColour(float r, float g, float b, float a)
 {
-	m_colour.set(255 * r, 255 * g, 255 * b, 255 * a);
+	m_colour.set(255 * (GLubyte)r, 255 * (GLubyte)g, 255 * (GLubyte)b, 255 * (GLubyte)a);
 }
 
 void Model::setColour(float r, float g, float b)
 {
-	m_colour.set(255 * r, 255 * g, 255 * b);
+	m_colour.set(255 * (GLubyte)r, 255 * (GLubyte)g, 255 * (GLubyte)b);
 }
 
 bool Model::loadModel(const char * path)

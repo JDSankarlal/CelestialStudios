@@ -133,8 +133,8 @@ std::vector<std::vector<float>>* Matrix::getMatrix()
 
 void Matrix::operator=(const std::vector<std::vector<float>>*a_matrix)
 {
-	m_size->row = a_matrix->size(); //rows 
-	m_size->colum = (*a_matrix)[0].size(); //cols
+	m_size->row = (int)(a_matrix->size()); //rows 
+	m_size->colum = (int)((*a_matrix)[0].size()); //cols
 	//delete m_matrix;
 	//m_matrix = new std::vector<std::vector<float>>;
 	*m_matrix = *a_matrix;

@@ -14,10 +14,7 @@ WindowCreator *GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{ 123,123,123 };
 //ModelBatch *GameEmGine::m_modelBatch;
 FrameBuffer GameEmGine::m_mainBuffer(1);
-SpriteBatch *GameEmGine::m_spriteBatch;
 std::vector<Model*> GameEmGine::m_models;
-std::vector<SpriteInfo*> GameEmGine::m_sprites;
-
 float GameEmGine::m_fps;
 short GameEmGine::m_fpsLimit;
 
@@ -39,98 +36,98 @@ GameEmGine::~GameEmGine()
 	glfwTerminate();
 }
 
-static void OpenGLDebugCallback (
-	GLenum source, GLenum type, GLuint id, GLenum severity,
-	GLsizei length, const GLchar *msg, const void *data)
-{
-	std::cout << "CALLBACK\n";
-	char buffer[9] = { '\0' };
-	sprintf (buffer, "%.8x", id);
-
-	std::string message ("OpenGL(0x");
-	message += buffer;
-	message += "): ";
-
-	switch(type)
-	{
-	case GL_DEBUG_TYPE_ERROR:
-	message += "Error:";
-	break;
-	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-	message += "Depricated behavior";
-	break;
-	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-	message += "Undefined Behavior";
-	break;
-	case GL_DEBUG_TYPE_PORTABILITY:
-	message += "portability issue";
-	break;
-	case GL_DEBUG_TYPE_MARKER:
-	message += "Stream annotation";
-	break;
-	case GL_DEBUG_TYPE_OTHER:
-	default:
-	message += "Other";
-	}
-
-	message += "\nSource: ";
-	switch(source)
-	{
-	case GL_DEBUG_SOURCE_API:
-	message += "API";
-	break;
-	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-	message += "Window System";
-	break;
-	case GL_DEBUG_SOURCE_SHADER_COMPILER:
-	message += "Shader Compiler";
-	break;
-	case GL_DEBUG_SOURCE_THIRD_PARTY:
-	message += "Third Party";
-	break;
-	case GL_DEBUG_SOURCE_APPLICATION:
-	message += "Application";
-	break;
-	case GL_DEBUG_SOURCE_OTHER:
-	message += "Other";
-	}
-
-	message += "/nSeverity: ";
-	switch(severity)
-	{
-	case GL_DEBUG_SEVERITY_HIGH:
-	message += "HIGH";
-	break;
-	case GL_DEBUG_SEVERITY_MEDIUM:
-	message += "Medium";
-	break;
-	case GL_DEBUG_SEVERITY_LOW:
-	message += "Low";
-	break;
-	case GL_DEBUG_SEVERITY_NOTIFICATION:
-	message += "NOT AN ERROR, IT'S A NOTIFICATION";
-	default:
-	message += "Josh is a loser";
-	}
-
-	message += "\n";
-	message += msg;
-	message += "\n";
-
-	if(type == GL_DEBUG_TYPE_ERROR)
-		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 12);
-	else
-		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 7);
-	std::cout << message << std::endl;
-}
-
-void InitOpenGlCallback ()
-{
-	//GLDEBUGPROC J = OpenGLDebugCallback;
-	
-	glEnable (GL_DEBUG_OUTPUT);
-	//glDebugMessageCallback (OpenGLDebugCallback, NULL);
-}
+//static void OpenGLDebugCallback (
+//	GLenum source, GLenum type, GLuint id, GLenum severity,
+//	GLsizei length, const GLchar *msg, const void *data)
+//{
+//	std::cout << "CALLBACK\n";
+//	char buffer[9] = { '\0' };
+//	sprintf (buffer, "%.8x", id);
+//
+//	std::string message ("OpenGL(0x");
+//	message += buffer;
+//	message += "): ";
+//
+//	switch(type)
+//	{
+//	case GL_DEBUG_TYPE_ERROR:
+//	message += "Error:";
+//	break;
+//	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+//	message += "Depricated behavior";
+//	break;
+//	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+//	message += "Undefined Behavior";
+//	break;
+//	case GL_DEBUG_TYPE_PORTABILITY:
+//	message += "portability issue";
+//	break;
+//	case GL_DEBUG_TYPE_MARKER:
+//	message += "Stream annotation";
+//	break;
+//	case GL_DEBUG_TYPE_OTHER:
+//	default:
+//	message += "Other";
+//	}
+//
+//	message += "\nSource: ";
+//	switch(source)
+//	{
+//	case GL_DEBUG_SOURCE_API:
+//	message += "API";
+//	break;
+//	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+//	message += "Window System";
+//	break;
+//	case GL_DEBUG_SOURCE_SHADER_COMPILER:
+//	message += "Shader Compiler";
+//	break;
+//	case GL_DEBUG_SOURCE_THIRD_PARTY:
+//	message += "Third Party";
+//	break;
+//	case GL_DEBUG_SOURCE_APPLICATION:
+//	message += "Application";
+//	break;
+//	case GL_DEBUG_SOURCE_OTHER:
+//	message += "Other";
+//	}
+//
+//	message += "/nSeverity: ";
+//	switch(severity)
+//	{
+//	case GL_DEBUG_SEVERITY_HIGH:
+//	message += "HIGH";
+//	break;
+//	case GL_DEBUG_SEVERITY_MEDIUM:
+//	message += "Medium";
+//	break;
+//	case GL_DEBUG_SEVERITY_LOW:
+//	message += "Low";
+//	break;
+//	case GL_DEBUG_SEVERITY_NOTIFICATION:
+//	message += "NOT AN ERROR, IT'S A NOTIFICATION";
+//	default:
+//	message += "Josh is a loser";
+//	}
+//
+//	message += "\n";
+//	message += msg;
+//	message += "\n";
+//
+//	if(type == GL_DEBUG_TYPE_ERROR)
+//		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 12);
+//	else
+//		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 7);
+//	std::cout << message << std::endl;
+//}
+//
+//void InitOpenGlCallback ()
+//{
+//	//GLDEBUGPROC J = OpenGLDebugCallback;
+//	
+//	glEnable (GL_DEBUG_OUTPUT);
+//	//glDebugMessageCallback (OpenGLDebugCallback, NULL);
+//}
 
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
@@ -147,7 +144,6 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 	shaderInit();
 
-	m_spriteBatch = new SpriteBatch;
 	
 	printf("created the window\n");
 }
@@ -155,9 +151,9 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 void GameEmGine::run()
 {
 
-#ifdef _DEBUG
-	InitOpenGlCallback ();
-#endif
+//#ifdef _DEBUG
+//	InitOpenGlCallback ();
+//#endif
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
@@ -166,7 +162,7 @@ void GameEmGine::run()
 
 	while (!glfwWindowShouldClose(m_window->getWindow()))//update loop
 	{
-		glClearColor((float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);//BG colour
+		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
 		
 		if (true)//fps calculation
 		{
@@ -245,7 +241,7 @@ void GameEmGine::calculateFPS()
 	static short count;
 	static float frameTimes[SAMPLE];
 
-	frameTimes[count++] = 1 / glfwGetTime();
+	frameTimes[count++] = 1 / float(glfwGetTime());
 	if (count == SAMPLE)
 	{
 		count = 0;
@@ -373,39 +369,7 @@ void GameEmGine::removeModel(Model* model)
 		}
 }
 
-void GameEmGine::addModelBatch(const char * model)
-{
-	//	m_modelBatch->draw(model);
-	//	m_modelBatch->end();
-}
 
-void GameEmGine::addSprite(SpriteInfo* sprite)
-{
-	m_sprites.push_back(sprite);
-
-	//m_sprites = (SpriteInfo**) realloc(m_sprites, sizeof(SpriteInfo*)*++_numSprites);
-	//m_sprites[_numSprites - 1] = sprite;
-}
-
-void GameEmGine::removeSprite(int index)
-{
-	m_sprites.erase(m_sprites.begin() + index);
-
-	//if(index < _numSprites)
-	//{
-	//	memmove(m_sprites + index, m_sprites + index + 1, sizeof(SpriteInfo*)*(_numSprites - 1 - index));
-	//	delete m_sprites[--_numSprites];
-	//}
-}
-
-void GameEmGine::removeSprite(SpriteInfo * sprite)
-{
-	//	for(int a = 0; a < _tmpNumSprites; a++)
-	//		if(_tmpSpriteArr[0][a] == sprite)
-	//			_tmpSpriteArr->erase(a),
-	//			_tmpNumSprites--,
-	//			printf("This sprite has been removed!!\n\n");
-}
 
 void GameEmGine::addCamera(Camera *cam)
 {

@@ -6,14 +6,12 @@
 #include <string>
 #include <thread>
 #include "ShaderCombiner.h"
-#include "Logger.h"
 //#include "EmGineAudioPlayer.h"
 //#include "Sprite.h"
 #include "GLSLCompiler.h"
 #include "WindowCreator.h"
 #include "Camera.h"
 #include "Model.h"
-#include "SpriteBatch.h"
 //#include "ModelBatch.h"
 #include "InputManager.h"
 #include "FrameBuffer.h"
@@ -117,11 +115,9 @@ public:
 	/*does not work!!!!*/
 	void addModelBatch(const char *model);
 
-	void addSprite(SpriteInfo* sprite);
 
 	void removeSprite(int index);
 
-	void removeSprite(SpriteInfo* sprite);
 
 	void addCamera(Camera* camera);
 
@@ -163,10 +159,8 @@ private:
 	static std::vector<Camera*> m_cameras;
 //	static ModelBatch* m_modelBatch;
 	static FrameBuffer m_mainBuffer;
-	static SpriteBatch* m_spriteBatch;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;
-	static std::vector<SpriteInfo*> m_sprites;
 
 	static float m_fps;
 	static short m_fpsLimit;

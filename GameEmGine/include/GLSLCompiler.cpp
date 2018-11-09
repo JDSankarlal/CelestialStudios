@@ -145,7 +145,7 @@ void GLSLCompiler::linkShaders ()
 		m_programID = m_vertID = m_fragID = 0;
 
 		// Use the infoLog as you see fit.
-		m_log->writeLog (infoLog + '\n');
+		printf(infoLog + '\n');
 		// In this simple program, we'll just leave
 		return;
 	}
@@ -239,7 +239,7 @@ bool GLSLCompiler::compileShader (Shaders shadType, const std::string filePath, 
 		char* errorLog = new char[maxLength];
 		glGetShaderInfoLog (id, maxLength, &maxLength, errorLog);
 
-		m_log->writeLog (errorLog + '\n');
+		printf(errorLog + '\n');
 
 		createDefault ();
 		return false;
