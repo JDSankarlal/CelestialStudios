@@ -13,6 +13,7 @@ uniform float Attenuation_Constant;
 uniform float Attenuation_Linear;
 uniform float Attenuation_Quadratic;
 
+uniform vec3 LightDirection = vec3(0,1,0);
 uniform sampler2D uTex;
 uniform vec4 colourMod;
 uniform bool textured;
@@ -56,16 +57,16 @@ void main()
         //The light contributes to this surface
         
         //Calculate attenuation (falloff)
-        //float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
+        float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
         
         //Calculate diffuse contribution
-        outColor.rgb += LightDiffuse * NdotL ;
+        outColor.rgb += LightDiffuse * NdotL * attenuation;
         
         //Blinn-Phong half vector
         float NdotHV =  max(dot(normal, normalize(lightDir + normalize(-pos))), 0.0); 
         
         //Calculate specular contribution
-        outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent)/* * attenuation*/;
+        outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
     }
   //  outColor.rgb = normal; 
 }
