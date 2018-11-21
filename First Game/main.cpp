@@ -24,10 +24,6 @@ Model *mod[modSize];
 void shaderInit()
 {
 	//shader initialization
-	colourProgram.compileShaders("Shaders/Colour Shading.vtsh", "Shaders/Colour Shading.fmsh");
-	colourProgram.linkShaders();
-	colourProgram2.compileShaders("Shaders/Colour Shading 2.vtsh", "Shaders/Colour Shading 2.fmsh");
-	colourProgram2.linkShaders();
 }
 
 //instance key is pressed
@@ -185,7 +181,7 @@ void update()
 				{
 					printf("SPECIAL ABILITY\n");
 				}
-				if(p1.triggers[LT])
+				if(p1.triggers[LT] >= .95)
 				{
 					printf("Dash\n");
 				}

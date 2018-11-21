@@ -42,14 +42,14 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	//glUniform4f(shader.getUniformLocation("LightPosition"), 2.0f, 3.0f, 0.01f, 1.0f);
 
-	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.6f, 0.6f, 0.6f);
-	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.0f, 0.0f, 1.0f);
-	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.2f, 0.2f);
+	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.0f, 0.0f, 0.0f);
+	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.8f, 0.8f, 1.0f);
+	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.2f, 0.2f, 0.2f);
 
-	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 50.0f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f);
+	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 100.0f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.5f); //Pretty much the brightness in the center.
 	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.02f);
 
 	glUniform1f(shader.getUniformLocation("utime"), (float)clock() / 1000);
 
