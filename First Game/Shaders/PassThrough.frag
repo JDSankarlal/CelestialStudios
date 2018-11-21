@@ -1,6 +1,6 @@
 #version 420
 
-uniform vec4 LightPosition;
+uniform vec4 LightPosition = vec4(0.0,0.0,-15.0,1.0);
 
 //color
 uniform vec3 LightAmbient;
@@ -30,10 +30,17 @@ void main()
     
     //outColor = vec4(normal, 1.0f);
     //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
-    if(!textured)
-      outColor = colourMod; 
-    outColor.rgb = LightAmbient;
-    outColor *= colourMod; 
+    
+     if(textured)
+     {       
+        vec4 textureColor = texture(uTex, texcoord);
+        outColor = textureColor;
+      //  outColor.rgb *= textureColor.rgb;
+     }else     
+     {
+        outColor = colourMod; 
+     }
+
     
     //account for rasterizer interpolating
     vec3 normal = normalize(norm);
@@ -49,7 +56,7 @@ void main()
         //The light contributes to this surface
         
         //Calculate attenuation (falloff)
-       // float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
+        //float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
         
         //Calculate diffuse contribution
         outColor.rgb += LightDiffuse * NdotL ;
@@ -58,15 +65,7 @@ void main()
         float NdotHV =  max(dot(normal, normalize(lightDir + normalize(-pos))), 0.0); 
         
         //Calculate specular contribution
-        outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) ;
+        outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent)/* * attenuation*/;
     }
-    
-    if(textured)
-    {       
-        vec4 textureColor = texture(uTex, texcoord);
-        outColor.rgb *= textureColor.rgb;
-        outColor.a = textureColor.a;
-    }
-  
-      
+  //  outColor.rgb = normal; 
 }

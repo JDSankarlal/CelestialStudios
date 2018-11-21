@@ -185,7 +185,7 @@ bool Mesh::loadMesh(std::string path)
 		(inputBuff == nullptr ? "" : (inputBuff[strlen(inputBuff) - 1] = (inputBuff[strlen(inputBuff) - 1] == '\n' ? ' ' : inputBuff[strlen(inputBuff) - 1]), inputBuff)),
 		  MeshCheck)
 	{
-
+		//checks for comments
 		if(strchr(inputBuff, '#'))
 			memset(strchr(inputBuff, '#'), '\0', sizeof(char));
 
@@ -195,7 +195,6 @@ bool Mesh::loadMesh(std::string path)
 			char str[CHAR_BUFF_SIZE];
 			sscanf_s(inputBuff, "usemtl %s", str, CHAR_BUFF_SIZE);
 			faces.push_back({ std::string(str),std::vector< Vertex3D>() });
-			//colours = loadMaterials(newPath);
 		} else
 			if(strstr(inputBuff, "vt"))
 			{
@@ -208,13 +207,13 @@ bool Mesh::loadMesh(std::string path)
 			{
 				//Normal data
 				Coord3D tmp;
-				sscanf_s(inputBuff, "vt %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
+				sscanf_s(inputBuff, "vn %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
 				norms.push_back(tmp);
 			} else if(strchr(inputBuff, 'o'))
 				continue;
 			else if(strchr(inputBuff, 's'))
 				continue;
-			else if(strchr(inputBuff, 'f'))
+			else if(strchr(inputBuff, 'f'))//Collect Face Data
 			{
 				//Face Dat
 
@@ -243,8 +242,10 @@ bool Mesh::loadMesh(std::string path)
 				short type = 0;
 				reformat(type);
 				formatStr = "f";
+
 				for(unsigned a = 0; a < count; a++)
 					formatStr += format[a];
+				
 				sscanf_s(inputBuff, formatStr.c_str(),
 						 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
 						 &tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
@@ -283,9 +284,9 @@ bool Mesh::loadMesh(std::string path)
 					faces.back().second.push_back(tmp);
 				}
 
-			} else if(strchr(inputBuff, 'v'))
+			} else if(strchr(inputBuff, 'v'))//Collects Vertex Data
 			{
-				//Vertex Datae
+				//Vertex Data
 
 				Coord3D tmp;
 				sscanf_s(inputBuff, "v %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
@@ -302,10 +303,6 @@ bool Mesh::loadMesh(std::string path)
 	}
 	fclose(f);
 
-
-	//ColourRGBA rgbaTmp;
-	//for (unsigned a = 0; a < colours.size(); a++)
-	//	rgbaTmp *= colours[a].second.m_colour;
 
 	//unpacked data
 	for(unsigned int a = 0; a < faces.size(); a++)
@@ -374,10 +371,6 @@ void Mesh::render(GLSLCompiler& shader)
 						textured = true,
 						glUniform1i(shader.getUniformLocation("uTex"), c),
 						glBindTexture(GL_TEXTURE_2D, d.id);
-				//else if (d.type == TEXTURE_TYPE::SPECULAR)
-				//	glUniform1i(shader.getUniformLocation("specularTexture"), c),
-				//	glBindTexture(GL_TEXTURE_2D, d.id);
-
 
 				c++;
 			}
