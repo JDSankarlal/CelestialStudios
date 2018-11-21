@@ -253,6 +253,8 @@ void GameEmGine::calculateFPS()
 	glfwSetTime(0);
 }
 
+
+
 void GameEmGine::fpsLimiter()
 {
 	static bool enter = false;

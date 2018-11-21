@@ -10,7 +10,8 @@ using namespace std;
 float ang = 2;
 int numModel = 0;
 bool m_left = 0, m_right = 0, m_in = 0, m_out = 0, m_up = 0, m_down = 0,
-rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0;
+rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0,
+movePlayer = true;
 Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 
@@ -77,12 +78,12 @@ void keyInputReleased(int key, int _mod)
 
 	if(key == GLFW_KEY_SPACE) //changes the model that is being moved
 	{
-		//Coord2D tmp = rightM - leftM;
-		//float length = sqrt(tmp.x * tmp.x + tmp.y * tmp.y);
-		//printf("%f\n\n", length);
 		static CAMERA_TYPE type = PERSPECTIVE;
 		game.setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 	}
+
+	if(key == GLFW_KEY_TAB)
+		movePlayer = !movePlayer;
 
 	if(key == 'R') //resets the camera
 	{
@@ -101,14 +102,14 @@ bool collisions(Model *l, Model *k)
 	//if distance between models in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 	Coord3D thing = l->getCenter() - k->getCenter();
 
-	float distanceX = thing.coordX;
-	float distanceY = thing.coordZ;
+	float distanceX = abs(thing.coordX);
+	float distanceY = abs(thing.coordZ);
 
-	//float capW = l->getWidth() / 2 + k->getWidth() / 2;
-	//float capD = l->getDepth() / 2 + k->getDepth() / 2;
+	float capW = (l->getWidth() + k->getWidth()) / 2;
+	float capD = (l->getDepth() + k->getDepth()) / 2;
 
-	if(std::abs(distanceX) < l->getWidth() / 2 + k->getWidth() / 2)
-		if(std::abs(distanceY) < l->getDepth() / 2 + k->getDepth() / 2)
+	if(std::abs(distanceX) < capW)
+		if(std::abs(distanceY) < capD)
 			return true;
 
 	return false;
@@ -122,242 +123,126 @@ void update()
 	static Model* bullets[4];
 	static Coord3D velocity[4];
 	static bool makeShitLessCancer[4];
-	for(int a = 0; a < 4; a++)
-		if(game.isControllerConnected(a))
-		{
-			Xinput p1 = game.getController(a);
-
-
-			static float angle[4] = { 0,0,0,0 };
-			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+	if(movePlayer)
+		for(int a = 0; a < 4; a++)
+			if(game.isControllerConnected(a))
 			{
-
-				angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-								 sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-								 + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-				angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
-				angle[a] = fmodf(angle[a], 360);
-			}
+				Xinput p1 = game.getController(a);
 
 
-			if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
-			{
-				makeShitLessCancer[a] = true;
+				static float angle[4] = { 0,0,0,0 };
+				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+				{
+
+					angle[a] = acosf(p1.Coord2D_sticks[RS].x /
+									 sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+									 + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
+					angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
+					angle[a] = fmodf(angle[a], 360);
+				}
+
+
+				if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
+				{
+					makeShitLessCancer[a] = true;
+
+					if(bullets[a])
+					{
+						game.removeModel(bullets[a]);
+						//	delete bullets[0];
+					}
+
+					game.addModel(bullets[a] = new Model(*mod[a]));
+					bullets[a]->getTransformer().reset();
+					Coord3D pos = mod[a]->getTransformer().getPosition();
+					bullets[a]->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
+					bullets[a]->getTransformer().setScale(0.25);
+
+					bullets[a]->getTransformer().setRotation({ 90 , angle[a] ,0 });
+
+
+					float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+					float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+
+					velocity[a] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
+					audio.createStream("pew.wav");
+					audio.play();
+				} else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
+					makeShitLessCancer[a] = false;
+
+				/// - Button Presses on controller - ///
+
+				if(p1.buttonPressed(p1.buttons.START))
+				{
+					printf("\nExiting Game\n");
+					exit(0);
+				}
+				if(p1.buttonPressed(p1.buttons.X))
+				{
+					printf("RELOADING!!!\n");
+				}
+				if(p1.buttonPressed(p1.buttons.Y))
+				{
+					printf("SPECIAL ABILITY\n");
+				}
+				if(p1.triggers[LT])
+				{
+					printf("Dash\n");
+				}
+
+				/// - Bullet Collisions - ///
 
 				if(bullets[a])
 				{
-					game.removeModel(bullets[a]);
-					//	delete bullets[0];
-				}
-
-				game.addModel(bullets[a] = new Model(*mod[a]));
-				bullets[a]->getTransformer().reset();
-				Coord3D pos = mod[a]->getTransformer().getPosition();
-				bullets[a]->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
-				bullets[a]->getTransformer().setScale(0.25);
-
-				bullets[a]->getTransformer().setRotation({ 90 , angle[a] ,0 });
-
-
-				float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-				float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-
-				velocity[a] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
-				audio.createStream("pew.wav");
-				audio.play();
-			} else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
-				makeShitLessCancer[a] = false;
-
-			/// - Button Presses on controller - ///
-
-			if(p1.buttonPressed(p1.buttons.START))
-			{
-				printf("\nExiting Game\n");
-				exit(0);
-			}
-			if(p1.buttonPressed(p1.buttons.X))
-			{
-				printf("RELOADING!!!\n");
-			}
-			if(p1.buttonPressed(p1.buttons.Y))
-			{
-				printf("SPECIAL ABILITY\n");
-			}
-			if(p1.triggers[LT])
-			{
-				printf("Dash\n");
-			}
-
-			/// - Bullet Collisions - ///
-
-			if(bullets[a])
-			{
-				bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
-				if(collisions(bullets[a], mod[8]))
-				{
-					game.removeModel(bullets[a]);
-					printf("Hit BOSS\n\n");
-				}
-				for(int i = 5; i < 8; i++)
-				{
-					if(collisions(bullets[a], mod[i]))
+					bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
+					if(collisions(bullets[a], mod[8]))
 					{
 						game.removeModel(bullets[a]);
-						printf("Hit Wall??\n\n");
-						break;
+						printf("Hit BOSS\n\n");
 					}
+					for(int i = 5; i < 8; i++)
+					{
+						if(collisions(bullets[a], mod[i]))
+						{
+							game.removeModel(bullets[a]);
+							printf("Hit Wall??\n\n");
+							break;
+						}
 
-					bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
+						bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
+					}
 				}
-			}
 				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
 				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move camera
 				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 			}
-		
-	//if(game.isControllerConnected(1))
-	//{
-	//
-	//	Xinput p1 = game.getController(1);
-	//
-	//
-	//
-	//	float angle = 0;
-	//	if(p1.sticks[RS].x || p1.sticks[RS].y)
-	//	{
-	//		angle = acos(p1.sticks[RS].x /
-	//					 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-	//					 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
-	//		angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
-	//	}
-	//
-	//	if(p1.triggers[RT] >= .95)
-	//	{
-	//		if(bullets[1])
-	//		{
-	//			game.removeModel(bullets[1]);
-	//			//	delete bullets[0];
-	//		}
-	//
-	//		game.addModel(bullets[1] = new Model(*mod[1]));
-	//		Coord3D pos = mod[1]->getTransformer().getPosition();
-	//		bullets[1]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
-	//		bullets[1]->getTransformer().setScale(.05);
-	//		bullets[1]->getTransformer().rotateBy({ 90 , 0, 0 });
-	//
-	//
-	//		float cosVal = cos(fmodf(angle - 90, 360)*(M_PI / 180));
-	//		float sinVal = sin(fmodf(angle - 90, 360)*(M_PI / 180));
-	//
-	//		velocity[1] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
-	//	}
-	//
-	//
-	//
-	//	mod[1]->getTransformer().setRotation({ 0,angle	,0 });
-	//	mod[1]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
-	//
-	////	mod[1]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
-	////	mod[1]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
-	//
-	//}
-	//
-	//if(game.isControllerConnected(2))
-	//{
-	//
-	//	Xinput p1 = game.getController(2);
-	//
-	//	float angle = 0;
-	//	if(p1.sticks[RS].x || p1.sticks[RS].y)
-	//	{
-	//		angle = acos(p1.sticks[RS].x /
-	//					 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-	//					 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
-	//		angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
-	//	}
-	//
-	//	if(p1.triggers[RT] >= .95)
-	//	{
-	//		if(bullets[2])
-	//		{
-	//			game.removeModel(bullets[2]);
-	//			//	delete bullets[0];
-	//		}
-	//
-	//		game.addModel(bullets[2] = new Model(*mod[3]));
-	//		Coord3D pos = mod[2]->getTransformer().getPosition();
-	//		bullets[2]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
-	//		bullets[2]->getTransformer().setScale(.05);
-	//		bullets[2]->getTransformer().rotateBy({ 90 , 0, 0 });
-	//
-	//
-	//		float cosVal = cos(fmodf(angle - 90, 360)*(M_PI / 180));
-	//		float sinVal = sin(fmodf(angle - 90, 360)*(M_PI / 180));
-	//
-	//		velocity[2] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
-	//	}
-	//
-	//
-	//	mod[2]->getTransformer().setRotation({ 0,angle	,0 });
-	//	mod[2]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
-	//}
-	//
-	//if(game.isControllerConnected(3))
-	//{
-	//
-	//	Xinput p1 = game.getController(3);
-	//
-	//
-	//	float angle = 0;
-	//	if(p1.sticks[RS].x || p1.sticks[RS].y)
-	//	{
-	//		angle = acos(p1.sticks[RS].x /
-	//					 sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-	//					 + p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / M_PI);
-	//		angle += (p1.sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
-	//	}
-	//
-	//	if(p1.triggers[RT] >= .95)
-	//	{
-	//		if(bullets[3])
-	//		{
-	//			game.removeModel(bullets[3]);
-	//			//	delete bullets[0];
-	//		}
-	//
-	//		game.addModel(bullets[3] = new Model(*mod[3]));
-	//		Coord3D pos = mod[3]->getTransformer().getPosition();
-	//		bullets[3]->getTransformer().setPosition(pos.x, pos.y + 1, pos.z);
-	//		bullets[3]->getTransformer().setScale(.05);
-	//		bullets[3]->getTransformer().rotateBy({ 90 , 0, 0 });
-	//
-	//
-	//		float cosVal = cos(fmodf(angle - 90, 360)*(M_PI / 180));
-	//		float sinVal = sin(fmodf(angle - 90, 360)*(M_PI / 180));
-	//
-	//		velocity[3] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
-	//	}
-	//
-	//	mod[3]->getTransformer().setRotation({ 0,angle	,0 });
-	//
-	//	mod[3]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move camera
-	//}
 
-	//if (game.isControllerConnected(0))
-	//{
-	//	Xinput p1 = game.getController(0);
-	//
-	//	p1.numButtons;
-	//	p1.numSticks;
-	//
-	//	if (Xinput::buttonPressed(p1.buttons.A))
-	//		printf("%d\n", p1.buttons.A);
-	//
-	//	game.moveCameraPositionBy({ p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move });//move camera
-	//	game.moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), { p1.sticks[RS].y  ,p1.sticks[RS].x, 0 });//rotate camera
-	//	game.moveCameraPositionBy({ 0 , 0, p1.triggers[LT] * -move });//move out
-	//}
+	if(!movePlayer)
+		if(game.isControllerConnected(0))
+		{
+			Xinput p1 = game.getController(0);
+
+			p1.numButtons;
+			p1.numSticks;
+			float angle;
+			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+			{
+
+				angle = acosf(p1.Coord2D_sticks[RS].x /
+							  sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+							  + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
+				angle += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
+				angle = fmodf(angle, 360);
+			}
+
+			if(Xinput::buttonPressed(p1.buttons.A))
+				printf("%d\n", p1.buttons.A);
+
+			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
+			game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
+			game.moveCameraPositionBy({ 0 , 0, p1.triggers[LT] * -move });//move out
+		}
 }
 
 void mouseButtonReleased(int button, int _mod)
@@ -371,6 +256,45 @@ void mouseButtonReleased(int button, int _mod)
 void render()
 {}
 
+//template<class T>
+//bool sorted(T* sort, unsigned size)
+//{
+//	for(unsigned a = 1; a < size; a++)
+//		if(sort[a] < sort[a - 1])
+//			return false;
+//	return true;
+//}
+//
+//template<class T>
+//void randomize(T* sort, unsigned size)
+//{
+//	for(int a = 0; a < size; a++)
+//		swap(sort[a], sort[(rand() % size]);
+//}
+//
+//template<class T>
+//void bogo(T* sort, unsigned size)
+//{
+//	if(sorted(sort, size))
+//		return;
+//
+//	randomize(sort, size);
+//	bogo(sort, size);
+//}
+//
+//template<class T>
+//void bogobogo(T* sort, unsigned size)
+//{
+//	T *sort2 = new T[size];
+//	memcpy_s(sort2, sizeof(T)*size, sort, sizeof(T)*size);
+//	unsigned n = size - 1;
+//
+//	while(n)
+//	{
+//		bogo(sort2, n);
+//		if()
+//	}
+//}
 
 int main()
 {
@@ -432,7 +356,7 @@ int main()
 
 	/// - Set Camera - ///
 
-	game.setCameraPosition({ 0,7,-20 });
+	game.setCameraPosition({ 0,15,-10 });
 	game.setCameraAngle(-45, { 1,0,0 });
 
 
@@ -441,7 +365,7 @@ int main()
 	audio.play(true);
 
 	//engine stuff
-	game.setFPSLimit(60);
+	//game.setFPSLimit(60);
 	game.keyPressed(keyInputPressed);
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);

@@ -17,26 +17,26 @@ void Camera::init(Size3D size, CAMERA_TYPE type)
 	size.height /= h;
 	*m_size = size;
 
+	m_viewMat = glm::lookAt(glm::vec3{ m_position->x,m_position->y,m_position->z + .1 }, glm::vec3{ m_position->x,m_position->y,m_position->z }, glm::vec3{ 0.f,1.f,0.f });
 	setType(type);
 
 }
 void Camera::setType(CAMERA_TYPE type)
 {
-	switch (type)
+	switch(type)
 	{
 	case ORTHOGRAPHIC:
-		m_projMat = glm::ortho(0.f, m_size->width, 0.f, m_size->height, .001f, m_size->depth);
-		break;
+	m_projMat = glm::ortho(0.f, m_size->width, 0.f, m_size->height, .001f, m_size->depth);
+	break;
 	case PERSPECTIVE:
-		m_projMat = glm::perspective(glm::radians(90.f), m_size->width / m_size->height, .001f, m_size->depth);
+	m_projMat = glm::perspective(glm::radians(90.f), m_size->width / m_size->height, .001f, m_size->depth);
 	}
 	m_cameraUpdate = true;
 }
 bool Camera::update()
 {
-	if (m_cameraUpdate)
+	if(m_cameraUpdate)
 	{
-		m_viewMat = glm::lookAt(glm::vec3{ m_position->x,m_position->y,m_position->z + .1 }, glm::vec3{ m_position->x,m_position->y,m_position->z }, glm::vec3{ 0.f,1.f,0.f });
 
 		m_transform.setPosition(m_position->x, m_position->y, m_position->z);
 		m_transform.setScale(m_scale);
@@ -89,7 +89,7 @@ void Camera::moveAngleBy(float angle, Coord3D direction)
 	//	m_rotMat = glm::rotate(m_rotMat, glm::radians(-angle), glm::vec3(direction.x, direction.y, direction.z));
 
 	//my rotation
-	if (angle != 0)
+	if(angle != 0)
 		m_rotMat *= Quat::quatRotationMat(glm::radians(angle), -direction.coordX, direction.coordY, direction.coordZ);
 
 	m_cameraUpdate = true;

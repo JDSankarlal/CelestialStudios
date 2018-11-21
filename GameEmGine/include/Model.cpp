@@ -40,7 +40,7 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
-	glUniform4f(shader.getUniformLocation("LightPosition"), 2.0f, 3.0f, 0.01f, 1.0f);
+	//glUniform4f(shader.getUniformLocation("LightPosition"), 2.0f, 3.0f, 0.01f, 1.0f);
 
 	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.6f, 0.6f, 0.6f);
 	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.0f, 0.0f, 1.0f);

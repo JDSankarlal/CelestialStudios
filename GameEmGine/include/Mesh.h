@@ -9,7 +9,7 @@
 #include "StructInfo.h"
 #include "ResourceManager.h"
 
-#define CHAR_BUFF_SIZE 125
+#define CHAR_BUFF_SIZE 500
 
 class Mesh
 {
