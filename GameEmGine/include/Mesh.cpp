@@ -102,7 +102,7 @@ void Mesh::loadMaterials(std::string path)
 			//path.resize(path.c_str());
 			cDir(str2);
 			std::string tmpStr(path.substr(0, path.find_last_of('/') + 1) + str2);
-			m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
+			m_textures.back().second.push_back(ResourceManager::createTexture2D(tmpStr.c_str()));
 			m_textures.back().second.back().type = TEXTURE_TYPE::DIFFUSE;
 
 		} else if(strstr(str, "map_Ks"))
@@ -113,7 +113,7 @@ void Mesh::loadMaterials(std::string path)
 			//path.resize(path.c_str());
 			cDir(str2);
 			std::string tmpStr(path.substr(0, path.find_last_of('/') + 1) + str2);
-			m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
+			m_textures.back().second.push_back(ResourceManager::createTexture2D(tmpStr.c_str()));
 			m_textures.back().second.back().type = TEXTURE_TYPE::SPECULAR;
 
 		} else if(strstr(str, "Ns"))

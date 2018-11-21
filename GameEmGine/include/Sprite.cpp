@@ -84,7 +84,7 @@ void Sprite::init(const char * path)
 	initial = true;
 
 	init();
-	_texture = ResourceManager::getTexture2D(path);
+	_texture = ResourceManager::createTexture2D(path);
 }
 
 void Sprite::draw()

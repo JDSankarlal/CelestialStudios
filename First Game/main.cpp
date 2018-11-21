@@ -213,7 +213,8 @@ void update()
 					}
 				}
 				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
-				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move camera
+				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
+				game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
 				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 			}
@@ -241,7 +242,8 @@ void update()
 
 			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
 			game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
-			game.moveCameraPositionBy({ 0 , 0, p1.triggers[LT] * -move });//move out
+			game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
+			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
 		}
 }
 
@@ -300,8 +302,8 @@ int main()
 {
 	/// - Load Models into Scene - ///
 
-	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
-	game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
+	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	//game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
