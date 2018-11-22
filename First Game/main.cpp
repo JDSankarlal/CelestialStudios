@@ -183,6 +183,7 @@ void update()
 				}
 				if(p1.triggers[LT] >= .95)
 				{
+					// Double velocity for ._ seconds
 					printf("Dash\n");
 				}
 
