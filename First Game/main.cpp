@@ -302,6 +302,7 @@ int main()
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
+	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 
 	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
@@ -333,6 +334,7 @@ int main()
 	//Floor Scale
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
 
+	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13,1,-1);
 	/// - Set Model Colour - ///
 	//Players
 	mod[0]->setColour(1, 0, 0);
