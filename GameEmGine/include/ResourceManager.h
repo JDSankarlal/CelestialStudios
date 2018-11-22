@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include <map>
 #include <string>
+#include <vector>
 #include "Texture.h"
 #include "ImageLoader.h"
 #include "GLSLCompiler.h"
@@ -12,7 +13,7 @@ struct Texture2DCache
 	Texture2D& getTexture(const char*);
 
 private:
-	std::map<std::string, Texture2D> m_texture;
+	std::map<std::string, Texture2D> m_textures;
 };
 		
 struct Texture3DCache
@@ -21,35 +22,30 @@ struct Texture3DCache
 	Texture3D& getTexture(const char*);
 
 private:
-	std::map<std::string, Texture3D> m_texture;
+	std::map<std::string, Texture3D> m_textures;
 };
 
 struct ShaderCache
 {
-	GLSLCompiler& getShader(std::string, std::string);
+	//creates a texture
+	GLSLCompiler& getShader(const char*, const char*);
 
-	template<class T1, class T2>
-	friend bool operator==(std::pair<T1, T2> p1, std::pair<T1, T2> p2)
-	{
-		return p1.first == p2.first &&
-			p1.second == p2.second;
-	}
 private:
-	std::map<std::pair<std::string, std::string>, GLSLCompiler> m_cashedShaders;
+	std::map<std::vector<std::string>, GLSLCompiler> m_shaders;
 };
-
 
 class ResourceManager
 {
 public:
-	static Texture2D& createTexture2D(const char*);
-	static Texture3D& getTexture3D(const char*);
+	static Texture2D getTexture2D(const char*);
+	static Texture3D getTexture3D(const char*);
+	static GLSLCompiler getShader(const char*, const char*);
 
-	static GLSLCompiler& createShader(const char*, const char*);
+	//static GLSLCompiler& createShader(const char*, const char*);
 
 private:
-	static Texture2DCache m_textureCache2D;
-	static Texture3DCache m_textureCache3D;
+	static Texture2DCache m_texter2DCache;
+	static Texture3DCache m_texture3DCache;
 	static ShaderCache m_shaderCache;
 };
 

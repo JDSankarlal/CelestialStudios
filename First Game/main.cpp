@@ -116,9 +116,10 @@ bool collisions(Model *l, Model *k)
 }
 
 //updates within game loop
-void update()
+void update(double dt)
 {
 	float move = .1f;
+	printf("%f\n", dt);
 
 	static Model* bullets[4];
 	static Coord3D velocity[4];

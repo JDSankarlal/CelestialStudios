@@ -4,7 +4,7 @@
 #include "EmGineAudioPlayer.h"
 
 #pragma region Static Variables
-void(*GameEmGine::m_compileShaders)(), (*GameEmGine::m_render)(), (*GameEmGine::m_gameLoop)();
+void(*GameEmGine::m_compileShaders)(), (*GameEmGine::m_render)(), (*GameEmGine::m_gameLoop)(double);
 Camera *GameEmGine::m_mainCamera;
 std::vector<Camera *>GameEmGine::m_cameras;
 GLSLCompiler *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
@@ -306,7 +306,7 @@ void GameEmGine::shaderInit(void shaders())
 	shaders();
 }
 
-void GameEmGine::gameLoopUpdate(void update())
+void GameEmGine::gameLoopUpdate(void update(double))
 {
 	m_gameLoop = update;
 }
@@ -422,7 +422,7 @@ void GameEmGine::update()
 	glfwPollEvents();//updates the event handelers
 
 	if (m_gameLoop != nullptr)
-		m_gameLoop();
+		m_gameLoop(glfwGetTime());
 }
 
 void GameEmGine::changeViewport(GLFWwindow *, int w, int h)

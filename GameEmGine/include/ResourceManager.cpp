@@ -1,18 +1,18 @@
 #include "ResourceManager.h"
 
-Texture2DCache ResourceManager::m_textureCache2D;
-Texture3DCache ResourceManager::m_textureCache3D;
+Texture2DCache ResourceManager::m_texter2DCache;
+Texture3DCache ResourceManager::m_texture3DCache;
 ShaderCache ResourceManager::m_shaderCache;
 
 Texture2D& Texture2DCache::getTexture(const char * path)
 {
-	auto it = m_texture.find(path);
+	auto it = m_textures.find(path);
 
-	if(it == m_texture.end())
+	if(it == m_textures.end())
 	{
-			Texture2D tmp= ImageLoader::loadImage2D(path);
-			m_texture.insert({path,tmp});
-			return m_texture[path];
+		Texture2D tmp = ImageLoader::loadImage2D(path);
+		m_textures.insert({ path,tmp });
+		return m_textures[path];
 	}
 	//printf("cashed image loaded\n");
 	return it->second;
@@ -20,49 +20,48 @@ Texture2D& Texture2DCache::getTexture(const char * path)
 
 Texture3D & Texture3DCache::getTexture(const char *path)
 {
-	auto it = m_texture.find(path);
+	auto it = m_textures.find(path);
 
-	if(it == m_texture.end())
+	if(it == m_textures.end())
 	{
 		Texture3D tmp = ImageLoader::loadImage3D(path);
-		m_texture.insert({path,tmp});
-		return m_texture[path];
+		m_textures.insert({ path,tmp });
+		return m_textures[path];
 	}
 	return it->second;
 }
 
-GLSLCompiler& ShaderCache::getShader(std::string vertShader, std::string fragShader)
-{
-	
-	auto it = m_cashedShaders.find({ vertShader, fragShader });
+GLSLCompiler& ShaderCache::getShader(const char * vtsh, const char* fmsh)
+{	
+	auto it = m_shaders.find({vtsh,fmsh});
 
-	if(it == m_cashedShaders.end())
+	if(it == m_shaders.end())
 	{
 		GLSLCompiler tmp;
-		tmp.create( vertShader, vertShader );
-		m_cashedShaders.insert({ { vertShader, vertShader },tmp });
-		return m_cashedShaders[{ vertShader, vertShader }];
+		tmp.create(vtsh, fmsh);
+		m_shaders[{ (std::string)vtsh, (std::string)fmsh }] = tmp;
+
+		return m_shaders[{ (std::string)vtsh, (std::string)fmsh }];
 	}
-	//printf("cashed image loaded\n");
-	
-	
+
 	return it->second;
+}
 
+Texture2D ResourceManager::getTexture2D(const char *path)
+{
+	Texture2D tmp;
+	return tmp = m_texter2DCache.getTexture(path);
 }
 
 
-Texture2D& ResourceManager::createTexture2D(const char *path)
+Texture3D ResourceManager::getTexture3D(const char *path)
 {
-	return m_textureCache2D.getTexture(path);
+	return m_texture3DCache.getTexture(path);
 }
 
-Texture3D& ResourceManager::getTexture3D(const char *path)
+GLSLCompiler ResourceManager::getShader(const char *vtsh, const char *fmsh)
 {
-	return m_textureCache3D.getTexture(path);
-}
-
-GLSLCompiler& ResourceManager::createShader(const char *vertShader, const char *fragShader)
-{
-	return m_shaderCache.getShader(vertShader,fragShader);
+	GLSLCompiler tmp;
+	return tmp = m_shaderCache.getShader(vtsh, fmsh);
 }
 
