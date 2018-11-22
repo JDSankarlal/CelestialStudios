@@ -183,8 +183,12 @@ void update()
 				}
 				if(p1.triggers[LT] >= .95)
 				{
-					// Double velocity for ._ seconds
-					printf("Dash\n");
+					//get deltaTime put into duraction variable
+					move = 0.5f;
+					//if (deltaTime >= duration + an amount)
+					//{
+					//		move = 0.1f;
+					//}
 				}
 
 				/// - Bullet Collisions - ///
@@ -391,5 +395,6 @@ int main()
 	game.run();//this one is pretty important
 
 	//the game ended... why are you here?... leave
+	//Or run it again... ;)
 	return 0;
 }
