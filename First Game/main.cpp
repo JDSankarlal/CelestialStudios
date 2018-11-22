@@ -316,6 +316,13 @@ int main()
 	mod[6] = new Model(*mod[5]);
 	mod[7] = new Model(*mod[5]);
 
+	//Street Lights
+	mod[11] = new Model(*mod[10]);
+	mod[12] = new Model(*mod[10]);
+	mod[13] = new Model(*mod[10]);
+	mod[14] = new Model(*mod[10]);
+	mod[15] = new Model(*mod[10]);
+
 	/// - Set Model Transforms - ///
 	//Player Transforms
 	mod[0]->getTransformer().setScale(1), mod[0]->getTransformer().setPosition(1, 1, 0),
@@ -331,10 +338,17 @@ int main()
 	//Boss Transforms
 	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(3);
 
-	//Floor Scale
+	//Floor Transforms
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
 
-	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13,1,-1);
+	//Street Light Transforms
+	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13,1,-1),
+		mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 1, 7),
+		mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 1, 15),
+		mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 1, -1), mod[13]->getTransformer().setRotation({0.0f,180.0f,0.0f}),
+		mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 1, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
+		mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 1, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+
 	/// - Set Model Colour - ///
 	//Players
 	mod[0]->setColour(1, 0, 0);
@@ -352,6 +366,11 @@ int main()
 	game.addModel(mod[3]);
 	game.addModel(mod[6]);
 	game.addModel(mod[7]);
+	game.addModel(mod[11]);
+	game.addModel(mod[12]);
+	game.addModel(mod[13]);
+	game.addModel(mod[14]);
+	game.addModel(mod[15]);
 
 	/// - Set Camera - ///
 
