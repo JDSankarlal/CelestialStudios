@@ -184,11 +184,19 @@ void update()
 				if(p1.triggers[LT] >= .95)
 				{
 					//get deltaTime put into duraction variable
-					move = 0.5f;
-					//if (deltaTime >= duration + an amount)
+					//if(deltaTime - coolDown >= 2)
 					//{
-					//		move = 0.1f;
+						//float duration = deltaTime;
+						move = 0.5f;
+						//if (deltaTime >= duration + an amount)
+						//{
+						//		move = 0.1f;
+						//		float coolDown = deltaTime;
+						//}
 					//}
+
+					
+					//Do the same with the LT button, have it so will only work every X seconds.
 				}
 
 				/// - Bullet Collisions - ///
