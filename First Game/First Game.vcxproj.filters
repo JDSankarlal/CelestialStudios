@@ -16,6 +16,7 @@
       <Filter>Main Game</Filter>
     </ClCompile>
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Logs\New Log">
@@ -38,5 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
 </Project>

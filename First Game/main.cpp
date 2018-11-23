@@ -5,6 +5,7 @@
 #include <EmGineAudioPlayer.h>
 #include <vector>
 #include "Boss.h"
+#include "Player.h"
 
 using namespace std;
 
@@ -129,7 +130,7 @@ void update(double dt)
 
 	
 
-	static vector<Model*> bullets[4];
+	static vector<Player*> bullets[4];
 	static vector<Coord3D> velocity[4];
 	static bool makeShitLessCancer[4];//stops the creation of bullets when trigger is healed down
 	if(movePlayer)
@@ -163,7 +164,7 @@ void update(double dt)
 					//}
 
 					bullets[a].push_back(nullptr);
-					game.addModel(bullets[a].back() = new Model(*mod[a]));
+					game.addModel(bullets[a].back() = new Player(*mod[a]));
 					bullets[a].back()->getTransformer().reset();
 					Coord3D pos = mod[a]->getTransformer().getPosition();
 					bullets[a].back()->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
@@ -233,13 +234,12 @@ void update(double dt)
 							game.removeModel(bullets[a][b]);
 							bullets[a].erase(bullets[a].begin()+b);
 							velocity[a].erase(velocity[a].begin() + b);
-							Boss*CandyMan = (Boss*)mod[8];
-							CandyMan->setHealth(CandyMan->getHealth() - 100);
+							Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+							CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
 							if (CandyMan->getHealth() <= 0)
 							{
-								game.removeModel (CandyMan);
+								game.removeModel (CandyMan); // If health = 0 then boss dead
 							}
-							printf("Hit BOSS\n\n");
 							break;
 						}
 
@@ -253,7 +253,7 @@ void update(double dt)
 									game.removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
 									velocity[a].erase(velocity[a].begin() + b);
-									printf("Hit Wall??\n\n");
+									printf("Hit Wall\n\n");
 									break;
 								}
 							}
@@ -349,7 +349,7 @@ int main()
 	/// - Load Models into Scene - ///
 
 	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
-	game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
+	game.addModel(mod[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
 	//Boss *CandyMan = mod[8];
@@ -360,9 +360,9 @@ int main()
 
 	/// - Make New Models From Existing Models - ///
 	//Players
-	mod[3] = new Model(*mod[0]);
-	mod[2] = new Model(*mod[0]);
-	mod[1] = new Model(*mod[0]);
+	mod[3] = new Player(*mod[0]);
+	mod[2] = new Player(*mod[0]);
+	mod[1] = new Player(*mod[0]);
 
 	//Placeholder Walls
 	mod[6] = new Model(*mod[5]);
