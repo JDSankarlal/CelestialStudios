@@ -31,7 +31,7 @@ void ShaderCombiner::combine(std::string base, std::string addition, std::string
 			addition.find_last_of('.') - addition.find_last_of('/') - 1) + "Combined." + ending)).c_str(), "w+");
 
 	char  baseStr[255], addStr[255];
-	char* check;
+	//char* check;
 	bool inmain = false;
 	while (fgets(baseStr, 255, basef))
 	{

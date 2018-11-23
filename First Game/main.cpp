@@ -120,6 +120,9 @@ void update(double dt)
 	float move = .1f;
 	printf("%f\n", dt);
 
+	float coolDown = 0;
+	float duration = 0;
+
 	static Model* bullets[4];
 	static Coord3D velocity[4];
 	static bool makeShitLessCancer[4];
@@ -188,16 +191,16 @@ void update(double dt)
 				if(p1.triggers[LT] >= .95)
 				{
 					//get deltaTime put into duraction variable
-					//if(deltaTime - coolDown >= 2)
-					//{
-						//float duration = deltaTime;
+					if(dt - coolDown >= 0.002f)
+					{
+						duration = dt;
 						move = 0.5f;
-						//if (deltaTime >= duration + an amount)
-						//{
-						//		move = 0.1f;
-						//		float coolDown = deltaTime;
-						//}
-					//}
+						if (dt - 0.0000000001f >= duration )
+						{
+								move = 0.1f;
+								coolDown = dt;
+						}
+					}
 
 					
 					//Do the same with the LT button, have it so will only work every X seconds.
