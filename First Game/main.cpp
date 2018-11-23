@@ -117,8 +117,16 @@ bool collisions(Model *l, Model *k)
 //updates within game loop
 void update(double dt)
 {
+	static float  time = 0;
+	time += dt;
+	static float coolDown = 0;
+	static float duration = 0;
+	static bool f = true;
+
 	float move = .1f;
 	printf("%f\n", dt);
+
+	
 
 	static vector<Model*> bullets[4];
 	static vector<Coord3D> velocity[4];
@@ -191,14 +199,21 @@ void update(double dt)
 				if(p1.triggers[LT] >= .95)
 				{
 					//get deltaTime put into duraction variable
-					if(dt - coolDown >= 0.002f)
+					
+					if(time - coolDown >= 3)
 					{
-						duration = dt;
+						if (f == true)
+						{
+							duration = time;
+							f = false;
+						}
 						move = 0.5f;
-						if (dt - 0.0000000001f >= duration )
+						if (time - 0.1f >= duration )
 						{
 								move = 0.1f;
-								coolDown = dt;
+								//If triggers up then coolDown = time;
+								coolDown = time;
+								f = true;
 						}
 					}
 
