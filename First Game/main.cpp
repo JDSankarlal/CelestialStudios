@@ -24,10 +24,6 @@ Model *mod[modSize];
 void shaderInit()
 {
 	//shader initialization
-	colourProgram.compileShaders("Shaders/Colour Shading.vtsh", "Shaders/Colour Shading.fmsh");
-	colourProgram.linkShaders();
-	colourProgram2.compileShaders("Shaders/Colour Shading 2.vtsh", "Shaders/Colour Shading 2.fmsh");
-	colourProgram2.linkShaders();
 }
 
 //instance key is pressed
@@ -85,13 +81,16 @@ void keyInputReleased(int key, int _mod)
 	if(key == GLFW_KEY_TAB)
 		movePlayer = !movePlayer;
 
-	if(key == 'R') //resets the camera
+	if(key == GLFW_KEY_F5) //resets the camera
 	{
 		GameEmGine::m_modelShader->refresh();
 
 		//game.setCameraAngle(0, { 1, 1, 1 });
 		//	game.setCameraPosition({0,0,0});
 	}
+
+	if(key == 'R')
+		game.setCameraAngle(0, {1,1,1});
 
 	printf("key RELEASED code: %d\n\n", key);
 }
@@ -186,9 +185,22 @@ void update(double dt)
 				{
 					printf("SPECIAL ABILITY\n");
 				}
-				if(p1.triggers[LT])
+				if(p1.triggers[LT] >= .95)
 				{
-					printf("Dash\n");
+					//get deltaTime put into duraction variable
+					//if(deltaTime - coolDown >= 2)
+					//{
+						//float duration = deltaTime;
+						move = 0.5f;
+						//if (deltaTime >= duration + an amount)
+						//{
+						//		move = 0.1f;
+						//		float coolDown = deltaTime;
+						//}
+					//}
+
+					
+					//Do the same with the LT button, have it so will only work every X seconds.
 				}
 
 				/// - Bullet Collisions - ///
@@ -215,7 +227,7 @@ void update(double dt)
 				}
 				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
 				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
-				game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
+				//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
 				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 			}
@@ -303,11 +315,12 @@ int main()
 {
 	/// - Load Models into Scene - ///
 
-	game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
-	//game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
+	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
+	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 
 	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
@@ -320,6 +333,13 @@ int main()
 	//Placeholder Walls
 	mod[6] = new Model(*mod[5]);
 	mod[7] = new Model(*mod[5]);
+
+	//Street Lights
+	mod[11] = new Model(*mod[10]);
+	mod[12] = new Model(*mod[10]);
+	mod[13] = new Model(*mod[10]);
+	mod[14] = new Model(*mod[10]);
+	mod[15] = new Model(*mod[10]);
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -336,8 +356,16 @@ int main()
 	//Boss Transforms
 	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(3);
 
-	//Floor Scale
+	//Floor Transforms
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
+
+	//Street Light Transforms
+	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13,1,-1),
+		mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 1, 7),
+		mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 1, 15),
+		mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 1, -1), mod[13]->getTransformer().setRotation({0.0f,180.0f,0.0f}),
+		mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 1, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
+		mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 1, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 	/// - Set Model Colour - ///
 	//Players
@@ -347,7 +375,7 @@ int main()
 	mod[3]->setColour(1, 1, 0);
 
 	//Floor
-	mod[9]->setColour((float)196 / 255, (float)167 / 255, (float)113 / 255);
+	mod[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
 
 	/// - Add Duplicate Models - ///
 
@@ -356,6 +384,11 @@ int main()
 	game.addModel(mod[3]);
 	game.addModel(mod[6]);
 	game.addModel(mod[7]);
+	game.addModel(mod[11]);
+	game.addModel(mod[12]);
+	game.addModel(mod[13]);
+	game.addModel(mod[14]);
+	game.addModel(mod[15]);
 
 	/// - Set Camera - ///
 
@@ -376,5 +409,6 @@ int main()
 	game.run();//this one is pretty important
 
 	//the game ended... why are you here?... leave
+	//Or run it again... ;)
 	return 0;
 }

@@ -34,9 +34,9 @@ void main()
     //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
     
      if(textured)
-     {       
-        vec4 textureColor = texture(uTex, texcoord);
-        outColor = textureColor;
+     {
+        outColor = texture(uTex, texcoord);
+        outColor *= colourMod;
       //  outColor.rgb *= textureColor.rgb;
      }else     
      {
@@ -53,9 +53,9 @@ void main()
     
     float NdotL = dot(normal, lightDir);
 
-    float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
+    //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
 
-    if(LightAngleConstraint < angle)
+   // if(LightAngleConstraint < angle)
         if(NdotL > 0.0)
         {
             //The light contributes to this surface
@@ -72,5 +72,5 @@ void main()
             //Calculate specular contribution
             outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
         }
-  //  outColor.rgb = normal; 
+       // outColor.rgb = normal;
 }

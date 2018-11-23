@@ -40,17 +40,17 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
-	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(/*cam.getProjectionMatrix() * cam.getViewMatrix() * cam.getObjectMatrix()**/glm::vec4(0.0f,3.0f,10.0f,1.0f))[0]);
+	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(/*cam.getProjectionMatrix() * cam.getViewMatrix() * cam.getObjectMatrix()**/glm::vec4(0.0f,3.0f,5.0f,1.0f))[0]);
 
-	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.5f, 0.5f, 0.5f);
-	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.0f, 0.0f, 1.0f);
-	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.8f, 0.2f, 0.2f);
-	glUniform3f(shader.getUniformLocation("LightDirection"), 0.0f, 0.0f, 0.2f);
+	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.0f, 0.0f, 0.0f);
+	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.8f, 0.8f, 1.0f);
+	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.2f, 0.2f, 0.2f);
 
-	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 50.0f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), .10f);
+	glUniform1f(shader.getUniformLocation("LightAngleConstraint"), 10.0f);
+	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 100.0f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.5f); //Pretty much the brightness in the center.
 	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.01f);
+	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.02f);
 
 	glUniform1f(shader.getUniformLocation("utime"), (float)clock() / 1000);
 
