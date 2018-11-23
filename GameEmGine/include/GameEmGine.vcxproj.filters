@@ -4,9 +4,6 @@
     <ClInclude Include="fileIO.h">
       <Filter>EmGine\FileIO</Filter>
     </ClInclude>
-    <ClInclude Include="GLSLCompiler.h">
-      <Filter>EmGine\Shader Stuff</Filter>
-    </ClInclude>
     <ClInclude Include="ImageLoader.h">
       <Filter>EmGine\FileIO</Filter>
     </ClInclude>
@@ -58,13 +55,13 @@
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
     <ClInclude Include="LightSource.h" />
+    <ClInclude Include="Shader.h">
+      <Filter>EmGine\Shader Stuff</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
       <Filter>EmGine\FileIO</Filter>
-    </ClCompile>
-    <ClCompile Include="GLSLCompiler.cpp">
-      <Filter>EmGine\Shader Stuff</Filter>
     </ClCompile>
     <ClCompile Include="ImageLoader.cpp">
       <Filter>EmGine\FileIO</Filter>
@@ -109,6 +106,9 @@
     <ClCompile Include="ShaderCombiner.cpp" />
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>EmGine\Shader Stuff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

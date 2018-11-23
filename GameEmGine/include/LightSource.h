@@ -24,7 +24,7 @@ public:
 	LightSource();
 	~LightSource();
 
-	void initLight(LIGHT_TYPE type, Camera * cam, GLSLCompiler * shader, LightInfo info, unsigned index= 0);
+	void initLight(LIGHT_TYPE type, Camera * cam, Shader * shader, LightInfo info, unsigned index= 0);
 
 	void update();
 private:

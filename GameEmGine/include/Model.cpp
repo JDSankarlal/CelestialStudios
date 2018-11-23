@@ -9,13 +9,17 @@ Model::Model(Model& model) :
 	m_mesh(model.m_mesh),
 	m_colour(model.m_colour)
 {
-
+	boundingBoxInit();
+	m_shaderBB.create("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
 }
 
 Model::Model(const char * path)
 {
+
 	if(loadModel(path))
 	{
+		boundingBoxInit();
+
 		m_left = m_mesh.left;
 		m_right = m_mesh.right;
 		m_top = m_mesh.top;
@@ -28,13 +32,13 @@ Model::Model(const char * path)
 Model::~Model()
 {}
 
-void Model::render(GLSLCompiler& shader, Camera& cam)
+void Model::render(Shader& shader, Camera& cam)
 {
 	shader.enable();
 	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
 	// update the position of the object
-	transformedUpdate(cam);
+	boundingBoxUpdate(cam);
 
 	/// - Lighting Variables - ///
 
@@ -56,12 +60,72 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
-
+	
 	//render the mesh
 	m_mesh.render(shader);
-
 	shader.disable();
+
+	if(m_enableBB)
+		drawBoundingBox(shader, cam);
+
+
 	m_transform.resetUpdated();
+}
+
+void Model::drawBoundingBox(Shader & shader, Camera & cam)
+{
+	float
+		top = -m_top.coordY,
+		bottom = -m_bottom.coordY,
+		left = -m_left.coordX,
+		right = -m_right.coordX,
+		front = -m_front.coordZ,
+		back = -m_back.coordZ;
+
+	Vertex3D
+		topLeftBack{ { left,top,back } },
+		topRightBack{ { right,top,back } },
+		topLeftFront{ { left, top,front } },
+		topRightFront{ { right,top,front } },
+		bottomLeftBack{ { left, bottom,back } },
+		bottomRightBack{ { right,bottom,back } },
+		bottomLeftFront{ { left, bottom,front } },
+		bottomRightFront{ { right,bottom,front } };
+
+	Vertex3D tmp[12 * 3]{
+		//top
+		topLeftBack,topRightBack,topRightFront,
+		topLeftBack,topRightFront,topLeftFront,
+		//bottom
+		bottomLeftBack,bottomRightBack, bottomRightFront,
+		bottomLeftBack,bottomRightFront,bottomLeftFront,
+		//front
+		topLeftFront,topRightFront,bottomRightFront,
+		topLeftFront,bottomRightFront,bottomLeftFront,
+		//back
+		topLeftBack,  topRightBack,bottomRightBack,
+		topLeftBack,bottomRightBack,bottomLeftBack,
+		//left
+		topLeftBack,topLeftFront,bottomLeftFront,
+		topLeftBack,bottomLeftFront,bottomLeftBack,
+		//right
+		topRightBack,   topRightFront,bottomRightFront,
+		topRightBack,bottomRightFront,bottomRightBack
+	};
+
+	memcpy_s(m_vertBBDat, 12 * 3 * sizeof(Vertex3D), tmp, 12 * 3 * sizeof(Vertex3D));
+	
+	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
+	m_shaderBB.enable();
+	glUniform4fv(m_shaderBB.getUniformLocation("colourMod"), 1, colour);
+
+	glBindVertexArray(m_BBVaoID);
+	glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
+	glBindVertexArray(0);
+
+	m_shaderBB.disable();
+	//shader.enable();
+	
 }
 
 Transformer& Model::getTransformer()
@@ -82,6 +146,11 @@ void Model::setColour(float r, float g, float b)
 bool Model::loadModel(const char * path)
 {
 	return m_mesh.loadMesh(path);
+}
+
+void Model::enableBoundingBox(bool enable)
+{
+	m_enableBB = enable;
 }
 
 float Model::getWidth()
@@ -113,7 +182,7 @@ Coord3D Model::getCenter()
 	return { tmp.x, tmp.y, tmp.z };
 }
 
-void Model::transformedUpdate(Camera& cam)
+void Model::boundingBoxUpdate(Camera& cam)
 {
 	m_front = m_back = m_top = m_bottom = m_left = m_right = Coord3D(0, 0, 0);
 	std::vector<glm::vec4> thing
@@ -145,5 +214,74 @@ void Model::transformedUpdate(Camera& cam)
 		}
 	}
 }
+
+void Model::boundingBoxInit()
+{
+	glGenVertexArrays(1, &m_BBVaoID);
+	glGenBuffers(1, &m_BBVboID);
+
+	glBindVertexArray(m_BBVaoID);
+	float
+		top = m_top.coordY,
+		bottom = m_bottom.coordY,
+		left = m_left.coordX,
+		right = m_right.coordX,
+		front = m_front.coordZ,
+		back = m_back.coordZ;
+
+	Vertex3D
+		topLeftBack{ { left,top,back } },
+		topRightBack{ { right,top,back } },
+		topLeftFront{ { left, top,front } },
+		topRightFront{ { right,top,front } },
+		bottomLeftBack{ { left, bottom,back } },
+		bottomRightBack{ { right,bottom,back } },
+		bottomLeftFront{ { left, bottom,front } },
+		bottomRightFront{ { right,bottom,front } };
+
+
+	static Vertex3D vertDat[12 * 3]{
+		//top
+		topLeftBack,topRightBack,topRightFront,
+		topLeftBack,topRightFront,topLeftFront,
+		//bottom
+		bottomLeftBack,bottomRightBack, bottomRightFront,
+		bottomLeftBack,bottomRightFront,bottomLeftFront,
+		//front
+		topLeftFront,topRightFront,bottomRightFront,
+		topLeftFront,bottomRightFront,bottomLeftFront,
+		//back
+		topLeftBack,  topRightBack,bottomRightBack,
+		topLeftBack,bottomRightBack,bottomLeftBack,
+		//left
+		topLeftBack,topLeftFront,bottomLeftFront,
+		topLeftBack,bottomLeftFront,bottomLeftBack,
+		//right
+		topRightBack,   topRightFront,bottomRightFront,
+		topRightBack,bottomRightFront,bottomRightBack
+	};
+
+	m_vertBBDat = vertDat;
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_BBVboID);
+	glBufferData(GL_ARRAY_BUFFER, 12 * 3 * sizeof(Vertex3D), vertDat, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	//vertex     atributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
+
+	//UV         atributes
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, uv));
+
+	//normal     atributes
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
 
 

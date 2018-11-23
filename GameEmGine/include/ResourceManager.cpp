@@ -31,13 +31,13 @@ Texture3D & Texture3DCache::getTexture(const char *path)
 	return it->second;
 }
 
-GLSLCompiler& ShaderCache::getShader(const char * vtsh, const char* fmsh)
+Shader& ShaderCache::getShader(const char * vtsh, const char* fmsh)
 {	
 	auto it = m_shaders.find({vtsh,fmsh});
 
 	if(it == m_shaders.end())
 	{
-		GLSLCompiler tmp;
+		Shader tmp;
 		tmp.create(vtsh, fmsh);
 		m_shaders[{ (std::string)vtsh, (std::string)fmsh }] = tmp;
 
@@ -59,9 +59,9 @@ Texture3D ResourceManager::getTexture3D(const char *path)
 	return m_texture3DCache.getTexture(path);
 }
 
-GLSLCompiler ResourceManager::getShader(const char *vtsh, const char *fmsh)
+Shader ResourceManager::getShader(const char *vtsh, const char *fmsh)
 {
-	GLSLCompiler tmp;
+	Shader tmp;
 	return tmp = m_shaderCache.getShader(vtsh, fmsh);
 }
 

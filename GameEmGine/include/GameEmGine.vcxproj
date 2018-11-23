@@ -181,7 +181,7 @@
     <ClInclude Include="fileIO.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameEmGine.h" />
-    <ClInclude Include="GLSLCompiler.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="ImageLoader.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LightSource.h" />
@@ -204,7 +204,7 @@
     <ClCompile Include="fileIO.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameEmGine.cpp" />
-    <ClCompile Include="GLSLCompiler.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ImageLoader.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Matrix.cpp" />

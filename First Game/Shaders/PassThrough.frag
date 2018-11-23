@@ -33,15 +33,15 @@ void main()
     //outColor = vec4(normal, 1.0f);
     //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
     
-     if(textured)
-     {       
-        vec4 textureColor = texture(uTex, texcoord);
-        outColor = textureColor;
-      //  outColor.rgb *= textureColor.rgb;
-     }else     
-     {
-        outColor = colourMod; 
-     }
+    if(textured)
+    {       
+       vec4 textureColor = texture(uTex, texcoord);
+       outColor = textureColor;
+     //  outColor.rgb *= textureColor.rgb;
+    }else     
+    {
+       outColor = colourMod; 
+    }
 
     
     //account for rasterizer interpolating

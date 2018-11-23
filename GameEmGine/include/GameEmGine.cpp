@@ -7,7 +7,7 @@
 void(*GameEmGine::m_compileShaders)(), (*GameEmGine::m_render)(), (*GameEmGine::m_gameLoop)(double);
 Camera *GameEmGine::m_mainCamera;
 std::vector<Camera *>GameEmGine::m_cameras;
-GLSLCompiler *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
+Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{ 123,123,123 };
@@ -156,6 +156,9 @@ void GameEmGine::run()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glDepthFunc(GL_LEQUAL);
 	glm::mat4 proj = glm::perspective(45.f, (float)m_window->getScreenWidth() / m_window->getScreenHeight(), 1.f, 1000.f);
@@ -230,7 +233,7 @@ void GameEmGine::shaderInit()
 {
 	//m_cameraShader = new GLSLCompiler;
 	//m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
-	m_modelShader = new GLSLCompiler;
+	m_modelShader = new Shader;
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 }
 

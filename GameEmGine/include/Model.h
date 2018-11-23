@@ -4,7 +4,7 @@
 #include <vector>
 //#include <map>
 #include "Camera.h"
-#include "GLSLCompiler.h"
+#include "Shader.h"
 #include "StructInfo.h"
 #include "Transformer.h"
 #include "Physics3D.h"
@@ -18,7 +18,7 @@ public:
 	Model(const char* path);
 	~Model();
 
-	void render(GLSLCompiler& shader,Camera& cam);
+	void render(Shader& shader,Camera& cam);
 
 	Transformer& getTransformer();
 
@@ -28,6 +28,7 @@ public:
 
 	bool loadModel(const char* path);
 
+	void enableBoundingBox(bool enable);
 
 	float getWidth();
 	float getHeight();
@@ -37,12 +38,19 @@ public:
 
 
 private:
+	void boundingBoxUpdate(Camera & cam);
+	void boundingBoxInit();
+	void drawBoundingBox(Shader& shader, Camera& cam);
+
+	GLuint m_BBVaoID = 0, m_BBVboID = 0;
 	Transformer m_transform;
+	Shader m_shaderBB;
 	//Physics3D *physics;
-	void transformedUpdate(Camera & cam);
 	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back;
+	Vertex3D *m_vertBBDat;
 	Mesh m_mesh;
 	ColourRGBA m_colour;
+	bool m_enableBB=false;
 	//std::vector <Texture2D> loadedTextures;
 	//std::string dir;
 	

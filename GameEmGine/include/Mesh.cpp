@@ -180,6 +180,7 @@ bool Mesh::loadMesh(std::string path)
 	std::vector < std::pair<std::string, std::vector<Vertex3D>>> faces;
 
 	char *MeshCheck = nullptr;
+	bool initFace = true;
 	while(MeshCheck = fgets(inputBuff, CHAR_BUFF_SIZE, f),
 		  //this part takes out the '\n' from the string
 		(inputBuff == nullptr ? "" : (inputBuff[strlen(inputBuff) - 1] = (inputBuff[strlen(inputBuff) - 1] == '\n' ? ' ' : inputBuff[strlen(inputBuff) - 1]), inputBuff)),
@@ -195,103 +196,107 @@ bool Mesh::loadMesh(std::string path)
 			char str[CHAR_BUFF_SIZE];
 			sscanf_s(inputBuff, "usemtl %s", str, CHAR_BUFF_SIZE);
 			faces.push_back({ std::string(str),std::vector< Vertex3D>() });
-		} else
-			if(strstr(inputBuff, "vt"))
+		} else if(strstr(inputBuff, "vt"))
+		{
+			//UV Dat
+
+			UV tmp;
+			sscanf_s(inputBuff, "vt %f %f", &tmp.uv_u, &tmp.uv_v);
+			uvs.push_back(tmp);
+		} else if(strstr(inputBuff, "vn"))
+		{
+			//Normal data
+			Coord3D tmp;
+			sscanf_s(inputBuff, "vn %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
+			norms.push_back(tmp);
+		} else if(strchr(inputBuff, 'o'))
+			continue;
+		else if(strchr(inputBuff, 's'))
+			continue;
+		else if(strchr(inputBuff, 'f'))//Collect Face Data
+		{
+			//Face Dat
+
+			Vertex3D tmp;
+
+			char check = 0;
+			unsigned counter = 0, count = 0;
+			while(check = inputBuff[counter++])
+				count += (check == '/');
+
+			count /= 2;
+			std::string	faceTmp[2][2]
+			{ { " %f/%f/%f"," %*f/%*f/%*f" },
+				{ " %f//%f"," %*f//%*f" } };
+
+			std::vector<std::string > format = std::vector<std::string>(count);
+			std::string formatStr;
+			std::function<void(int)> reformat = [&](int type)
 			{
-				//UV Dat
+				for(unsigned a = 0; a < count; a++)
+					if(a < 3)
+						format[a] = faceTmp[type][0];
+					else
+						format[a] = faceTmp[type][1];
+			};
+			short type = 0;
+			reformat(type);
+			formatStr = "f";
 
-				UV tmp;
-				sscanf_s(inputBuff, "vt %f %f", &tmp.uv_u, &tmp.uv_v);
-				uvs.push_back(tmp);
-			} else if(strstr(inputBuff, "vn"))
+			for(unsigned a = 0; a < count; a++)
+				formatStr += format[a];
+
+			sscanf_s(inputBuff, formatStr.c_str(),
+					 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
+					 &tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
+					 &tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
+
+			if(!tmp.coord[1])
 			{
-				//Normal data
-				Coord3D tmp;
-				sscanf_s(inputBuff, "vn %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
-				norms.push_back(tmp);
-			} else if(strchr(inputBuff, 'o'))
-				continue;
-			else if(strchr(inputBuff, 's'))
-				continue;
-			else if(strchr(inputBuff, 'f'))//Collect Face Data
-			{
-				//Face Dat
-
-				Vertex3D tmp;
-
-				char check = 0;
-				unsigned counter = 0, count = 0;
-				while(check = inputBuff[counter++])
-					count += (check == '/');
-
-				count /= 2;
-				std::string	faceTmp[2][2]
-				{ { " %f/%f/%f"," %*f/%*f/%*f" },
-					{ " %f//%f"," %*f//%*f" } };
-
-				std::vector<std::string > format = std::vector<std::string>(count);
-				std::string formatStr;
-				std::function<void(int)> reformat = [&](int type)
-				{
-					for(unsigned a = 0; a < count; a++)
-						if(a < 3)
-							format[a] = faceTmp[type][0];
-						else
-							format[a] = faceTmp[type][1];
-				};
-				short type = 0;
-				reformat(type);
+				reformat(++type);
 				formatStr = "f";
-
 				for(unsigned a = 0; a < count; a++)
 					formatStr += format[a];
-				
 				sscanf_s(inputBuff, formatStr.c_str(),
-						 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
-						 &tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
-						 &tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
+						 &tmp.coord[0], &tmp.norm[0],
+						 &tmp.coord[1], &tmp.norm[1],
+						 &tmp.coord[2], &tmp.norm[2]);
+			}
+			faces.back().second.push_back(tmp);
 
-				if(!tmp.coord[1])
-				{
-					reformat(++type);
-					formatStr = "f";
-					for(unsigned a = 0; a < count; a++)
-						formatStr += format[a];
+			for(unsigned a = 1; a < count - 2; a++)
+			{
+				formatStr = "f";
+				swap(format[a], format[a + 2]);
+				for(unsigned i = 0; i < count; i++)
+					formatStr += format[i];
+				if(type == 0)
+					sscanf_s(inputBuff, formatStr.c_str(),
+							 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
+							 &tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
+							 &tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
+				else
 					sscanf_s(inputBuff, formatStr.c_str(),
 							 &tmp.coord[0], &tmp.norm[0],
 							 &tmp.coord[1], &tmp.norm[1],
 							 &tmp.coord[2], &tmp.norm[2]);
-				}
+
 				faces.back().second.push_back(tmp);
+			}
 
-				for(unsigned a = 1; a < count - 2; a++)
-				{
-					formatStr = "f";
-					swap(format[a], format[a + 2]);
-					for(unsigned i = 0; i < count; i++)
-						formatStr += format[i];
-					if(type == 0)
-						sscanf_s(inputBuff, formatStr.c_str(),
-								 &tmp.coord[0], &tmp.uv[0], &tmp.norm[0],
-								 &tmp.coord[1], &tmp.uv[1], &tmp.norm[1],
-								 &tmp.coord[2], &tmp.uv[2], &tmp.norm[2]);
-					else
-						sscanf_s(inputBuff, formatStr.c_str(),
-								 &tmp.coord[0], &tmp.norm[0],
-								 &tmp.coord[1], &tmp.norm[1],
-								 &tmp.coord[2], &tmp.norm[2]);
+		} else if(strchr(inputBuff, 'v'))//Collects Vertex Data
+		{
+			//Vertex Data
 
-					faces.back().second.push_back(tmp);
-				}
-
-			} else if(strchr(inputBuff, 'v'))//Collects Vertex Data
+			Coord3D tmp;
+			sscanf_s(inputBuff, "v %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
+			verts.push_back(tmp);
+			if(initFace)
 			{
-				//Vertex Data
-
-				Coord3D tmp;
-				sscanf_s(inputBuff, "v %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
-				verts.push_back(tmp);
-
+				front = back = left = right = top = bottom = tmp;
+				initFace = false;
+			} else
+			{
 				front = tmp.coordZ > front.coordZ ? tmp : front;
 				back = tmp.coordZ < back.coordZ ? tmp : back;
 				left = tmp.coordX < left.coordX ? tmp : left;
@@ -299,6 +304,7 @@ bool Mesh::loadMesh(std::string path)
 				top = tmp.coordY > top.coordY ? tmp : top;
 				bottom = tmp.coordY < bottom.coordY ? tmp : bottom;
 			}
+		}
 
 	}
 	fclose(f);
@@ -354,7 +360,7 @@ bool Mesh::loadMesh(std::string path)
 	return true;
 }
 
-void Mesh::render(GLSLCompiler& shader)
+void Mesh::render(Shader& shader)
 {
 	for(unsigned a = 0; a < m_vaoID.size(); a++)
 	{

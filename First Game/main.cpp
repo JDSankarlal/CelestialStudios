@@ -17,7 +17,7 @@ EmGineAudioPlayer audio;
 
 #define modSize 20 //Number of Models that can exist
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
-GLSLCompiler colourProgram, colourProgram2;
+Shader colourProgram, colourProgram2;
 Model *mod[modSize];
 
 //shader initialization
@@ -118,11 +118,15 @@ bool collisions(Model *l, Model *k)
 void update(double dt)
 {
 	float move = .1f;
-	printf("%f\n", dt);
+//	printf("%f\n", dt);
+
+	static float time = 0;
+	time += dt;
 
 	static vector<Model*> bullets[4];
 	static vector<Coord3D> velocity[4];
-	static bool makeShitLessCancer[4];//stops the creation of bullets when trigger is healed down
+	static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
+
 	if(movePlayer)
 		for(int a = 0; a < 4; a++)
 			if(game.isControllerConnected(a))
@@ -190,20 +194,30 @@ void update(double dt)
 				}
 				if(p1.triggers[LT] >= .95)
 				{
+					static float coolDown[4];
+
 					//get deltaTime put into duraction variable
-					//if(deltaTime - coolDown >= 2)
-					//{
-						//float duration = deltaTime;
-					move = 0.5f;
-					//if (deltaTime >= duration + an amount)
-					//{
-					//		move = 0.1f;
-					//		float coolDown = deltaTime;
-					//}
-				//}
+					if(!makeShitLessCancer2[a])
+						if(time - coolDown[a] >= 2)
+						{
+							makeShitLessCancer2[a] = true;
+							coolDown[a] = time;
+							move = 0.5f;
+							//if(time >= duration + an amount)
+							//{
+							//	move = 0.1f;
+							//	 coolDown = deltaTime;
+							//}
 
+						}
 
-				//Do the same with the LT button, have it so will only work every X seconds.
+					//Do the same with the LT button, have it so will only work every X seconds.
+				} else
+				{
+					move -= .001;
+					if(move < .1)
+						move = .1;
+					makeShitLessCancer2[a] = false;
 				}
 
 				/// - Bullet Collisions - ///
@@ -215,7 +229,7 @@ void update(double dt)
 						if(collisions(bullets[a][b], mod[8]))
 						{
 							game.removeModel(bullets[a][b]);
-							bullets[a].erase(bullets[a].begin()+b);
+							bullets[a].erase(bullets[a].begin() + b);
 							velocity[a].erase(velocity[a].begin() + b);
 							printf("Hit BOSS\n\n");
 							break;
@@ -236,7 +250,21 @@ void update(double dt)
 								}
 							}
 					}
-				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
+
+				//bool  hitWall = false;
+				//for(int i = 5; i < 8; i++)
+				//{
+				//
+				//	if(collisions(mod[a], mod[i]))
+				//	{
+				//		hitWall = true;
+				//		printf("player has hit a wall");
+				//		break;
+				//	}
+				//}
+				mod[a]->getTransformer().setRotation({ 0,angle[a], 0 });
+				//if(hitWall)
+				//	continue;
 				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 				//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
 				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
@@ -337,9 +365,9 @@ int main()
 
 	/// - Make New Models From Existing Models - ///
 	//Players
-	mod[3] = new Model(*mod[0]);
-	mod[2] = new Model(*mod[0]);
 	mod[1] = new Model(*mod[0]);
+	mod[2] = new Model(*mod[0]);
+	mod[3] = new Model(*mod[0]);
 
 	//Placeholder Walls
 	mod[6] = new Model(*mod[5]);
@@ -366,7 +394,8 @@ int main()
 
 	//Boss Transforms
 	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(3);
-
+	mod[8]->enableBoundingBox(true);
+	
 	//Floor Transforms
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
 
