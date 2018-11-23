@@ -117,11 +117,16 @@ bool collisions(Model *l, Model *k)
 //updates within game loop
 void update(double dt)
 {
+	static float  time = 0;
+	time += dt;
+	static float coolDown = 0;
+	static float duration = 0;
+	static bool f = true;
+
 	float move = .1f;
 //	printf("%f\n", dt);
 
-	static float time = 0;
-	time += dt;
+	
 
 	static vector<Model*> bullets[4];
 	static vector<Coord3D> velocity[4];
@@ -197,17 +202,23 @@ void update(double dt)
 					static float coolDown[4];
 
 					//get deltaTime put into duraction variable
-					if(!makeShitLessCancer2[a])
-						if(time - coolDown[a] >= 2)
+					
+					if(time - coolDown >= 3)
+					{
+						if (f == true)
 						{
-							makeShitLessCancer2[a] = true;
-							coolDown[a] = time;
-							move = 0.5f;
-							//if(time >= duration + an amount)
-							//{
-							//	move = 0.1f;
-							//	 coolDown = deltaTime;
-							//}
+							duration = time;
+							f = false;
+						}
+						move = 0.5f;
+						if (time - 0.1f >= duration )
+						{
+								move = 0.1f;
+								//If triggers up then coolDown = time;
+								coolDown = time;
+								f = true;
+						}
+					}
 
 						}
 
