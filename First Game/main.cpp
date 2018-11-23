@@ -118,7 +118,7 @@ bool collisions(Model *l, Model *k)
 void update(double dt)
 {
 	float move = .1f;
-	//printf("%f\n", dt);
+	printf("%f\n", dt);
 
 	float coolDown = 0;
 	float duration = 0;
@@ -149,25 +149,28 @@ void update(double dt)
 				{
 					makeShitLessCancer[a] = true;
 
-					if(bullets[a])
-					{
-						game.removeModel(bullets[a]);
-						//	delete bullets[0];
-					}
+					//for(unsigned b=0;b<bullets[a].size();b++)
+					//if(bullets[a][b])
+					//{
+					//	game.removeModel(bullets[a][b]);
+					//	bullets[a].erase(bullets[a].begin() + b);
+					//}
 
-					game.addModel(bullets[a] = new Model(*mod[a]));
-					bullets[a]->getTransformer().reset();
+					bullets[a].push_back(nullptr);
+					game.addModel(bullets[a].back() = new Model(*mod[a]));
+					bullets[a].back()->getTransformer().reset();
 					Coord3D pos = mod[a]->getTransformer().getPosition();
-					bullets[a]->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
-					bullets[a]->getTransformer().setScale(0.25);
+					bullets[a].back()->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
+					bullets[a].back()->getTransformer().setScale(0.25);
 
-					bullets[a]->getTransformer().setRotation({ 90 , angle[a] ,0 });
+					bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
 
 					float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 					float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 
-					velocity[a] = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
+					velocity[a].push_back(Coord3D());
+					velocity[a].back() = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
 					audio.createStream("pew.wav");
 					audio.play();
 				} else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
@@ -207,32 +210,35 @@ void update(double dt)
 				}
 
 				/// - Bullet Collisions - ///
-
-				if(bullets[a])
-				{
-					bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
-
-					if(collisions(bullets[a], mod[8]))
+				for(unsigned b = 0; b < bullets[a].size(); b++)
+					if(bullets[a][b])
 					{
-						game.removeModel(bullets[a]);
-						bullets[a] = 0;
-						printf("Hit BOSS\n\n");
-					}
+						bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
 
-					if(bullets[a])
-						for(int i = 5; i < 8; i++)
+						if(collisions(bullets[a][b], mod[8]))
 						{
-							bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
-
-							if(collisions(bullets[a], mod[i]))
-							{
-								game.removeModel(bullets[a]);
-								bullets[a] = 0;
-								printf("Hit Wall??\n\n");
-								break;
-							}
+							game.removeModel(bullets[a][b]);
+							bullets[a].erase(bullets[a].begin()+b);
+							velocity[a].erase(velocity[a].begin() + b);
+							printf("Hit BOSS\n\n");
+							break;
 						}
-				}
+
+						if(bullets[a][b])
+							for(int i = 5; i < 8; i++)
+							{
+								bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
+
+								if(collisions(bullets[a][b], mod[i]))
+								{
+									game.removeModel(bullets[a][b]);
+									bullets[a].erase(bullets[a].begin() + b);
+									velocity[a].erase(velocity[a].begin() + b);
+									printf("Hit Wall??\n\n");
+									break;
+								}
+							}
+					}
 				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
 				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 				//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
