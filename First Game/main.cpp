@@ -81,13 +81,16 @@ void keyInputReleased(int key, int _mod)
 	if(key == GLFW_KEY_TAB)
 		movePlayer = !movePlayer;
 
-	if(key == 'R') //resets the camera
+	if(key == GLFW_KEY_F5) //resets the camera
 	{
 		GameEmGine::m_modelShader->refresh();
 
 		//game.setCameraAngle(0, { 1, 1, 1 });
 		//	game.setCameraPosition({0,0,0});
 	}
+
+	if(key == 'R')
+		game.setCameraAngle(0, {1,1,1});
 
 	printf("key RELEASED code: %d\n\n", key);
 }
@@ -112,9 +115,10 @@ bool collisions(Model *l, Model *k)
 }
 
 //updates within game loop
-void update()
+void update(double dt)
 {
 	float move = .1f;
+	printf("%f\n", dt);
 
 	static Model* bullets[4];
 	static Coord3D velocity[4];
@@ -222,7 +226,8 @@ void update()
 					}
 				}
 				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
-				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move camera
+				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
+				//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
 				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 			}
@@ -250,7 +255,8 @@ void update()
 
 			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
 			game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
-			game.moveCameraPositionBy({ 0 , 0, p1.triggers[LT] * -move });//move out
+			game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
+			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
 		}
 }
 
@@ -369,7 +375,7 @@ int main()
 	mod[3]->setColour(1, 1, 0);
 
 	//Floor
-	mod[9]->setColour((float)196 / 255, (float)167 / 255, (float)113 / 255);
+	mod[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
 
 	/// - Add Duplicate Models - ///
 

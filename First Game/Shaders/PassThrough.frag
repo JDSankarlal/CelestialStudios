@@ -1,6 +1,6 @@
 #version 420
 
-uniform vec4 LightPosition = vec4(0.0,0.0,-15.0,1.0);
+uniform vec4 LightPosition;
 
 //color
 uniform vec3 LightAmbient;
@@ -13,6 +13,8 @@ uniform float Attenuation_Constant;
 uniform float Attenuation_Linear;
 uniform float Attenuation_Quadratic;
 
+uniform vec3 LightDirection = vec3(0,0,-1);
+uniform float LightAngleConstraint;
 uniform sampler2D uTex;
 uniform vec4 colourMod;
 uniform bool textured;
@@ -32,9 +34,9 @@ void main()
     //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
     
      if(textured)
-     {       
-        vec4 textureColor = texture(uTex, texcoord);
-        outColor = textureColor;
+     {
+        outColor = texture(uTex, texcoord);
+        outColor *= colourMod;
       //  outColor.rgb *= textureColor.rgb;
      }else     
      {
@@ -50,22 +52,25 @@ void main()
     vec3 lightDir = lightVec / dist;
     
     float NdotL = dot(normal, lightDir);
-    
-    if(NdotL > 0.0)
-    {
-        //The light contributes to this surface
-        
-        //Calculate attenuation (falloff)
-        float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
-        
-        //Calculate diffuse contribution
-        outColor.rgb += LightDiffuse * NdotL  * attenuation;
-        
-        //Blinn-Phong half vector
-        float NdotHV =  max(dot(normal, normalize(lightDir + normalize(-pos))), 0.0); 
-        
-        //Calculate specular contribution
-        outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
-    }
-  //  outColor.rgb = normal; 
+
+    //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
+
+   // if(LightAngleConstraint < angle)
+        if(NdotL > 0.0)
+        {
+            //The light contributes to this surface
+
+            //Calculate attenuation (falloff)
+            float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
+
+            //Calculate diffuse contribution
+            outColor.rgb += LightDiffuse * NdotL * attenuation;
+
+            //Blinn-Phong half vector
+            float NdotHV =  max(dot(normal, normalize(lightDir + normalize(-pos))), 0.0); 
+
+            //Calculate specular contribution
+            outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
+        }
+       // outColor.rgb = normal;
 }

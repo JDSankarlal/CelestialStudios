@@ -73,7 +73,7 @@ public:
 	/*
 	 What the game must do each update
 	*/
-	void gameLoopUpdate(void update());
+	void gameLoopUpdate(void update(double));
 	/*
 	Set background colour
 	*/
@@ -152,7 +152,7 @@ private:
 	*/
 	static void update();
 	static void changeViewport(GLFWwindow * win, int w, int h);
-	static void(*m_compileShaders)(), (*m_render)(), (*m_gameLoop)();
+	static void(*m_compileShaders)(), (*m_render)(), (*m_gameLoop)(double);
 	static WindowCreator *m_window;
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;

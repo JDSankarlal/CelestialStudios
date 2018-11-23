@@ -1,17 +1,18 @@
 #include "ResourceManager.h"
 
-Texture2DCache ResourceManager::_cache2D;
-Texture3DCache ResourceManager::_cache3D;
+Texture2DCache ResourceManager::m_texter2DCache;
+Texture3DCache ResourceManager::m_texture3DCache;
+ShaderCache ResourceManager::m_shaderCache;
 
 Texture2D& Texture2DCache::getTexture(const char * path)
 {
-	auto it = _texture.find(path);
+	auto it = m_textures.find(path);
 
-	if(it == _texture.end())
+	if(it == m_textures.end())
 	{
-			Texture2D tmp= ImageLoader::loadImage2D(path);
-			_texture.insert({path,tmp});
-			return _texture[path];
+		Texture2D tmp = ImageLoader::loadImage2D(path);
+		m_textures.insert({ path,tmp });
+		return m_textures[path];
 	}
 	//printf("cashed image loaded\n");
 	return it->second;
@@ -19,24 +20,48 @@ Texture2D& Texture2DCache::getTexture(const char * path)
 
 Texture3D & Texture3DCache::getTexture(const char *path)
 {
-	auto it = _texture.find(path);
+	auto it = m_textures.find(path);
 
-	if(it == _texture.end())
+	if(it == m_textures.end())
 	{
 		Texture3D tmp = ImageLoader::loadImage3D(path);
-		_texture.insert({path,tmp});
-		return _texture[path];
+		m_textures.insert({ path,tmp });
+		return m_textures[path];
 	}
+	return it->second;
+}
+
+GLSLCompiler& ShaderCache::getShader(const char * vtsh, const char* fmsh)
+{	
+	auto it = m_shaders.find({vtsh,fmsh});
+
+	if(it == m_shaders.end())
+	{
+		GLSLCompiler tmp;
+		tmp.create(vtsh, fmsh);
+		m_shaders[{ (std::string)vtsh, (std::string)fmsh }] = tmp;
+
+		return m_shaders[{ (std::string)vtsh, (std::string)fmsh }];
+	}
+
 	return it->second;
 }
 
 Texture2D ResourceManager::getTexture2D(const char *path)
 {
 	Texture2D tmp;
-	return tmp=_cache2D.getTexture(path);
+	return tmp = m_texter2DCache.getTexture(path);
 }
+
+
 Texture3D ResourceManager::getTexture3D(const char *path)
 {
-	return _cache3D.getTexture(path);
+	return m_texture3DCache.getTexture(path);
+}
+
+GLSLCompiler ResourceManager::getShader(const char *vtsh, const char *fmsh)
+{
+	GLSLCompiler tmp;
+	return tmp = m_shaderCache.getShader(vtsh, fmsh);
 }
 

@@ -14,7 +14,7 @@
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
-      <Filter>EmGine\Resource Manager</Filter>
+      <Filter>EmGine\Resource Management</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>EmGine\Game Engine</Filter>
@@ -41,7 +41,7 @@
       <Filter>EmGine\Audio</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
-      <Filter>EmGine\Resource Manager</Filter>
+      <Filter>EmGine\Resource Management</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>EmGine\Game Engine</Filter>
@@ -57,6 +57,7 @@
     <ClInclude Include="FrameBuffer.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
+    <ClInclude Include="LightSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
@@ -72,7 +73,7 @@
       <Filter>EmGine\Data Types</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
-      <Filter>EmGine\Resource Manager</Filter>
+      <Filter>EmGine\Resource Management</Filter>
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>EmGine\Game Engine</Filter>
@@ -96,7 +97,7 @@
       <Filter>EmGine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>EmGine\Resource Manager</Filter>
+      <Filter>EmGine\Resource Management</Filter>
     </ClCompile>
     <ClCompile Include="Physics3D.cpp" />
     <ClCompile Include="Camera.cpp">
@@ -123,14 +124,14 @@
     <Filter Include="EmGine\Game Engine">
       <UniqueIdentifier>{e37a305d-43c9-4ff3-9f29-417020fa4b78}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EmGine\Resource Manager">
-      <UniqueIdentifier>{9ede1b93-f3f0-450f-b7f3-8c78f40241af}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EmGine\Shader Stuff">
       <UniqueIdentifier>{bd22f3e9-7094-4193-8787-3ad8cdf2a642}</UniqueIdentifier>
     </Filter>
     <Filter Include="EmGine\Audio">
       <UniqueIdentifier>{455a346d-f6c6-4bf4-ab90-c96c06c4406b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EmGine\Resource Management">
+      <UniqueIdentifier>{9ede1b93-f3f0-450f-b7f3-8c78f40241af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

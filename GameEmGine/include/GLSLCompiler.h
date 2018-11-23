@@ -43,13 +43,14 @@ private:
 	bool compileShader(Shaders shadNum, const std::string filePath, GLuint id);
 	void findAtributes();
 
-	std::string m_vtsh,m_vtPath,m_fmPath;
+	std::string m_vtsh="",m_vtPath="",m_fmPath="";
 	int m_attribNum = 0;
 	bool m_enabled = false;
 	GLuint
 		m_programID = 0,
 		m_vertID = 0,
 		m_fragID = 0;
+
 	static GLuint *m_programs, *m_attribs, m_num;
 
 };
