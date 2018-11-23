@@ -72,5 +72,5 @@ void main()
             //Calculate specular contribution
             outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
         }
-  //  outColor.rgb = normal; 
+   // outColor.rgb = normal; 
 }

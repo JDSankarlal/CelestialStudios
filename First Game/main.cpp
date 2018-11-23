@@ -4,6 +4,7 @@
 #include <GameEmGine.h>
 #include <EmGineAudioPlayer.h>
 #include <vector>
+#include "Boss.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ void keyInputPressed(int key, int _mod)
 	rotUp = (key == GLFW_KEY_UP ? true : rotUp);
 	rotDown = (key == GLFW_KEY_DOWN ? true : rotDown);
 
-	printf("key PRESED code: %d\n\n", key);
+	printf("key PRESSED code: %d\n\n", key);
 }
 
 //instace key is released
@@ -124,7 +125,7 @@ void update(double dt)
 	static bool f = true;
 
 	float move = .1f;
-	//	printf("%f\n", dt);
+	printf("%f\n", dt);
 
 
 
@@ -242,6 +243,12 @@ void update(double dt)
 							game.removeModel(bullets[a][b]);
 							bullets[a].erase(bullets[a].begin() + b);
 							velocity[a].erase(velocity[a].begin() + b);
+							Boss*CandyMan = (Boss*)mod[8];
+							CandyMan->setHealth(CandyMan->getHealth() - 100);
+							if (CandyMan->getHealth() <= 0)
+							{
+								game.removeModel (CandyMan);
+							}
 							printf("Hit BOSS\n\n");
 							break;
 						}
@@ -368,7 +375,8 @@ int main()
 	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
 	game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
-	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
+	game.addModel(mod[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
+	//Boss *CandyMan = mod[8];
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 

@@ -2,10 +2,20 @@
 
 
 
-Boss::Boss()
+Boss::Boss() : Model()
 {
 }
 
+Boss::Boss(Model& model) :Model(model)
+	
+{
+
+}
+
+Boss::Boss(const char * path):Model(path)
+{
+	
+}
 
 Boss::~Boss()
 {
@@ -18,4 +28,14 @@ bool Boss::randAttacks()
 	//If Player(s) standing too close use stomp OR flop attack instead
 	//Wait x Amount of time before repeating
 	return false;
+}
+
+int Boss::getHealth()
+{
+	return health;
+}
+
+void Boss::setHealth(int v)
+{
+	health = v;
 }
