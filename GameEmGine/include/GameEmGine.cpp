@@ -377,7 +377,7 @@ void GameEmGine::removeModel(Model* model)
 
 void GameEmGine::addCamera(Camera *cam)
 {
-
+	cam;
 
 	//realloc(m_cameras, sizeof(Camera3D*)*++_numCameras);
 	//m_cameras[_numCameras - 1] = cam;

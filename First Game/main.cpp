@@ -124,9 +124,9 @@ void update(double dt)
 	static bool f = true;
 
 	float move = .1f;
-//	printf("%f\n", dt);
+	//	printf("%f\n", dt);
 
-	
+
 
 	static vector<Model*> bullets[4];
 	static vector<Coord3D> velocity[4];
@@ -139,7 +139,7 @@ void update(double dt)
 				Xinput p1 = game.getController(a);
 
 
-				static float angle[4] = { 0,0,0,0 };
+				static float angle[4] = { 180,180,180,180 };
 				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 				{
 
@@ -202,28 +202,28 @@ void update(double dt)
 					static float coolDown[4];
 
 					//get deltaTime put into duraction variable
-					
-					if(time - coolDown >= 3)
+
+					if(time - coolDown[a] >= 3)
 					{
-						if (f == true)
+						if(f == true)
 						{
 							duration = time;
 							f = false;
 						}
 						move = 0.5f;
-						if (time - 0.1f >= duration )
+						if(time - 0.1f >= duration)
 						{
-								move = 0.1f;
-								//If triggers up then coolDown = time;
-								coolDown = time;
-								f = true;
+							move = 0.1f;
+							//If triggers up then coolDown = time;
+							coolDown[a] = time;
+							f = true;
 						}
 					}
 
-						}
+				}
 
-					//Do the same with the LT button, have it so will only work every X seconds.
-				} else
+				//Do the same with the LT button, have it so will only work every X seconds.
+				else
 				{
 					move -= .001;
 					if(move < .1)
@@ -393,10 +393,10 @@ int main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(1), mod[0]->getTransformer().setPosition(1, 1, 0),
-		mod[1]->getTransformer().setScale(1), mod[1]->getTransformer().setPosition(-1, 1, 0),
-		mod[2]->getTransformer().setScale(1), mod[2]->getTransformer().setPosition(2, 1, 0),
-		mod[3]->getTransformer().setScale(1), mod[3]->getTransformer().setPosition(-2, 1, 0);
+	mod[0]->getTransformer().setScale(1), mod[0]->getTransformer().setPosition(1, 1, 0), mod[0]->getTransformer().setRotation({ 0,180,0 });
+	mod[1]->getTransformer().setScale(1), mod[1]->getTransformer().setPosition(-1, 1, 0), mod[1]->getTransformer().setRotation({ 0,180,0 });
+	mod[2]->getTransformer().setScale(1), mod[2]->getTransformer().setPosition(2, 1, 0), mod[2]->getTransformer().setRotation({ 0,180,0 });
+	mod[3]->getTransformer().setScale(1), mod[3]->getTransformer().setPosition(-2, 1, 0), mod[3]->getTransformer().setRotation({ 0,180,0 });
 
 	//Wall Transforms
 	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), mod[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
@@ -406,7 +406,7 @@ int main()
 	//Boss Transforms
 	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(3);
 	mod[8]->enableBoundingBox(true);
-	
+
 	//Floor Transforms
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
 

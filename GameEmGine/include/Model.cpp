@@ -15,7 +15,6 @@ Model::Model(Model& model) :
 
 Model::Model(const char * path)
 {
-
 	if(loadModel(path))
 	{
 		boundingBoxInit();
