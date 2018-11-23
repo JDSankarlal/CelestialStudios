@@ -4,6 +4,7 @@
 #include <GameEmGine.h>
 #include <EmGineAudioPlayer.h>
 #include <vector>
+#include "Boss.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ void keyInputPressed(int key, int _mod)
 	rotUp = (key == GLFW_KEY_UP ? true : rotUp);
 	rotDown = (key == GLFW_KEY_DOWN ? true : rotDown);
 
-	printf("key PRESED code: %d\n\n", key);
+	printf("key PRESSED code: %d\n\n", key);
 }
 
 //instace key is released
@@ -124,7 +125,7 @@ void update(double dt)
 	static bool f = true;
 
 	float move = .1f;
-	printf("%f\n", dt);
+	//printf("%f\n", dt);
 
 	
 
@@ -232,6 +233,12 @@ void update(double dt)
 							game.removeModel(bullets[a][b]);
 							bullets[a].erase(bullets[a].begin()+b);
 							velocity[a].erase(velocity[a].begin() + b);
+							Boss*CandyMan = (Boss*)mod[8];
+							CandyMan->setHealth(CandyMan->getHealth() - 100);
+							if (CandyMan->getHealth() <= 0)
+							{
+								game.removeModel (CandyMan);
+							}
 							printf("Hit BOSS\n\n");
 							break;
 						}
@@ -344,7 +351,8 @@ int main()
 	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
 	game.addModel(mod[0] = new Model("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
-	game.addModel(mod[8] = new Model("Models/BOSS/roughBOSS.obj")); //Boss
+	game.addModel(mod[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
+	//Boss *CandyMan = mod[8];
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 
@@ -369,10 +377,10 @@ int main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(1), mod[0]->getTransformer().setPosition(1, 1, 0),
-		mod[1]->getTransformer().setScale(1), mod[1]->getTransformer().setPosition(-1, 1, 0),
-		mod[2]->getTransformer().setScale(1), mod[2]->getTransformer().setPosition(2, 1, 0),
-		mod[3]->getTransformer().setScale(1), mod[3]->getTransformer().setPosition(-2, 1, 0);
+	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1, 1, -5),
+		mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1, 1, -5),
+		mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2, 1, -5),
+		mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2, 1, -5);
 
 	//Wall Transforms
 	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), mod[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
@@ -380,7 +388,7 @@ int main()
 		mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(0.0f, 1.8f, 20.5f), mod[7]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, -1, 17), mod[8]->getTransformer().setScale(3);
+	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, -1, 17), mod[8]->getTransformer().setScale(4);
 
 	//Floor Transforms
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
