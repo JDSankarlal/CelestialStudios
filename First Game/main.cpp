@@ -120,12 +120,9 @@ void update(double dt)
 	float move = .1f;
 	printf("%f\n", dt);
 
-	float coolDown = 0;
-	float duration = 0;
-
-	static Model* bullets[4];
-	static Coord3D velocity[4];
-	static bool makeShitLessCancer[4];
+	static vector<Model*> bullets[4];
+	static vector<Coord3D> velocity[4];
+	static bool makeShitLessCancer[4];//stops the creation of bullets when trigger is healed down
 	if(movePlayer)
 		for(int a = 0; a < 4; a++)
 			if(game.isControllerConnected(a))
