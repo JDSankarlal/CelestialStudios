@@ -157,12 +157,15 @@ void GameEmGine::run()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 
+		glDepthFunc(GL_LEQUAL);
 	glm::mat4 proj = glm::perspective(45.f, (float)m_window->getScreenWidth() / m_window->getScreenHeight(), 1.f, 1000.f);
 
 	while (!glfwWindowShouldClose(m_window->getWindow()))//update loop
 	{
 		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
 		
+		InputManager::controllerUpdate();
+		update();
 		if (true)//fps calculation
 		{
 			calculateFPS();
@@ -171,9 +174,6 @@ void GameEmGine::run()
 			glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
 		}
 		
-		glDepthFunc(GL_LEQUAL);
-		InputManager::controllerUpdate();
-		update();
 		glfwSwapBuffers(m_window->getWindow());
 		glFlush();
 		fpsLimiter();
