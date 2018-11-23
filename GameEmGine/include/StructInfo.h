@@ -163,7 +163,7 @@ struct Coord3D
 
 	Coord3D operator-(Coord3D coord)
 	{
-		return { coordX - coord.coordX, coordY - coord.coordY, coordZ + coord.coordZ };
+		return { coordX - coord.coordX, coordY - coord.coordY, coordZ - coord.coordZ };
 	}
 
 	Coord3D operator*(Coord3D coord)

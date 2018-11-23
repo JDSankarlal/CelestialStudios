@@ -90,7 +90,7 @@ void keyInputReleased(int key, int _mod)
 	}
 
 	if(key == 'R')
-		game.setCameraAngle(0, {1,1,1});
+		game.setCameraAngle(0, { 1,1,1 });
 
 	printf("key RELEASED code: %d\n\n", key);
 }
@@ -102,13 +102,13 @@ bool collisions(Model *l, Model *k)
 	Coord3D thing = l->getCenter() - k->getCenter();
 
 	float distanceX = abs(thing.coordX);
-	float distanceY = abs(thing.coordZ);
+	float distanceZ = abs(thing.coordZ);
 
 	float capW = (l->getWidth() + k->getWidth()) / 2;
 	float capD = (l->getDepth() + k->getDepth()) / 2;
 
-	if(std::abs(distanceX) < capW)
-		if(std::abs(distanceY) < capD)
+	if(std::abs(distanceX) <= capW)
+		if(std::abs(distanceZ) <= capD)
 			return true;
 
 	return false;
@@ -118,7 +118,7 @@ bool collisions(Model *l, Model *k)
 void update(double dt)
 {
 	float move = .1f;
-	printf("%f\n", dt);
+	//printf("%f\n", dt);
 
 	static Model* bullets[4];
 	static Coord3D velocity[4];
@@ -191,16 +191,16 @@ void update(double dt)
 					//if(deltaTime - coolDown >= 2)
 					//{
 						//float duration = deltaTime;
-						move = 0.5f;
-						//if (deltaTime >= duration + an amount)
-						//{
-						//		move = 0.1f;
-						//		float coolDown = deltaTime;
-						//}
+					move = 0.5f;
+					//if (deltaTime >= duration + an amount)
+					//{
+					//		move = 0.1f;
+					//		float coolDown = deltaTime;
 					//}
+				//}
 
-					
-					//Do the same with the LT button, have it so will only work every X seconds.
+
+				//Do the same with the LT button, have it so will only work every X seconds.
 				}
 
 				/// - Bullet Collisions - ///
@@ -208,22 +208,27 @@ void update(double dt)
 				if(bullets[a])
 				{
 					bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
+
 					if(collisions(bullets[a], mod[8]))
 					{
 						game.removeModel(bullets[a]);
+						bullets[a] = 0;
 						printf("Hit BOSS\n\n");
 					}
-					for(int i = 5; i < 8; i++)
-					{
-						if(collisions(bullets[a], mod[i]))
-						{
-							game.removeModel(bullets[a]);
-							printf("Hit Wall??\n\n");
-							break;
-						}
 
-						bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
-					}
+					if(bullets[a])
+						for(int i = 5; i < 8; i++)
+						{
+							bullets[a]->getTransformer().translateBy(velocity[a].coordX, velocity[a].coordY, velocity[a].coordZ);
+
+							if(collisions(bullets[a], mod[i]))
+							{
+								game.removeModel(bullets[a]);
+								bullets[a] = 0;
+								printf("Hit Wall??\n\n");
+								break;
+							}
+						}
 				}
 				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
 				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
@@ -360,10 +365,10 @@ int main()
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
 
 	//Street Light Transforms
-	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13,1,-1),
+	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 1, -1),
 		mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 1, 7),
 		mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 1, 15),
-		mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 1, -1), mod[13]->getTransformer().setRotation({0.0f,180.0f,0.0f}),
+		mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 1, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
 		mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 1, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
 		mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 1, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
