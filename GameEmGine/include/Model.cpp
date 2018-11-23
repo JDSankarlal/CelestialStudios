@@ -9,7 +9,7 @@ Model::Model(Model& model) :
 	m_mesh(model.m_mesh),
 	m_colour(model.m_colour)
 {
-	
+
 }
 
 Model::Model(const char * path)
@@ -35,12 +35,12 @@ void Model::render(GLSLCompiler& shader, Camera& cam)
 
 	// update the position of the object
 	transformedUpdate(cam);
-	
+
 	/// - Lighting Variables - ///
 
 	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
-	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(/*cam.getProjectionMatrix() * cam.getViewMatrix() * cam.getObjectMatrix()**/glm::vec4(0.0f,3.0f,5.0f,1.0f))[0]);
+	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(/*cam.getProjectionMatrix() * cam.getViewMatrix() * cam.getObjectMatrix()**/glm::vec4(0.0f, 3.0f, 5.0f, 1.0f))[0]);
 
 	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.0f, 0.0f, 0.0f);
 	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.8f, 0.8f, 1.0f);
@@ -108,14 +108,14 @@ Coord3D Model::getCenter()
 {
 	//if(m_transform.isUpdated())
 	//transformedUpdate();
-	glm::vec4 tmp =  glm::vec4((m_right.coordX + m_left.coordX) / 2, (m_top.coordY + m_bottom.coordY) / 2, (m_front.coordZ + m_back.coordZ) / 2, 1);
+	glm::vec4 tmp = glm::vec4((m_right.coordX + m_left.coordX) / 2, (m_top.coordY + m_bottom.coordY) / 2, (m_front.coordZ + m_back.coordZ) / 2, 1);
 
 	return { tmp.x, tmp.y, tmp.z };
 }
 
 void Model::transformedUpdate(Camera& cam)
 {
-	m_front = m_back = m_top = m_bottom = m_left = m_right = Coord3D(0,0,0);
+	m_front = m_back = m_top = m_bottom = m_left = m_right = Coord3D(0, 0, 0);
 	std::vector<glm::vec4> thing
 	{
 	glm::vec4(m_mesh.right.coordX, m_mesh.right.coordY, m_mesh.right.coordZ, 1), glm::vec4(m_mesh.left.coordX,   m_mesh.left.coordY,   m_mesh.left.coordZ, 1),
@@ -123,19 +123,26 @@ void Model::transformedUpdate(Camera& cam)
 	glm::vec4(m_mesh.front.coordX, m_mesh.front.coordY, m_mesh.front.coordZ, 1), glm::vec4(m_mesh.back.coordX,   m_mesh.back.coordY,   m_mesh.back.coordZ, 1)
 	};
 
-
+	bool first = true;
 	for(auto &a : thing)
 	{
-		
-			a = cam.getCameraMatrix()*  m_transform.getTransformation() * a;
-			
 
-		m_front = a.z > m_front.coordZ ? Coord3D(a.x, a.y, a.z) : m_front;
-		m_back = a.z < m_back.coordZ ? Coord3D(a.x, a.y, a.z) : m_back;
-		m_left = a.x < m_left.coordX ? Coord3D(a.x, a.y, a.z) : m_left;
-		m_right = a.x > m_right.coordX ? Coord3D(a.x, a.y, a.z) : m_right;
-		m_top = a.y > m_top.coordY ? Coord3D(a.x, a.y, a.z) : m_top;
-		m_bottom = a.y < m_bottom.coordY ? Coord3D(a.x, a.y, a.z) : m_bottom;
+		a = cam.getProjectionMatrix() *  (cam.getObjectMatrix() * cam.getViewMatrix()) * m_transform.getTransformation() * a;
+
+
+		if(first)
+		{
+			m_front = m_back = m_left = m_right = m_top = m_bottom = Coord3D(a.x, a.y, a.z);
+			first = false;
+		} else
+		{
+			m_front = a.z > m_front.coordZ ? Coord3D(a.x, a.y, a.z) : m_front;
+			m_back = a.z < m_back.coordZ ? Coord3D(a.x, a.y, a.z) : m_back;
+			m_left = a.x < m_left.coordX ? Coord3D(a.x, a.y, a.z) : m_left;
+			m_right = a.x > m_right.coordX ? Coord3D(a.x, a.y, a.z) : m_right;
+			m_top = a.y > m_top.coordY ? Coord3D(a.x, a.y, a.z) : m_top;
+			m_bottom = a.y < m_bottom.coordY ? Coord3D(a.x, a.y, a.z) : m_bottom;
+		}
 	}
 }
 

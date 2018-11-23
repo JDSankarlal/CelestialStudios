@@ -22,7 +22,7 @@ void main()
     
     vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f); 
     
-    gl_Position = uProj * viewSpace;
+    gl_Position =  uProj * viewSpace;
     
     pos = viewSpace.xyz;
 }
