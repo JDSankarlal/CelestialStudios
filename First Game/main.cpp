@@ -198,6 +198,8 @@ void update(double dt)
 				{
 					printf("SPECIAL ABILITY\n");
 				}
+				/// - Left Trigger to Dash - ///
+
 				if(p1.triggers[LT] >= .95)
 				{
 					//get deltaTime put into duraction variable
@@ -355,7 +357,7 @@ int main()
 	//Boss *CandyMan = mod[8];
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
-	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));
+	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
 
 	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
@@ -402,8 +404,8 @@ int main()
 		mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 1, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
 		mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 1, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
-	//bench Transforms
-	mod[16]->getTransformer().setPosition(0, 1, 0);
+	//Bench Transforms
+	mod[16]->getTransformer().setPosition(-13, 1, 3);
 
 	/// - Set Model Colour - ///
 	//Players
