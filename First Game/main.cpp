@@ -406,9 +406,9 @@ int main()
 	mod[3]->getTransformer().setScale(1), mod[3]->getTransformer().setPosition(-2, 1, 0), mod[3]->getTransformer().setRotation({ 0,180,0 });
 
 	//Wall Transforms
-	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), mod[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
-		mod[6]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 1.8f, 7.0f), mod[6]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
-		mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(0.0f, 1.8f, 20.5f), mod[7]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
+	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), mod[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
+	mod[6]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 1.8f, 7.0f), mod[6]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
+	mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(0.0f, 1.8f, 20.5f), mod[7]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
 
 	//Boss Transforms
 	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(3);
@@ -418,12 +418,12 @@ int main()
 	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
 
 	//Street Light Transforms
-	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 1, -1),
-		mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 1, 7),
-		mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 1, 15),
-		mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 1, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
-		mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 1, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
-		mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 1, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 1, -1);
+	mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 1, 7);
+	mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 1, 15);
+	mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 1, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 1, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 1, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 	/// - Set Model Colour - ///
 	//Players

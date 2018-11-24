@@ -91,7 +91,7 @@ void Model::drawBoundingBox(Shader & shader, Camera & cam)
 		bottomLeftFront{ { left, bottom,front } },
 		bottomRightFront{ { right,bottom,front } };
 
-	Vertex3D tmp[12 * 3]{
+	static Vertex3D tmp[12 * 3]{
 		//top
 		topLeftBack,topRightBack,topRightFront,
 		topLeftBack,topRightFront,topLeftFront,
@@ -114,6 +114,25 @@ void Model::drawBoundingBox(Shader & shader, Camera & cam)
 
 	memcpy_s(m_vertBBDat, 12 * 3 * sizeof(Vertex3D), tmp, 12 * 3 * sizeof(Vertex3D));
 	
+	glBindBuffer(GL_ARRAY_BUFFER, m_BBVboID);
+	glBufferData(GL_ARRAY_BUFFER, 12 * 3 * sizeof(Vertex3D), m_vertBBDat, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	//vertex     atributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
+
+	//UV         atributes
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, uv));
+
+	//normal     atributes
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 	m_shaderBB.enable();
 	glUniform4fv(m_shaderBB.getUniformLocation("colourMod"), 1, colour);

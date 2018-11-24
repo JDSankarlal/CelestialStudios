@@ -73,13 +73,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)GameEmGine\include;$(solutionDir)Externals\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEmGine\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>$(ProjectDir)</OutDir>
     <IntDir>$(ProjectDir)junck\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)GameEmGine\include;$(solutionDir)Externals\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEmGine\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>$(ProjectDir)</OutDir>
     <IntDir>$(ProjectDir)junck\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
