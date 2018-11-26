@@ -9,7 +9,7 @@ class ImageLoader
 {
 public:
 	static Texture2D loadImage2D(const char* path);
-	static Texture3D loadImage3D(const char* path);
+//	static Texture3D loadImage3D(const char* path);
 private:
 };
 

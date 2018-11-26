@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "GLSLCompiler.h"
+#include "Shader.h"
 
 class ShaderCombiner
 {

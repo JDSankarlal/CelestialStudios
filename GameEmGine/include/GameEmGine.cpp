@@ -7,13 +7,14 @@
 void(*GameEmGine::m_compileShaders)(), (*GameEmGine::m_render)(), (*GameEmGine::m_gameLoop)(double);
 Camera *GameEmGine::m_mainCamera;
 std::vector<Camera *>GameEmGine::m_cameras;
-GLSLCompiler *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
+Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{ 123,123,123 };
 //ModelBatch *GameEmGine::m_modelBatch;
 FrameBuffer GameEmGine::m_mainBuffer(1);
 std::vector<Model*> GameEmGine::m_models;
+bool GameEmGine::exitGame = false;
 float GameEmGine::m_fps;
 short GameEmGine::m_fpsLimit;
 
@@ -35,155 +36,73 @@ GameEmGine::~GameEmGine()
 	glfwTerminate();
 }
 
-//static void OpenGLDebugCallback (
-//	GLenum source, GLenum type, GLuint id, GLenum severity,
-//	GLsizei length, const GLchar *msg, const void *data)
-//{
-//	std::cout << "CALLBACK\n";
-//	char buffer[9] = { '\0' };
-//	sprintf (buffer, "%.8x", id);
-//
-//	std::string message ("OpenGL(0x");
-//	message += buffer;
-//	message += "): ";
-//
-//	switch(type)
-//	{
-//	case GL_DEBUG_TYPE_ERROR:
-//	message += "Error:";
-//	break;
-//	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-//	message += "Depricated behavior";
-//	break;
-//	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-//	message += "Undefined Behavior";
-//	break;
-//	case GL_DEBUG_TYPE_PORTABILITY:
-//	message += "portability issue";
-//	break;
-//	case GL_DEBUG_TYPE_MARKER:
-//	message += "Stream annotation";
-//	break;
-//	case GL_DEBUG_TYPE_OTHER:
-//	default:
-//	message += "Other";
-//	}
-//
-//	message += "\nSource: ";
-//	switch(source)
-//	{
-//	case GL_DEBUG_SOURCE_API:
-//	message += "API";
-//	break;
-//	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-//	message += "Window System";
-//	break;
-//	case GL_DEBUG_SOURCE_SHADER_COMPILER:
-//	message += "Shader Compiler";
-//	break;
-//	case GL_DEBUG_SOURCE_THIRD_PARTY:
-//	message += "Third Party";
-//	break;
-//	case GL_DEBUG_SOURCE_APPLICATION:
-//	message += "Application";
-//	break;
-//	case GL_DEBUG_SOURCE_OTHER:
-//	message += "Other";
-//	}
-//
-//	message += "/nSeverity: ";
-//	switch(severity)
-//	{
-//	case GL_DEBUG_SEVERITY_HIGH:
-//	message += "HIGH";
-//	break;
-//	case GL_DEBUG_SEVERITY_MEDIUM:
-//	message += "Medium";
-//	break;
-//	case GL_DEBUG_SEVERITY_LOW:
-//	message += "Low";
-//	break;
-//	case GL_DEBUG_SEVERITY_NOTIFICATION:
-//	message += "NOT AN ERROR, IT'S A NOTIFICATION";
-//	default:
-//	message += "Josh is a loser";
-//	}
-//
-//	message += "\n";
-//	message += msg;
-//	message += "\n";
-//
-//	if(type == GL_DEBUG_TYPE_ERROR)
-//		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 12);
-//	else
-//		SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE), 7);
-//	std::cout << message << std::endl;
-//}
-//
-//void InitOpenGlCallback ()
-//{
-//	//GLDEBUGPROC J = OpenGLDebugCallback;
-//	
-//	glEnable (GL_DEBUG_OUTPUT);
-//	//glDebugMessageCallback (OpenGLDebugCallback, NULL);
-//}
-
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	glfwInit();//initilize GLFW before ANYTHING
 
-	printf("Trying to create the window\n");
-	
+	printf("Creating The Window...\n");
+
 	m_window = new WindowCreator(name, { (float)width,(float)height }, { (float)x,(float)y }, monitor, fullScreen, visable);
-	
+
+	if(m_window)
+		puts("Window Creation Successful\n");
+	else
+	{
+		puts("Window Creation Unsuccessful\n");
+		return;
+	}
+
 	glfwSetFramebufferSizeCallback(m_window->getWindow(), changeViewport);
-	
+
 	m_inputManager = new InputManager;
 	m_mainCamera = new Camera({ (float)width,(float)height,500 });
 
 	shaderInit();
 
-	
 	printf("created the window\n");
 }
 
 void GameEmGine::run()
 {
 
-//#ifdef _DEBUG
-//	InitOpenGlCallback ();
-//#endif
+	//#ifdef _DEBUG
+	//	InitOpenGlCallback ();
+	//#endif
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
 
-		glDepthFunc(GL_LEQUAL);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDepthFunc(GL_LEQUAL);
 	glm::mat4 proj = glm::perspective(45.f, (float)m_window->getScreenWidth() / m_window->getScreenHeight(), 1.f, 1000.f);
 
-	while (!glfwWindowShouldClose(m_window->getWindow()))//update loop
+	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
 	{
 		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
-		
+
 		InputManager::controllerUpdate();
 		update();
-		if (true)//fps calculation
+		if(true)//fps calculation
 		{
 			calculateFPS();
 			char str[20];
 			sprintf_s(str, "fps: %.2f", m_fps);
 			glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
 		}
-		
+
 		glfwSwapBuffers(m_window->getWindow());
 		glFlush();
 		fpsLimiter();
 	}
+	glfwInit();
 	glfwTerminate();
 }
 
 void GameEmGine::exit()
 {
-	glfwTerminate();
+	exitGame = true;
 }
 
 void GameEmGine::setFPSLimit(short limit)
@@ -230,7 +149,7 @@ void GameEmGine::shaderInit()
 {
 	//m_cameraShader = new GLSLCompiler;
 	//m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
-	m_modelShader = new GLSLCompiler;
+	m_modelShader = new Shader;
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 }
 
@@ -241,11 +160,11 @@ void GameEmGine::calculateFPS()
 	static float frameTimes[SAMPLE];
 
 	frameTimes[count++] = 1 / float(glfwGetTime());
-	if (count == SAMPLE)
+	if(count == SAMPLE)
 	{
 		count = 0;
 		m_fps = 0;
-		for (auto &a : frameTimes)
+		for(auto &a : frameTimes)
 			m_fps += a;
 		m_fps /= SAMPLE;
 	}
@@ -262,9 +181,9 @@ void GameEmGine::fpsLimiter()
 
 
 	//way 1: 
-	if (enter)
-		if (m_fpsLimit > 0)
-			while ((CLOCKS_PER_SEC / m_fpsLimit) > (clock() - frameStart));
+	if(enter)
+		if(m_fpsLimit > 0)
+			while((CLOCKS_PER_SEC / m_fpsLimit) > (clock() - frameStart));
 
 	////way 2: puts the thread to sleep 
 	//if(enter)
@@ -362,8 +281,8 @@ void GameEmGine::addModel(Model* model)
 void GameEmGine::removeModel(Model* model)
 {
 
-	for (unsigned a = 0; a < m_models.size(); a++)
-		if (m_models[a] == model)
+	for(unsigned a = 0; a < m_models.size(); a++)
+		if(m_models[a] == model)
 		{
 			delete m_models[a];
 			m_models.erase(m_models.begin() + a);
@@ -374,7 +293,7 @@ void GameEmGine::removeModel(Model* model)
 
 void GameEmGine::addCamera(Camera *cam)
 {
-
+	cam;
 
 	//realloc(m_cameras, sizeof(Camera3D*)*++_numCameras);
 	//m_cameras[_numCameras - 1] = cam;
@@ -388,16 +307,16 @@ void GameEmGine::update()
 	m_mainCamera->update();
 	//	m_mainBuffer.Bind();
 
-	if (m_render != nullptr)
+	if(m_render != nullptr)
 		m_render();
 
-	if (m_mainCamera->getTransformer().isUpdated())
+	if(m_mainCamera->getTransformer().isUpdated())
 	{
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix()*m_mainCamera->getViewMatrix())[0][0]));
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
 	}
 	//3D-Graphics 1
-	for (unsigned a = 0; a < m_models.size(); a++)
+	for(unsigned a = 0; a < m_models.size(); a++)
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
 	//	m_mainBuffer.UnBind();
 	//	m_mainBuffer.MoveToBackBuffer(m_window->getScreenWidth(),m_window->getScreenHeight());
@@ -421,7 +340,7 @@ void GameEmGine::update()
 
 	glfwPollEvents();//updates the event handelers
 
-	if (m_gameLoop != nullptr)
+	if(m_gameLoop != nullptr)
 		m_gameLoop(glfwGetTime());
 }
 

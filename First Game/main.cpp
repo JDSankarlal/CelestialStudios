@@ -128,11 +128,11 @@ void update(double dt)
 	float move = .1f;
 	//printf("%f\n", dt);
 
-	
 
 	static vector<Player*> bullets[4];
 	static vector<Coord3D> velocity[4];
-	static bool makeShitLessCancer[4];//stops the creation of bullets when trigger is healed down
+	static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
+
 	if(movePlayer)
 		for(int a = 0; a < 4; a++)
 			if(game.isControllerConnected(a))
@@ -140,7 +140,7 @@ void update(double dt)
 				Xinput p1 = game.getController(a);
 
 
-				static float angle[4] = { 0,0,0,0 };
+				static float angle[4] = { 180,180,180,180 };
 				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 				{
 
@@ -164,9 +164,9 @@ void update(double dt)
 					//}
 
 					bullets[a].push_back(nullptr);
-					game.addModel(bullets[a].back() = new Player(*mod[a]));
+					game.addModel(bullets[a].back() = new Player(*models[a]));
 					bullets[a].back()->getTransformer().reset();
-					Coord3D pos = mod[a]->getTransformer().getPosition();
+					Coord3D pos = models[a]->getTransformer().getPosition();
 					bullets[a].back()->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
 					bullets[a].back()->getTransformer().setScale(0.25);
 
@@ -187,42 +187,51 @@ void update(double dt)
 
 				if(p1.buttonPressed(p1.buttons.START))
 				{
-					printf("\nExiting Game\n");
-					exit(0);
+					puts("\nExiting Game\n");
+					game.exit();
 				}
 				if(p1.buttonPressed(p1.buttons.X))
 				{
-					printf("RELOADING!!!\n");
+					puts("RELOADING!!!\n");
 				}
 				if(p1.buttonPressed(p1.buttons.Y))
 				{
-					printf("SPECIAL ABILITY\n");
+					puts("SPECIAL ABILITY\n");
 				}
 				/// - Left Trigger to Dash - ///
 
 				if(p1.triggers[LT] >= .95)
 				{
+					static float coolDown[4];
+
 					//get deltaTime put into duraction variable
-					
-					if(time - coolDown >= 3)
+
+					if(time - coolDown[a] >= 3)
 					{
-						if (f == true)
+						if(f == true)
 						{
 							duration = time;
 							f = false;
 						}
 						move = 0.5f;
-						if (time - 0.1f >= duration )
+						if(time - 0.1f >= duration)
 						{
-								move = 0.1f;
-								//If triggers up then coolDown = time;
-								coolDown = time;
-								f = true;
+							move = 0.1f;
+							//If triggers up then coolDown = time;
+							coolDown[a] = time;
+							f = true;
 						}
 					}
 
+				}
 
 				//Do the same with the LT button, have it so will only work every X seconds.
+				else
+				{
+					move -= .001;
+					if(move < .1)
+						move = .1;
+					makeShitLessCancer2[a] = false;
 				}
 
 				/// - Bullet Collisions - ///
@@ -231,26 +240,30 @@ void update(double dt)
 					{
 						bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
 
-						if(collisions(bullets[a][b], mod[8]))
-						{
-							game.removeModel(bullets[a][b]);
-							bullets[a].erase(bullets[a].begin()+b);
-							velocity[a].erase(velocity[a].begin() + b);
-							Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
-							CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
-							if (CandyMan->getHealth() <= 0)
+						if(models[8])
+							if(collisions(bullets[a][b], models[8]))
 							{
-								game.removeModel (CandyMan); // If health = 0 then boss dead
+								game.removeModel(bullets[a][b]);
+								bullets[a].erase(bullets[a].begin() + b);
+								velocity[a].erase(velocity[a].begin() + b);
+								Boss*CandyMan = (Boss*)models[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+								CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
+								if(CandyMan->getHealth() <= 0)
+								{
+									game.removeModel(CandyMan); // If health = 0 then boss dead
+									models[8] = nullptr;
+									puts("Killed The BOSS\n");
+								}
+								puts("Hit The BOSS\n");
+								break;
 							}
-							break;
-						}
 
 						if(bullets[a][b])
 							for(int i = 5; i < 8; i++)
 							{
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
-
-								if(collisions(bullets[a][b], mod[i]))
+						
+								if(collisions(bullets[a][b], models[i]))
 								{
 									game.removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
@@ -260,8 +273,22 @@ void update(double dt)
 								}
 							}
 					}
-				mod[a]->getTransformer().setRotation({ 0,angle[a]	,0 });
-				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
+
+				//bool  hitWall = false;
+				//for(int i = 5; i < 8; i++)
+				//{
+				//
+				//	if(collisions(mod[a], mod[i]))
+				//	{
+				//		hitWall = true;
+				//		printf("player has hit a wall");
+				//		break;
+				//	}
+				//}
+				models[a]->getTransformer().setRotation({ 0,angle[a], 0 });
+				//if(hitWall)
+				//	continue;
+				models[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 				//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
 				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
@@ -276,7 +303,7 @@ void update(double dt)
 
 			p1.numButtons;
 			p1.numSticks;
-			float angle;
+			float angle = 0;
 			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 			{
 
@@ -290,10 +317,16 @@ void update(double dt)
 			if(Xinput::buttonPressed(p1.buttons.A))
 				printf("%d\n", p1.buttons.A);
 
+			////rotate left wall
+			//models[6]->getTransformer().setRotation({ 0, angle, 0 });
+			
+			//move canera
+			move *= 2;
 			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
 			game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
 			game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
 			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
+			move /= 2;
 		}
 }
 
@@ -308,6 +341,7 @@ void mouseButtonReleased(int button, int _mod)
 void render()
 {}
 
+//// We need BogoBogo sort in our game right?
 //template<class T>
 //bool sorted(T* sort, unsigned size)
 //{
@@ -362,24 +396,24 @@ int main()
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
 	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
 
-	mod[5]->setColour(0.65f, 0.65f, 0.7f);
+	models[5]->setColour(0.65f, 0.65f, 0.7f);
 
 	/// - Make New Models From Existing Models - ///
 	//Players
-	mod[3] = new Player(*mod[0]);
-	mod[2] = new Player(*mod[0]);
-	mod[1] = new Player(*mod[0]);
+	models[3] = new Player(*models[0]);
+	models[2] = new Player(*models[0]);
+	models[1] = new Player(*models[0]);
 
 	//Placeholder Walls
-	mod[6] = new Model(*mod[5]);
-	mod[7] = new Model(*mod[5]);
+	models[6] = new Model(*models[5]);
+	models[7] = new Model(*models[5]);
 
 	//Street Lights
-	mod[11] = new Model(*mod[10]);
-	mod[12] = new Model(*mod[10]);
-	mod[13] = new Model(*mod[10]);
-	mod[14] = new Model(*mod[10]);
-	mod[15] = new Model(*mod[10]);
+	models[11] = new Model(*models[10]);
+	models[12] = new Model(*models[10]);
+	models[13] = new Model(*models[10]);
+	models[14] = new Model(*models[10]);
+	models[15] = new Model(*models[10]);
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -416,26 +450,26 @@ int main()
 
 	/// - Set Model Colour - ///
 	//Players
-	mod[0]->setColour(1, 0, 0);
-	mod[1]->setColour(0, 0, 1);
-	mod[2]->setColour(0, 1, 0);
-	mod[3]->setColour(1, 1, 0);
+	models[0]->setColour(1, 0, 0);
+	models[1]->setColour(0, 0, 1);
+	models[2]->setColour(0, 1, 0);
+	models[3]->setColour(1, 1, 0);
 
 	//Floor
-	mod[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
+	models[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
 
 	/// - Add Duplicate Models - ///
 
-	game.addModel(mod[1]);
-	game.addModel(mod[2]);
-	game.addModel(mod[3]);
-	game.addModel(mod[6]);
-	game.addModel(mod[7]);
-	game.addModel(mod[11]);
-	game.addModel(mod[12]);
-	game.addModel(mod[13]);
-	game.addModel(mod[14]);
-	game.addModel(mod[15]);
+	game.addModel(models[1]);
+	game.addModel(models[2]);
+	game.addModel(models[3]);
+	game.addModel(models[6]);
+	game.addModel(models[7]);
+	game.addModel(models[11]);
+	game.addModel(models[12]);
+	game.addModel(models[13]);
+	game.addModel(models[14]);
+	game.addModel(models[15]);
 
 	/// - Set Camera - ///
 
@@ -455,7 +489,6 @@ int main()
 	game.mouseButtonReleased(mouseButtonReleased);
 	game.gameLoopUpdate(update);
 	game.run();//this one is pretty important
-
 	//the game ended... why are you here?... leave
 	//Or run it again... ;)
 	return 0;

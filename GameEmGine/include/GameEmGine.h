@@ -8,7 +8,7 @@
 #include "ShaderCombiner.h"
 //#include "EmGineAudioPlayer.h"
 //#include "Sprite.h"
-#include "GLSLCompiler.h"
+#include "Shader.h"
 #include "WindowCreator.h"
 #include "Camera.h"
 #include "Model.h"
@@ -140,7 +140,7 @@ public:
 
 	Xinput& getController(int index);
 
-	static GLSLCompiler *m_cameraShader, *m_modelShader;
+	static Shader *m_cameraShader, *m_modelShader;
 
 private:
 	void shaderInit();
@@ -162,6 +162,7 @@ private:
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;
 
+	static bool exitGame;
 	static float m_fps;
 	static short m_fpsLimit;
 };

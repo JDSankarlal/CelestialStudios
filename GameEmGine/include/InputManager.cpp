@@ -43,6 +43,7 @@ void InputManager::mouseButtonUpdate(GLFWwindow *, int button, int state, int mo
 
 void InputManager::keyUpdate(GLFWwindow *, int key, int scancode, int state, int mods)
 {
+	scancode;
 	if(_keyAll != nullptr)
 		_keyAll(state, key, mods);
 	

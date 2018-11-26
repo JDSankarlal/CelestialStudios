@@ -1,6 +1,6 @@
 #include "Sprite.h"
 
-GLSLCompiler * Sprite::_textureShader = new GLSLCompiler;
+Shader * Sprite::_textureShader = new Shader;
 
 Sprite::Sprite()
 {

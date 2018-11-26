@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstddef>
 #include "ResourceManager.h"
-#include "GLSLCompiler.h"
+#include "Shader.h"
 #include "Quat.h"
 #include "StructInfo.h"
 class Sprite : protected VboInfo2D
@@ -28,6 +28,6 @@ private:
 	GLuint _vboID,_bound;
 	Texture2D _texture;
 	Vertex2D _vertData[6];
-	static GLSLCompiler* _textureShader;
+	static Shader* _textureShader;
 };
 
