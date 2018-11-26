@@ -17,9 +17,9 @@ movePlayer = true;
 Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 
-#define modSize 20 //Number of Models that can exist
+#define modSize 20 //Number of mod that can exist
 GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
-GLSLCompiler colourProgram, colourProgram2;
+Shader colourProgram, colourProgram2;
 Model *mod[modSize];
 
 //shader initialization
@@ -100,7 +100,7 @@ void keyInputReleased(int key, int _mod)
 /// - Collision Class - ///
 bool collisions(Model *l, Model *k)
 {
-	//if distance between models in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 	Coord3D thing = l->getCenter() - k->getCenter();
 
 	float distanceX = abs(thing.coordX);
@@ -164,9 +164,9 @@ void update(double dt)
 					//}
 
 					bullets[a].push_back(nullptr);
-					game.addModel(bullets[a].back() = new Player(*models[a]));
+					game.addModel(bullets[a].back() = new Player(*mod[a]));
 					bullets[a].back()->getTransformer().reset();
-					Coord3D pos = models[a]->getTransformer().getPosition();
+					Coord3D pos = mod[a]->getTransformer().getPosition();
 					bullets[a].back()->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
 					bullets[a].back()->getTransformer().setScale(0.25);
 
@@ -240,18 +240,18 @@ void update(double dt)
 					{
 						bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
 
-						if(models[8])
-							if(collisions(bullets[a][b], models[8]))
+						if(mod[8])
+							if(collisions(bullets[a][b], mod[8]))
 							{
 								game.removeModel(bullets[a][b]);
 								bullets[a].erase(bullets[a].begin() + b);
 								velocity[a].erase(velocity[a].begin() + b);
-								Boss*CandyMan = (Boss*)models[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+								Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
 								CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
 								if(CandyMan->getHealth() <= 0)
 								{
 									game.removeModel(CandyMan); // If health = 0 then boss dead
-									models[8] = nullptr;
+									mod[8] = nullptr;
 									puts("Killed The BOSS\n");
 								}
 								puts("Hit The BOSS\n");
@@ -263,7 +263,7 @@ void update(double dt)
 							{
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
 						
-								if(collisions(bullets[a][b], models[i]))
+								if(collisions(bullets[a][b], mod[i]))
 								{
 									game.removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
@@ -285,10 +285,10 @@ void update(double dt)
 				//		break;
 				//	}
 				//}
-				models[a]->getTransformer().setRotation({ 0,angle[a], 0 });
+				mod[a]->getTransformer().setRotation({ 0,angle[a], 0 });
 				//if(hitWall)
 				//	continue;
-				models[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
+				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 				//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
 				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
@@ -318,7 +318,7 @@ void update(double dt)
 				printf("%d\n", p1.buttons.A);
 
 			////rotate left wall
-			//models[6]->getTransformer().setRotation({ 0, angle, 0 });
+			//mod[6]->getTransformer().setRotation({ 0, angle, 0 });
 			
 			//move canera
 			move *= 2;
@@ -384,9 +384,9 @@ void render()
 
 int main()
 {
-	/// - Load Models into Scene - ///
+	/// - Load mod into Scene - ///
 
-	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	//game.addModel(mod[0] = new Model("mod/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
 	game.addModel(mod[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
@@ -396,24 +396,24 @@ int main()
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
 	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
 
-	models[5]->setColour(0.65f, 0.65f, 0.7f);
+	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
-	/// - Make New Models From Existing Models - ///
+	/// - Make New mod From Existing mod - ///
 	//Players
-	models[3] = new Player(*models[0]);
-	models[2] = new Player(*models[0]);
-	models[1] = new Player(*models[0]);
+	mod[3] = new Player(*mod[0]);
+	mod[2] = new Player(*mod[0]);
+	mod[1] = new Player(*mod[0]);
 
 	//Placeholder Walls
-	models[6] = new Model(*models[5]);
-	models[7] = new Model(*models[5]);
+	mod[6] = new Model(*mod[5]);
+	mod[7] = new Model(*mod[5]);
 
 	//Street Lights
-	models[11] = new Model(*models[10]);
-	models[12] = new Model(*models[10]);
-	models[13] = new Model(*models[10]);
-	models[14] = new Model(*models[10]);
-	models[15] = new Model(*models[10]);
+	mod[11] = new Model(*mod[10]);
+	mod[12] = new Model(*mod[10]);
+	mod[13] = new Model(*mod[10]);
+	mod[14] = new Model(*mod[10]);
+	mod[15] = new Model(*mod[10]);
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -450,26 +450,26 @@ int main()
 
 	/// - Set Model Colour - ///
 	//Players
-	models[0]->setColour(1, 0, 0);
-	models[1]->setColour(0, 0, 1);
-	models[2]->setColour(0, 1, 0);
-	models[3]->setColour(1, 1, 0);
+	mod[0]->setColour(1, 0, 0);
+	mod[1]->setColour(0, 0, 1);
+	mod[2]->setColour(0, 1, 0);
+	mod[3]->setColour(1, 1, 0);
 
 	//Floor
-	models[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
+	mod[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
 
-	/// - Add Duplicate Models - ///
+	/// - Add Duplicate mod - ///
 
-	game.addModel(models[1]);
-	game.addModel(models[2]);
-	game.addModel(models[3]);
-	game.addModel(models[6]);
-	game.addModel(models[7]);
-	game.addModel(models[11]);
-	game.addModel(models[12]);
-	game.addModel(models[13]);
-	game.addModel(models[14]);
-	game.addModel(models[15]);
+	game.addModel(mod[1]);
+	game.addModel(mod[2]);
+	game.addModel(mod[3]);
+	game.addModel(mod[6]);
+	game.addModel(mod[7]);
+	game.addModel(mod[11]);
+	game.addModel(mod[12]);
+	game.addModel(mod[13]);
+	game.addModel(mod[14]);
+	game.addModel(mod[15]);
 
 	/// - Set Camera - ///
 
