@@ -24,5 +24,5 @@ void main()
     
     gl_Position =  uProj * viewSpace;
     
-    pos = viewSpace.xyz;
+    pos = (gl_Position).xyz;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "GLSLCompiler.h"
+#include "Shader.h"
 #include "Transformer.h"
 #include "Model.h"
 

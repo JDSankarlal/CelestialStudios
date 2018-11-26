@@ -37,8 +37,8 @@ void Model::render(Shader& shader, Camera& cam)
 {
 	if(m_camera != &cam)
 		m_camera = &cam;
-	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
+	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
 	shader.enable();
 
@@ -46,19 +46,17 @@ void Model::render(Shader& shader, Camera& cam)
 
 	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
-	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(/*cam.getProjectionMatrix() * cam.getViewMatrix() * cam.getObjectMatrix()**/glm::vec4(0.0f, 3.0f, 5.0f, 1.0f))[0]);
+	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(cam.getCameraMatrix() * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f))[0]);
 
-	glUniform3f(shader.getUniformLocation("LightAmbient"), 0.0f, 0.0f, 0.0f);
+	glUniform3f(shader.getUniformLocation("LightAmbient"), .5f, .5f, .5f);
 	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.8f, 0.8f, 1.0f);
 	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.2f, 0.2f, 0.2f);
 
-	glUniform1f(shader.getUniformLocation("LightAngleConstraint"), 10.0f);
+	//glUniform1f(shader.getUniformLocation("LightAngleConstraint"), 10.0f);
 	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 100.0f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.5f); //Pretty much the brightness in the center.
+	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f); //Pretty much the brightness in the center.
 	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
 	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.02f);
-
-	glUniform1f(shader.getUniformLocation("utime"), (float)clock() / 1000);
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
@@ -68,7 +66,7 @@ void Model::render(Shader& shader, Camera& cam)
 	shader.disable();
 
 	// update the position of the object
-	m_transBB = cam.getProjectionMatrix() *  (cam.getObjectMatrix() * cam.getViewMatrix()) * (m_transform.getTranslationMatrix());
+	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
 	if(m_enableBB)
 	{
 		boundingBoxUpdate();
@@ -157,7 +155,7 @@ Coord3D Model::getCenter()
 {
 	//if(m_transform.isUpdated())
 	//transformedUpdate();
-	glm::mat4 trans= m_transform.getTranslationMatrix();
+	glm::mat4 trans = m_transform.getTranslationMatrix();
 	glm::vec4
 		top = trans * glm::vec4(m_top.coordX, m_top.coordY, m_top.coordZ, 1),
 		bottom = trans * glm::vec4(m_bottom.coordX, m_bottom.coordY, m_bottom.coordZ, 1),

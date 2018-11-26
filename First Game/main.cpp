@@ -384,7 +384,7 @@ int main()
 
 	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
 	game.addModel(models[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
-	game.addModel(models[8] = new Boss("Models\\BOSS\\roughBOSS.obj")); //Boss
+	game.addModel(models[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
 	models[8]->enableBoundingBox(true);
 	game.addModel(models[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	//Boss *CandyMan = mod[8];

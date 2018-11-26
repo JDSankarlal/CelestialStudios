@@ -14,6 +14,7 @@ void Transformer::reset()
 
 void Transformer::setRotation(Coord3D angles, Coord3D forward)
 {
+	//glm::mat4 thing = glm::lookAt(glm::vec3(0,0,0), glm::vec3(),);
 	m_updatedRot = true;
 
 	if(angles.coordZ)

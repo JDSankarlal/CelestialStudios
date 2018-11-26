@@ -13,8 +13,8 @@ uniform float Attenuation_Constant;
 uniform float Attenuation_Linear;
 uniform float Attenuation_Quadratic;
 
-uniform vec3 LightDirection = vec3(0,0,-1);
-uniform float LightAngleConstraint;
+//uniform vec3 LightDirection = vec3(0,0,-1);
+//uniform float LightAngleConstraint;
 uniform sampler2D uTex;
 uniform vec4 colourMod;
 uniform bool textured;
@@ -43,6 +43,7 @@ void main()
        outColor = colourMod; 
     }
 
+    outColor.rgb *= LightAmbient;
     
     //account for rasterizer interpolating
     vec3 normal = normalize(norm);
@@ -53,9 +54,8 @@ void main()
     
     float NdotL = dot(normal, lightDir);
 
-    float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
+    //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
 
-    if(LightAngleConstraint < angle)
         if(NdotL > 0.0)
         {
             //The light contributes to this surface
@@ -72,5 +72,5 @@ void main()
             //Calculate specular contribution
             outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
         }
-   // outColor.rgb = normal; 
+  //  outColor.rgb = vec3(NdotL,NdotL,NdotL); 
 }
