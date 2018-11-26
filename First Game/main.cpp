@@ -18,7 +18,7 @@ Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 
 #define modSize 20 //Number of Models that can exist
-GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
+GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
 GLSLCompiler colourProgram, colourProgram2;
 Model *mod[modSize];
 
@@ -272,6 +272,8 @@ void update(double dt)
 		{
 			Xinput p1 = game.getController(0);
 
+			//if(Player.getTransformer())
+
 			p1.numButtons;
 			p1.numSticks;
 			float angle;
@@ -352,10 +354,10 @@ int main()
 
 	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
 	game.addModel(mod[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
+	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
 	//Boss *CandyMan = mod[8];
-	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
 	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
@@ -381,36 +383,36 @@ int main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1, 1, -5),
-		mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1, 1, -5),
-		mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2, 1, -5),
-		mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2, 1, -5);
+	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1, 0, -5),
+		mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1, 0, -5),
+		mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2, 0, -5),
+		mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2, 0, -5);
 
 	//Wall Transforms
-	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), mod[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
-		mod[6]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 1.8f, 7.0f), mod[6]->getTransformer().setScale(3.0f, 1.0f, 1.0f),
-		mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(0.0f, 1.8f, 20.5f), mod[7]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
+	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[5]->getTransformer().setScale(4.0f, 1.0f, 1.0f),
+		mod[6]->getTransformer().setRotation({ 0.0f, 270.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 0.0f, -5.0f), mod[6]->getTransformer().setScale(4.0f, 1.0f, 1.0f),
+		mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[7]->getTransformer().setScale(4.52f, 1.0f, 1.0f);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, -1, 17), mod[8]->getTransformer().setScale(4);
+	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, -1.65f, 17), mod[8]->getTransformer().setScale(4);
 
 	//Floor Transforms
-	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
+	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0, 0.0f, 5);
 
 	//Street Light Transforms
-	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 1, -1),
-		mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 1, 7),
-		mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 1, 15),
-		mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 1, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
-		mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 1, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
-		mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 1, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 0, -1),
+		mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 0, 7),
+		mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 0, 15),
+		mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 0, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
+		mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 0, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
+		mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 0, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 	//Bench Transforms
-	mod[16]->getTransformer().setPosition(-13, 1, 3);
+	mod[16]->getTransformer().setPosition(-13, 0, 3);
 
 	//Sign Transformations
 	//Project Nebula Sign
-	mod[17]->getTransformer().setPosition(9, 3, 18), mod[17]->getTransformer().setScale(3);
+	mod[17]->getTransformer().setPosition(9, 1.1f, 21), mod[17]->getTransformer().setScale(3);
 
 	/// - Set Model Colour - ///
 	//Players
