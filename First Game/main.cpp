@@ -20,7 +20,7 @@ EmGineAudioPlayer audio;
 #define modSize 20 //Number of Models that can exist
 GameEmGine game("The Real Game", 1000, 800, 0, 0, 0, false);
 Shader colourProgram, colourProgram2;
-Model *mod[modSize];
+Model *models[modSize];
 
 //shader initialization
 void shaderInit()
@@ -126,7 +126,7 @@ void update(double dt)
 	static bool f = true;
 
 	float move = .1f;
-	printf("%f\n", dt);
+	//printf("%f\n", dt);
 
 
 	static vector<Player*> bullets[4];
@@ -164,9 +164,9 @@ void update(double dt)
 					//}
 
 					bullets[a].push_back(nullptr);
-					game.addModel(bullets[a].back() = new Player(*mod[a]));
+					game.addModel(bullets[a].back() = new Player(*models[a]));
 					bullets[a].back()->getTransformer().reset();
-					Coord3D pos = mod[a]->getTransformer().getPosition();
+					Coord3D pos = models[a]->getTransformer().getPosition();
 					bullets[a].back()->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
 					bullets[a].back()->getTransformer().setScale(0.25);
 
@@ -187,16 +187,16 @@ void update(double dt)
 
 				if(p1.buttonPressed(p1.buttons.START))
 				{
-					printf("\nExiting Game\n");
-					exit(0);
+					puts("\nExiting Game\n");
+					game.exit();
 				}
 				if(p1.buttonPressed(p1.buttons.X))
 				{
-					printf("RELOADING!!!\n");
+					puts("RELOADING!!!\n");
 				}
 				if(p1.buttonPressed(p1.buttons.Y))
 				{
-					printf("SPECIAL ABILITY\n");
+					puts("SPECIAL ABILITY\n");
 				}
 				if(p1.triggers[LT] >= .95)
 				{
@@ -238,26 +238,30 @@ void update(double dt)
 					{
 						bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
 
-						if(collisions(bullets[a][b], mod[8]))
-						{
-							game.removeModel(bullets[a][b]);
-							bullets[a].erase(bullets[a].begin() + b);
-							velocity[a].erase(velocity[a].begin() + b);
-							Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
-							CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
-							if (CandyMan->getHealth() <= 0)
+						if(models[8])
+							if(collisions(bullets[a][b], models[8]))
 							{
-								game.removeModel (CandyMan); // If health = 0 then boss dead
+								game.removeModel(bullets[a][b]);
+								bullets[a].erase(bullets[a].begin() + b);
+								velocity[a].erase(velocity[a].begin() + b);
+								Boss*CandyMan = (Boss*)models[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+								CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
+								if(CandyMan->getHealth() <= 0)
+								{
+									game.removeModel(CandyMan); // If health = 0 then boss dead
+									models[8] = nullptr;
+									puts("Killed The BOSS\n");
+								}
+								puts("Hit The BOSS\n");
+								break;
 							}
-							break;
-						}
 
 						if(bullets[a][b])
 							for(int i = 5; i < 8; i++)
 							{
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
-
-								if(collisions(bullets[a][b], mod[i]))
+						
+								if(collisions(bullets[a][b], models[i]))
 								{
 									game.removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
@@ -279,10 +283,10 @@ void update(double dt)
 				//		break;
 				//	}
 				//}
-				mod[a]->getTransformer().setRotation({ 0,angle[a], 0 });
+				models[a]->getTransformer().setRotation({ 0,angle[a], 0 });
 				//if(hitWall)
 				//	continue;
-				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
+				models[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 				//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
 				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
 				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
@@ -295,7 +299,7 @@ void update(double dt)
 
 			p1.numButtons;
 			p1.numSticks;
-			float angle;
+			float angle = 0;
 			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 			{
 
@@ -309,10 +313,16 @@ void update(double dt)
 			if(Xinput::buttonPressed(p1.buttons.A))
 				printf("%d\n", p1.buttons.A);
 
+			////rotate left wall
+			//models[6]->getTransformer().setRotation({ 0, angle, 0 });
+			
+			//move canera
+			move *= 2;
 			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
 			game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
 			game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
 			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
+			move /= 2;
 		}
 }
 
@@ -327,6 +337,7 @@ void mouseButtonReleased(int button, int _mod)
 void render()
 {}
 
+//// We need BogoBogo sort in our game right?
 //template<class T>
 //bool sorted(T* sort, unsigned size)
 //{
@@ -372,81 +383,85 @@ int main()
 	/// - Load Models into Scene - ///
 
 	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
-	game.addModel(mod[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
-	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
-	game.addModel(mod[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
+	game.addModel(models[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
+	game.addModel(models[8] = new Boss("Models\\BOSS\\roughBOSS.obj")); //Boss
+	models[8]->enableBoundingBox(true);
+	game.addModel(models[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	//Boss *CandyMan = mod[8];
-	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
-	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
+	game.addModel(models[9] = new Model("Models/Floor/Floor.obj")); //Floor
+	game.addModel(models[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 
-	mod[5]->setColour(0.65f, 0.65f, 0.7f);
+	models[5]->setColour(0.65f, 0.65f, 0.7f);
 
 	/// - Make New Models From Existing Models - ///
 	//Players
-	mod[3] = new Player(*mod[0]);
-	mod[2] = new Player(*mod[0]);
-	mod[1] = new Player(*mod[0]);
+	models[3] = new Player(*models[0]);
+	models[2] = new Player(*models[0]);
+	models[1] = new Player(*models[0]);
 
 	//Placeholder Walls
-	mod[6] = new Model(*mod[5]);
-	mod[7] = new Model(*mod[5]);
+	models[6] = new Model(*models[5]);
+	models[7] = new Model(*models[5]);
 
 	//Street Lights
-	mod[11] = new Model(*mod[10]);
-	mod[12] = new Model(*mod[10]);
-	mod[13] = new Model(*mod[10]);
-	mod[14] = new Model(*mod[10]);
-	mod[15] = new Model(*mod[10]);
+	models[11] = new Model(*models[10]);
+	models[12] = new Model(*models[10]);
+	models[13] = new Model(*models[10]);
+	models[14] = new Model(*models[10]);
+	models[15] = new Model(*models[10]);
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(1), mod[0]->getTransformer().setPosition(1, 1, 0), mod[0]->getTransformer().setRotation({ 0,180,0 });
-	mod[1]->getTransformer().setScale(1), mod[1]->getTransformer().setPosition(-1, 1, 0), mod[1]->getTransformer().setRotation({ 0,180,0 });
-	mod[2]->getTransformer().setScale(1), mod[2]->getTransformer().setPosition(2, 1, 0), mod[2]->getTransformer().setRotation({ 0,180,0 });
-	mod[3]->getTransformer().setScale(1), mod[3]->getTransformer().setPosition(-2, 1, 0), mod[3]->getTransformer().setRotation({ 0,180,0 });
+	models[0]->getTransformer().setScale(1), models[0]->getTransformer().setPosition(1, 1, 0), models[0]->getTransformer().setRotation({ 0,180,0 });
+	models[1]->getTransformer().setScale(1), models[1]->getTransformer().setPosition(-1, 1, 0), models[1]->getTransformer().setRotation({ 0,180,0 });
+	models[2]->getTransformer().setScale(1), models[2]->getTransformer().setPosition(2, 1, 0), models[2]->getTransformer().setRotation({ 0,180,0 });
+	models[3]->getTransformer().setScale(1), models[3]->getTransformer().setPosition(-2, 1, 0), models[3]->getTransformer().setRotation({ 0,180,0 });
 
 	//Wall Transforms
-	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), mod[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
-	mod[6]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 1.8f, 7.0f), mod[6]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
-	mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(0.0f, 1.8f, 20.5f), mod[7]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
+	models[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), models[5]->getTransformer().setPosition(15.0f, 1.8f, 7.0f), models[5]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
+	models[5]->enableBoundingBox(true);
+	models[6]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), models[6]->getTransformer().setPosition(-15.0f, 1.8f, 7.0f), models[6]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
+	models[6]->enableBoundingBox(true);
+	models[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), models[7]->getTransformer().setPosition(0.0f, 1.8f, 20.5f), models[7]->getTransformer().setScale(3.0f, 1.0f, 1.0f);
+	models[7]->enableBoundingBox(true);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(3);
-	mod[8]->enableBoundingBox(true);
+	models[8]->getTransformer().setRotation({ 0, 90, 0 }), models[8]->getTransformer().setPosition(0, 0, 17), models[8]->getTransformer().setScale(3);
+	//mod[8]->enableBoundingBox(true);
 
 	//Floor Transforms
-	mod[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
+	models[9]->getTransformer().setScale(1.3f, 1.0f, 1.3f);
 
 	//Street Light Transforms
-	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 1, -1);
-	mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 1, 7);
-	mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 1, 15);
-	mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 1, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
-	mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 1, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
-	mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 1, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	models[10]->getTransformer().setScale(0.5), models[10]->getTransformer().setPosition(13, 1, -1);
+	models[11]->getTransformer().setScale(0.5), models[11]->getTransformer().setPosition(13, 1, 7);
+	models[12]->getTransformer().setScale(0.5), models[12]->getTransformer().setPosition(13, 1, 15);
+	models[13]->getTransformer().setScale(0.5), models[13]->getTransformer().setPosition(-13, 1, -1), models[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	models[14]->getTransformer().setScale(0.5), models[14]->getTransformer().setPosition(-13, 1, 7), models[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	models[15]->getTransformer().setScale(0.5), models[15]->getTransformer().setPosition(-13, 1, 15), models[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 	/// - Set Model Colour - ///
 	//Players
-	mod[0]->setColour(1, 0, 0);
-	mod[1]->setColour(0, 0, 1);
-	mod[2]->setColour(0, 1, 0);
-	mod[3]->setColour(1, 1, 0);
+	models[0]->setColour(1, 0, 0);
+	models[1]->setColour(0, 0, 1);
+	models[2]->setColour(0, 1, 0);
+	models[3]->setColour(1, 1, 0);
 
 	//Floor
-	mod[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
+	models[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
 
 	/// - Add Duplicate Models - ///
 
-	game.addModel(mod[1]);
-	game.addModel(mod[2]);
-	game.addModel(mod[3]);
-	game.addModel(mod[6]);
-	game.addModel(mod[7]);
-	game.addModel(mod[11]);
-	game.addModel(mod[12]);
-	game.addModel(mod[13]);
-	game.addModel(mod[14]);
-	game.addModel(mod[15]);
+	game.addModel(models[1]);
+	game.addModel(models[2]);
+	game.addModel(models[3]);
+	game.addModel(models[6]);
+	game.addModel(models[7]);
+	game.addModel(models[11]);
+	game.addModel(models[12]);
+	game.addModel(models[13]);
+	game.addModel(models[14]);
+	game.addModel(models[15]);
 
 	/// - Set Camera - ///
 
@@ -459,13 +474,12 @@ int main()
 	audio.play(true);
 
 	//engine stuff
-	//game.setFPSLimit(60);
+	game.setFPSLimit(60);
 	game.keyPressed(keyInputPressed);
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);
 	game.gameLoopUpdate(update);
 	game.run();//this one is pretty important
-
 	//the game ended... why are you here?... leave
 	//Or run it again... ;)
 	return 0;

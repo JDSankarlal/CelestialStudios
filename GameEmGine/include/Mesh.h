@@ -32,7 +32,7 @@ public:
 	Coord3D top , bottom , left, right , front, back;
 
 private:
-	void loadMaterials(std::string path);
+	void loadMaterials(const char * path);
 
 	void init();
 

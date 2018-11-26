@@ -162,6 +162,7 @@ private:
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;
 
+	static bool exitGame;
 	static float m_fps;
 	static short m_fpsLimit;
 };

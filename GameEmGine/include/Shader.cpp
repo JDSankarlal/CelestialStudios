@@ -2,14 +2,14 @@
 
 GLuint *Shader::m_programs = new GLuint[0], *Shader::m_attribs = new GLuint[0], Shader::m_num;
 
-Shader::Shader():m_vtsh (""), m_vtPath ( ""), m_fmPath ( ""), m_attribNum ( 0),
-m_enabled ( false), m_programID ( 0),
-m_vertID ( 0),
-m_fragID (0)
+Shader::Shader() :m_vtsh(""), m_vtPath(""), m_fmPath(""), m_attribNum(0),
+m_enabled(false), m_programID(0),
+m_vertID(0),
+m_fragID(0)
 {
-	
-	
-		
+
+
+
 	glewInit();
 }
 
@@ -26,8 +26,8 @@ void Shader::refresh()
 
 void Shader::create(const std::string & vertFilePath, const std::string & fragFilePath)
 {
-	compileShaders(vertFilePath, fragFilePath);
-	linkShaders();
+	if(compileShaders(vertFilePath, fragFilePath))
+		linkShaders();
 }
 
 void Shader::createDefault()
@@ -107,7 +107,7 @@ void Shader::createDefault()
 	//delete tmpFileContent;
 }
 
-void Shader::compileShaders(const std::string & vertFilePath, const std::string & fragFilePath)
+bool Shader::compileShaders(const std::string & vertFilePath, const std::string & fragFilePath)
 {
 	m_vtPath = vertFilePath;
 	m_fmPath = fragFilePath;
@@ -120,8 +120,10 @@ void Shader::compileShaders(const std::string & vertFilePath, const std::string 
 	m_vertID = glCreateShader(GL_VERTEX_SHADER);
 	m_fragID = glCreateShader(GL_FRAGMENT_SHADER);
 
-	if(!compileShader(VT_SHADER, vertFilePath, m_vertID))return;
-	if(!compileShader(FG_SHADER, fragFilePath, m_fragID))return;
+	if(!compileShader(VT_SHADER, vertFilePath, m_vertID))return false;
+	if(!compileShader(FG_SHADER, fragFilePath, m_fragID))return false;
+
+	return true;
 }
 
 void Shader::linkShaders()
@@ -169,7 +171,8 @@ void Shader::addAtribute(const std::string attributeName, short attribSize)
 
 GLint Shader::getUniformLocation(const char * uniform)
 {
-	return glGetUniformLocation(m_programID, uniform);
+	GLuint uni = glGetUniformLocation(m_programID, uniform);
+	return uni;
 }
 
 void Shader::enable()
@@ -204,11 +207,10 @@ void Shader::disable()
 			glUseProgram(m_programs[--m_num - 1]);
 			for(unsigned a = 0; a < m_attribs[m_num - 1]; a++)
 				glEnableVertexAttribArray(a);
-			m_enabled = false;
 		} else
 			glUseProgram(0);
 
-		m_enabled = !m_enabled;
+		m_enabled = false;
 	}
 
 	//glUseProgram(0);

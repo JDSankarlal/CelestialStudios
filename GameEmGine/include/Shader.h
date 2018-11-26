@@ -17,7 +17,7 @@ public:
 	void createDefault();
 
 	//compiles shaders into code
-	void compileShaders(const std::string& vertFilePath, const std::string& fragFilePath);
+	bool compileShaders(const std::string& vertFilePath, const std::string& fragFilePath);
 	//links vertx and fragment shaders into a single shader
 	void linkShaders();
 	/*

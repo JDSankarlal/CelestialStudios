@@ -18,7 +18,7 @@ public:
 	Model(const char* path);
 	~Model();
 
-	void render(Shader& shader,Camera& cam);
+	void render(Shader& shader, Camera& cam);
 
 	Transformer& getTransformer();
 
@@ -38,22 +38,24 @@ public:
 
 
 private:
-	void boundingBoxUpdate(Camera & cam);
+	void boundingBoxUpdate();
 	void boundingBoxInit();
-	void drawBoundingBox(Shader& shader, Camera& cam);
+	void drawBoundingBox();
 
 	GLuint m_BBVaoID = 0, m_BBVboID = 0;
 	Transformer m_transform;
-	Shader m_shaderBB;
 	//Physics3D *physics;
 	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back;
-	Vertex3D *m_vertBBDat;
+	Camera *m_camera;
 	Mesh m_mesh;
 	ColourRGBA m_colour;
-	bool m_enableBB=false;
+	Shader m_shaderBB;
+	Vertex3D *m_vertBBDat = new Vertex3D[12 * 3];
+	glm::mat4 m_transBB;
+	bool m_enableBB = false;
 	//std::vector <Texture2D> loadedTextures;
 	//std::string dir;
-	
-	
-	
+
+
+
 };
