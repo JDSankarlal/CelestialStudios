@@ -358,6 +358,7 @@ int main()
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
+	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
 
 	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
@@ -407,6 +408,10 @@ int main()
 	//Bench Transforms
 	mod[16]->getTransformer().setPosition(-13, 1, 3);
 
+	//Sign Transformations
+	//Project Nebula Sign
+	mod[17]->getTransformer().setPosition(9, 3, 18), mod[17]->getTransformer().setScale(3);
+
 	/// - Set Model Colour - ///
 	//Players
 	mod[0]->setColour(1, 0, 0);
@@ -442,6 +447,7 @@ int main()
 
 	//engine stuff
 	//game.setFPSLimit(60);
+	game.backgroundColour(0.05f,0.0f,0.1f);
 	game.keyPressed(keyInputPressed);
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);
