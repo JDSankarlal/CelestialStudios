@@ -40,19 +40,19 @@ void Model::render(Shader& shader, Camera& cam)
 	shader.enable();
 
 	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
-//	/// - Lighting Variables - ///
-//
-//	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(cam.getCameraMatrix() * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f))[0]);
-//
-//	glUniform3f(shader.getUniformLocation("LightAmbient"), .5f, .5f, .5f);
-//	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.8f, 0.8f, 1.0f);
-//	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.2f, 0.2f, 0.2f);
-//
-//	//glUniform1f(shader.getUniformLocation("LightAngleConstraint"), 10.0f);
-//	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 100.0f);
-//	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f); //Pretty much the brightness in the center.
-//	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
-//	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.02f);
+	//	/// - Lighting Variables - ///
+	//
+	//	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(cam.getCameraMatrix() * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f))[0]);
+	//
+	//	glUniform3f(shader.getUniformLocation("LightAmbient"), .5f, .5f, .5f);
+	//	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.8f, 0.8f, 1.0f);
+	//	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.2f, 0.2f, 0.2f);
+	//
+	//	//glUniform1f(shader.getUniformLocation("LightAngleConstraint"), 10.0f);
+	//	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 100.0f);
+	//	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f); //Pretty much the brightness in the center.
+	//	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
+	//	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.02f);
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
@@ -63,12 +63,11 @@ void Model::render(Shader& shader, Camera& cam)
 
 	// update the position of the object
 	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
-	if(m_enableBB)
-	{
 		boundingBoxUpdate();
-		drawBoundingBox();
-	}
 
+	if(m_enableBB)
+		drawBoundingBox();
+	
 	m_transform.resetUpdated();
 }
 
@@ -117,20 +116,20 @@ void Model::enableBoundingBox(bool enable)
 float Model::getWidth()
 {
 	//	transformedUpdate();
-	glm::mat4 trans = m_transform.getTranslationMatrix();
+	//glm::mat4 trans = m_transform.getTranslationMatrix();
 	glm::vec4
-		left = trans * glm::vec4(m_left.coordX, m_left.coordY, m_left.coordZ, 1),
-		right = trans * glm::vec4(m_right.coordX, m_right.coordY, m_right.coordZ, 1);
+		left = m_transBB * glm::vec4(m_left.coordX, m_left.coordY, m_left.coordZ, 1),
+		right = m_transBB * glm::vec4(m_right.coordX, m_right.coordY, m_right.coordZ, 1);
 
 	return std::abs(right.x - left.x);
 }
 
 float Model::getHeight()
 {
-	glm::mat4 trans = m_transform.getTranslationMatrix();
+	//	glm::mat4 trans = m_transform.getTranslationMatrix();
 	glm::vec4
-		top = trans * glm::vec4(m_top.coordX, m_top.coordY, m_top.coordZ, 1),
-		bottom = trans * glm::vec4(m_bottom.coordX, m_bottom.coordY, m_bottom.coordZ, 1);
+		top = m_transBB * glm::vec4(m_top.coordX, m_top.coordY, m_top.coordZ, 1),
+		bottom = m_transBB * glm::vec4(m_bottom.coordX, m_bottom.coordY, m_bottom.coordZ, 1);
 
 	//transformedUpdate();
 	return std::abs(top.y - bottom.y);
@@ -139,10 +138,10 @@ float Model::getHeight()
 float Model::getDepth()
 {
 	//transformedUpdate();
-	glm::mat4 trans = m_transform.getTranslationMatrix();
+	//glm::mat4 trans = m_transform.getTranslationMatrix();
 	glm::vec4
-		front = trans * glm::vec4(m_front.coordX, m_front.coordY, m_front.coordZ, 1),
-		back = trans * glm::vec4(m_back.coordX, m_back.coordY, m_back.coordZ, 1);
+		front = m_transBB * glm::vec4(m_front.coordX, m_front.coordY, m_front.coordZ, 1),
+		back = m_transBB * glm::vec4(m_back.coordX, m_back.coordY, m_back.coordZ, 1);
 
 	return std::abs(front.z - back.z);
 }
@@ -151,14 +150,14 @@ Coord3D Model::getCenter()
 {
 	//if(m_transform.isUpdated())
 	//transformedUpdate();
-	glm::mat4 trans = m_transform.getTranslationMatrix();
+	//glm::mat4 trans = m_transform.getTranslationMatrix();
 	glm::vec4
-		top = trans * glm::vec4(m_top.coordX, m_top.coordY, m_top.coordZ, 1),
-		bottom = trans * glm::vec4(m_bottom.coordX, m_bottom.coordY, m_bottom.coordZ, 1),
-		left = trans * glm::vec4(m_left.coordX, m_left.coordY, m_left.coordZ, 1),
-		right = trans * glm::vec4(m_right.coordX, m_right.coordY, m_right.coordZ, 1),
-		front = trans * glm::vec4(m_front.coordX, m_front.coordY, m_front.coordZ, 1),
-		back = trans * glm::vec4(m_back.coordX, m_back.coordY, m_back.coordZ, 1);
+		top = m_transBB * glm::vec4(m_top.coordX, m_top.coordY, m_top.coordZ, 1),
+		bottom = m_transBB * glm::vec4(m_bottom.coordX, m_bottom.coordY, m_bottom.coordZ, 1),
+		left = m_transBB * glm::vec4(m_left.coordX, m_left.coordY, m_left.coordZ, 1),
+		right = m_transBB * glm::vec4(m_right.coordX, m_right.coordY, m_right.coordZ, 1),
+		front = m_transBB * glm::vec4(m_front.coordX, m_front.coordY, m_front.coordZ, 1),
+		back = m_transBB * glm::vec4(m_back.coordX, m_back.coordY, m_back.coordZ, 1);
 
 	glm::vec4 tmp = glm::vec4((right.x + left.x) / 2, (top.y + bottom.y) / 2, (front.z + back.z) / 2, 1);
 
@@ -180,7 +179,8 @@ void Model::boundingBoxUpdate()
 
 	bool first = true;
 	m_shaderBB.enable();
-	//glUniformMatrix4fv(m_shaderBB.getUniformLocation("trans"), 1, false, &(m_transBB)[0][0]);
+
+	glUniformMatrix4fv(m_shaderBB.getUniformLocation("trans"), 1, false, &(m_transBB)[0][0]);
 	m_shaderBB.disable();
 
 	for(auto &a : thing)
@@ -203,7 +203,9 @@ void Model::boundingBoxUpdate()
 			m_bottom = a.y < m_bottom.coordY ? Coord3D(a.x, a.y, a.z) : m_bottom;
 		}
 	}
-	boundingBoxInit();
+
+	if(m_enableBB)
+		boundingBoxInit();
 }
 
 void Model::boundingBoxInit()
