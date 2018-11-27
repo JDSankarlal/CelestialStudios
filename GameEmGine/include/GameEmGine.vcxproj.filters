@@ -58,6 +58,15 @@
     <ClInclude Include="Shader.h">
       <Filter>EmGine\Shader Stuff</Filter>
     </ClInclude>
+    <ClInclude Include="Path.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="PointHandle.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtraMath.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
@@ -109,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>EmGine\Shader Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="Path.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="PointHandle.cpp">
+      <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
