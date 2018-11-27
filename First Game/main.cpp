@@ -407,16 +407,16 @@ void update(double dt)
 			if(Xinput::buttonPressed(p1.buttons.A))
 				printf("%d\n", p1.buttons.A);
 
-			//rotate left wall
-			mod[6]->getTransformer().setRotation({ 0, angle, 0 });
+			////rotate left wall
+			//mod[6]->getTransformer().setRotation({ 0, angle, 0 });
 
-			////move canera
-			//move *= 2;
-			//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
-			//game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
-			//game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
-			//game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
-			//move /= 2;
+			//move canera
+			move *= 2;
+			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
+			game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
+			game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
+			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
+			move /= 2;
 		}
 	if(bossActive == true)
 	{
@@ -505,7 +505,7 @@ int main()
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
 	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
-	game.addModel(mod[18] = new Model("Models/Missile/untitled.obj"));
+	game.addModel(mod[18] = new Model("Models/Missile/candyMissile.obj"));
 
 
 
@@ -586,9 +586,11 @@ int main()
 	game.addModel(mod[15]);
 
 	LightSource::setLightAmount(6);
-	for(int a = 0; a < 6; a++)
+	for (int a = 0; a < 6; a++)
+	{
 		LightSource::setParent(mod[10 + a], a);
-
+		LightSource::setPosition({ -2, 0, 0 }, a);
+	}
 	/// - Set Camera - ///
 
 	game.setCameraPosition({ 0,15,-10 });
