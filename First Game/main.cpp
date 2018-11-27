@@ -170,7 +170,7 @@ void update(double dt)
 
 	static float pointSize = 50.0f;
 	//printf("%f\n", dt);
-
+	static Player* player;
 
 	static vector<Player*> bullets[4];
 	static vector<Coord3D> velocity[4];
@@ -222,13 +222,15 @@ void update(double dt)
 
 	if(movePlayer)
 		for(int a = 0; a < 4; a++)
+			
 			if(game.isControllerConnected(a))
 			{
 				Xinput p1 = game.getController(a);
-
-
-
-
+				//Player Collisions with Walls
+				//if (player->getTransformer().getPosition().coordX > 20)
+				//{
+				//	player->getTransformer().setPosition(20, player->getTransformer().getPosition().coordY, player->getTransformer().getPosition().coordZ);
+				//}
 				static float angle[4] = { 180,180,180,180 };
 				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 				{
@@ -336,7 +338,7 @@ void update(double dt)
 								bullets[a].erase(bullets[a].begin() + b);
 								velocity[a].erase(velocity[a].begin() + b);
 								Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
-								CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
+								CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 								if(CandyMan->getHealth() <= 0)
 								{
 									game.removeModel(CandyMan); // If health = 0 then boss dead
@@ -508,7 +510,6 @@ int main()
 	game.addModel(mod[18] = new Model("Models/Missile/candyMissile.obj"));
 
 
-
 	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
 	/// - Make New mod From Existing mod - ///
@@ -568,9 +569,6 @@ int main()
 	mod[1]->setColour(0, 0, 1);
 	mod[2]->setColour(0, 1, 0);
 	mod[3]->setColour(1, 1, 0);
-
-	//Floor
-	mod[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
 
 	/// - Add Duplicate mod - ///
 
