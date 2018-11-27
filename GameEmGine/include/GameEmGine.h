@@ -81,7 +81,7 @@ public:
 	/*
 	Set background colour
 	*/
-	void backgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1);
+	void setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1);
 	/*
 	Gets window width in pixles
 	*/
@@ -90,6 +90,8 @@ public:
 	Gets window height in pixles
 	*/
 	int getWindowHeight();
+
+	Camera * getMainCamera();
 
 	void setCameraType(CAMERA_TYPE type);
 

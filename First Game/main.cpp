@@ -196,7 +196,7 @@ void update(double dt)
 				p1 = mod[8]->getTransformer().getPosition(),//start point
 				p2 = bossTarget,//end point 
 				c1 = p1 - Coord3D{ 0,100,0 },//controle point
-				c2 = p2 - Coord3D{ 0,100,0 };//controle point
+				c2 = p2 - Coord3D{ 0,100,100};//controle point
 
 			Coord3D cat = catmull
 			(
@@ -364,24 +364,10 @@ void update(double dt)
 							}
 					}
 
-				//bool  hitWall = false;
-				//for(int i = 5; i < 8; i++)
-				//{
-				//
-				//	if(collisions(mod[a], mod[i]))
-				//	{
-				//		hitWall = true;
-				//		printf("player has hit a wall");
-				//		break;
-				//	}
-				//}
+				
 				mod[a]->getTransformer().setRotation({ 0,angle[a], 0 });
-				//if(hitWall)
-				//	continue;
 				mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 				//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
-				//	mod[0]->getTransformer().translateBy(0, -p1.triggers[LT] * move, 0);
-				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 			}
 
 	if(!movePlayer)
@@ -407,16 +393,18 @@ void update(double dt)
 			if(Xinput::buttonPressed(p1.buttons.A))
 				printf("%d\n", p1.buttons.A);
 
-			//rotate left wall
-			mod[6]->getTransformer().setRotation({ 0, angle, 0 });
+			////rotate left wall
+			//mod[6]->getTransformer().setRotation({ 0, angle, 0 });
 
-			////move canera
-			//move *= 2;
-			//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
+			//move canera
+			move *= 2;
+			
+			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
 			//game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
-			//game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
-			//game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
-			//move /= 2;
+			game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+			game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
+			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
+			move /= 2;
 		}
 	if(bossActive == true)
 	{
@@ -501,7 +489,6 @@ int main()
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
 	game.addModel(mod[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
-	//Boss *CandyMan = mod[8];
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
 	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
@@ -587,8 +574,10 @@ int main()
 
 	LightSource::setLightAmount(6);
 	for(int a = 0; a < 6; a++)
+	{
 		LightSource::setParent(mod[10 + a], a);
-
+		LightSource::setPosition({ 0,3,0 }, a);
+	}
 	/// - Set Camera - ///
 
 	game.setCameraPosition({ 0,15,-10 });
@@ -601,7 +590,7 @@ int main()
 
 	//engine stuff
 	//game.setFPSLimit(60);
-	game.backgroundColour(0.05f, 0.0f, 0.1f);
+	game.setBackgroundColour(0.05f, 0.0f, 0.1f);
 	game.keyPressed(keyInputPressed);
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);

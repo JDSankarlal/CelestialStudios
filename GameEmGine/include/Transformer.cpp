@@ -14,34 +14,48 @@ void Transformer::reset()
 
 void Transformer::setRotation(Coord3D angles, Coord3D forward)
 {
-	//glm::mat4 thing = glm::lookAt(glm::vec3(0,0,0), glm::vec3(),);
+	forward.normalize();
+	glm::vec3 pos;
+	glm::vec3 tmp(angles.coordX, angles.coordY, angles.coordZ);
+	glm::mat4 thing = glm::lookAt(pos = glm::vec3(m_pos.coordX, m_pos.coordY, m_pos.coordZ), pos + glm::vec3(forward.coordX, forward.coordY, forward.coordZ), {0,1,0});
+	tmp = thing * glm::vec4(tmp,1.f);
+	
 	m_updatedRot = true;
 
 	if(angles.coordZ)
 	{
 		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordZ), 0, 0, 1);
-		m_angles.coordZ = angles.coordZ;
+		m_angles.coordZ = tmp.z;
 	}
 	if(angles.coordY)
 	{
 		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordY), 0, 1, 0);
-		m_angles.coordY = angles.coordY;
+		m_angles.coordY = tmp.y;
 	}
 	if(angles.coordX)
 	{
 		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordX), 1, 0, 0);
-		m_angles.coordX = angles.coordX;
+		m_angles.coordX = tmp.x;
 	}
+
+	
 }
 
 void Transformer::rotateBy(Coord3D angles, Coord3D forward)
 {
 	m_updatedRot = true;
-	m_angles += angles;
+	
+	glm::vec3 tmp(angles.coordX, angles.coordY, angles.coordZ);
+	forward.normalize();
+	glm::vec3 pos;
+	glm::mat4 thing = glm::lookAt(pos = glm::vec3(m_pos.coordX, m_pos.coordY, m_pos.coordZ), pos + glm::vec3(forward.coordX, forward.coordY, forward.coordZ), { 0,1,0 });
+	tmp = thing * glm::vec4(tmp, 1.f);
+	
+	m_angles += {tmp.x,tmp.y,tmp.z};
 
-	m_rotate = Quat::quatRotationMat(glm::radians(m_angles.coordX), 1, 0, 0);
-	m_rotate *= Quat::quatRotationMat(glm::radians(m_angles.coordY), 0, 1, 0);
-	m_rotate *= Quat::quatRotationMat(glm::radians(m_angles.coordZ), 0, 0, 1);
+	m_rotate = Quat::quatRotationMat(glm::radians(tmp.x), 1, 0, 0);
+	m_rotate *= Quat::quatRotationMat(glm::radians(tmp.y), 0, 1, 0);
+	m_rotate *= Quat::quatRotationMat(glm::radians(tmp.z), 0, 0, 1);
 }
 
 void Transformer::setPosition(float x, float y, float z, Coord3D forward)
@@ -95,6 +109,11 @@ void Transformer::scaleBy(float x, float y, float z)
 Coord3D Transformer::getPosition()
 {
 	return m_pos;
+}
+
+Coord3D Transformer::getRotation()
+{
+	return m_angles;
 }
 
 glm::mat4 & Transformer::getRotationMatrix()

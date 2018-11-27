@@ -34,6 +34,7 @@ public:
 
 	/*GETERS*/
 	Coord3D getPosition();
+	Coord3D getRotation();
 	glm::mat4& getRotationMatrix();
 	glm::mat4& getScaleMatrix();
 	glm::mat4& getTranslationMatrix();

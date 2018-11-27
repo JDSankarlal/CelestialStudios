@@ -105,9 +105,14 @@ void LightSource::update()
 	{
 		Coord3D lp = m_lights[a].transform->getPosition();
 		glm::vec4 pos(lp.coordX, lp.coordY, lp.coordZ, 1.0f);
-		if(m_lights[a].parent)
-			pos = m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation() * pos;
-		else
+			if(m_lights[a].parent)
+			{
+				Transformer *trans = &m_lights[a].parent->getTransformer();
+				glm::vec3 pos2 (trans->getPosition().coordX, trans->getPosition().coordY, trans->getPosition().coordZ);
+				glm::mat4 forward = glm::lookAt(pos2, pos2 + glm::vec3(cos(trans->getRotation().coordX), tan(trans->getRotation().coordY), sin(trans->getRotation().coordZ)), 
+							{0,1,0});
+				pos =  m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation()*forward * glm::vec4(pos2,1.f);
+			} else
 			pos = m_lights[a].transform->getTransformation() * pos;
 	
 		sprintf_s(buff, "LightPosition[%d]", a);
