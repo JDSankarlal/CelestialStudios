@@ -100,6 +100,13 @@ struct Coord3D
 		coordX = coord.x;
 		coordY = coord.y;
 	}
+	
+	Coord3D(float scale)
+	{
+		this->coordX = scale;
+		this->coordY = scale;
+		this->coordZ = scale;
+	}
 
 	Coord3D(float x, float y, float z)
 	{
@@ -166,6 +173,11 @@ struct Coord3D
 		return { coordX - coord.coordX, coordY - coord.coordY, coordZ - coord.coordZ };
 	}
 
+	friend Coord3D operator*(float scaler, Coord3D coord)
+	{
+		return { scaler * coord.coordX, scaler * coord.coordY, scaler * coord.coordZ };
+	}
+
 	Coord3D operator*(Coord3D coord)
 	{
 		return { coordX * coord.coordX, coordY * coord.coordY, coordZ * coord.coordZ };
@@ -180,7 +192,12 @@ struct Coord3D
 		return { coordX / coord,coordY / coord,coordZ / coord };
 	}
 
-
+	Coord3D& operator-() {
+		static Coord3D tmp;
+		tmp = *this*-1;
+		return tmp;
+	}
+	   
 	void operator-=(Coord3D coord)
 	{
 		coordX -= coord.coordX;

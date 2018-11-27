@@ -68,8 +68,8 @@ template <typename T>
 inline T catmull(T p0, T p1, T p2, T p3, float t)
 {
 	return 0.5f *
-		(t * t * t * (-p0 + 3.0f * p1 + -3.0f * p2 + p3) +
-			t * t * (2.0f * p0 + -5.0f * p1 + 4.0f * p2 - p3) +
+		(t * t * t * (-p0 +  p1* 3.0f +  p2*-3.0f + p3) +
+			t * t * ( p0 *2.0f +  p1*-5.0f +  p2 * 4.0f - p3) +
 			t * (-p0 + p2) +
 			(2.0F * p1));
 
