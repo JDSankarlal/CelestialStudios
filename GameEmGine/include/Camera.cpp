@@ -19,8 +19,8 @@ void Camera::init(Size3D size, CAMERA_TYPE type)
 
 	m_viewMat = glm::lookAt(glm::vec3{ m_position->x,m_position->y,m_position->z + .1 }, glm::vec3{ m_position->x,m_position->y,m_position->z }, glm::vec3{ 0.f,1.f,0.f });
 	setType(type);
-
 }
+
 void Camera::setType(CAMERA_TYPE type)
 {
 	switch(type)
@@ -33,6 +33,7 @@ void Camera::setType(CAMERA_TYPE type)
 	}
 	m_cameraUpdate = true;
 }
+
 bool Camera::update()
 {
 	if(m_cameraUpdate)
@@ -40,9 +41,9 @@ bool Camera::update()
 
 		m_transform.setPosition(m_position->x, m_position->y, m_position->z);
 		m_transform.setScale(m_scale);
-		m_objMat = m_rotMat * glm::inverse(m_transform.getTranslationMatrix())* m_transform.getScaleMatrix();
+		m_objMat = m_rotMat * glm::inverse(m_transform.getTranslationMatrix()) /** m_transform.getScaleMatrix()*/;
 
-		m_cameraMat = m_projMat * m_viewMat * m_rotMat;
+		m_cameraMat = m_projMat * m_objMat * m_viewMat ;
 		m_cameraUpdate = false;
 
 		return true;

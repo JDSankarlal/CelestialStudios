@@ -1,6 +1,6 @@
 #include "Sprite.h"
 
-GLSLCompiler * Sprite::_textureShader = new GLSLCompiler;
+Shader * Sprite::_textureShader = new Shader;
 
 Sprite::Sprite()
 {
@@ -84,7 +84,7 @@ void Sprite::init(const char * path)
 	initial = true;
 
 	init();
-	_texture = ResourceManager::createTexture2D(path);
+	_texture = ResourceManager::getTexture2D(path);
 }
 
 void Sprite::draw()

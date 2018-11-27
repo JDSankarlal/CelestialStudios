@@ -53,11 +53,11 @@ Matrix& Matrix::matrixMulti(const Matrix m1, const Matrix m2)
 
 }
 
-Matrix& Matrix::rotaton(float x, float y, float z)
-{
-	Matrix position;
-	return position;
-}
+//Matrix& Matrix::rotaton(float x, float y, float z)
+//{
+//	Matrix position;
+//	return position;
+//}
 
 void Matrix::scale(float x, float y, float z)
 {

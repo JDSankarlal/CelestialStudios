@@ -5,11 +5,11 @@
 #include <vector>
 #include <map>
 #include "Transformer.h"
-#include "GLSLCompiler.h"
+#include "Shader.h"
 #include "StructInfo.h"
 #include "ResourceManager.h"
 
-#define CHAR_BUFF_SIZE 500
+#define CHAR_BUFF_SIZE 1000
 
 class Mesh
 {
@@ -20,7 +20,7 @@ public:
 
 	bool loadMesh(std::string);
 
-	void render(GLSLCompiler& shader);
+	void render(Shader& shader);
 
 	void unload();
 
@@ -32,7 +32,7 @@ public:
 	Coord3D top , bottom , left, right , front, back;
 
 private:
-	void loadMaterials(std::string path);
+	void loadMaterials(const char * path);
 
 	void init();
 

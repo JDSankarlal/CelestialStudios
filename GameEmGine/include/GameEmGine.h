@@ -8,7 +8,7 @@
 #include "ShaderCombiner.h"
 //#include "EmGineAudioPlayer.h"
 //#include "Sprite.h"
-#include "GLSLCompiler.h"
+#include "Shader.h"
 #include "WindowCreator.h"
 #include "Camera.h"
 #include "Model.h"
@@ -73,7 +73,7 @@ public:
 	/*
 	 What the game must do each update
 	*/
-	void gameLoopUpdate(void update());
+	void gameLoopUpdate(void update(double));
 	/*
 	Set background colour
 	*/
@@ -140,7 +140,7 @@ public:
 
 	Xinput& getController(int index);
 
-	static GLSLCompiler *m_cameraShader, *m_modelShader;
+	static Shader *m_cameraShader, *m_modelShader;
 
 private:
 	void shaderInit();
@@ -152,7 +152,7 @@ private:
 	*/
 	static void update();
 	static void changeViewport(GLFWwindow * win, int w, int h);
-	static void(*m_compileShaders)(), (*m_render)(), (*m_gameLoop)();
+	static void(*m_compileShaders)(), (*m_render)(), (*m_gameLoop)(double);
 	static WindowCreator *m_window;
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
@@ -162,6 +162,7 @@ private:
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;
 
+	static bool exitGame;
 	static float m_fps;
 	static short m_fpsLimit;
 };
