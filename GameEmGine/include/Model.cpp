@@ -35,28 +35,24 @@ Model::~Model()
 
 void Model::render(Shader& shader, Camera& cam)
 {
-	if(m_camera != &cam)
-		m_camera = &cam;
-
 	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
 	shader.enable();
 
-	/// - Lighting Variables - ///
-
 	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
-
-	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(cam.getCameraMatrix() * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f))[0]);
-
-	glUniform3f(shader.getUniformLocation("LightAmbient"), .5f, .5f, .5f);
-	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.8f, 0.8f, 1.0f);
-	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.2f, 0.2f, 0.2f);
-
-	//glUniform1f(shader.getUniformLocation("LightAngleConstraint"), 10.0f);
-	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 100.0f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f); //Pretty much the brightness in the center.
-	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
-	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.02f);
+//	/// - Lighting Variables - ///
+//
+//	glUniform4fv(shader.getUniformLocation("LightPosition"), 1, &(cam.getCameraMatrix() * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f))[0]);
+//
+//	glUniform3f(shader.getUniformLocation("LightAmbient"), .5f, .5f, .5f);
+//	glUniform3f(shader.getUniformLocation("LightDiffuse"), 0.8f, 0.8f, 1.0f);
+//	glUniform3f(shader.getUniformLocation("LightSpecular"), 0.2f, 0.2f, 0.2f);
+//
+//	//glUniform1f(shader.getUniformLocation("LightAngleConstraint"), 10.0f);
+//	glUniform1f(shader.getUniformLocation("LightSpecularExponent"), 100.0f);
+//	glUniform1f(shader.getUniformLocation("Attenuation_Constant"), 1.0f); //Pretty much the brightness in the center.
+//	glUniform1f(shader.getUniformLocation("Attenuation_Linear"), 0.1f);
+//	glUniform1f(shader.getUniformLocation("Attenuation_Quadratic"), 0.02f);
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 

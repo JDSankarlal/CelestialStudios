@@ -1,4 +1,3 @@
-#include <windows.h>
 
 #include "GameEmGine.h"
 #include "EmGineAudioPlayer.h"
@@ -285,6 +284,7 @@ void GameEmGine::removeModel(Model* model)
 		if(m_models[a] == model)
 		{
 			delete m_models[a];
+			m_models[a] = nullptr;
 			m_models.erase(m_models.begin() + a);
 		}
 }
@@ -309,7 +309,9 @@ void GameEmGine::update()
 
 	if(m_render != nullptr)
 		m_render();
-
+	LightSource::setCamera(m_mainCamera);
+	LightSource::setShader(m_modelShader);
+	LightSource::update();
 	if(m_mainCamera->getTransformer().isUpdated())
 	{
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix()*m_mainCamera->getViewMatrix())[0][0]));

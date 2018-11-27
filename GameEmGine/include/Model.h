@@ -46,7 +46,6 @@ private:
 	Transformer m_transform;
 	//Physics3D *physics;
 	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back;
-	Camera *m_camera;
 	Mesh m_mesh;
 	ColourRGBA m_colour;
 	Shader m_shaderBB;

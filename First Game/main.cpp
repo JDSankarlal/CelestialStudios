@@ -386,7 +386,7 @@ int main()
 {
 	/// - Load mod into Scene - ///
 
-	//game.addModel(mod[0] = new Model("mod/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
+	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
 	game.addModel(mod[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
@@ -470,6 +470,10 @@ int main()
 	game.addModel(mod[13]);
 	game.addModel(mod[14]);
 	game.addModel(mod[15]);
+
+	LightSource::setLightAmount(6);
+	for(int a=0;a<6;a++)
+	LightSource::setParent(mod[10+a], a);
 
 	/// - Set Camera - ///
 

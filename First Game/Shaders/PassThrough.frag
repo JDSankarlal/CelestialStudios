@@ -73,6 +73,7 @@ void main()
             //Calculate specular contribution
             outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
         }
+     // outColor.rgb = vec3(NdotL,NdotL,NdotL); 
     }
-  //  outColor.rgb = vec3(NdotL,NdotL,NdotL); 
+    
 }

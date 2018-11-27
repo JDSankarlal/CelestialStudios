@@ -21,7 +21,7 @@ void main()
     texcoord = in_uv;
     texcoord.y = 1 - texcoord.y;
 
-    norm = mat3(uView) * mat3(uModel) * in_normal;
+    norm =  mat3(uView) * mat3(uModel) * in_normal;
     
     vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f); 
     
