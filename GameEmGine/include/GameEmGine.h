@@ -17,6 +17,8 @@
 //#include "ModelBatch.h"
 #include "InputManager.h"
 #include "FrameBuffer.h"
+#include "LightSource.h"
+
 //will get joystic input latter :>
 
 

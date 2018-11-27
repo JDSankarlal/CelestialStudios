@@ -1,17 +1,20 @@
 #version 420
-
-uniform vec4 LightPosition;
+#define MAX_LIGHTS_SIZE 50
+uniform vec4 LightPosition[MAX_LIGHTS_SIZE];
 
 //color
 uniform vec3 LightAmbient;
-uniform vec3 LightDiffuse;
-uniform vec3 LightSpecular;
+uniform vec3 LightDiffuse[MAX_LIGHTS_SIZE];
+uniform vec3 LightSpecular[MAX_LIGHTS_SIZE];
 
 //scalar
-uniform float LightSpecularExponent;
-uniform float Attenuation_Constant;
-uniform float Attenuation_Linear;
-uniform float Attenuation_Quadratic;
+uniform float LightSpecularExponent[MAX_LIGHTS_SIZE];
+uniform float Attenuation_Constant[MAX_LIGHTS_SIZE];
+uniform float Attenuation_Linear[MAX_LIGHTS_SIZE];
+uniform float Attenuation_Quadratic[MAX_LIGHTS_SIZE];
+
+//amount of lights
+uniform int LightAmount;
 
 //uniform vec3 LightDirection = vec3(0,0,-1);
 //uniform float LightAngleConstraint;
@@ -48,29 +51,29 @@ void main()
     //account for rasterizer interpolating
     vec3 normal = normalize(norm);
     
-    vec3 lightVec = LightPosition.xyz - pos;
-    float dist = length(lightVec);
-    vec3 lightDir = lightVec / dist;
-    
-    float NdotL = dot(normal, lightDir);
+    for(int a = 0; a < LightAmount; a++)
+    { 
+        vec3 lightVec = LightPosition[a].xyz - pos;
+        float dist = length(lightVec);
+        vec3 lightDir = lightVec / dist;
 
-    //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
+        float NdotL = dot(normal, lightDir);
+
+        //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
 
         if(NdotL > 0.0)
         {
             //The light contributes to this surface
-
             //Calculate attenuation (falloff)
-            float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
-
+            float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) + (Attenuation_Quadratic[a] * dist * dist));
             //Calculate diffuse contribution
-            outColor.rgb += LightDiffuse * NdotL * attenuation;
-
+            outColor.rgb += LightDiffuse[a] * NdotL * attenuation;
             //Blinn-Phong half vector
             float NdotHV =  max(dot(normal, normalize(lightDir + normalize(-pos))), 0.0); 
-
             //Calculate specular contribution
-            outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
+            outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
         }
-  //  outColor.rgb = vec3(NdotL,NdotL,NdotL); 
+     // outColor.rgb = vec3(NdotL,NdotL,NdotL); 
+    }
+    
 }

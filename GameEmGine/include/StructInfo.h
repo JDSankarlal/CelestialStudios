@@ -187,6 +187,7 @@ struct Coord3D
 	{
 		return { coordX / coord.coordX,coordY / coord.coordY,coordZ / coord.coordZ };
 	}
+
 	Coord3D operator/(float coord)
 	{
 		return { coordX / coord,coordY / coord,coordZ / coord };

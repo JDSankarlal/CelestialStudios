@@ -45,8 +45,8 @@ private:
 	GLuint m_BBVaoID = 0, m_BBVboID = 0;
 	Transformer m_transform;
 	//Physics3D *physics;
-	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back;
-	Camera *m_camera;
+	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back,m_center;
+	float m_width, m_height, m_depth;
 	Mesh m_mesh;
 	ColourRGBA m_colour;
 	Shader m_shaderBB;

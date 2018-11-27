@@ -17,8 +17,11 @@ out vec3 pos;
 void main()
 {
     //normal = (uModel * vec4(in_normal, 0.0f)).xyz;
+    
     texcoord = in_uv;
-    norm = mat3(uView) * mat3(uModel) * in_normal;
+    texcoord.y = 1 - texcoord.y;
+
+    norm =  mat3(uView) * mat3(uModel) * in_normal;
     
     vec4 viewSpace = uView * uModel * vec4(in_vert, 1.0f); 
     

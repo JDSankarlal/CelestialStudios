@@ -209,6 +209,7 @@
     <ClCompile Include="fileIO.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameEmGine.cpp" />
+    <ClCompile Include="LightSource.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="PointHandle.cpp" />
     <ClCompile Include="Shader.cpp" />
