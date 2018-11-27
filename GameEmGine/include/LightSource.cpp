@@ -97,21 +97,22 @@ void LightSource::setLightAmount(unsigned size)
 void LightSource::update()
 {
 	char buff[90];
-		m_shader->enable();
+	m_shader->enable();
 	glUniform1i(m_shader->getUniformLocation("LightAmount"), m_lights.size());
 	glUniform3f(m_shader->getUniformLocation("LightAmbient"), m_ambient[0] / 255.0f, m_ambient[1] / 255.0f, m_ambient[2] / 255.0f);
-
+	
 	for(unsigned a = 0; a < m_lights.size(); a++)
 	{
-		glm::vec4 pos(m_lights[a].transform->getPosition().coordX, m_lights[a].transform->getPosition().coordY, m_lights[a].transform->getPosition().coordZ, 1.0f);
+		Coord3D lp = m_lights[a].transform->getPosition();
+		glm::vec4 pos(lp.coordX, lp.coordY, lp.coordZ, 1.0f);
 		if(m_lights[a].parent)
-			pos = m_lights[a].parent->getTransformer().getTransformation()* m_lights[a].transform->getTransformation()*pos;
+			pos = m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation() * pos;
 		else
-			pos = m_lights[a].transform->getTransformation()*pos;
-
+			pos = m_lights[a].transform->getTransformation() * pos;
+	
 		sprintf_s(buff, "LightPosition[%d]", a);
 		glUniform4fv(m_shader->getUniformLocation(buff), 1, &(m_cam->getCameraMatrix()*pos)[0]);
-		
+	
 		sprintf_s(buff, "LightDiffuse[%d]", a);
 		glUniform3f(m_shader->getUniformLocation(buff), m_lights[a].diffuse[0] / 255.0f, m_lights[a].diffuse[1] / 255.0f, m_lights[a].diffuse[2] / 255.0f);
 		sprintf_s(buff, "LightSpecular[%d]", a);
@@ -127,5 +128,5 @@ void LightSource::update()
 		sprintf_s(buff, "Attenuation_Quadratic[%d]", a);
 		glUniform1f(m_shader->getUniformLocation(buff), m_lights[a].attenuationQuadratic);
 	}
-		m_shader->disable();
+	m_shader->disable();
 }
