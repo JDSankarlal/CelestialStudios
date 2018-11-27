@@ -62,28 +62,28 @@ void keyInputReleased(int key, int _mod)
 	rotDown = (key == GLFW_KEY_DOWN ? false : rotDown);
 
 	//changes fps limit
-	if(key == GLFW_KEY_KP_6)
+	if (key == GLFW_KEY_KP_6)
 		game.setFPSLimit(game.getFPSLimit() + 1);
-	if(key == GLFW_KEY_KP_4)
+	if (key == GLFW_KEY_KP_4)
 		game.setFPSLimit(game.getFPSLimit() - 1);
 
-	if(key == GLFW_KEY_F) //Toggles Fullscreen
+	if (key == GLFW_KEY_F) //Toggles Fullscreen
 	{
 		static bool full;
 		game.getWindow()->setFullScreen(full = !full);
 		printf("Full Screen: %s\n", full ? "true" : "false");
 	}
 
-	if(key == GLFW_KEY_SPACE) //changes the model that is being moved
+	if (key == GLFW_KEY_SPACE) //changes the model that is being moved
 	{
 		static CAMERA_TYPE type = PERSPECTIVE;
 		game.setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 	}
 
-	if(key == GLFW_KEY_TAB)
+	if (key == GLFW_KEY_TAB)
 		movePlayer = !movePlayer;
 
-	if(key == GLFW_KEY_F5) //resets the camera
+	if (key == GLFW_KEY_F5) //resets the camera
 	{
 		GameEmGine::m_modelShader->refresh();
 
@@ -91,10 +91,48 @@ void keyInputReleased(int key, int _mod)
 		//	game.setCameraPosition({0,0,0});
 	}
 
-	if(key == 'R')
+	if (key == 'R')
 		game.setCameraAngle(0, { 1,1,1 });
 
 	printf("key RELEASED code: %d\n\n", key);
+}
+Path path;
+int lineCurveDetail = 10;
+void drawLineCatmull()
+{
+	if (path.pointHandles.size() < 4)
+		return;
+
+	for (int p0 = 0; p0 < path.pointHandles.size() - !path.connectedEndpoints * 3; ++p0)
+	{
+		int p1, p2, p3;
+		p1 = vectorWrap(p0 + 1, path.pointHandles.size());
+		p2 = vectorWrap(p0 + 2, path.pointHandles.size());
+		p3 = vectorWrap(p0 + 3, path.pointHandles.size());
+
+		glm::vec3 lastPosition = path.pointHandles[p1].position;
+		for (int j = 0; j < lineCurveDetail; ++j)
+		{
+
+			glm::vec3 pointPosition = catmull
+			(
+				path.pointHandles[p0].position,
+				path.pointHandles[p1].position,
+				path.pointHandles[p2].position,
+				path.pointHandles[p3].position, (j + 1.0f) / lineCurveDetail);
+
+			//glLineWidth(10);
+			//glColor3f(1.0, 0.0, 0.0);
+			//glBegin(GL_LINES);
+			//glVertex3f(0.0f, 4.0f, 10.0f);
+			//glVertex3f(0, 0, 0);
+			//	
+			////Path path;
+			//TTK::Graphics::DrawLine(lastPosition, pointPosition);
+			//lastPosition = pointPosition;
+			//glEnd();
+		}
+	}
 }
 
 /// - Collision Class - ///
@@ -109,8 +147,8 @@ bool collisions(Model *l, Model *k)
 	float capW = (l->getWidth() + k->getWidth()) / 2;
 	float capD = (l->getDepth() + k->getDepth()) / 2;
 
-	if(std::abs(distanceX) <= capW)
-		if(std::abs(distanceZ) <= capD)
+	if (std::abs(distanceX) <= capW)
+		if (std::abs(distanceZ) <= capD)
 			return true;
 
 	return false;
@@ -124,35 +162,83 @@ void update(double dt)
 	static float coolDown = 0;
 	static float duration = 0;
 	static bool f = true;
+	static bool bossActive = true;
 
 	float move = .1f;
+
+	static float pointSize = 50.0f;
 	//printf("%f\n", dt);
 
 
 	static vector<Player*> bullets[4];
 	static vector<Coord3D> velocity[4];
 	static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
+	static float  curveroni = 0;
+	curveroni += .01;
+	curveroni = fmodf(curveroni, 1);
 
-	if(movePlayer)
-		for(int a = 0; a < 4; a++)
-			if(game.isControllerConnected(a))
+	static bool hasTarget = false;
+	static Coord3D bossTarget;
+
+	//gets a   target for missile (player 1,2,3 or 4) randomly
+	if (!hasTarget)
+	{
+		bossTarget = mod[rand() % 4]->getTransformer().getPosition();
+		hasTarget = true;
+	}
+
+	if (hasTarget)
+	{
+		Coord3D
+			p1 = mod[8]->getTransformer().getPosition(),//start point
+			p2 = bossTarget,//end point 
+			c1 = p1 - Coord3D{ 0,100,0 },//controle point
+			c2 = p2 - Coord3D{ 0,100,0 };//controle point
+
+		Coord3D cat = catmull
+		(
+			c1,
+			p1,
+			p2,
+			c2,
+			curveroni
+		);
+
+		Coord3D  pointPosition = cat;
+		mod[18]->getTransformer().setPosition(pointPosition.coordX, pointPosition.coordY, pointPosition.coordZ);
+	}
+
+	//some function
+	//{
+
+	//when function plays, get player locations
+	//call 4 missles to shoot at those locations
+	//maybe call missles to shoot randomly
+	//}
+
+
+	if (movePlayer)
+		for (int a = 0; a < 4; a++)
+			if (game.isControllerConnected(a))
 			{
 				Xinput p1 = game.getController(a);
 
 
+
+
 				static float angle[4] = { 180,180,180,180 };
-				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+				if (p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 				{
 
 					angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-									 sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-									 + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
+						sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+							+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
 					angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 					angle[a] = fmodf(angle[a], 360);
 				}
 
 
-				if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
+				if (p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 				{
 					makeShitLessCancer[a] = true;
 
@@ -180,41 +266,42 @@ void update(double dt)
 					velocity[a].back() = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
 					audio.createStream("pew.wav");
 					audio.play();
-				} else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
+				}
+				else if (p1.triggers[RT] < .95 && makeShitLessCancer[a])
 					makeShitLessCancer[a] = false;
 
 				/// - Button Presses on controller - ///
 
-				if(p1.buttonPressed(p1.buttons.START))
+				if (p1.buttonPressed(p1.buttons.START))
 				{
 					puts("\nExiting Game\n");
 					game.exit();
 				}
-				if(p1.buttonPressed(p1.buttons.X))
+				if (p1.buttonPressed(p1.buttons.X))
 				{
 					puts("RELOADING!!!\n");
 				}
-				if(p1.buttonPressed(p1.buttons.Y))
+				if (p1.buttonPressed(p1.buttons.Y))
 				{
 					puts("SPECIAL ABILITY\n");
 				}
 				/// - Left Trigger to Dash - ///
 
-				if(p1.triggers[LT] >= .95)
+				if (p1.triggers[LT] >= .95)
 				{
 					static float coolDown[4];
 
 					//get deltaTime put into duraction variable
 
-					if(time - coolDown[a] >= 3)
+					if (time - coolDown[a] >= 3)
 					{
-						if(f == true)
+						if (f == true)
 						{
 							duration = time;
 							f = false;
 						}
 						move = 0.5f;
-						if(time - 0.1f >= duration)
+						if (time - 0.1f >= duration)
 						{
 							move = 0.1f;
 							//If triggers up then coolDown = time;
@@ -229,41 +316,42 @@ void update(double dt)
 				else
 				{
 					move -= .001;
-					if(move < .1)
+					if (move < .1)
 						move = .1;
 					makeShitLessCancer2[a] = false;
 				}
 
 				/// - Bullet Collisions - ///
-				for(unsigned b = 0; b < bullets[a].size(); b++)
-					if(bullets[a][b])
+				for (unsigned b = 0; b < bullets[a].size(); b++)
+					if (bullets[a][b])
 					{
 						bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
 
-						if(mod[8])
-							if(collisions(bullets[a][b], mod[8]))
+						if (mod[8])
+							if (collisions(bullets[a][b], mod[8]))
 							{
 								game.removeModel(bullets[a][b]);
 								bullets[a].erase(bullets[a].begin() + b);
 								velocity[a].erase(velocity[a].begin() + b);
 								Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
 								CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
-								if(CandyMan->getHealth() <= 0)
+								if (CandyMan->getHealth() <= 0)
 								{
 									game.removeModel(CandyMan); // If health = 0 then boss dead
 									mod[8] = nullptr;
+									bossActive = false;
 									puts("Killed The BOSS\n");
 								}
 								puts("Hit The BOSS\n");
 								break;
 							}
 
-						if(bullets[a][b])
-							for(int i = 5; i < 8; i++)
+						if (bullets[a][b])
+							for (int i = 5; i < 8; i++)
 							{
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
 
-								if(collisions(bullets[a][b], mod[i]))
+								if (collisions(bullets[a][b], mod[i]))
 								{
 									game.removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
@@ -294,8 +382,8 @@ void update(double dt)
 				//	mod[0]->getTransformer().translateBy(0, p1.triggers[RT] * move, 0);
 			}
 
-	if(!movePlayer)
-		if(game.isControllerConnected(0))
+	if (!movePlayer)
+		if (game.isControllerConnected(0))
 		{
 			Xinput p1 = game.getController(0);
 
@@ -304,17 +392,17 @@ void update(double dt)
 			p1.numButtons;
 			p1.numSticks;
 			float angle = 0;
-			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+			if (p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 			{
 
 				angle = acosf(p1.Coord2D_sticks[RS].x /
-							  sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-							  + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
+					sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+						+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
 				angle += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
 				angle = fmodf(angle, 360);
 			}
 
-			if(Xinput::buttonPressed(p1.buttons.A))
+			if (Xinput::buttonPressed(p1.buttons.A))
 				printf("%d\n", p1.buttons.A);
 
 			////rotate left wall
@@ -328,13 +416,33 @@ void update(double dt)
 			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
 			move /= 2;
 		}
+	if (bossActive == true)
+	{
+		//glm::vec3 pi(0.0f,4.0f,10.0f);
+		//glm::vec3 pp1(0, 0, 0);
+		//glm::vec3 ppu1(0, -3, -1);
+		//glm::vec3 ppu2(0, -3, 11);
+		//
+		//path.pointHandles.push_back(PointHandle(pointSize, pi, std::to_string(path.pointHandles.size())));
+		//path.pointHandles.push_back(PointHandle(pointSize, pp1, std::to_string(path.pointHandles.size())));
+		//path.pointHandles.push_back(PointHandle(pointSize, ppu1, std::to_string(path.pointHandles.size())));
+		//path.pointHandles.push_back(PointHandle(pointSize, ppu2, std::to_string(path.pointHandles.size())));
+
+		//glLineWidth(50);
+		//glColor3f(1.0, 0.0, 0.0);
+		//glBegin(GL_LINES);
+		//glVertex3f(0.0f, 0.0f, 0.0f);
+		//glVertex3f(0, 0, 5);
+		//glEnd();
+		//Path path;
+	}
 }
 
 void mouseButtonReleased(int button, int _mod)
 {
-	if(button == LEFT_BUTTON)
+	if (button == LEFT_BUTTON)
 		leftM = InputManager::getMouseCursorPosition();
-	if(button == RIGHT_BUTTON)
+	if (button == RIGHT_BUTTON)
 		rightM = InputManager::getMouseCursorPosition();
 }
 
@@ -395,6 +503,9 @@ int main()
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
 	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
+	game.addModel(mod[18] = new Model("Models/Missile/untitled.obj"));
+
+
 
 	mod[5]->setColour(0.65f, 0.65f, 0.7f);
 
@@ -429,6 +540,7 @@ int main()
 
 	//Boss Transforms
 	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, -1.65f, 17), mod[8]->getTransformer().setScale(4);
+	mod[18]->getTransformer().setPosition(0, 2.f, 17);
 
 	//Floor Transforms
 	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0, 0.0f, 5);
