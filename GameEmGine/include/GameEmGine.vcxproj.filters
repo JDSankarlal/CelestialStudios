@@ -43,20 +43,26 @@
     <ClInclude Include="Texture.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Physics3D.h" />
     <ClInclude Include="Camera.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
     <ClInclude Include="Transformer.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderCombiner.h" />
     <ClInclude Include="FrameBuffer.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
-    <ClInclude Include="LightSource.h" />
     <ClInclude Include="Shader.h">
       <Filter>EmGine\Shader Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSource.h">
+      <Filter>EmGine</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics3D.h">
+      <Filter>EmGine</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderCombiner.h">
+      <Filter>EmGine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -96,19 +102,26 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>EmGine\Resource Management</Filter>
     </ClCompile>
-    <ClCompile Include="Physics3D.cpp" />
     <ClCompile Include="Camera.cpp">
       <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
     <ClCompile Include="Transformer.cpp">
       <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderCombiner.cpp" />
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>EmGine\Shader Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSource.cpp">
+      <Filter>EmGine</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics3D.cpp">
+      <Filter>EmGine</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderCombiner.cpp">
+      <Filter>EmGine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

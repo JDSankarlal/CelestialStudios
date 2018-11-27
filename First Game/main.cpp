@@ -262,7 +262,7 @@ void update(double dt)
 							for(int i = 5; i < 8; i++)
 							{
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
-						
+
 								if(collisions(bullets[a][b], mod[i]))
 								{
 									game.removeModel(bullets[a][b]);
@@ -319,7 +319,7 @@ void update(double dt)
 
 			////rotate left wall
 			//mod[6]->getTransformer().setRotation({ 0, angle, 0 });
-			
+
 			//move canera
 			move *= 2;
 			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
@@ -417,15 +417,15 @@ int main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1, 0, -5),
-		mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1, 0, -5),
-		mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2, 0, -5),
-		mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2, 0, -5);
+	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1, 0, -5);
+	mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1, 0, -5);
+	mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2, 0, -5);
+	mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2, 0, -5);
 
 	//Wall Transforms
-	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[5]->getTransformer().setScale(4.0f, 1.0f, 1.0f),
-		mod[6]->getTransformer().setRotation({ 0.0f, 270.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 0.0f, -5.0f), mod[6]->getTransformer().setScale(4.0f, 1.0f, 1.0f),
-		mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[7]->getTransformer().setScale(4.52f, 1.0f, 1.0f);
+	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[5]->getTransformer().setScale(4.0f, 1.0f, 1.0f);
+	mod[6]->getTransformer().setRotation({ 0.0f, 270.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 0.0f, -5.0f), mod[6]->getTransformer().setScale(4.0f, 1.0f, 1.0f);
+	mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[7]->getTransformer().setScale(4.52f, 1.0f, 1.0f);
 
 	//Boss Transforms
 	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, -1.65f, 17), mod[8]->getTransformer().setScale(4);
@@ -434,12 +434,12 @@ int main()
 	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0, 0.0f, 5);
 
 	//Street Light Transforms
-	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 0, -1),
-		mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 0, 7),
-		mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 0, 15),
-		mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 0, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
-		mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 0, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f }),
-		mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 0, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 0, -1);
+	mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 0, 7);
+	mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 0, 15);
+	mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 0, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 0, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 0, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 	//Bench Transforms
 	mod[16]->getTransformer().setPosition(-13, 0, 3);
@@ -483,7 +483,7 @@ int main()
 
 	//engine stuff
 	//game.setFPSLimit(60);
-	game.backgroundColour(0.05f,0.0f,0.1f);
+	game.backgroundColour(0.05f, 0.0f, 0.1f);
 	game.keyPressed(keyInputPressed);
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);
