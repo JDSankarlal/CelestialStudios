@@ -170,7 +170,7 @@ void update(double dt)
 
 	static float pointSize = 50.0f;
 	//printf("%f\n", dt);
-
+	static Player* player;
 
 	static vector<Player*> bullets[4];
 	static vector<Coord3D> velocity[4];
@@ -222,13 +222,15 @@ void update(double dt)
 
 	if(movePlayer)
 		for(int a = 0; a < 4; a++)
+			
 			if(game.isControllerConnected(a))
 			{
 				Xinput p1 = game.getController(a);
-
-
-
-
+				//Player Collisions with Walls
+				//if (player->getTransformer().getPosition().coordX > 20)
+				//{
+				//	player->getTransformer().setPosition(20, player->getTransformer().getPosition().coordY, player->getTransformer().getPosition().coordZ);
+				//}
 				static float angle[4] = { 180,180,180,180 };
 				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 				{
@@ -336,7 +338,7 @@ void update(double dt)
 								bullets[a].erase(bullets[a].begin() + b);
 								velocity[a].erase(velocity[a].begin() + b);
 								Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
-								CandyMan->setHealth(CandyMan->getHealth() - 100);// When hit takes damage
+								CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 								if(CandyMan->getHealth() <= 0)
 								{
 									game.removeModel(CandyMan); // If health = 0 then boss dead
@@ -488,12 +490,12 @@ int main()
 	game.addModel(mod[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
-	game.addModel(mod[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
+	game.addModel(mod[8] = new Boss("Models/BOSS/BOSS.obj")); //Boss
+	//Boss *CandyMan = mod[8];
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
 	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
-	game.addModel(mod[18] = new Model("Models/Missile/untitled.obj"));
-
+	game.addModel(mod[18] = new Model("Models/Missile/candyMissile.obj"));
 
 
 	mod[5]->setColour(0.65f, 0.65f, 0.7f);
@@ -528,7 +530,7 @@ int main()
 	mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[7]->getTransformer().setScale(4.52f, 1.0f, 1.0f);
 	
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, -1.65f, 17), mod[8]->getTransformer().setScale(4);
+	mod[8]->getTransformer().setRotation({ 0, 180, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(4);
 	mod[18]->getTransformer().setPosition(0, 2.f, 17);//Missile
 
 	//Floor Transforms
@@ -555,9 +557,6 @@ int main()
 	mod[1]->setColour(0, 0, 1);
 	mod[2]->setColour(0, 1, 0);
 	mod[3]->setColour(1, 1, 0);
-
-	//Floor
-	mod[9]->setColour(196.0f / 255, 167.0f / 255, 113.0f / 255);
 
 	/// - Add Duplicate mod - ///
 
@@ -587,7 +586,6 @@ int main()
 
 	game.setCameraPosition({ 0,15,-10 });
 	game.setCameraAngle(-45, { 1,0,0 });
-
 
 	audio.createStream("Game Jam(Full).wav");
 
