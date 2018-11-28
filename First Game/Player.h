@@ -11,5 +11,5 @@ public:
 	void setHealth(int v);
 
 private:
-	int health;
+	int health = 100;
 };

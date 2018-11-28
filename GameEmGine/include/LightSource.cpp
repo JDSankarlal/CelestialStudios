@@ -48,7 +48,7 @@ void LightSource::setDirection(Coord3D dir, int index)
 	m_lights[index].direction = -dir;
 }
 
-void LightSource::setSceneAmbient(ColourRGBA ambi, unsigned index)
+void LightSource::setSceneAmbient(ColourRGBA ambi)
 {
 	m_ambient = ambi;
 }

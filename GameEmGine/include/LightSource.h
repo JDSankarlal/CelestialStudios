@@ -37,7 +37,7 @@ public:
 
 	static void setPosition(Coord3D pos, unsigned index);
 
-	static void setSceneAmbient(ColourRGBA ambi, unsigned index);
+	static void setSceneAmbient(ColourRGBA ambi);
 
 	static void setDirection(Coord3D dir, int index);
 
