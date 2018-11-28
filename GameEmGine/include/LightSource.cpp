@@ -33,9 +33,19 @@ void LightSource::initLight(LIGHT_TYPE type, Camera * cam, Shader * shader, Ligh
 	//glUniform1f(shader->getUniformLocation(buff), 0.01f);
 }
 
+void LightSource::setLightType(LIGHT_TYPE type, unsigned index)
+{
+	m_lights[index].type = type;
+}
+
 void LightSource::setPosition(Coord3D pos, unsigned index)
 {
 	m_lights[index].transform->setPosition(pos.coordX, pos.coordY, pos.coordZ);
+}
+
+void LightSource::setDirection(Coord3D dir, int index)
+{
+	m_lights[index].direction = dir;
 }
 
 void LightSource::setSceneAmbient(ColourRGBA ambi, unsigned index)
