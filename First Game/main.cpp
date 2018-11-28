@@ -576,12 +576,13 @@ int main()
 	{
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 		LightSource::setParent(mod[10 + a], a);
-		LightSource::setPosition({ -5,2.5,0 }, a);
+		LightSource::setPosition({ -5,4.5,0 }, a);
 		LightSource::setDirection({0,-1,0},a);
 	}
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
 	LightSource::setParent(mod[18], 6);
+	LightSource::setDiffuse({ 255,100,0,200 },6);
 	/// - Set Camera - ///
 
 	game.setCameraPosition({ 0,15,-10 });
