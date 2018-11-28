@@ -193,7 +193,7 @@ void update(double dt)
 		if(hasTarget)
 		{
 			Coord3D
-				p1 = mod[8]->getTransformer().getPosition(),//start point
+				p1 = mod[8]->getTransformer().getPosition() + Coord3D(0,5,2),//start point
 				p2 = bossTarget,//end point 
 				c1 = p1 - Coord3D{ 0,100,100 },//controle point
 				c2 = p2 - Coord3D{ 0,100,0 };//controle point
