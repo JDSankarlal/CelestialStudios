@@ -17,7 +17,7 @@ movePlayer = true;
 Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 
-#define modSize 20 //Number of mod that can exist
+#define modSize 50 //Number of mod that can exist
 GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
 Shader colourProgram, colourProgram2;
 Model *mod[modSize];
@@ -275,6 +275,9 @@ void update(double dt)
 					player->setHealth(player->getHealth() - 50);
 					if (player->getHealth() <= 0)
 					{
+						game.removeModel(mod[19 +a]);
+						game.addModel( mod[19+a]);
+						mod[19 + a]->getTransformer().setPosition(player->getTransformer().getPosition());
 						game.removeModel(player);
 					}
 				}
