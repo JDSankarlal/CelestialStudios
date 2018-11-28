@@ -502,7 +502,7 @@ int main()
 	game.addModel(mod[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
 	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
 	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
-	game.addModel(mod[8] = new Boss("Models/BOSS/roughBOSS.obj")); //Boss
+	game.addModel(mod[8] = new Boss("Models/BOSS/BOSS.obj")); //Boss
 	//Boss *CandyMan = mod[8];
 	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
 	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
@@ -542,7 +542,7 @@ int main()
 	mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[7]->getTransformer().setScale(4.52f, 1.0f, 1.0f);
 	
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 90, 0 }), mod[8]->getTransformer().setPosition(0, -1.65f, 17), mod[8]->getTransformer().setScale(4);
+	mod[8]->getTransformer().setRotation({ 0, 180, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(4);
 	mod[18]->getTransformer().setPosition(0, 2.f, 17);//Missile
 
 	//Floor Transforms
@@ -593,7 +593,6 @@ int main()
 
 	game.setCameraPosition({ 0,15,-10 });
 	game.setCameraAngle(-45, { 1,0,0 });
-
 
 	audio.createStream("Game Jam(Full).wav");
 
