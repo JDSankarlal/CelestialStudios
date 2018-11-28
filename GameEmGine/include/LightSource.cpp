@@ -33,9 +33,19 @@ void LightSource::initLight(LIGHT_TYPE type, Camera * cam, Shader * shader, Ligh
 	//glUniform1f(shader->getUniformLocation(buff), 0.01f);
 }
 
+void LightSource::setLightType(LIGHT_TYPE type, unsigned index)
+{
+	m_lights[index].type = type;
+}
+
 void LightSource::setPosition(Coord3D pos, unsigned index)
 {
 	m_lights[index].transform->setPosition(pos.coordX, pos.coordY, pos.coordZ);
+}
+
+void LightSource::setDirection(Coord3D dir, int index)
+{
+	m_lights[index].direction = -dir;
 }
 
 void LightSource::setSceneAmbient(ColourRGBA ambi, unsigned index)
@@ -105,14 +115,20 @@ void LightSource::update()
 	{
 		Coord3D lp = m_lights[a].transform->getPosition();
 		glm::vec4 pos(lp.coordX, lp.coordY, lp.coordZ, 1.0f);
-		if(m_lights[a].parent)
-			pos = m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation() * pos;
-		else
+			if(m_lights[a].parent)
+			{
+				Transformer *trans = &m_lights[a].parent->getTransformer();
+				glm::vec3 pos2 (trans->getPosition().coordX, trans->getPosition().coordY, trans->getPosition().coordZ);
+				glm::mat4 forward = glm::lookAt(pos2, pos2 + glm::vec3(cos(trans->getRotation().coordX), tan(trans->getRotation().coordY), sin(trans->getRotation().coordZ)), 
+							{0,1,0});
+				pos =  m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation()*forward * glm::vec4(pos2,1.f);
+			} else
 			pos = m_lights[a].transform->getTransformation() * pos;
 	
+		sprintf_s(buff, "LightType[%d]", a);
+		glUniform1i(m_shader->getUniformLocation(buff), (int)m_lights[a].type);
 		sprintf_s(buff, "LightPosition[%d]", a);
-		glUniform4fv(m_shader->getUniformLocation(buff), 1, &(m_cam->getCameraMatrix()*pos)[0]);
-	
+		glUniform4fv(m_shader->getUniformLocation(buff), 1, &(m_cam->getCameraMatrix()*pos)[0]);	
 		sprintf_s(buff, "LightDiffuse[%d]", a);
 		glUniform3f(m_shader->getUniformLocation(buff), m_lights[a].diffuse[0] / 255.0f, m_lights[a].diffuse[1] / 255.0f, m_lights[a].diffuse[2] / 255.0f);
 		sprintf_s(buff, "LightSpecular[%d]", a);

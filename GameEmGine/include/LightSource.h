@@ -5,14 +5,16 @@
 #include "Model.h"
 
 enum class LIGHT_TYPE
-{
-	NONE,
+{	
+	DEFAULT,
+	POINT,
 	DIRECTIONAL,
-	POINT
+	SPOTLIGHT
 };
 
 struct LightInfo
 {
+	LIGHT_TYPE type;
 	Transformer *transform=new Transformer;
 	Model* parent; 
 	ColourRGBA diffuse, specular;
@@ -31,9 +33,13 @@ public:
 	
 	void initLight(LIGHT_TYPE type, Camera * cam, Shader * shader, LightInfo info, unsigned index= 0);
 
+	static void setLightType(LIGHT_TYPE type, unsigned index);
+
 	static void setPosition(Coord3D pos, unsigned index);
 
 	static void setSceneAmbient(ColourRGBA ambi, unsigned index);
+
+	static void setDirection(Coord3D dir, int index);
 
 	static 	void setDiffuse(ColourRGBA diff, unsigned index);
 

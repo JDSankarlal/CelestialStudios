@@ -53,6 +53,8 @@ private:
 	Vertex3D *m_vertBBDat = new Vertex3D[12 * 3];
 	glm::mat4 m_transBB;
 	bool m_enableBB = false;
+
+	std::vector<Model*> m_children;
 	//std::vector <Texture2D> loadedTextures;
 	//std::string dir;
 

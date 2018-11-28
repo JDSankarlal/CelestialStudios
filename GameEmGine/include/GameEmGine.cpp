@@ -229,7 +229,7 @@ void GameEmGine::gameLoopUpdate(void update(double))
 	m_gameLoop = update;
 }
 
-void GameEmGine::backgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
 	m_colour = { GLubyte(r * 255),GLubyte(g * 255),GLubyte(b * 255),GLubyte(a * 255) };
 }
@@ -242,6 +242,11 @@ int GameEmGine::getWindowWidth()
 int GameEmGine::getWindowHeight()
 {
 	return m_window->getScreenHeight();
+}
+
+Camera* GameEmGine::getMainCamera()
+{
+	return m_mainCamera;
 }
 
 void GameEmGine::setCameraType(CAMERA_TYPE type)
