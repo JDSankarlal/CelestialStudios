@@ -156,6 +156,27 @@ bool collisions(Model *l, Model *k)
 	return false;
 }
 
+bool collisions3D(Model *l, Model *k)
+{
+	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	Coord3D thing = l->getCenter() - k->getCenter();
+
+	float distanceX = abs(thing.coordX);
+	float distanceY = abs(thing.coordY);
+	float distanceZ = abs(thing.coordZ);
+
+	float capW = (l->getWidth() + k->getWidth()) / 2;
+	float capH = (l->getHeight() + k->getHeight()) / 2;
+	float capD = (l->getDepth() + k->getDepth()) / 2;
+
+	if (std::abs(distanceX) <= capW)
+		if (std::abs(distanceZ) <= capD)
+			if (std::abs(distanceY) <= capH)
+				return true;
+
+	return false;
+}
+
 //updates within game loop
 void update(double dt)
 {
@@ -176,10 +197,14 @@ void update(double dt)
 	static vector<Coord3D> velocity[4];
 	static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
 	static float  curveroni = 0;
+	static bool hasTarget = false;
 	curveroni += .01;
+	if (curveroni >= 1)
+	{
+		hasTarget = false;
+	}
 	curveroni = fmodf(curveroni, 1);
 
-	static bool hasTarget = false;
 	static Coord3D bossTarget;
 
 	//gets a   target for missile (player 1,2,3 or 4) randomly
@@ -193,7 +218,7 @@ void update(double dt)
 		if(hasTarget)
 		{
 			Coord3D
-				p1 = mod[8]->getTransformer().getPosition(),//start point
+				p1 = mod[8]->getTransformer().getPosition() + Coord3D(0,5,2),//start point
 				p2 = bossTarget,//end point 
 				c1 = p1 - Coord3D{ 0,100,100 },//controle point
 				c2 = p2 - Coord3D{ 0,100,0 };//controle point
@@ -225,6 +250,7 @@ void update(double dt)
 			
 			if(game.isControllerConnected(a))
 			{
+				player = (Player*)mod[a];
 				Xinput p1 = game.getController(a);
 				//Player Collisions with Walls
 				//if (player->getTransformer().getPosition().coordX > 20)
@@ -241,6 +267,33 @@ void update(double dt)
 					angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 					angle[a] = fmodf(angle[a], 360);
 				}
+
+				/// - Missile Collisions with Player - ///
+				if(collisions3D (player, mod[18]))
+				{
+					mod[18]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D(0, 5, 2));
+					player->setHealth(player->getHealth() - 50);
+					if (player->getHealth() <= 0)
+					{
+						game.removeModel(player);
+					}
+				}
+
+				/// - Player Collisions with Walls - ///
+				if (collisions(player, mod[5])) // left wall
+				{
+					
+				}
+				if (collisions(player, mod[6])) //Right Wall
+				{
+
+				}
+				if (collisions(player, mod[7])) //Back Wall behind boss
+				{
+
+				}
+
+				//TODO: Collide with "wall" behind camera
 
 
 				if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
@@ -576,12 +629,16 @@ int main()
 	{
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 		LightSource::setParent(mod[10 + a], a);
-		LightSource::setPosition({ -5,2.5,0 }, a);
+		LightSource::setPosition({ -5,4.5,0 }, a);
 		LightSource::setDirection({0,-1,0},a);
+		
 	}
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
 	LightSource::setParent(mod[18], 6);
+	LightSource::setDiffuse({ 255,100,0,200 },6);
+
+	LightSource::setSceneAmbient({ 60,60,60,255 });
 	/// - Set Camera - ///
 
 	game.setCameraPosition({ 0,15,-10 });

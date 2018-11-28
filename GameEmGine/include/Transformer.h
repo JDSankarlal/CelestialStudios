@@ -23,6 +23,7 @@ public:
 	/*SET POSITION*/
 
 	void setPosition(float x, float y, float z, Coord3D forward = { 1,0,0 });
+	void setPosition(Coord3D pos, Coord3D forward = { 1,0,0 });
 	void translateBy(float x, float y, float z, Coord3D forward = { 1,0,0 });
 
 	/*SET SCALE*/

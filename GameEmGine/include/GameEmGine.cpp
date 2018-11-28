@@ -287,9 +287,7 @@ void GameEmGine::removeModel(Model* model)
 
 	for(unsigned a = 0; a < m_models.size(); a++)
 		if(m_models[a] == model)
-		{
-			delete m_models[a];
-			m_models[a] = nullptr;
+		{			
 			m_models.erase(m_models.begin() + a);
 		}
 }
