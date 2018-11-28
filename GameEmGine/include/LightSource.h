@@ -5,10 +5,10 @@
 #include "Model.h"
 
 enum class LIGHT_TYPE
-{
+{	
 	DEFAULT,
-	DIRECTIONAL,
 	POINT,
+	DIRECTIONAL,
 	SPOTLIGHT
 };
 
@@ -33,13 +33,13 @@ public:
 	
 	void initLight(LIGHT_TYPE type, Camera * cam, Shader * shader, LightInfo info, unsigned index= 0);
 
-	void setLightType(LIGHT_TYPE type, unsigned index);
+	static void setLightType(LIGHT_TYPE type, unsigned index);
 
 	static void setPosition(Coord3D pos, unsigned index);
 
 	static void setSceneAmbient(ColourRGBA ambi, unsigned index);
 
-	void setDirection(Coord3D dir, int index);
+	static void setDirection(Coord3D dir, int index);
 
 	static 	void setDiffuse(ColourRGBA diff, unsigned index);
 

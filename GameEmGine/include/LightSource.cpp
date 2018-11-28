@@ -45,7 +45,7 @@ void LightSource::setPosition(Coord3D pos, unsigned index)
 
 void LightSource::setDirection(Coord3D dir, int index)
 {
-	m_lights[index].direction = dir;
+	m_lights[index].direction = -dir;
 }
 
 void LightSource::setSceneAmbient(ColourRGBA ambi, unsigned index)
@@ -125,9 +125,10 @@ void LightSource::update()
 			} else
 			pos = m_lights[a].transform->getTransformation() * pos;
 	
+		sprintf_s(buff, "LightType[%d]", a);
+		glUniform1i(m_shader->getUniformLocation(buff), (int)m_lights[a].type);
 		sprintf_s(buff, "LightPosition[%d]", a);
-		glUniform4fv(m_shader->getUniformLocation(buff), 1, &(m_cam->getCameraMatrix()*pos)[0]);
-	
+		glUniform4fv(m_shader->getUniformLocation(buff), 1, &(m_cam->getCameraMatrix()*pos)[0]);	
 		sprintf_s(buff, "LightDiffuse[%d]", a);
 		glUniform3f(m_shader->getUniformLocation(buff), m_lights[a].diffuse[0] / 255.0f, m_lights[a].diffuse[1] / 255.0f, m_lights[a].diffuse[2] / 255.0f);
 		sprintf_s(buff, "LightSpecular[%d]", a);

@@ -195,8 +195,8 @@ void update(double dt)
 			Coord3D
 				p1 = mod[8]->getTransformer().getPosition(),//start point
 				p2 = bossTarget,//end point 
-				c1 = p1 - Coord3D{ 0,100,0 },//controle point
-				c2 = p2 - Coord3D{ 0,100,100};//controle point
+				c1 = p1 - Coord3D{ 0,100,100 },//controle point
+				c2 = p2 - Coord3D{ 0,100,0 };//controle point
 
 			Coord3D cat = catmull
 			(
@@ -400,8 +400,8 @@ void update(double dt)
 			move *= 2;
 			
 			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
-			//game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
-			game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+			game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
+			//game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
 			game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
 			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
 			move /= 2;
@@ -572,12 +572,17 @@ int main()
 	game.addModel(mod[14]);
 	game.addModel(mod[15]);
 
-	LightSource::setLightAmount(6);
+	LightSource::setLightAmount(7);
 	for(int a = 0; a < 6; a++)
 	{
+		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 		LightSource::setParent(mod[10 + a], a);
-		LightSource::setPosition({ 0,3,0 }, a);
+		LightSource::setPosition({ -5,2.5,0 }, a);
+		LightSource::setDirection({0,-1,0},a);
 	}
+
+	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
+	LightSource::setParent(mod[18], 6);
 	/// - Set Camera - ///
 
 	game.setCameraPosition({ 0,15,-10 });
