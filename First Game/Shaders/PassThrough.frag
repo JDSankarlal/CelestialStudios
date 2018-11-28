@@ -57,6 +57,8 @@ void main()
         float dist = length(lightVec);
         vec3 lightDir = lightVec / dist;
 
+		lightDir = vec3(0,1,0); //@EMORY THIS IS THE LIGHT DIRECTION
+
         float NdotL = dot(normal, lightDir);
 
         //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));

@@ -587,7 +587,7 @@ int main()
 	for (int a = 0; a < 6; a++)
 	{
 		LightSource::setParent(mod[10 + a], a);
-		LightSource::setPosition({ -2, 0, 0 }, a);
+		LightSource::setPosition({ -2, 2.5f, 0 }, a);
 	}
 	/// - Set Camera - ///
 
