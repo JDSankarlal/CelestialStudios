@@ -603,43 +603,43 @@ int main()
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
-	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1, 0, -5);
-	mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1, 0, -5);
-	mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2, 0, -5);
-	mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2, 0, -5);
+	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
+	mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
+	mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
+	mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
 
 	//Building Transforms
 	//Building 1s
-	mod[4]->getTransformer().setScale(2), mod[4]->getTransformer().setPosition(-16.75f, 0, -2);
-	mod[5]->getTransformer().setScale(2), mod[5]->getTransformer().setPosition(16.75f,0,10), mod[5]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
-	mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4, 0, 22.75f), mod[6]->getTransformer().setRotation({ 0.0f,-90.0f,0.0f });
+	mod[4]->getTransformer().setScale(2), mod[4]->getTransformer().setPosition(-16.75f, 0.0f, -2.0f);
+	mod[5]->getTransformer().setScale(2), mod[5]->getTransformer().setPosition(16.75f,0.0f,10.0f), mod[5]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4.0f, 0.0f, 22.75f), mod[6]->getTransformer().setRotation({ 0.0f,-90.0f,0.0f });
 	//Building 2s
-	mod[19]->getTransformer().setScale(1.75f), mod[19]->getTransformer().setPosition(-16.4f,0,3);
-	mod[20]->getTransformer().setScale(1.75f), mod[20]->getTransformer().setPosition(16.4f, 0, 0), mod[20]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });;
-	mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+	mod[19]->getTransformer().setScale(1.75f), mod[19]->getTransformer().setPosition(-16.4f,0.0f,3.0f);
+	mod[20]->getTransformer().setScale(1.75f), mod[20]->getTransformer().setPosition(16.4f, 0.0f, 0.0f), mod[20]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });;
+	mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0.0f, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
 	
 	//Project Nebula Sign Transforms
-	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9, 1.1f, 21);
+	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.0f, 1.1f, 21.0f);
 
 	//Boss Transforms
-	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0, 0, 16), mod[8]->getTransformer().setRotation({ 0, 180, 0 });
+	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
 	//Missile
-	mod[18]->getTransformer().setPosition(0, 2.f, 17);
+	mod[18]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 
 	//Floor Transforms
-	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0, 0.0f, 5);
+	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
 
 	//Street Light Transforms
-	mod[10]->getTransformer().setScale(0.5), mod[10]->getTransformer().setPosition(13, 0, -1);
-	mod[11]->getTransformer().setScale(0.5), mod[11]->getTransformer().setPosition(13, 0, 7);
-	mod[12]->getTransformer().setScale(0.5), mod[12]->getTransformer().setPosition(13, 0, 15);
-	mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 0, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
-	mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 0, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
-	mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 0, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[10]->getTransformer().setScale(0.5f), mod[10]->getTransformer().setPosition(13.0f, 0.0f, -1.0f);
+	mod[11]->getTransformer().setScale(0.5f), mod[11]->getTransformer().setPosition(13.0f, 0.0f, 7.0f);
+	mod[12]->getTransformer().setScale(0.5f), mod[12]->getTransformer().setPosition(13.0f, 0.0f, 15.0f);
+	mod[13]->getTransformer().setScale(0.5f), mod[13]->getTransformer().setPosition(-13.0f, 0.0f, -1.0f), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[14]->getTransformer().setScale(0.5f), mod[14]->getTransformer().setPosition(-13.0f, 0.0f, 7.0f), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[15]->getTransformer().setScale(0.5f), mod[15]->getTransformer().setPosition(-13.0f, 0.0f, 15.0f), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 	
 	//Bench Transforms
-	mod[16]->getTransformer().setPosition(-13, 0, 3);
-	mod[17]->getTransformer().setPosition(13, 0, 3), mod[17]->getTransformer().setRotation({ 0,180,0 });
+	mod[16]->getTransformer().setPosition(-13.0f, 0.0f, 3.0f);
+	mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 
 	/// - Set Model Colour - ///
@@ -654,15 +654,15 @@ int main()
 	{
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 		LightSource::setParent(mod[10 + a], a);
-		LightSource::setPosition({ -5,4.5,0 }, a);
-		LightSource::setDirection({0,-1,0},a);
+		LightSource::setPosition({ -5.0f,4.5,0.0f }, a);
+		LightSource::setDirection({0.0f,-1.0f,0.0f },a);
 		
 	}
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
 	LightSource::setParent(mod[18], 6);
 	LightSource::setDiffuse({ 255,100,0,200 },6);
-	LightSource::setAttenuationQuadratic(0.04f,6);
+	LightSource::setAttenuationQuadratic(0.04f,6.0f);
 
 	LightSource::setSceneAmbient({ 60,60,60,255 });
 	/// - Set Camera - ///
