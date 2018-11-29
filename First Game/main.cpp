@@ -267,9 +267,12 @@ void update(double dt)
 					player->setHealth(player->getHealth() - 50);
 					if (player->getHealth() <= 0)
 					{
-						game.removeModel(mod[19 +a]);
-						game.addModel( mod[19+a]);
-						mod[19 + a]->getTransformer().setPosition(player->getTransformer().getPosition());
+						game.removeModel(mod[22 +a]);
+					
+						mod[22 + a]->setColour(player->getColour());
+						static Coord3D test = player->getTransformer().getPosition();
+						mod[22 + a]->getTransformer().setScale(0.75f,1,0.5) ,mod[22 + a]->getTransformer().setPosition(player->getTransformer().getPosition()), mod[22 + a]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+						game.addModel(mod[22 + a]);
 						game.removeModel(player);
 					}
 				}
@@ -442,10 +445,7 @@ void update(double dt)
 			if(Xinput::buttonPressed(p1.buttons.A))
 				printf("%d\n", p1.buttons.A);
 
-			////rotate left wall
-			//mod[6]->getTransformer().setRotation({ 0, angle, 0 });
-
-			//move canera
+			//move camera
 			move *= 2;
 			
 			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
@@ -455,26 +455,6 @@ void update(double dt)
 			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
 			move /= 2;
 		}
-	if(bossActive == true)
-	{
-		//glm::vec3 pi(0.0f,4.0f,10.0f);
-		//glm::vec3 pp1(0, 0, 0);
-		//glm::vec3 ppu1(0, -3, -1);
-		//glm::vec3 ppu2(0, -3, 11);
-		//
-		//path.pointHandles.push_back(PointHandle(pointSize, pi, std::to_string(path.pointHandles.size())));
-		//path.pointHandles.push_back(PointHandle(pointSize, pp1, std::to_string(path.pointHandles.size())));
-		//path.pointHandles.push_back(PointHandle(pointSize, ppu1, std::to_string(path.pointHandles.size())));
-		//path.pointHandles.push_back(PointHandle(pointSize, ppu2, std::to_string(path.pointHandles.size())));
-
-		//glLineWidth(50);
-		//glColor3f(1.0, 0.0, 0.0);
-		//glBegin(GL_LINES);
-		//glVertex3f(0.0f, 0.0f, 0.0f);
-		//glVertex3f(0, 0, 5);
-		//glEnd();
-		//Path path;
-	}
 }
 
 void mouseButtonReleased(int button, int _mod)
@@ -488,7 +468,7 @@ void mouseButtonReleased(int button, int _mod)
 void render()
 {}
 
-//// We need BogoBogo sort in our game right?
+//// We need BogoBogo sort in our game right? NO!
 //template<class T>
 //bool sorted(T* sort, unsigned size)
 //{
@@ -596,6 +576,11 @@ int main()
 	game.addModel(mod.back());//20
 	mod.push_back(new Player(*mod[19]));
 	game.addModel(mod.back());//21
+
+	mod.push_back(new Model("Models/RIP/RIP.obj")); //22
+	mod.push_back(new Player(*mod[22]));
+	mod.push_back(new Player(*mod[22]));
+	mod.push_back(new Player(*mod[22]));
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
