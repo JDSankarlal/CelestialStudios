@@ -151,7 +151,7 @@ void update(double dt)
 	static bool f = true;
 	static bool bossActive = true;
 
-	float move = .1f;
+	float move = .15f;
 
 	static float pointSize = 50.0f;
 	//printf("%f\n", dt);
@@ -162,7 +162,7 @@ void update(double dt)
 	static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
 	static float  curveroni = 0;
 	static bool hasTarget = false;
-	curveroni += .01;
+	curveroni += .02;
 	if (curveroni >= 1)
 	{
 		hasTarget = false;
