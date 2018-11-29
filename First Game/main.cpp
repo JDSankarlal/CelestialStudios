@@ -21,7 +21,7 @@ EmGineAudioPlayer audio;
 #define modSize 50 //Number of mod that can exist
 GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
 Shader colourProgram, colourProgram2;
-Model *mod[modSize];
+std::vector<Model*> mod;
 
 //shader initialization
 void shaderInit()
@@ -157,6 +157,7 @@ bool collisions(Model *l, Model *k)
 	return false;
 }
 
+/// - 3D Collision Function - ///
 bool collisions3D(Model *l, Model *k)
 {
 	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
@@ -285,18 +286,18 @@ void update(double dt)
 				}
 
 				/// - Player Collisions with Walls - ///
-				if (collisions(player, mod[5])) // left wall
-				{
-					
-				}
-				if (collisions(player, mod[6])) //Right Wall
-				{
-
-				}
-				if (collisions(player, mod[7])) //Back Wall behind boss
-				{
-
-				}
+				//if (collisions(player, mod[5])) // left wall
+				//{
+				//	
+				//}
+				//if (collisions(player, mod[6])) //Right Wall
+				//{
+				//
+				//}
+				//if (collisions(player, mod[7])) //Back Wall behind boss
+				//{
+				//
+				//}
 
 				//TODO: Collide with "wall" behind camera
 
@@ -333,7 +334,7 @@ void update(double dt)
 					makeShitLessCancer[a] = false;
 
 				/// - Button Presses on controller - ///
-
+				//Start button quits game
 				if(p1.buttonPressed(p1.buttons.START))
 				{
 					puts("\nExiting Game\n");
@@ -347,6 +348,7 @@ void update(double dt)
 				{
 					puts("SPECIAL ABILITY\n");
 				}
+
 				/// - Left Trigger to Dash - ///
 
 				if(p1.triggers[LT] >= .95)
@@ -400,7 +402,7 @@ void update(double dt)
 								if(CandyMan->getHealth() <= 0)
 								{
 									game.removeModel(CandyMan); // If health = 0 then boss dead
-								//	mod[8] = nullptr;
+									//	mod[8] = nullptr;
 									bossActive = false;
 									puts("Killed The BOSS\n");
 								}
@@ -434,8 +436,6 @@ void update(double dt)
 		if(game.isControllerConnected(0))
 		{
 			Xinput p1 = game.getController(0);
-
-			//if(Player.getTransformer())
 
 			p1.numButtons;
 			p1.numSticks;
@@ -546,36 +546,67 @@ int main()
 
 	/// - Load mod into Scene - ///
 
-	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
-	game.addModel(mod[0] = new Player("Models/AssaultModel/Model_AssaultClass.obj"));//Rowans Character
-	game.addModel(mod[9] = new Model("Models/Floor/Floor.obj")); //Floor
-	game.addModel(mod[5] = new Model("Models/PlaceholderWalls/PlaceholderBox.obj")); //Wall
-	game.addModel(mod[8] = new Boss("Models/BOSS/BOSS.obj")); //Boss
-	//Boss *CandyMan = mod[8];
-	game.addModel(mod[10] = new Model("Models/Lamp/lampPost.obj"));//Street Light
-	game.addModel(mod[16] = new Model("Models/Bench/Bench.obj"));//Bench
-	game.addModel(mod[17] = new Model("Models/Neon Signs/Project Nebula/signn.obj"));
-	game.addModel(mod[18] = new Model("Models/Missile/candyMissile.obj"));
-
-
-	mod[5]->setColour(0.65f, 0.65f, 0.7f);
-
-	/// - Make New mod From Existing mod - ///
 	//Players
-	mod[3] = new Player(*mod[0]);
-	mod[2] = new Player(*mod[0]);
-	mod[1] = new Player(*mod[0]);
+	mod.push_back(new Player("Models/AssaultModel/Model_AssaultClass.obj")); 
+	game.addModel(mod.back());//0
+	mod.push_back(new Player(*mod[0]));
+	game.addModel(mod.back());//1
+	mod.push_back(new Player(*mod[0]));
+	game.addModel(mod.back());//2
+	mod.push_back(new Player(*mod[0]));
+	game.addModel(mod.back());//3
 
-	//Placeholder Walls
-	mod[6] = new Model(*mod[5]);
-	mod[7] = new Model(*mod[5]);
+	//Building 1s
+	mod.push_back(new Model("Models/Buildings//Building1/building1.obj"));
+	game.addModel(mod.back());//4
+	mod.push_back(new Model (*mod[4]));
+	game.addModel(mod.back());//5
+	mod.push_back(new Model(*mod[4]));
+	game.addModel(mod.back());//6
 
-	//Street Lights
-	mod[11] = new Model(*mod[10]);
-	mod[12] = new Model(*mod[10]);
-	mod[13] = new Model(*mod[10]);
-	mod[14] = new Model(*mod[10]);
-	mod[15] = new Model(*mod[10]);
+	//Project Nebula Sign
+	mod.push_back(new Model("Models/Neon Signs/Project Nebula/signn.obj"));
+	game.addModel(mod.back()); //7
+
+	//Boss
+	mod.push_back(new Model("Models/BOSS/BOSS.obj"));
+	game.addModel(mod.back()); //8
+
+	//Floor
+	mod.push_back(new Model("Models/Floor/Floor.obj"));
+	game.addModel(mod.back()); //9
+
+	//Light Posts
+	mod.push_back(new Model("Models/Lamp/lampPost.obj"));
+	game.addModel(mod.back()); //10
+	mod.push_back(new Player(*mod[10]));
+	game.addModel(mod.back());//11
+	mod.push_back(new Player(*mod[10]));
+	game.addModel(mod.back());//12
+	mod.push_back(new Player(*mod[10]));
+	game.addModel(mod.back());//13
+	mod.push_back(new Player(*mod[10]));
+	game.addModel(mod.back());//14
+	mod.push_back(new Player(*mod[10]));
+	game.addModel(mod.back());//15
+
+	//Bench
+	mod.push_back(new Model("Models/Bench/Bench.obj"));
+	game.addModel(mod.back()); //16
+	mod.push_back(new Player(*mod[16]));
+	game.addModel(mod.back());//17
+
+	//Missile
+	mod.push_back(new Model("Models/Missile/candyMissile.obj"));
+	game.addModel(mod.back()); //18
+
+	//Building 2s
+	mod.push_back(new Model("Models/Buildings//Building2/building2.obj"));
+	game.addModel(mod.back());//19
+	mod.push_back(new Player(*mod[19]));
+	game.addModel(mod.back());//20
+	mod.push_back(new Player(*mod[19]));
+	game.addModel(mod.back());//21
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -584,14 +615,23 @@ int main()
 	mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2, 0, -5);
 	mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2, 0, -5);
 
-	//Wall Transforms
-	mod[5]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f }), mod[5]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[5]->getTransformer().setScale(4.0f, 1.0f, 1.0f);
-	mod[6]->getTransformer().setRotation({ 0.0f, 270.0f, 0.0f }), mod[6]->getTransformer().setPosition(-15.0f, 0.0f, -5.0f), mod[6]->getTransformer().setScale(4.0f, 1.0f, 1.0f);
-	mod[7]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f }), mod[7]->getTransformer().setPosition(15.0f, 0.0f, 21.0f), mod[7]->getTransformer().setScale(4.52f, 1.0f, 1.0f);
+	//Building Transforms
+	//Building 1s
+	mod[4]->getTransformer().setScale(2), mod[4]->getTransformer().setPosition(-16.75f, 0, -2);
+	mod[5]->getTransformer().setScale(2), mod[5]->getTransformer().setPosition(16.75f,0,10), mod[5]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+	mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4, 0, 22.75f), mod[6]->getTransformer().setRotation({ 0.0f,-90.0f,0.0f });
+	//Building 2s
+	mod[19]->getTransformer().setScale(1.75f), mod[19]->getTransformer().setPosition(-16.4f,0,3);
+	mod[20]->getTransformer().setScale(1.75f), mod[20]->getTransformer().setPosition(16.4f, 0, 0), mod[20]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });;
+	mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
 	
+	//Project Nebula Sign Transforms
+	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9, 1.1f, 21);
+
 	//Boss Transforms
-	mod[8]->getTransformer().setRotation({ 0, 180, 0 }), mod[8]->getTransformer().setPosition(0, 0, 17), mod[8]->getTransformer().setScale(4);
-	mod[18]->getTransformer().setPosition(0, 2.f, 17);//Missile
+	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0, 0, 16), mod[8]->getTransformer().setRotation({ 0, 180, 0 });
+	//Missile
+	mod[18]->getTransformer().setPosition(0, 2.f, 17);
 
 	//Floor Transforms
 	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0, 0.0f, 5);
@@ -603,13 +643,11 @@ int main()
 	mod[13]->getTransformer().setScale(0.5), mod[13]->getTransformer().setPosition(-13, 0, -1), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 	mod[14]->getTransformer().setScale(0.5), mod[14]->getTransformer().setPosition(-13, 0, 7), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 	mod[15]->getTransformer().setScale(0.5), mod[15]->getTransformer().setPosition(-13, 0, 15), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
-
+	
 	//Bench Transforms
 	mod[16]->getTransformer().setPosition(-13, 0, 3);
+	mod[17]->getTransformer().setPosition(13, 0, 3), mod[17]->getTransformer().setRotation({ 0,180,0 });
 
-	//Sign Transformations
-	//Project Nebula Sign
-	mod[17]->getTransformer().setPosition(9, 1.1f, 21), mod[17]->getTransformer().setScale(3);
 
 	/// - Set Model Colour - ///
 	//Players
@@ -617,19 +655,6 @@ int main()
 	mod[1]->setColour(0, 0, 1);
 	mod[2]->setColour(0, 1, 0);
 	mod[3]->setColour(1, 1, 0);
-
-	/// - Add Duplicate mod - ///
-
-	game.addModel(mod[1]);
-	game.addModel(mod[2]);
-	game.addModel(mod[3]);
-	game.addModel(mod[6]);
-	game.addModel(mod[7]);
-	game.addModel(mod[11]);
-	game.addModel(mod[12]);
-	game.addModel(mod[13]);
-	game.addModel(mod[14]);
-	game.addModel(mod[15]);
 
 	LightSource::setLightAmount(7);
 	for(int a = 0; a < 6; a++)
@@ -644,6 +669,7 @@ int main()
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
 	LightSource::setParent(mod[18], 6);
 	LightSource::setDiffuse({ 255,100,0,200 },6);
+	LightSource::setAttenuationQuadratic(0.04f,6);
 
 	LightSource::setSceneAmbient({ 60,60,60,255 });
 	/// - Set Camera - ///
