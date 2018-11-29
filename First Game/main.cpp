@@ -122,17 +122,6 @@ void drawLineCatmull()
 				path.pointHandles[p1].position,
 				path.pointHandles[p2].position,
 				path.pointHandles[p3].position, (j + 1.0f) / lineCurveDetail);
-
-			//glLineWidth(10);
-			//glColor3f(1.0, 0.0, 0.0);
-			//glBegin(GL_LINES);
-			//glVertex3f(0.0f, 4.0f, 10.0f);
-			//glVertex3f(0, 0, 0);
-			//	
-			////Path path;
-			//TTK::Graphics::DrawLine(lastPosition, pointPosition);
-			//lastPosition = pointPosition;
-			//glEnd();
 		}
 	}
 }
@@ -219,10 +208,10 @@ void update(double dt)
 		if(hasTarget)
 		{
 			Coord3D
-				p1 = mod[8]->getTransformer().getPosition() + Coord3D(0,5,2),//start point
+				p1 = mod[8]->getTransformer().getPosition() + Coord3D(0.0f,5.0f,1.5f),//start point
 				p2 = bossTarget,//end point 
-				c1 = p1 - Coord3D{ 0,100,100 },//controle point
-				c2 = p2 - Coord3D{ 0,100,0 };//controle point
+				c1 = p1 - Coord3D{ 0,100,100 },//control point
+				c2 = p2 - Coord3D{ 0,100,0 };//control point
 
 			Coord3D cat = catmull
 			(
@@ -661,7 +650,7 @@ int main()
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
 	LightSource::setParent(mod[18], 6);
-	LightSource::setDiffuse({ 255,100,0,200 },6);
+	LightSource::setDiffuse({ 255,100,0,100 },6);
 	LightSource::setAttenuationQuadratic(0.04f,6.0f);
 
 	LightSource::setSceneAmbient({ 60,60,60,255 });
