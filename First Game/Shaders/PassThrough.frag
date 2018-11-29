@@ -108,7 +108,7 @@ void main()
     {       
        vec4 textureColor = texture(uTex, texcoord);
        outColor = textureColor;
-     //  outColor.rgb *= textureColor.rgb;
+      //outColor.rgb *= textureColor.rgb;
     }else     
     {
        outColor = colourMod; 
