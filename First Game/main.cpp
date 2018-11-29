@@ -222,7 +222,7 @@ void update(double dt)
 				//{
 				//	player->getTransformer().setPosition(20, player->getTransformer().getPosition().coordY, player->getTransformer().getPosition().coordZ);
 				//}
-				mod[26 + a]->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0, 0.05f, 0));
+			//	mod[26 + a]->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0, 0.05f, 0));
 
 				static float angle[4] = { 180,180,180,180 };
 				if (p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
@@ -538,10 +538,22 @@ int main()
 	mod.push_back(new Model(*mod[22]));//24
 	mod.push_back(new Model(*mod[22]));//25
 
-	mod.push_back(new Model("Models/ID/Identifier.obj"));
-	game.addModel(mod.back());//26
+	mod.push_back(new Model("Models/ID/Identifier.obj"));//26
+	mod.push_back(new Model(*mod.back()));//27
+	mod.push_back(new Model(*mod.back()));//28
+	mod.push_back(new Model(*mod.back()));//29
+
 	mod[26]->setColour({ 255,0,0 });
-	mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f);
+	mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
+	
+	mod[27]->setColour({ 0,0,255 });
+	mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({ 0,-90,0 });
+	
+	mod[28]->setColour({ 0,255,0 });
+	mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({ 0,-90,0 });
+	
+	mod[29]->setColour({ 255,255,0 });
+	mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -590,6 +602,10 @@ int main()
 	mod[1]->setColour(0, 0, 1);
 	mod[2]->setColour(0, 1, 0);
 	mod[3]->setColour(1, 1, 0);
+	mod[0]->addChild(mod[26]);
+	mod[1]->addChild(mod[27]);
+	mod[2]->addChild(mod[28]);
+	mod[3]->addChild(mod[29]);
 
 	LightSource::setLightAmount(11);
 	for (int a = 0; a < 6; a++)
@@ -612,16 +628,19 @@ int main()
 	LightSource::setPosition({ 0, -0.75f, 0	}, 7);
 	LightSource::setDiffuse({ 255,0,0,100 }, 7);
 	LightSource::setAttenuationQuadratic(1.f, 7);
+
 	LightSource::setLightType(LIGHT_TYPE::POINT, 8);
 	LightSource::setParent(mod[1], 8);
 	LightSource::setPosition({ 0, -0.75f, 0 }, 8);
 	LightSource::setDiffuse({ 0,0,255,100 }, 8);
 	LightSource::setAttenuationQuadratic(1.f, 8);
+
 	LightSource::setLightType(LIGHT_TYPE::POINT, 9);
 	LightSource::setParent(mod[2], 9);
 	LightSource::setPosition({ 0, -0.75f, 0 }, 9);
 	LightSource::setDiffuse({ 0,255,0,100 }, 9);
 	LightSource::setAttenuationQuadratic(1.f, 9);
+
 	LightSource::setLightType(LIGHT_TYPE::POINT, 10);
 	LightSource::setParent(mod[3], 10);
 	LightSource::setPosition({ 0, -0.75f, 0 }, 10);
@@ -629,6 +648,10 @@ int main()
 	LightSource::setAttenuationQuadratic(1.f, 10);
 
 	LightSource::setSceneAmbient({ 60,60,60,255 });
+
+	
+	
+
 	/// - Set Camera - ///
 
 	game.setCameraPosition({ 0,15,-10 });

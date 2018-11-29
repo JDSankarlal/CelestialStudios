@@ -9,6 +9,7 @@
 #include "Transformer.h"
 #include "Physics3D.h"
 #include "Mesh.h"
+#include "Animation.h"
 
 class Model
 {
@@ -21,6 +22,10 @@ public:
 	void render(Shader& shader, Camera& cam);
 
 	Transformer& getTransformer();
+
+	void removeChild(Model * child);
+
+	void addChild(Model* child);
 
 	void setColour(float r, float g, float b, float a);
 
@@ -59,6 +64,7 @@ private:
 	bool m_enableBB = false;
 
 	std::vector<Model*> m_children;
+	Model* m_parent;
 	//std::vector <Texture2D> loadedTextures;
 	//std::string dir;
 

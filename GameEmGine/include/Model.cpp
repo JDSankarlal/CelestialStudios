@@ -39,7 +39,10 @@ void Model::render(Shader& shader, Camera& cam)
 
 	shader.enable();
 
-	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
+	if(m_parent)
+		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_parent->m_transform.getTransformation() * m_transform.getTransformation())[0][0]));
+	else
+		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
@@ -56,6 +59,9 @@ void Model::render(Shader& shader, Camera& cam)
 		drawBoundingBox();
 
 	m_transform.resetUpdated();
+
+	for(auto&a : m_children)
+		a->render(shader, cam);
 }
 
 void Model::drawBoundingBox()
@@ -80,6 +86,19 @@ Transformer& Model::getTransformer()
 	return m_transform;
 }
 
+void Model::removeChild(Model* child)
+{
+	auto ref = std::find(m_children.begin(), m_children.end(), child);
+	if(ref != m_children.end())
+		m_children.erase(ref);
+}
+
+void Model::addChild(Model * child)
+{
+	m_children.push_back(child);
+	m_children.back()->m_parent = this;
+}
+
 void Model::setColour(float r, float g, float b, float a)
 {
 	m_colour.set((GLubyte)(255 * r), (GLubyte)(255 * g), (GLubyte)(255 * b), (GLubyte)(255 * a));
@@ -93,7 +112,7 @@ void Model::setColour(ColourRGBA colour)
 {
 	m_colour = colour;
 }
-ColourRGBA Model::getColour() 
+ColourRGBA Model::getColour()
 {
 	return m_colour;
 }
@@ -119,13 +138,13 @@ float Model::getHeight()
 
 float Model::getDepth()
 {
-	
+
 	return m_depth;
 }
 
 Coord3D Model::getCenter()
 {
-	
+
 	return m_center;
 }
 
@@ -182,9 +201,9 @@ void Model::boundingBoxUpdate()
 	m_width = abs(right.x - left.x);
 	m_height = abs(top.y - bottom.y);
 	m_depth = abs(front.z - back.z);
-	m_center = Coord3D((right.x+left.x)/2,(top.y+bottom.y)/2,(front.z+back.z)/2);
-		if(m_enableBB)
-			boundingBoxInit();
+	m_center = Coord3D((right.x + left.x) / 2, (top.y + bottom.y) / 2, (front.z + back.z) / 2);
+	if(m_enableBB)
+		boundingBoxInit();
 }
 
 void Model::boundingBoxInit()
