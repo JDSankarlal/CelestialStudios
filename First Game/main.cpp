@@ -184,7 +184,7 @@ void update(double dt)
 	//printf("%f\n", dt);
 	static Player* player;
 
-	static vector<Player*> bullets[4];
+	static vector<Model*> bullets[4];
 	static vector<Coord3D> velocity[4];
 	static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
 	static float  curveroni = 0;
@@ -265,34 +265,18 @@ void update(double dt)
 				{
 					mod[18]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D(0, 5, 2));
 					player->setHealth(player->getHealth() - 50);
+					Coord3D test = player->getTransformer().getPosition();
 					if (player->getHealth() <= 0)
 					{
-						game.removeModel(mod[22 +a]);
+						//game.removeModel(mod[22 +a]);
 					
 						mod[22 + a]->setColour(player->getColour());
-						static Coord3D test = player->getTransformer().getPosition();
-						mod[22 + a]->getTransformer().setScale(0.75f,1,0.5) ,mod[22 + a]->getTransformer().setPosition(player->getTransformer().getPosition()), mod[22 + a]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+						//static Coord3D test = player->getTransformer().getPosition();
+						mod[22 + a]->getTransformer().setScale(0.75f,1,0.5) ,mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({0.0f,90.0f,0.0f});
 						game.addModel(mod[22 + a]);
 						game.removeModel(player);
 					}
 				}
-
-				/// - Player Collisions with Walls - ///
-				//if (collisions(player, mod[5])) // left wall
-				//{
-				//	
-				//}
-				//if (collisions(player, mod[6])) //Right Wall
-				//{
-				//
-				//}
-				//if (collisions(player, mod[7])) //Back Wall behind boss
-				//{
-				//
-				//}
-
-				//TODO: Collide with "wall" behind camera
-
 
 				if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 				{
@@ -306,7 +290,7 @@ void update(double dt)
 					//}
 
 					bullets[a].push_back(nullptr);
-					game.addModel(bullets[a].back() = new Player(*mod[a]));
+					game.addModel(bullets[a].back() = new Model(*mod[a]));
 					bullets[a].back()->getTransformer().reset();
 					Coord3D pos = mod[a]->getTransformer().getPosition();
 					bullets[a].back()->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
@@ -403,7 +387,7 @@ void update(double dt)
 							}
 
 						if(bullets[a][b])
-							for(int i = 5; i < 8; i++)
+							for(int i = 4; i < 7; i++) // Bullet Object number parameter
 							{
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].coordX, velocity[a][b].coordY, velocity[a][b].coordZ);
 
