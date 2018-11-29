@@ -21,18 +21,16 @@ struct LightInfo
 	Coord3D position,direction = { 0,-1,0 };
 	float angleConstraint = 45,
 		specularExponent=100,
-		attenuationConst = .1,
-		attenuationLinear=0.01,
-		attenuationQuadratic=0.1;
+		attenuationConst = .1f,
+		attenuationLinear=0.01f,
+		attenuationQuadratic=0.1f;
 
 };
 
-static class LightSource
+class LightSource
 {
 public:
 	
-	void initLight(LIGHT_TYPE type, Camera * cam, Shader * shader, LightInfo info, unsigned index= 0);
-
 	static void setLightType(LIGHT_TYPE type, unsigned index);
 
 	static void setPosition(Coord3D pos, unsigned index);

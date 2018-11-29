@@ -11,7 +11,7 @@ Quat::Quat(float x, float y, float z):w(0), x(x), y(y), z(z)
 Quat::Quat(float w, float x, float y, float z) : w(w), x(x), y(y), z(z)
 {}
 
-Quat & Quat::normal()
+Quat Quat::normal()
 {
 	Quat q = *this;
 	float unit = sqrt(q.x*q.x + q.y*q.y + q.z*q.z + q.w*q.w);

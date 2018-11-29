@@ -99,44 +99,6 @@ void keyInputReleased(int key, int mod)
 
 	printf("key RELEASED code: %d\n\n", key);
 }
-Path path;
-int lineCurveDetail = 10;
-void drawLineCatmull()
-{
-	if(path.pointHandles.size() < 4)
-		return;
-
-	for(int p0 = 0; p0 < path.pointHandles.size() - !path.connectedEndpoints * 3; ++p0)
-	{
-		int p1, p2, p3;
-		p1 = vectorWrap(p0 + 1, path.pointHandles.size());
-		p2 = vectorWrap(p0 + 2, path.pointHandles.size());
-		p3 = vectorWrap(p0 + 3, path.pointHandles.size());
-
-		glm::vec3 lastPosition = path.pointHandles[p1].position;
-		for(int j = 0; j < lineCurveDetail; ++j)
-		{
-
-			glm::vec3 pointPosition = catmull
-			(
-				path.pointHandles[p0].position,
-				path.pointHandles[p1].position,
-				path.pointHandles[p2].position,
-				path.pointHandles[p3].position, (j + 1.0f) / lineCurveDetail);
-
-			//glLineWidth(10);
-			//glColor3f(1.0, 0.0, 0.0);
-			//glBegin(GL_LINES);
-			//glVertex3f(0.0f, 4.0f, 10.0f);
-			//glVertex3f(0, 0, 0);
-			//	
-			////Path path;
-			//TTK::Graphics::DrawLine(lastPosition, pointPosition);
-			//lastPosition = pointPosition;
-			//glEnd();
-		}
-	}
-}
 
 /// - Collision Class - ///
 bool collisions(Model *l, Model *k)
@@ -306,15 +268,11 @@ void update(double dt)
 				{
 					makeShitLessCancer[a] = true;
 
-					//for(unsigned b=0;b<bullets[a].size();b++)
-					//if(bullets[a][b])
-					//{
-					//	game.removeModel(bullets[a][b]);
-					//	bullets[a].erase(bullets[a].begin() + b);
-					//}
+					
 
 					bullets[a].push_back(nullptr);
 					game.addModel(bullets[a].back() = new Player(*mod[a]));
+
 					bullets[a].back()->getTransformer().reset();
 					Coord3D pos = mod[a]->getTransformer().getPosition();
 					bullets[a].back()->getTransformer().setPosition(pos.coordX, pos.coordY + .1, pos.coordZ);
@@ -663,7 +621,7 @@ int main()
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 		LightSource::setParent(mod[10 + a], a);
 		LightSource::setPosition({0, mod[10 + a]->getHeight(),mod[10 + a]->getDepth() }, a);
-		LightSource::setDirection({-5,-1,0},a);		
+		LightSource::setDirection({0,-1,0},a);		
 	}
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);

@@ -12,7 +12,6 @@
 #include "WindowCreator.h"
 #include "Camera.h"
 #include "Model.h"
-#include "Path.h"
 #include "ExtraMath.h"
 //#include "ModelBatch.h"
 #include "InputManager.h"

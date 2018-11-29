@@ -117,7 +117,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -184,8 +184,6 @@
     <ClInclude Include="fileIO.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GameEmGine.h" />
-    <ClInclude Include="Path.h" />
-    <ClInclude Include="PointHandle.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ImageLoader.h" />
     <ClInclude Include="InputManager.h" />
@@ -210,8 +208,6 @@
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GameEmGine.cpp" />
     <ClCompile Include="LightSource.cpp" />
-    <ClCompile Include="Path.cpp" />
-    <ClCompile Include="PointHandle.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ImageLoader.cpp" />
     <ClCompile Include="InputManager.cpp" />
