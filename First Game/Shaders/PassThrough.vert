@@ -25,11 +25,11 @@ void main()
     texcoord = in_uv;
     texcoord.y = 1 - texcoord.y;
 
-   vec3 normal = mix(in_normal1,in_normal2,uTime);
-   vec3 vert = mix(in_vert1,in_vert2,uTime);
+   vec3 normal = mix(in_normal1, in_normal2, uTime);
+   vec3 vert = mix(in_vert1, in_vert2, uTime);
 
 
-    norm =  mat3(uView) * mat3(uModel) * norm;
+    norm =  mat3(uView) * mat3(uModel) * normal;
     
     vec4 viewSpace = uView * uModel * vec4(vert, 1.0f); 
     

@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <ctime>
 #include "Mesh.h"
+#include "Shader.h"
 
 class Animation
 {
@@ -17,12 +19,16 @@ public:
 	//gets a speed in seconds
 	void setSpeed(float speed);
 
-	void update();
+	void update(Shader* shader,Mesh* mesh);
 	std::vector<Mesh*> getFrames();
 
+	
+	
 private:
 	std::vector<Mesh*> m_frames;
 	std::vector<std::vector< std::pair<std::string, std::vector<Vertex3D>>>> m_unpackedData;
-	float m_speed;
+	bool init=false;
+	float m_speed,m_lastTime,m_time;
+	unsigned m_frame=0;
 };
 

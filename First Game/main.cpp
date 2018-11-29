@@ -471,17 +471,23 @@ int main()
 	/// - Load mod into Scene - ///
 
 	//Players
-	mod.push_back(new Player("Models/AssaultModel/ACMStanding.obj"));
+	mod.push_back(new Player("Models/AssaultModel/ACM1.obj"));
 	game.addModel(mod.back());//0
-	mod.push_back(new Player(*mod[0]));
+	mod.push_back(new Player("Models/AssaultModel/ACM1.obj"));
 	game.addModel(mod.back());//1
-	mod.push_back(new Player(*mod[0]));
+	mod.push_back(new Player("Models/AssaultModel/ACM1.obj"));
 	game.addModel(mod.back());//2
-	mod.push_back(new Player(*mod[0]));
+	mod.push_back(new Player("Models/AssaultModel/ACM1.obj"));
 	game.addModel(mod.back());//3
 
+	static Animation walk ;
+	walk.setSpeed(.25);
+	
+	walk.addDir("Models/AssaultModel/", "ACM1.obj");
+	mod[0]->ani = &walk;
+
 	//Building 1s
-	mod.push_back(new Model("Models/Buildings//Building1/building1.obj"));
+	mod.push_back(new Model("Models/Buildings/Building1/building1.obj"));
 	game.addModel(mod.back());//4
 	mod.push_back(new Model(*mod[4]));
 	game.addModel(mod.back());//5
@@ -609,10 +615,10 @@ int main()
 	mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
 	/// - Set Model Colour - ///
 	//Players
-	mod[0]->setColour(1, 0, 0);
-	mod[1]->setColour(0, 0, 1);
-	mod[2]->setColour(0, 1, 0);
-	mod[3]->setColour(1, 1, 0);
+	mod[0]->setColour(1, 0.1, 0.1);
+	mod[1]->setColour(0.1, 0.1, 1);
+	mod[2]->setColour(0.1, 1, 0.1);
+	mod[3]->setColour(1, 1, 0.1);
 	mod[0]->addChild(mod[26]);
 	mod[1]->addChild(mod[27]);
 	mod[2]->addChild(mod[28]);
