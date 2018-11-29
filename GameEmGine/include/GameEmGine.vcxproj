@@ -178,6 +178,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="EmGineAudioPlayer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ExtraMath.h" />
@@ -202,6 +203,7 @@
     <ClInclude Include="WindowCreator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="EmGineAudioPlayer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="fileIO.cpp" />
