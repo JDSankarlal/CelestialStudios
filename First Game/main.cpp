@@ -471,7 +471,7 @@ int main()
 	/// - Load mod into Scene - ///
 
 	//Players
-	mod.push_back(new Player("Models/AssaultModel/AssaultClassModel.obj"));
+	mod.push_back(new Player("Models/AssaultModel/ACMStanding.obj"));
 	game.addModel(mod.back());//0
 	mod.push_back(new Player(*mod[0]));
 	game.addModel(mod.back());//1
