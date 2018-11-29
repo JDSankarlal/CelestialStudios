@@ -1,6 +1,6 @@
 #pragma once
-#include <GLM/glm.hpp>
-#include <GLM/gtc/matrix_access.hpp>
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_access.hpp>
 
 template <typename T>
 inline T bezier(const T &p0, const T &t1, const T &t2, const T &p3, const float t)

@@ -60,13 +60,7 @@ void Transformer::rotateBy(Coord3D angles, Coord3D forward)
 
 void Transformer::setPosition(float x, float y, float z, Coord3D forward)
 {
-	m_updatedTrans = true;
-	int w, h;
-	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
-	float aspect = (float)w / h;
-	m_pos = Coord3D(x * aspect, y * aspect, z * aspect);
-	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.coordX, m_pos.coordY, -m_pos.coordZ));
-	m_pos = m_pos / aspect;
+	setPosition(Coord3D{ x,y,z });
 }
 
 void Transformer::setPosition(Coord3D pos, Coord3D forward)
@@ -82,15 +76,7 @@ void Transformer::setPosition(Coord3D pos, Coord3D forward)
 
 void Transformer::translateBy(float x, float y, float z, Coord3D forward)
 {
-	m_updatedTrans = true;
-	int w, h;
-	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
-
-	float aspect = (float)w / h;
-
-	m_translate = glm::translate(m_translate, glm::vec3(x* aspect, y* aspect, -z * aspect));
-	//glm::vec4 tmp = m_translate * glm::vec4(glm::vec3(x* aspect, y* aspect, -z * aspect), 1);
-	m_pos = Coord3D(x, y, z);
+	setPosition(m_pos + Coord3D{x,y,z});
 }
 
 void Transformer::setScale(float scale)

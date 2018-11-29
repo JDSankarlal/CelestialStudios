@@ -16,7 +16,7 @@ struct Quat
 	Quat(float x, float y, float z);
 	Quat(float w, float x, float y, float z);
 
-	Quat& normal();
+	Quat normal();
 	void normalize();
 
 	Quat & rotation(float a_ang, float a_dirX, float a_dirY, float a_dirZ);

@@ -99,33 +99,6 @@ void keyInputReleased(int key, int mod)
 
 	printf("key RELEASED code: %d\n\n", key);
 }
-Path path;
-int lineCurveDetail = 10;
-void drawLineCatmull()
-{
-	if(path.pointHandles.size() < 4)
-		return;
-
-	for(int p0 = 0; p0 < path.pointHandles.size() - !path.connectedEndpoints * 3; ++p0)
-	{
-		int p1, p2, p3;
-		p1 = vectorWrap(p0 + 1, path.pointHandles.size());
-		p2 = vectorWrap(p0 + 2, path.pointHandles.size());
-		p3 = vectorWrap(p0 + 3, path.pointHandles.size());
-
-		glm::vec3 lastPosition = path.pointHandles[p1].position;
-		for(int j = 0; j < lineCurveDetail; ++j)
-		{
-
-			glm::vec3 pointPosition = catmull
-			(
-				path.pointHandles[p0].position,
-				path.pointHandles[p1].position,
-				path.pointHandles[p2].position,
-				path.pointHandles[p3].position, (j + 1.0f) / lineCurveDetail);
-		}
-	}
-}
 
 /// - Collision Class - ///
 bool collisions(Model *l, Model *k)
@@ -282,12 +255,7 @@ void update(double dt)
 				{
 					makeShitLessCancer[a] = true;
 
-					//for(unsigned b=0;b<bullets[a].size();b++)
-					//if(bullets[a][b])
-					//{
-					//	game.removeModel(bullets[a][b]);
-					//	bullets[a].erase(bullets[a].begin() + b);
-					//}
+					
 
 					bullets[a].push_back(nullptr);
 					game.addModel(bullets[a].back() = new Model(*mod[a]));

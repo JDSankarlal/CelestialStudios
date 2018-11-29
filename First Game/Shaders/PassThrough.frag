@@ -55,7 +55,7 @@ void directionalLight(int a)
     vec3 normal = normalize(norm);
     vec3 lightVec = LightPosition[a].xyz - pos;
     float dist = length(lightVec);
-    float NdotL = dot(normal, LightDirection[a]);
+    float NdotL = max(dot(normal, LightDirection[a]),0.0);
 
     //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
     if(NdotL > 0.0)
@@ -68,7 +68,7 @@ void directionalLight(int a)
         outColor.rgb += LightDiffuse[a] * NdotL * attenuation;
         
         //Blinn-Phong half vector
-        float NdotHV =  max(dot(normal, normalize(LightDirection[a] + normalize(-pos))), 0.0); 
+        float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
         
         //Calculate specular contribution
         outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
@@ -94,7 +94,8 @@ void pointLight(int a)
     //Blinn-Phong half vector
     float NdotHV =  max(dot(normal, normalize(lightVec + normalize(-pos))), 0.0); 
     
-    
+    //Calculate specular contribution
+    outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
 }
 
 void main()
@@ -135,6 +136,5 @@ void main()
             defaultLight(a);
         }
      // outColor.rgb = vec3(NdotL,NdotL,NdotL); 
-    }
-    
+    }    
 }
