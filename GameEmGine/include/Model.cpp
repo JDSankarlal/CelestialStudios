@@ -41,8 +41,8 @@ void Model::render(Shader& shader, Camera& cam)
 
 	if(m_parent)
 		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_parent->m_transform.getTransformation() * m_transform.getTransformation())[0][0]));
-
-	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
+	else
+		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
@@ -96,6 +96,7 @@ void Model::removeChild(Model* child)
 void Model::addChild(Model * child)
 {
 	m_children.push_back(child);
+	m_children.back()->m_parent = this;
 }
 
 void Model::setColour(float r, float g, float b, float a)
@@ -111,7 +112,7 @@ void Model::setColour(ColourRGBA colour)
 {
 	m_colour = colour;
 }
-ColourRGBA Model::getColour() 
+ColourRGBA Model::getColour()
 {
 	return m_colour;
 }
