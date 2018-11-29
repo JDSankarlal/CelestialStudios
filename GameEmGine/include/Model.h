@@ -31,6 +31,10 @@ public:
 
 	void setColour(float r, float g, float b);
 
+	void setColour(ColourRGBA colour);
+
+	ColourRGBA getColour();
+
 	bool loadModel(const char* path);
 
 	void enableBoundingBox(bool enable);

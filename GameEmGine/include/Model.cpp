@@ -107,7 +107,14 @@ void Model::setColour(float r, float g, float b)
 {
 	m_colour.set((GLubyte)(255 * r), (GLubyte)(255 * g), (GLubyte)(255 * b));
 }
-
+void Model::setColour(ColourRGBA colour)
+{
+	m_colour = colour;
+}
+ColourRGBA Model::getColour() 
+{
+	return m_colour;
+}
 bool Model::loadModel(const char * path)
 {
 	return m_mesh.loadMesh(path);
