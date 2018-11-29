@@ -525,35 +525,32 @@ int main()
 	game.addModel(mod.back()); //18
 
 	//Building 2s
-	mod.push_back(new Model("Models/Buildings//Building2/building2.obj"));
+	mod.push_back(new Model("Models/Buildings/Building2/building2.obj"));
 	game.addModel(mod.back());//19
 	mod.push_back(new Model(*mod[19]));
 	game.addModel(mod.back());//20
 	mod.push_back(new Model(*mod[19]));
 	game.addModel(mod.back());//21
 
-
+	//GraveStones
 	mod.push_back(new Model("Models/RIP/RIP.obj")); //22
 	mod.push_back(new Model(*mod[22]));//23
 	mod.push_back(new Model(*mod[22]));//24
 	mod.push_back(new Model(*mod[22]));//25
 
+	//Coloured ring "IDs"
 	mod.push_back(new Model("Models/ID/Identifier.obj"));//26
 	mod.push_back(new Model(*mod.back()));//27
 	mod.push_back(new Model(*mod.back()));//28
 	mod.push_back(new Model(*mod.back()));//29
 
-	mod[26]->setColour({ 255,0,0 });
-	mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
-	
-	mod[27]->setColour({ 0,0,255 });
-	mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({ 0,-90,0 });
-	
-	mod[28]->setColour({ 0,255,0 });
-	mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({ 0,-90,0 });
-	
-	mod[29]->setColour({ 255,255,0 });
-	mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
+	//Building 3s
+	mod.push_back(new Model("Models/Buildings/Building3/House.obj"));
+	game.addModel(mod.back());//30
+	mod.push_back(new Model(*mod[30]));
+	game.addModel(mod.back());//31
+	mod.push_back(new Model(*mod[30]));
+	game.addModel(mod.back());//32
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -569,13 +566,17 @@ int main()
 	mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4.0f, 0.0f, 22.75f), mod[6]->getTransformer().setRotation({ 0.0f,-90.0f,0.0f });
 	//Building 2s
 	mod[19]->getTransformer().setScale(1.75f), mod[19]->getTransformer().setPosition(-16.4f, 0.0f, 3.0f);
-	mod[20]->getTransformer().setScale(1.75f), mod[20]->getTransformer().setPosition(16.4f, 0.0f, 0.0f), mod[20]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });;
+	mod[20]->getTransformer().setScale(1.75f), mod[20]->getTransformer().setPosition(16.4f, 0.0f, 1.2f), mod[20]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });;
 	mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0.0f, 22.4f), mod[21]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
+	//Buildings 3s
+	mod[30]->getTransformer().setPosition(7.25f, 0.0f, 23.6f);
+	mod[31]->getTransformer().setPosition(19.5f, 0.0f, 5.35f), mod[31]->getTransformer().setRotation({ 0,180,0 });
+	mod[32]->getTransformer().setPosition(-8.6f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({ 0,-90,0 });
 
 	//Project Nebula Sign Transforms
-	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.0f, 1.1f, 21.0f);
+	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(7.5f, 5.34f, 22.5f);
 
-	//Boss Transforms
+	//Boss Trarrnsforms
 	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
 	//Missile
 	mod[18]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
@@ -595,7 +596,17 @@ int main()
 	mod[16]->getTransformer().setPosition(-13.0f, 0.0f, 3.0f);
 	mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
+	mod[26]->setColour({ 255,0,0 });
+	mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
 
+	mod[27]->setColour({ 0,0,255 });
+	mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({ 0,-90,0 });
+
+	mod[28]->setColour({ 0,255,0 });
+	mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({ 0,-90,0 });
+
+	mod[29]->setColour({ 255,255,0 });
+	mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
 	/// - Set Model Colour - ///
 	//Players
 	mod[0]->setColour(1, 0, 0);
