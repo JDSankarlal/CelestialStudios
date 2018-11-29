@@ -10,7 +10,9 @@ Animation::~Animation()
 {}
 
 void Animation::addFrame(Mesh * frame, float speed)
-{}
+{
+
+}
 
 void Animation::addDir(const char * dir)
 {}

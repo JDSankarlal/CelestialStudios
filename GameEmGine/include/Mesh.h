@@ -20,14 +20,14 @@ public:
 
 	bool loadMesh(std::string);
 
+	bool loadAni(std::string);
+
 	void render(Shader& shader);
 
 	void unload();
 
 	GLuint getNumFaces(int index)const;
 	GLuint getNumVerticies(int index)const;
-
-
 
 	Coord3D top , bottom , left, right , front, back;
 
