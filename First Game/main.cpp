@@ -4,6 +4,7 @@
 #include <GameEmGine.h>
 #include <EmGineAudioPlayer.h>
 #include <vector>
+#include <ctime>
 #include "Boss.h"
 #include "Player.h"
 
@@ -17,7 +18,7 @@ movePlayer = true;
 Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 
-#define modSize 20 //Number of mod that can exist
+#define modSize 50 //Number of mod that can exist
 GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
 Shader colourProgram, colourProgram2;
 std::vector<Model*> mod;
@@ -200,6 +201,7 @@ void update(double dt)
 	//gets a   target for missile (player 1,2,3 or 4) randomly
 	if(!hasTarget)
 	{
+		
 		bossTarget = mod[rand() % 4]->getTransformer().getPosition();
 		hasTarget = true;
 	}
@@ -210,8 +212,8 @@ void update(double dt)
 			Coord3D
 				p1 = mod[8]->getTransformer().getPosition() + Coord3D(0.0f,5.0f,1.5f),//start point
 				p2 = bossTarget,//end point 
-				c1 = p1 - Coord3D{ 0,100,100 },//control point
-				c2 = p2 - Coord3D{ 0,100,0 };//control point
+				c1 = p1 - Coord3D{ 0,50,100 },//controle point
+				c2 = p2 - Coord3D{ 0,100,100 };//controle point
 
 			Coord3D cat = catmull
 			(
@@ -252,7 +254,7 @@ void update(double dt)
 				{
 
 					angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-									 sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+									 sqrtf(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
 									 + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
 					angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 					angle[a] = fmodf(angle[a], 360);
@@ -265,6 +267,9 @@ void update(double dt)
 					player->setHealth(player->getHealth() - 50);
 					if (player->getHealth() <= 0)
 					{
+						game.removeModel(mod[19 +a]);
+						game.addModel( mod[19+a]);
+						mod[19 + a]->getTransformer().setPosition(player->getTransformer().getPosition());
 						game.removeModel(player);
 					}
 				}
@@ -526,6 +531,8 @@ void render()
 
 int main()
 {
+	srand(clock());
+
 	/// - Load mod into Scene - ///
 
 	//Players
@@ -641,6 +648,7 @@ int main()
 	LightSource::setLightAmount(7);
 	for(int a = 0; a < 6; a++)
 	{
+		mod[10 + a]->boundingBoxUpdate();
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 		LightSource::setParent(mod[10 + a], a);
 		LightSource::setPosition({ -5.0f,4.5,0.0f }, a);

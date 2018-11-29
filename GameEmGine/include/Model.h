@@ -36,9 +36,9 @@ public:
 
 	Coord3D getCenter();
 
+	void boundingBoxUpdate();
 
 private:
-	void boundingBoxUpdate();
 	void boundingBoxInit();
 	void drawBoundingBox();
 
