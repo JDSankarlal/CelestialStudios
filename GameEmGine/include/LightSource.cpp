@@ -110,31 +110,34 @@ void LightSource::update()
 	m_shader->enable();
 	glUniform1i(m_shader->getUniformLocation("LightAmount"), m_lights.size());
 	glUniform3f(m_shader->getUniformLocation("LightAmbient"), m_ambient[0] / 255.0f, m_ambient[1] / 255.0f, m_ambient[2] / 255.0f);
-	
+
 	for(unsigned a = 0; a < m_lights.size(); a++)
 	{
 		Coord3D lp = m_lights[a].transform->getPosition();
 		glm::vec4 pos(lp.coordX, lp.coordY, lp.coordZ, 1.0f);
-			if(m_lights[a].parent)
-			{
-				Transformer *trans = &m_lights[a].parent->getTransformer();
-				glm::vec3 pos2 (trans->getPosition().coordX, trans->getPosition().coordY, trans->getPosition().coordZ);
-				glm::mat4 forward = glm::lookAt(pos2, pos2 + glm::vec3(cos(trans->getRotation().coordX), tan(trans->getRotation().coordY), sin(trans->getRotation().coordZ)), 
-							{0,1,0});
-				pos =  m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation()*forward * glm::vec4(pos2,1.f);
-			} else
+		glm::vec4 dir{ m_lights[a].direction.coordX,m_lights[a].direction.coordY ,m_lights[a].direction.coordZ ,1.0f};
+		if(m_lights[a].parent)
+		{
+			Transformer *trans = &m_lights[a].parent->getTransformer();
+			glm::vec3 pos2(trans->getPosition().coordX, trans->getPosition().coordY, trans->getPosition().coordZ);
+			glm::mat4 forward = glm::lookAt(pos2, pos2 + glm::vec3(cos(trans->getRotation().coordX), tan(trans->getRotation().coordY), sin(trans->getRotation().coordZ)),
+											{ 0,1,0 });
+			pos = m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation()*forward * glm::vec4(pos2, 1.f);
+			// dir = forward * dir;
+			//m_lights[a].direction = {tmp.x,tmp.y,tmp.z};
+		} else
 			pos = m_lights[a].transform->getTransformation() * pos;
-	
+
 		sprintf_s(buff, "LightType[%d]", a);
 		glUniform1i(m_shader->getUniformLocation(buff), (int)m_lights[a].type);
 		sprintf_s(buff, "LightPosition[%d]", a);
-		glUniform4fv(m_shader->getUniformLocation(buff), 1, &(m_cam->getCameraMatrix()*pos)[0]);	
+		glUniform4fv(m_shader->getUniformLocation(buff), 1, &(m_cam->getCameraMatrix()*pos)[0]);
 		sprintf_s(buff, "LightDiffuse[%d]", a);
 		glUniform3f(m_shader->getUniformLocation(buff), m_lights[a].diffuse[0] / 255.0f, m_lights[a].diffuse[1] / 255.0f, m_lights[a].diffuse[2] / 255.0f);
 		sprintf_s(buff, "LightSpecular[%d]", a);
 		glUniform3f(m_shader->getUniformLocation(buff), m_lights[a].specular[0] / 255.0f, m_lights[a].specular[1] / 255.0f, m_lights[a].specular[2] / 255.0f);
 		sprintf_s(buff, "LightDirection[%d]", a);
-		glUniform3fv(m_shader->getUniformLocation(buff), 1, &m_lights[a].direction[0]);
+		glUniform3fv(m_shader->getUniformLocation(buff), 1, &dir[0]);
 		sprintf_s(buff, "LightSpecularExponent[%d]", a);
 		glUniform1f(m_shader->getUniformLocation(buff), 50.0f);
 		sprintf_s(buff, "Attenuation_Constant[%d]", a);

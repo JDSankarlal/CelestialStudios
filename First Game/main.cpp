@@ -4,6 +4,7 @@
 #include <GameEmGine.h>
 #include <EmGineAudioPlayer.h>
 #include <vector>
+#include <ctime>
 #include "Boss.h"
 #include "Player.h"
 
@@ -210,6 +211,7 @@ void update(double dt)
 	//gets a   target for missile (player 1,2,3 or 4) randomly
 	if(!hasTarget)
 	{
+		
 		bossTarget = mod[rand() % 4]->getTransformer().getPosition();
 		hasTarget = true;
 	}
@@ -220,8 +222,8 @@ void update(double dt)
 			Coord3D
 				p1 = mod[8]->getTransformer().getPosition() + Coord3D(0,5,2),//start point
 				p2 = bossTarget,//end point 
-				c1 = p1 - Coord3D{ 0,100,100 },//controle point
-				c2 = p2 - Coord3D{ 0,100,0 };//controle point
+				c1 = p1 - Coord3D{ 0,50,100 },//controle point
+				c2 = p2 - Coord3D{ 0,100,100 };//controle point
 
 			Coord3D cat = catmull
 			(
@@ -262,7 +264,7 @@ void update(double dt)
 				{
 
 					angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-									 sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+									 sqrtf(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
 									 + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
 					angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 					angle[a] = fmodf(angle[a], 360);
@@ -540,6 +542,8 @@ void render()
 
 int main()
 {
+	srand(clock());
+
 	/// - Load mod into Scene - ///
 
 	//game.addModel(mod[0] = new Model("Models/crysis-nano-suit-2(OBJ)/scene.obj")); //Crysis Guy
@@ -630,11 +634,11 @@ int main()
 	LightSource::setLightAmount(7);
 	for(int a = 0; a < 6; a++)
 	{
+		mod[10 + a]->boundingBoxUpdate();
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 		LightSource::setParent(mod[10 + a], a);
-		LightSource::setPosition({ -5,4.5,0 }, a);
-		LightSource::setDirection({0,-1,0},a);
-		
+		LightSource::setPosition({0, mod[10 + a]->getHeight(),mod[10 + a]->getDepth() }, a);
+		LightSource::setDirection({-5,-1,0},a);		
 	}
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
