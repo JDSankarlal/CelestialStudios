@@ -222,6 +222,8 @@ void update(double dt)
 				//{
 				//	player->getTransformer().setPosition(20, player->getTransformer().getPosition().coordY, player->getTransformer().getPosition().coordZ);
 				//}
+				mod[26 + a]->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0, 0.05f, 0));
+
 				static float angle[4] = { 180,180,180,180 };
 				if (p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 				{
@@ -530,10 +532,16 @@ int main()
 	mod.push_back(new Model(*mod[19]));
 	game.addModel(mod.back());//21
 
+
 	mod.push_back(new Model("Models/RIP/RIP.obj")); //22
-	mod.push_back(new Model(*mod[22]));
-	mod.push_back(new Model(*mod[22]));
-	mod.push_back(new Model(*mod[22]));
+	mod.push_back(new Model(*mod[22]));//23
+	mod.push_back(new Model(*mod[22]));//24
+	mod.push_back(new Model(*mod[22]));//25
+
+	mod.push_back(new Model("Models/ID/Identifier.obj"));
+	game.addModel(mod.back());//26
+	mod[26]->setColour({ 255,0,0 });
+	mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f);
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
