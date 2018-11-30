@@ -1,5 +1,5 @@
 #version 420
-#define MAX_LIGHTS_SIZE 50
+#define MAX_LIGHTS_SIZE 100
 
 //
 const int DEFAULT=0;
@@ -80,10 +80,8 @@ void pointLight(int a)
     vec3 normal = normalize(norm);
     vec3 lightVec = LightPosition[a].xyz - pos;
     float dist = length(lightVec);
-    float scaler = clamp(dot(normal , lightVec) / length(normal * lightVec), 0, 1);
-
-    
-
+   
+   
     //The light contributes to this surface
     //Calculate attenuation (falloff)
     float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) + (Attenuation_Quadratic[a] * dist * dist));
@@ -111,9 +109,8 @@ void main()
        outColor.rgb *= textureColor.rgb;
        outColor *= colourMod;
     }else     
-    {
-       outColor = colourMod; 
-    }
+     outColor = colourMod; 
+    
 
     outColor.rgb *= LightAmbient;
     

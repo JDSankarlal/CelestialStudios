@@ -11,20 +11,25 @@ public:
 	Animation();
 	~Animation();
 
-	void setAnimationSpeed();
-
+	
 	void addFrame(Mesh* frame, float speed = 1);
-	void addDir(const char * dir, const char * fileName);
+	void addDir(const char * dir );
 	
 	//gets a speed in seconds
-	void setSpeed(float speed);
+	void setAnimationSpeed(float speed);
 
 	void update(Shader* shader,Mesh* mesh);
-	std::vector<Mesh*> getFrames();
+	
+	void stop();
 
+	void play();
+
+	void pause();
 	
 	
 private:
+	bool m_pause=0, m_stop=0;
+
 	std::vector<Mesh*> m_frames;
 	std::vector<std::vector< std::pair<std::string, std::vector<Vertex3D>>>> m_unpackedData;
 	bool init=false;

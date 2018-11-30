@@ -2,7 +2,7 @@
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>	  
 #include <vector>
-//#include <map>
+#include <unordered_map>
 #include "Camera.h"
 #include "Shader.h"
 #include "StructInfo.h"
@@ -39,6 +39,8 @@ public:
 
 	void enableBoundingBox(bool enable);
 
+	void addAnimation(std::string tag, Animation *animation);
+
 	float getWidth();
 	float getHeight();
 	float getDepth();
@@ -47,10 +49,14 @@ public:
 
 	void boundingBoxUpdate();
 
-	Animation *ani;
-	Mesh m_mesh;
+	Animation* getAnimation(const char* tag);
+	void  setAnimation(const char* tag);
+
 private:
 
+	std::unordered_map< std::string, Animation *>m_animations;
+	std::string m_animation;
+	Mesh m_mesh;
 
 	void boundingBoxInit();
 	void drawBoundingBox();
@@ -59,7 +65,7 @@ private:
 	GLuint m_BBVaoID = 0, m_BBVboID = 0;
 	Transformer m_transform;
 	//Physics3D *physics;
-	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back,m_center;
+	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back, m_center;
 	float m_width, m_height, m_depth;
 	ColourRGBA m_colour;
 	Shader m_shaderBB;

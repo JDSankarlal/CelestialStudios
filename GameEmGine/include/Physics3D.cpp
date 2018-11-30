@@ -34,5 +34,5 @@ void Physics3D::update()
 
 	tmpDer *= direction;
 
-	transform->translateBy(direction.coordX, direction.coordY, direction.coordZ);
+	transform->translateBy(direction.x, direction.y, direction.z);
 }

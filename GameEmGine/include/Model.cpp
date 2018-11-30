@@ -1,6 +1,7 @@
 #include "Model.h" 
 #include "ResourceManager.h"
 #include <ctime>
+
 Model::Model()
 {}
 
@@ -46,8 +47,8 @@ void Model::render(Shader& shader, Camera& cam)
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
-	if(ani)
-		ani->update(&shader,&m_mesh);
+	if(m_animations[m_animation])
+		m_animations[m_animation]->update(&shader,&m_mesh);
 	//render the mesh
 	m_mesh.render(shader);
 	shader.disable();
@@ -109,14 +110,17 @@ void Model::setColour(float r, float g, float b)
 {
 	m_colour.set((GLubyte)(255 * r), (GLubyte)(255 * g), (GLubyte)(255 * b));
 }
+
 void Model::setColour(ColourRGBA colour)
 {
 	m_colour = colour;
 }
+
 ColourRGBA Model::getColour()
 {
 	return m_colour;
 }
+
 bool Model::loadModel(const char * path)
 {
 	return m_mesh.loadMesh(path);
@@ -125,6 +129,11 @@ bool Model::loadModel(const char * path)
 void Model::enableBoundingBox(bool enable)
 {
 	m_enableBB = enable;
+}
+
+void Model::addAnimation(std::string tag, Animation * animation)
+{
+	m_animations[tag] = animation;
 }
 
 float Model::getWidth()
@@ -154,12 +163,12 @@ void Model::boundingBoxUpdate()
 	m_front = m_back = m_top = m_bottom = m_left = m_right = Coord3D(0, 0, 0);
 	std::vector<glm::vec4> thing
 	{
-	glm::vec4(m_mesh.right.coordX, m_mesh.right.coordY, m_mesh.right.coordZ, 1),
-	glm::vec4(m_mesh.left.coordX,   m_mesh.left.coordY,   m_mesh.left.coordZ, 1),
-	glm::vec4(m_mesh.top.coordX,   m_mesh.top.coordY,   m_mesh.top.coordZ, 1),
-	glm::vec4(m_mesh.bottom.coordX, m_mesh.bottom.coordY, m_mesh.bottom.coordZ, 1),
-	glm::vec4(m_mesh.front.coordX, m_mesh.front.coordY, m_mesh.front.coordZ, 1),
-	glm::vec4(m_mesh.back.coordX,   m_mesh.back.coordY,   m_mesh.back.coordZ, 1)
+	glm::vec4(m_mesh.right.x, m_mesh.right.y, m_mesh.right.z, 1),
+	glm::vec4(m_mesh.left.x,   m_mesh.left.y,   m_mesh.left.z, 1),
+	glm::vec4(m_mesh.top.x,   m_mesh.top.y,   m_mesh.top.z, 1),
+	glm::vec4(m_mesh.bottom.x, m_mesh.bottom.y, m_mesh.bottom.z, 1),
+	glm::vec4(m_mesh.front.x, m_mesh.front.y, m_mesh.front.z, 1),
+	glm::vec4(m_mesh.back.x,   m_mesh.back.y,   m_mesh.back.z, 1)
 	};
 
 	bool first = true;
@@ -183,21 +192,21 @@ void Model::boundingBoxUpdate()
 			first = false;
 		} else
 		{
-			m_front = a.z > m_front.coordZ ? Coord3D(a.x, a.y, a.z) : m_front;
-			m_back = a.z < m_back.coordZ ? Coord3D(a.x, a.y, a.z) : m_back;
-			m_left = a.x < m_left.coordX ? Coord3D(a.x, a.y, a.z) : m_left;
-			m_right = a.x > m_right.coordX ? Coord3D(a.x, a.y, a.z) : m_right;
-			m_top = a.y > m_top.coordY ? Coord3D(a.x, a.y, a.z) : m_top;
-			m_bottom = a.y < m_bottom.coordY ? Coord3D(a.x, a.y, a.z) : m_bottom;
+			m_front = a.z > m_front.z ? Coord3D(a.x, a.y, a.z) : m_front;
+			m_back = a.z < m_back.z ? Coord3D(a.x, a.y, a.z) : m_back;
+			m_left = a.x < m_left.x ? Coord3D(a.x, a.y, a.z) : m_left;
+			m_right = a.x > m_right.x ? Coord3D(a.x, a.y, a.z) : m_right;
+			m_top = a.y > m_top.y ? Coord3D(a.x, a.y, a.z) : m_top;
+			m_bottom = a.y < m_bottom.y ? Coord3D(a.x, a.y, a.z) : m_bottom;
 		}
 	}
 	glm::vec4
-		top = m_transBB * glm::vec4(m_top.coordX, m_top.coordY, m_top.coordZ, 1),
-		bottom = m_transBB * glm::vec4(m_bottom.coordX, m_bottom.coordY, m_bottom.coordZ, 1),
-		left = m_transBB * glm::vec4(m_left.coordX, m_left.coordY, m_left.coordZ, 1),
-		right = m_transBB * glm::vec4(m_right.coordX, m_right.coordY, m_right.coordZ, 1),
-		front = m_transBB * glm::vec4(m_front.coordX, m_front.coordY, m_front.coordZ, 1),
-		back = m_transBB * glm::vec4(m_back.coordX, m_back.coordY, m_back.coordZ, 1);
+		top = m_transBB * glm::vec4(m_top.x, m_top.y, m_top.z, 1),
+		bottom = m_transBB * glm::vec4(m_bottom.x, m_bottom.y, m_bottom.z, 1),
+		left = m_transBB * glm::vec4(m_left.x, m_left.y, m_left.z, 1),
+		right = m_transBB * glm::vec4(m_right.x, m_right.y, m_right.z, 1),
+		front = m_transBB * glm::vec4(m_front.x, m_front.y, m_front.z, 1),
+		back = m_transBB * glm::vec4(m_back.x, m_back.y, m_back.z, 1);
 
 	m_width = abs(right.x - left.x);
 	m_height = abs(top.y - bottom.y);
@@ -205,6 +214,16 @@ void Model::boundingBoxUpdate()
 	m_center = Coord3D((right.x + left.x) / 2, (top.y + bottom.y) / 2, (front.z + back.z) / 2);
 	if(m_enableBB)
 		boundingBoxInit();
+}
+
+Animation * Model::getAnimation(const char * tag)
+{
+	return nullptr;
+}
+
+void Model::setAnimation(const char * tag)
+{
+	m_animation = tag;
 }
 
 void Model::boundingBoxInit()
@@ -215,12 +234,12 @@ void Model::boundingBoxInit()
 		glGenBuffers(1, &m_BBVboID);
 
 	float
-		top = m_top.coordY,
-		bottom = m_bottom.coordY,
-		left = m_left.coordX,
-		right = m_right.coordX,
-		front = m_front.coordZ,
-		back = m_back.coordZ;
+		top = m_top.y,
+		bottom = m_bottom.y,
+		left = m_left.x,
+		right = m_right.x,
+		front = m_front.z,
+		back = m_back.z;
 
 	Vertex3D
 		topLeftBack{ { left,top,back } },

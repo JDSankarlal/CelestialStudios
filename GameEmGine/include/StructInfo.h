@@ -74,7 +74,7 @@ struct Coord2D
 
 struct Coord3D
 {
-	float coordX = 0.0f, coordY = 0.0f, coordZ = 0.0f;
+	float x = 0.0f, y = 0.0f, z = 0.0f;
 
 	Coord3D()
 	{}
@@ -87,7 +87,7 @@ struct Coord3D
 
 	float distance()
 	{
-		return sqrt(coordX * coordX + coordY * coordY + coordZ * coordZ);
+		return sqrt(x * x + y * y + z * z);
 	}
 
 	Coord3D normal()
@@ -97,55 +97,55 @@ struct Coord3D
 
 	Coord3D(Coord2D coord)
 	{
-		coordX = coord.x;
-		coordY = coord.y;
+		x = coord.x;
+		y = coord.y;
 	}
 	
 	Coord3D(float scale)
 	{
-		this->coordX = scale;
-		this->coordY = scale;
-		this->coordZ = scale;
+		this->x = scale;
+		this->y = scale;
+		this->z = scale;
 	}
 
-	Coord3D(float x, float y, float z)
+	Coord3D(float m_x, float m_y, float m_z)
 	{
-		this->coordX = x;
-		this->coordY = y;
-		this->coordZ = z;
+		this->x = m_x;
+		this->y = m_y;
+		this->z = m_z;
 	}
 
-	Coord3D(float x, float y)
+	Coord3D(float m_x, float m_y)
 	{
-		this->coordX = x;
-		this->coordY = y;
+		this->x = m_x;
+		this->y = m_y;
 	}
 
 	void set(Coord2D coord)
 	{
-		coordX = coord.x;
-		coordY = coord.y;
+		x = coord.x;
+		y = coord.y;
 	}
 
-	void set(float x, float y, float z)
+	void set(float m_x, float m_y, float m_z)
 	{
-		this->coordX = x;
-		this->coordY = y;
-		this->coordZ = z;
+		this->x = m_x;
+		this->y = m_y;
+		this->z = m_z;
 	}
 
-	void set(float x, float y)
+	void set(float m_x, float m_y)
 	{
-		this->coordX = x;
-		this->coordY = y;
+		this->x = m_x;
+		this->y = m_y;
 	}
 
 	void normalize()
 	{
-		float norm = sqrt(coordX * coordX + coordY * coordY + coordZ * coordZ);
-		coordX *= norm;
-		coordY *= norm;
-		coordZ *= norm;
+		float norm = sqrt(x * x + y * y + z * z);
+		x *= norm;
+		y *= norm;
+		z *= norm;
 	}
 
 	float& operator[] (int index)
@@ -154,43 +154,43 @@ struct Coord3D
 		switch (index)
 		{
 		case 0:
-			return const_cast<float&>(coordX);
+			return const_cast<float&>(x);
 		case 1:
-			return const_cast<float&>(coordY);
+			return const_cast<float&>(y);
 		case 2:
-			return const_cast<float&>(coordZ);
+			return const_cast<float&>(z);
 		}
 		return *error;
 	}
 
 	Coord3D operator+(Coord3D coord)
 	{
-		return { coordX + coord.coordX, coordY + coord.coordY, coordZ + coord.coordZ };
+		return { x + coord.x, y + coord.y, z + coord.z };
 	}
 
 	Coord3D operator-(Coord3D coord)
 	{
-		return { coordX - coord.coordX, coordY - coord.coordY, coordZ - coord.coordZ };
+		return { x - coord.x, y - coord.y, z - coord.z };
 	}
 
 	friend Coord3D operator*(float scaler, Coord3D coord)
 	{
-		return { scaler * coord.coordX, scaler * coord.coordY, scaler * coord.coordZ };
+		return { scaler * coord.x, scaler * coord.y, scaler * coord.z };
 	}
 
 	Coord3D operator*(Coord3D coord)
 	{
-		return { coordX * coord.coordX, coordY * coord.coordY, coordZ * coord.coordZ };
+		return { x * coord.x, y * coord.y, z * coord.z };
 	}
 
 	Coord3D operator/(Coord3D coord)
 	{
-		return { coordX / coord.coordX,coordY / coord.coordY,coordZ / coord.coordZ };
+		return { x / coord.x,y / coord.y,z / coord.z };
 	}
 
 	Coord3D operator/(float coord)
 	{
-		return { coordX / coord,coordY / coord,coordZ / coord };
+		return { x / coord,y / coord,z / coord };
 	}
 
 	Coord3D& operator-() {
@@ -201,30 +201,30 @@ struct Coord3D
 	   
 	void operator-=(Coord3D coord)
 	{
-		coordX -= coord.coordX;
-		coordY -= coord.coordY;
-		coordZ -= coord.coordZ;
+		x -= coord.x;
+		y -= coord.y;
+		z -= coord.z;
 	}
 
 	void operator+=(Coord3D coord)
 	{
-		coordX += coord.coordX;
-		coordY += coord.coordY;
-		coordZ += coord.coordZ;
+		x += coord.x;
+		y += coord.y;
+		z += coord.z;
 	}
 
 	void operator*=(Coord3D coord)
 	{
-		coordX *= coord.coordX;
-		coordY *= coord.coordY;
-		coordZ *= coord.coordZ;
+		x *= coord.x;
+		y *= coord.y;
+		z *= coord.z;
 	}
 
 	void operator*=(float coord)
 	{
-		coordX *= coord;
-		coordY *= coord;
-		coordZ *= coord;
+		x *= coord;
+		y *= coord;
+		z *= coord;
 	}
 };
 
@@ -466,9 +466,9 @@ struct Vertex3D
 
 	void setCoord(float x, float y, float z)
 	{
-		coord.coordX = x;
-		coord.coordY = y;
-		coord.coordZ = z;
+		coord.x = x;
+		coord.y = y;
+		coord.z = z;
 	}
 	//uses the 0-255 representation instead of 0-1
 	void setColour(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255)
@@ -487,14 +487,14 @@ struct Vertex3D
 
 	void setNorm(float x, float y, float z)
 	{
-		norm.coordX = x;
-		norm.coordY = y;
-		norm.coordZ = z;
+		norm.x = x;
+		norm.y = y;
+		norm.z = z;
 	}
 
 	void print()
 	{
-		printf("Coord3D: (%f, %f, %f)\n", coord.coordX, coord.coordY, coord.coordZ);
+		printf("Coord3D: (%f, %f, %f)\n", coord.x, coord.y, coord.z);
 		printf("Colour : (%d, %d, %d, %d)\n", colour.colorR, colour.colorG, colour.colorB, colour.colorA);
 		printf("UV     : (%f, %f)\n\n", uv.uv_u, uv.uv_v);
 	}
