@@ -169,13 +169,14 @@ void update(double dt)
 	}
 	curveroni = fmodf(curveroni, 1);
 
-	static Coord3D bossTarget;
+	static Coord3D bossTarget[4];
 
 	//gets a   target for missile (player 1,2,3 or 4) randomly
 	if (!hasTarget)
 	{
+		for(int a=0;a<4;a++)
+		bossTarget[a] = mod[a]->getTransformer().getPosition();
 
-		bossTarget = mod[rand() % 4]->getTransformer().getPosition();
 		hasTarget = true;
 	}
 
@@ -183,22 +184,31 @@ void update(double dt)
 		if (hasTarget)
 		{
 			Coord3D
-				p1 = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
-				p2 = bossTarget,//end point 
-				c1 = p1 - Coord3D{ 0,50,100 },//controle point
-				c2 = p2 - Coord3D{ 0,100,100 };//controle point
+				p1[4],
+				p2[4],
+				c1[4],
+				c2[4];
+			Coord3D cat[4];
+			Coord3D  pointPosition[4];
+			for (int a = 0; a < 4; a++)
+			{
+				p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
+					p2[a] = bossTarget[a],//end point 
+					c1[a] = p1[a] - Coord3D{ 0,50,100 },//controle point
+					c2[a] = p2[a] - Coord3D{ 0,100,100 };//controle point
 
-			Coord3D cat = catmull
-			(
-				c1,
-				p1,
-				p2,
-				c2,
-				curveroni
-			);
-
-			Coord3D  pointPosition = cat;
-			mod[18]->getTransformer().setPosition(pointPosition.coordX, pointPosition.coordY, pointPosition.coordZ);
+				 cat[a] = catmull
+				(
+					c1[a],
+					p1[a],
+					p2[a],
+					c2[a],
+					curveroni
+				);
+			  pointPosition[a] = cat[a];
+			//mod[18]->getTransformer().setPosition(pointPosition.coordX, pointPosition.coordY, pointPosition.coordZ);
+			mod[44+a]->getTransformer().setPosition(pointPosition[a].coordX, pointPosition[a].coordY, pointPosition[a].coordZ);
+			}
 		}
 
 	//some function
@@ -236,9 +246,9 @@ void update(double dt)
 				}
 
 				/// - Missile Collisions with Player - ///
-				if (collisions3D(player, mod[18]))
+				if (collisions3D(player, mod[44]))
 				{
-					mod[18]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D(0, 5, 2));
+					mod[44]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D(0, 5, 2));
 					player->setHealth(player->getHealth() - 50);
 					Coord3D test = player->getTransformer().getPosition();
 					if (player->getHealth() <= 0)
@@ -527,7 +537,7 @@ int main()
 	game.addModel(mod.back());//17
 
 	//Missile
-	mod.push_back(new Model("Models/Missile/candyMissile.obj"));
+	mod.push_back(new Model("Models/Planet/planet.obj"));
 	game.addModel(mod.back()); //18
 
 	//Building 2s
@@ -585,6 +595,15 @@ int main()
 	mod.push_back(new Model(*mod[42]));
 	game.addModel(mod.back());//43
 
+	mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+	game.addModel(mod.back()); //44
+	mod.push_back(new Model(*mod[44]));
+	game.addModel(mod.back());//45
+	mod.push_back(new Model(*mod[44]));
+	game.addModel(mod.back());//46
+	mod.push_back(new Model(*mod[44]));
+	game.addModel(mod.back());//47
+
 	/// - Set Model Transforms - ///
 	//Player Transforms
 	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
@@ -639,6 +658,9 @@ int main()
 	mod[16]->getTransformer().setPosition(-13.0f, 0.0f, 3.0f);
 	mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
+	//Planet Transforms
+	mod[18]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+
 	//ID rings?
 	mod[26]->setColour({ 255,0,0 });
 	mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
@@ -658,6 +680,12 @@ int main()
 	mod[37]->getTransformer().setScale(0.3f), mod[37]->getTransformer().setPosition(13.0f, 0.0f, 11.0f), mod[37]->getTransformer().setRotation({ 0,-0,0 });
 	mod[38]->getTransformer().setScale(0.3f), mod[38]->getTransformer().setPosition(-13.0f, 0.0f, 11.0f), mod[38]->getTransformer().setRotation({ 0,-0,0 });
 
+	//Missiles
+	mod[44]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+	mod[45]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+	mod[46]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+	mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+
 
 	/// - Set Model Colour - ///
 	//Players
@@ -670,7 +698,7 @@ int main()
 	mod[2]->addChild(mod[28]);
 	mod[3]->addChild(mod[29]);
 
-	LightSource::setLightAmount(11);
+	LightSource::setLightAmount(14);
 	for (int a = 0; a < 6; a++)
 	{
 		mod[10 + a]->boundingBoxUpdate();
@@ -682,9 +710,9 @@ int main()
 	}
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
-	LightSource::setParent(mod[18], 6);
+	LightSource::setParent(mod[44], 6);
 	LightSource::setDiffuse({ 255,100,0,100 }, 6);
-	LightSource::setAttenuationQuadratic(0.04f, 6.0f);
+	LightSource::setAttenuationQuadratic(0.06f, 6.0f);
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 7);
 	LightSource::setParent(mod[0], 7);
@@ -710,10 +738,22 @@ int main()
 	LightSource::setDiffuse({ 255,255,0,100 }, 10);
 	LightSource::setAttenuationQuadratic(1.f, 10);
 
-	LightSource::setSceneAmbient({ 60,60,60,255 });
+	LightSource::setLightType(LIGHT_TYPE::POINT, 11);
+	LightSource::setParent(mod[45], 11);
+	LightSource::setDiffuse({ 255,100,0,100 }, 11);
+	LightSource::setAttenuationQuadratic(0.06f, 11.0f);
 
-	
-	
+	LightSource::setLightType(LIGHT_TYPE::POINT, 12);
+	LightSource::setParent(mod[46], 12);
+	LightSource::setDiffuse({ 255,100,0,100 }, 12);
+	LightSource::setAttenuationQuadratic(0.06f, 12.0f);
+
+	LightSource::setLightType(LIGHT_TYPE::POINT, 13);
+	LightSource::setParent(mod[47], 13);
+	LightSource::setDiffuse({ 255,100,0,100 }, 13);
+	LightSource::setAttenuationQuadratic(0.06f, 13.0f);
+
+	LightSource::setSceneAmbient({ 60,60,60,255 });
 
 	/// - Set Camera - ///
 
