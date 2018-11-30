@@ -62,3 +62,7 @@ Robert and Emilian video Engine/
 *.idb
 
 GameEmGine/include/x64/Debug/
+
+*.iobj
+
+*.ipdb

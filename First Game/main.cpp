@@ -236,7 +236,7 @@ void update(double dt)
 		{
 			squash[a].addDir("Models/RIP/Rip Ani/");
 			squash[a].setAnimationSpeed(.2);
-		//	squash[a].repeat(true);
+			//	squash[a].repeat(true);
 		}
 		init = true;
 	}
@@ -402,6 +402,9 @@ void update(double dt)
 					mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 					float speed = sqrt(p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y);
 
+					if(!collisions3D(mod[a],mod[48]))
+						mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * -move, 0, p1.Coord2D_sticks[LS].y * -move);
+
 					if(!speed)
 						mod[a]->getAnimation("walk")->pause();
 					else
@@ -524,16 +527,16 @@ int main()
 
 	for(int a = 0; a < 4; a++)
 	{
-	walk[a].addDir("Models/AssaultModel/Walk/");
-	idle[a].addDir("Models/AssaultModel/Idle/");
-	mod[a]->addAnimation("walk", &walk[a]);
-	mod[a]->addAnimation("idle", &idle[a]);
-	mod[a]->setAnimation("walk");
+		walk[a].addDir("Models/AssaultModel/Walk/");
+		idle[a].addDir("Models/AssaultModel/Idle/");
+		mod[a]->addAnimation("walk", &walk[a]);
+		mod[a]->addAnimation("idle", &idle[a]);
+		mod[a]->setAnimation("walk");
 
-	walk[a].setAnimationSpeed(.25);
-	walk[a].repeat(true);
-	idle[a].stop();
-		
+		walk[a].setAnimationSpeed(.25);
+		walk[a].repeat(true);
+		idle[a].stop();
+
 
 		mod[a]->addAnimation("walk", &walk[a]);
 		mod[a]->addAnimation("idle", &idle[a]);
@@ -653,6 +656,13 @@ int main()
 	game.addModel(mod.back());//46
 	mod.push_back(new Model(*mod[44]));
 	game.addModel(mod.back());//47
+
+	//collision floor
+	mod.push_back(new Model(*mod[9]));//48
+	game.addModel(mod[48]);
+
+	mod[48]->setToRender(true);
+	mod[48]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[48]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
 
 	/// - Set Model Transforms - ///
 	//Player Transforms

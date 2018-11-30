@@ -50,21 +50,24 @@ void Model::render(Shader& shader, Camera& cam)
 	if(m_animations[m_animation])
 		m_animations[m_animation]->update(&shader, &m_mesh);
 
-	//render the mesh
-	m_mesh.render(shader);
-	shader.disable();
-
 	// update the position of the object
 	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
 	boundingBoxUpdate();
 
-	if(m_enableBB)
-		drawBoundingBox();
+	if(m_render)
+	{
+		//render the mesh
+		m_mesh.render(shader);
+		shader.disable();
 
-	m_transform.resetUpdated();
+		if(m_enableBB)
+			drawBoundingBox();
 
-	for(auto&a : m_children)
-		a->render(shader, cam);
+		m_transform.resetUpdated();
+
+		for(auto&a : m_children)
+			a->render(shader, cam);
+	}
 }
 
 void Model::drawBoundingBox()
@@ -235,6 +238,11 @@ Mesh * Model::getMesh()
 Shader * Model::getShader()
 {
 	return &m_shader;
+}
+
+void Model::setToRender(bool render)
+{
+	m_render = render;
 }
 
 void Model::boundingBoxInit()
