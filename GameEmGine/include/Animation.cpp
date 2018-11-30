@@ -68,7 +68,6 @@ void Animation::update(Shader* shader, Mesh* mesh)
 					else
 						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frame]);
 				}
-
 			}
 	//printf("%f\n\n", fmodf(time / m_speed, 1));
 	shader->enable();

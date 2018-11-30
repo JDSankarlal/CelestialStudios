@@ -134,9 +134,9 @@ bool collisions3D(Model *l, Model *k)
 	float capH = (l->getHeight() + k->getHeight()) / 2;
 	float capD = (l->getDepth() + k->getDepth()) / 2;
 
-	if(std::abs(distanceX) <= capW)
-		if(std::abs(distanceZ) <= capD)
-			if(std::abs(distanceY) <= capH)
+	if(std::abs(distanceX) <= abs(capW))
+		if(std::abs(distanceZ) <= abs(capD))
+			if(std::abs(distanceY) <= abs(capH))
 				return true;
 
 	return false;
@@ -153,7 +153,7 @@ void update(double dt)
 	static bool f = true;
 	static bool bossActive = true;
 
-	float move = .15f;
+	float move = .2f;
 
 	static float pointSize = 50.0f;
 	//printf("%f\n", dt);
@@ -165,7 +165,7 @@ void update(double dt)
 	static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
 	static float  curveroni = 0;
 	static bool hasTarget = false;
-	curveroni += .02;
+	curveroni += .015;
 	if(curveroni >= 1)
 	{
 		hasTarget = false;
@@ -177,8 +177,8 @@ void update(double dt)
 	//gets a   target for missile (player 1,2,3 or 4) randomly
 	if(!hasTarget)
 	{
-		for(int a=0;a<4;a++)
-		bossTarget[a] = mod[a]->getTransformer().getPosition();
+		for(int a = 0; a < 4; a++)
+			bossTarget[a] = mod[a]->getTransformer().getPosition();
 
 		hasTarget = true;
 	}
@@ -193,14 +193,14 @@ void update(double dt)
 				c2[4];
 			Coord3D cat[4];
 			Coord3D  pointPosition[4];
-			for (int a = 0; a < 4; a++)
+			for(int a = 0; a < 4; a++)
 			{
 				p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
 					p2[a] = bossTarget[a],//end point 
 					c1[a] = p1[a] - Coord3D{ 0,50,100 },//controle point
 					c2[a] = p2[a] - Coord3D{ 0,100,100 };//controle point
 
-				 cat[a] = catmull
+				cat[a] = catmull
 				(
 					c1[a],
 					p1[a],
@@ -208,9 +208,8 @@ void update(double dt)
 					c2[a],
 					curveroni
 				);
-			  pointPosition[a] = cat[a];
-			//mod[18]->getTransformer().setPosition(pointPosition.coordX, pointPosition.coordY, pointPosition.coordZ);
-			mod[44+a]->getTransformer().setPosition(pointPosition[a].coordX, pointPosition[a].coordY, pointPosition[a].coordZ);
+				pointPosition[a] = cat[a];
+				mod[44 + a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
 			}
 		}
 
@@ -232,11 +231,13 @@ void update(double dt)
 
 	if(!init)
 	{
-		squash[0].addDir("Models/RIP/Rip Ani/");
-		squash[0].setAnimationSpeed(.2);
 
-		for(int a = 1; a < 4; a++)
-			squash[a] = squash[0];
+		for(int a = 0; a < 4; a++)
+		{
+			squash[a].addDir("Models/RIP/Rip Ani/");
+			squash[a].setAnimationSpeed(.2);
+		//	squash[a].repeat(true);
+		}
 		init = true;
 	}
 
@@ -261,23 +262,24 @@ void update(double dt)
 					}
 
 					/// - Missile Collisions with Player - ///
-					if(collisions3D(player, mod[18]))
-					{
-						mod[18]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D(0, 5, 2));
-						player->setHealth(player->getHealth() - 50);
-						Coord3D test = player->getTransformer().getPosition();
-						if(player->getHealth() <= 0)
+					for(int b = 0; b < 4; b++)
+						if(collisions3D(player, mod[44 + b]))
 						{
-							dead[a] = true;
-							mod[22 + a]->setColour(player->getColour());
-							mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
-							game.addModel(mod[22 + a]);
-							mod[22 + a]->addAnimation("squash", &squash[a]);
-							
-							mod[22 + a]->setAnimation("squash");
-							game.removeModel(player);
+
+							player->setHealth(player->getHealth() - 50);
+							Coord3D test = player->getTransformer().getPosition();
+							if(player->getHealth() <= 0)
+							{
+								dead[a] = true;
+								mod[22 + a]->setColour(player->getColour());
+								mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
+								game.addModel(mod[22 + a]);
+								mod[22 + a]->addAnimation("squash", &squash[a]);
+
+								mod[22 + a]->setAnimation("squash");
+								game.removeModel(player);
+							}
 						}
-					}
 
 					if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 					{
@@ -399,10 +401,19 @@ void update(double dt)
 					mod[a]->getTransformer().setRotation({ 0,angle[a], 0 });
 					mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 					float speed = sqrt(p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y);
+
+					if(!speed)
+						mod[a]->getAnimation("walk")->pause();
+					else
+					{
+						mod[a]->getAnimation("walk")->play();
+						mod[a]->setAnimation("walk");
+						mod[a]->getAnimation("walk")->setAnimationSpeed(.25 / speed);
+					}
 				}
 			} else
 			{
-		//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
+				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
 
 			lastTime = (float)clock() / CLOCKS_PER_SEC;
@@ -511,19 +522,18 @@ int main()
 
 	static Animation walk[4], idle[4];
 
-	walk[0].addDir("Models/AssaultModel/walk/");
-	idle[0].addDir("Models/AssaultModel/idle/");
-	mod[0]->addAnimation("walk", &walk[0]);
-	mod[0]->addAnimation("idle", &idle[0]);
-	mod[0]->setAnimation("walk");
-
-	walk[0].setAnimationSpeed(.25);
-	walk[0].repeat(true);
-	idle[0].stop();
-	for(int a = 1; a < 4; a++)
+	for(int a = 0; a < 4; a++)
 	{
-		walk[a] = walk[0];
-		idle[a] = idle[0];
+	walk[a].addDir("Models/AssaultModel/Walk/");
+	idle[a].addDir("Models/AssaultModel/Idle/");
+	mod[a]->addAnimation("walk", &walk[a]);
+	mod[a]->addAnimation("idle", &idle[a]);
+	mod[a]->setAnimation("walk");
+
+	walk[a].setAnimationSpeed(.25);
+	walk[a].repeat(true);
+	idle[a].stop();
+		
 
 		mod[a]->addAnimation("walk", &walk[a]);
 		mod[a]->addAnimation("idle", &idle[a]);
@@ -586,10 +596,10 @@ int main()
 	game.addModel(mod.back());//21
 
 	//GraveStones
-	mod.push_back(new Model("Models/RIP/RIP.obj")); //22
-	mod.push_back(new Model(*mod[22]));//23
-	mod.push_back(new Model(*mod[22]));//24
-	mod.push_back(new Model(*mod[22]));//25
+	mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj")); //22
+	mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj"));//23
+	mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj"));//24
+	mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj"));//25
 
 
 
@@ -669,8 +679,8 @@ int main()
 	mod[33]->getTransformer().setPosition(18.25f, 0.0f, 18.5f), mod[33]->getTransformer().setRotation({ 0,-90,0 });
 	mod[34]->getTransformer().setPosition(-18.25f, 0.0f, 8.25), mod[34]->getTransformer().setRotation({ 0,90,0 });
 	//Building 5s
-	mod[39]->getTransformer().setScale(1.0f,1.0f,1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 14.25f), mod[39]->getTransformer().setRotation({ 0,180,0 });
-	mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f),mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({ 0,90,0 });
+	mod[39]->getTransformer().setScale(1.0f, 1.0f, 1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 14.25f), mod[39]->getTransformer().setRotation({ 0,180,0 });
+	mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f), mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({ 0,90,0 });
 	mod[41]->getTransformer().setScale(1.0f, 1.3f, 1.6f), mod[41]->getTransformer().setPosition(1.0f, 0.0f, 25.5f), mod[41]->getTransformer().setRotation({ 0,-90,0 });
 	//Building 6s
 	mod[42]->getTransformer().setScale(1.0f, 1.5f, 1.8f), mod[42]->getTransformer().setPosition(-14.2f, 0.0f, 22.9f), mod[42]->getTransformer().setRotation({ 0,-90,0 });
@@ -740,7 +750,7 @@ int main()
 	mod[3]->addChild(mod[29]);
 
 	LightSource::setLightAmount(14);
-	for (int a = 0; a < 6; a++)
+	for(int a = 0; a < 6; a++)
 	{
 		mod[10 + a]->boundingBoxUpdate();
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);

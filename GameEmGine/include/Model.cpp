@@ -48,8 +48,8 @@ void Model::render(Shader& shader, Camera& cam)
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
 	if(m_animations[m_animation])
-		m_animations[m_animation]->update(&shader,&m_mesh);
-	
+		m_animations[m_animation]->update(&shader, &m_mesh);
+
 	//render the mesh
 	m_mesh.render(shader);
 	shader.disable();
@@ -212,14 +212,14 @@ void Model::boundingBoxUpdate()
 	m_width = abs(right.x - left.x);
 	m_height = abs(top.y - bottom.y);
 	m_depth = abs(front.z - back.z);
-	m_center = Coord3D((right.x + left.x) / 2, (top.y + bottom.y) / 2, (front.z + back.z) / 2);
+	m_center = Coord3D((right.x + left.x), (top.y + bottom.y), (front.z + back.z)) / 2;
 	if(m_enableBB)
 		boundingBoxInit();
 }
 
 Animation * Model::getAnimation(const char * tag)
 {
-	return nullptr;
+	return m_animations[tag];
 }
 
 void Model::setAnimation(const char * tag)
