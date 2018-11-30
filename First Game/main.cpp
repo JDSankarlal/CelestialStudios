@@ -172,13 +172,14 @@ void update(double dt)
 	}
 	curveroni = fmodf(curveroni, 1);
 
-	static Coord3D bossTarget;
+	static Coord3D bossTarget[4];
 
 	//gets a   target for missile (player 1,2,3 or 4) randomly
 	if(!hasTarget)
 	{
+		for(int a=0;a<4;a++)
+		bossTarget[a] = mod[a]->getTransformer().getPosition();
 
-		bossTarget = mod[rand() % 4]->getTransformer().getPosition();
 		hasTarget = true;
 	}
 
@@ -186,22 +187,31 @@ void update(double dt)
 		if(hasTarget)
 		{
 			Coord3D
-				p1 = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
-				p2 = bossTarget,//end point 
-				c1 = p1 - Coord3D{ 0,50,100 },//controle point
-				c2 = p2 - Coord3D{ 0,100,100 };//controle point
+				p1[4],
+				p2[4],
+				c1[4],
+				c2[4];
+			Coord3D cat[4];
+			Coord3D  pointPosition[4];
+			for (int a = 0; a < 4; a++)
+			{
+				p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
+					p2[a] = bossTarget[a],//end point 
+					c1[a] = p1[a] - Coord3D{ 0,50,100 },//controle point
+					c2[a] = p2[a] - Coord3D{ 0,100,100 };//controle point
 
-			Coord3D cat = catmull
-			(
-				c1,
-				p1,
-				p2,
-				c2,
-				curveroni
-			);
-
-			Coord3D  pointPosition = cat;
-			mod[18]->getTransformer().setPosition(pointPosition.x, pointPosition.y, pointPosition.z);
+				 cat[a] = catmull
+				(
+					c1[a],
+					p1[a],
+					p2[a],
+					c2[a],
+					curveroni
+				);
+			  pointPosition[a] = cat[a];
+			//mod[18]->getTransformer().setPosition(pointPosition.coordX, pointPosition.coordY, pointPosition.coordZ);
+			mod[44+a]->getTransformer().setPosition(pointPosition[a].coordX, pointPosition[a].coordY, pointPosition[a].coordZ);
+			}
 		}
 
 	//some function
@@ -564,7 +574,7 @@ int main()
 	game.addModel(mod.back());//17
 
 	//Missile
-	mod.push_back(new Model("Models/Missile/candyMissile.obj"));
+	mod.push_back(new Model("Models/Planet/planet.obj"));
 	game.addModel(mod.back()); //18
 
 	//Building 2s
@@ -598,13 +608,41 @@ int main()
 	mod.push_back(new Model(*mod[30]));
 	game.addModel(mod.back());//32
 
+	//Building 4s
+	mod.push_back(new Model("Models/Buildings/Building4/tallBuilding.obj"));
+	game.addModel(mod.back());//33
+	mod.push_back(new Model(*mod[33]));
+	game.addModel(mod.back());//34
 
-	//Pause Menu
-	mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
+	mod.push_back(new Model("Models/DiedTree/tree.obj"));
+	game.addModel(mod.back());//35
+	mod.push_back(new Model(*mod[35]));
+	game.addModel(mod.back());//36
+	mod.push_back(new Model(*mod[35]));
+	game.addModel(mod.back());//37
+	mod.push_back(new Model(*mod[35]));
+	game.addModel(mod.back());//38
 
-	//Bullets
-	mod.push_back(new Model("Models/Bullet/bullet.obj"));//34
+	mod.push_back(new Model("Models/Buildings/Building5/smallShop.obj"));
+	game.addModel(mod.back());//39
+	mod.push_back(new Model(*mod[39]));
+	game.addModel(mod.back());//40
+	mod.push_back(new Model(*mod[39]));
+	game.addModel(mod.back());//41
 
+	mod.push_back(new Model("Models/Buildings/Building6/Building6.obj"));
+	game.addModel(mod.back());//42
+	mod.push_back(new Model(*mod[42]));
+	game.addModel(mod.back());//43
+
+	mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+	game.addModel(mod.back()); //44
+	mod.push_back(new Model(*mod[44]));
+	game.addModel(mod.back());//45
+	mod.push_back(new Model(*mod[44]));
+	game.addModel(mod.back());//46
+	mod.push_back(new Model(*mod[44]));
+	game.addModel(mod.back());//47
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -627,6 +665,16 @@ int main()
 	mod[30]->getTransformer().setPosition(7.25f, 0.0f, 23.6f);
 	mod[31]->getTransformer().setPosition(19.5f, 0.0f, 5.35f), mod[31]->getTransformer().setRotation({ 0,180,0 });
 	mod[32]->getTransformer().setPosition(-8.6f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({ 0,-90,0 });
+	//Building 4s
+	mod[33]->getTransformer().setPosition(18.25f, 0.0f, 18.5f), mod[33]->getTransformer().setRotation({ 0,-90,0 });
+	mod[34]->getTransformer().setPosition(-18.25f, 0.0f, 8.25), mod[34]->getTransformer().setRotation({ 0,90,0 });
+	//Building 5s
+	mod[39]->getTransformer().setScale(1.0f,1.0f,1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 14.25f), mod[39]->getTransformer().setRotation({ 0,180,0 });
+	mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f),mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({ 0,90,0 });
+	mod[41]->getTransformer().setScale(1.0f, 1.3f, 1.6f), mod[41]->getTransformer().setPosition(1.0f, 0.0f, 25.5f), mod[41]->getTransformer().setRotation({ 0,-90,0 });
+	//Building 6s
+	mod[42]->getTransformer().setScale(1.0f, 1.5f, 1.8f), mod[42]->getTransformer().setPosition(-14.2f, 0.0f, 22.9f), mod[42]->getTransformer().setRotation({ 0,-90,0 });
+	mod[43]->getTransformer().setPosition(16.65f, 0.0f, -3.15f), mod[43]->getTransformer().setRotation({ 0,180,0 });
 
 	//Project Nebula Sign Transforms
 	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(7.5f, 5.34f, 22.5f);
@@ -651,6 +699,10 @@ int main()
 	mod[16]->getTransformer().setPosition(-13.0f, 0.0f, 3.0f);
 	mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
+	//Planet Transforms
+	mod[18]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+
+	//ID rings?
 	mod[26]->setColour({ 255,0,0 });
 	mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
 
@@ -662,6 +714,20 @@ int main()
 
 	mod[29]->setColour({ 255,255,0 });
 	mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
+
+	//Trees
+	mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({ 0,-0,0 });
+	mod[36]->getTransformer().setScale(0.3f), mod[36]->getTransformer().setPosition(-13.0f, 0.0f, -3.0f), mod[36]->getTransformer().setRotation({ 0,-0,0 });
+	mod[37]->getTransformer().setScale(0.3f), mod[37]->getTransformer().setPosition(13.0f, 0.0f, 11.0f), mod[37]->getTransformer().setRotation({ 0,-0,0 });
+	mod[38]->getTransformer().setScale(0.3f), mod[38]->getTransformer().setPosition(-13.0f, 0.0f, 11.0f), mod[38]->getTransformer().setRotation({ 0,-0,0 });
+
+	//Missiles
+	mod[44]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+	mod[45]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+	mod[46]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+	mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+
+
 	/// - Set Model Colour - ///
 	//Players
 	mod[0]->setColour(1, 0.5, 0.5);
@@ -673,8 +739,8 @@ int main()
 	mod[2]->addChild(mod[28]);
 	mod[3]->addChild(mod[29]);
 
-	LightSource::setLightAmount(11);
-	for(int a = 0; a < 6; a++)
+	LightSource::setLightAmount(14);
+	for (int a = 0; a < 6; a++)
 	{
 		mod[10 + a]->boundingBoxUpdate();
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
@@ -685,9 +751,9 @@ int main()
 	}
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 6);
-	LightSource::setParent(mod[18], 6);
+	LightSource::setParent(mod[44], 6);
 	LightSource::setDiffuse({ 255,100,0,100 }, 6);
-	LightSource::setAttenuationQuadratic(0.04f, 6.0f);
+	LightSource::setAttenuationQuadratic(0.06f, 6.0f);
 
 	LightSource::setLightType(LIGHT_TYPE::POINT, 7);
 	LightSource::setParent(mod[0], 7);
@@ -713,7 +779,22 @@ int main()
 	LightSource::setDiffuse({ 255,255,0,100 }, 10);
 	LightSource::setAttenuationQuadratic(1.f, 10);
 
-	LightSource::setSceneAmbient({ 200,200,200,255 });
+	LightSource::setLightType(LIGHT_TYPE::POINT, 11);
+	LightSource::setParent(mod[45], 11);
+	LightSource::setDiffuse({ 255,100,0,100 }, 11);
+	LightSource::setAttenuationQuadratic(0.06f, 11.0f);
+
+	LightSource::setLightType(LIGHT_TYPE::POINT, 12);
+	LightSource::setParent(mod[46], 12);
+	LightSource::setDiffuse({ 255,100,0,100 }, 12);
+	LightSource::setAttenuationQuadratic(0.06f, 12.0f);
+
+	LightSource::setLightType(LIGHT_TYPE::POINT, 13);
+	LightSource::setParent(mod[47], 13);
+	LightSource::setDiffuse({ 255,100,0,100 }, 13);
+	LightSource::setAttenuationQuadratic(0.06f, 13.0f);
+
+	LightSource::setSceneAmbient({ 60,60,60,255 });
 
 	/// - Set Camera - ///
 
