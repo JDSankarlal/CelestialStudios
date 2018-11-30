@@ -227,7 +227,7 @@ bool Mesh::loadMesh(std::string path)
 		{
 			//Normal data
 			Coord3D tmp;
-			sscanf_s(inputBuff, "vn %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
+			sscanf_s(inputBuff, "vn %f %f %f", &tmp.x, &tmp.y, &tmp.z);
 			norms.push_back(tmp);
 		} else if(strchr(inputBuff, 'o'))
 			continue;
@@ -309,7 +309,7 @@ bool Mesh::loadMesh(std::string path)
 			//Vertex Data
 
 			Coord3D tmp;
-			sscanf_s(inputBuff, "v %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
+			sscanf_s(inputBuff, "v %f %f %f", &tmp.x, &tmp.y, &tmp.z);
 			verts.push_back(tmp);
 			if(initFace)
 			{
@@ -317,12 +317,12 @@ bool Mesh::loadMesh(std::string path)
 				initFace = false;
 			} else
 			{
-				front = tmp.coordZ > front.coordZ ? tmp : front;
-				back = tmp.coordZ < back.coordZ ? tmp : back;
-				left = tmp.coordX < left.coordX ? tmp : left;
-				right = tmp.coordX > right.coordX ? tmp : right;
-				top = tmp.coordY > top.coordY ? tmp : top;
-				bottom = tmp.coordY < bottom.coordY ? tmp : bottom;
+				front = tmp.z > front.z ? tmp : front;
+				back = tmp.z < back.z ? tmp : back;
+				left = tmp.x < left.x ? tmp : left;
+				right = tmp.x > right.x ? tmp : right;
+				top = tmp.y > top.y ? tmp : top;
+				bottom = tmp.y < bottom.y ? tmp : bottom;
 			}
 		}
 
@@ -342,9 +342,9 @@ bool Mesh::loadMesh(std::string path)
 
 				//set Verticies
 				tmp.setCoord(
-					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordX,
-					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordY,
-					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordZ);
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].x,
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].y,
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].z);
 
 				//set UV's
 				if(faces[a].second[c].uv[0])
@@ -356,9 +356,9 @@ bool Mesh::loadMesh(std::string path)
 				if(faces[a].second[c].norm[0])
 				{
 					tmp.setNorm(
-						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordX,
-						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordY,
-						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordZ);
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].x,
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].y,
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].z);
 				}
 
 				m_unpackedData.back().second.push_back(tmp);
@@ -438,7 +438,7 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 		{
 			//Normal data
 			Coord3D tmp;
-			sscanf_s(inputBuff, "vn %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
+			sscanf_s(inputBuff, "vn %f %f %f", &tmp.x, &tmp.y, &tmp.z);
 			norms.push_back(tmp);
 		} else if(strchr(inputBuff, 'o'))
 			continue;
@@ -520,7 +520,7 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 			//Vertex Data
 
 			Coord3D tmp;
-			sscanf_s(inputBuff, "v %f %f %f", &tmp.coordX, &tmp.coordY, &tmp.coordZ);
+			sscanf_s(inputBuff, "v %f %f %f", &tmp.x, &tmp.y, &tmp.z);
 			verts.push_back(tmp);
 			if(initFace)
 			{
@@ -528,12 +528,12 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 				initFace = false;
 			} else
 			{
-				front = tmp.coordZ > front.coordZ ? tmp : front;
-				back = tmp.coordZ < back.coordZ ? tmp : back;
-				left = tmp.coordX < left.coordX ? tmp : left;
-				right = tmp.coordX > right.coordX ? tmp : right;
-				top = tmp.coordY > top.coordY ? tmp : top;
-				bottom = tmp.coordY < bottom.coordY ? tmp : bottom;
+				front = tmp.z > front.z ? tmp : front;
+				back = tmp.z < back.z ? tmp : back;
+				left = tmp.x < left.x ? tmp : left;
+				right = tmp.x > right.x ? tmp : right;
+				top = tmp.y > top.y ? tmp : top;
+				bottom = tmp.y < bottom.y ? tmp : bottom;
 			}
 		}
 
@@ -553,9 +553,9 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 
 				//set Verticies
 				tmp.setCoord(
-					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordX,
-					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordY,
-					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].coordZ);
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].x,
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].y,
+					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].z);
 
 				//set UV's
 				if(faces[a].second[c].uv[0])
@@ -567,9 +567,9 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 				if(faces[a].second[c].norm[0])
 				{
 					tmp.setNorm(
-						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordX,
-						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordY,
-						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].coordZ);
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].x,
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].y,
+						norms[(unsigned int)(faces[a].second[c].norm[b] - 1)].z);
 				}
 
 				m_unpackedData.back().second.push_back(tmp);
@@ -683,12 +683,6 @@ void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>>
 {
 	for(unsigned a = 0; a < m_numFaces.size(); a++)
 	{
-		//m_vaoID.push_back({ m_unpackedData[a].first ,0 });
-		//m_vboID.push_back(0);
-
-		//glGenVertexArrays(1, &m_vaoID[a].second);
-		//glGenBuffers(1, &m_vboID[a]);
-
 		glBindVertexArray(m_vaoID[a].second);
 
 		glEnableVertexAttribArray(0);

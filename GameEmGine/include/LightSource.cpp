@@ -18,7 +18,7 @@ void LightSource::setLightType(LIGHT_TYPE type, unsigned index)
 
 void LightSource::setPosition(Coord3D pos, unsigned index)
 {
-	m_lights[index].transform->setPosition(pos.coordX, pos.coordY, pos.coordZ);
+	m_lights[index].transform->setPosition(pos.x, pos.y, pos.z);
 }
 
 void LightSource::setDirection(Coord3D dir, int index)
@@ -92,13 +92,13 @@ void LightSource::update()
 	for(unsigned a = 0; a < m_lights.size(); a++)
 	{
 		Coord3D lp = m_lights[a].transform->getPosition();
-		glm::vec4 pos(lp.coordX, lp.coordY, lp.coordZ, 1.0f);
-		glm::vec4 dir{ m_lights[a].direction.coordX,m_lights[a].direction.coordY ,m_lights[a].direction.coordZ ,1.0f};
+		glm::vec4 pos(lp.x, lp.y, lp.z, 1.0f);
+		glm::vec4 dir{ m_lights[a].direction.x,m_lights[a].direction.y ,m_lights[a].direction.z ,1.0f};
 		if(m_lights[a].parent)
 		{
 			Transformer *trans = &m_lights[a].parent->getTransformer();
-			glm::vec3 pos2(trans->getPosition().coordX, trans->getPosition().coordY, trans->getPosition().coordZ);
-			glm::mat4 forward = glm::lookAt(pos2, pos2 + glm::vec3(cos(trans->getRotation().coordX), tan(trans->getRotation().coordY), sin(trans->getRotation().coordZ)),
+			glm::vec3 pos2(trans->getPosition().x, trans->getPosition().y, trans->getPosition().z);
+			glm::mat4 forward = glm::lookAt(pos2, pos2 + glm::vec3(cos(trans->getRotation().x), tan(trans->getRotation().y), sin(trans->getRotation().z)),
 											{ 0,1,0 });
 			pos = m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation()*forward * glm::vec4(pos2, 1.f);
 			// dir = forward * dir;

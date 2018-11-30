@@ -16,26 +16,26 @@ void Transformer::setRotation(Coord3D angles, Coord3D forward)
 {
 	forward.normalize();
 	glm::vec3 pos;
-	glm::vec3 tmp(angles.coordX, angles.coordY, angles.coordZ);
-	glm::mat4 thing = glm::lookAt(pos = glm::vec3(m_pos.coordX, m_pos.coordY, m_pos.coordZ), pos + glm::vec3(forward.coordX, forward.coordY, forward.coordZ), {0,1,0});
+	glm::vec3 tmp(angles.x, angles.y, angles.z);
+	glm::mat4 thing = glm::lookAt(pos = glm::vec3(m_pos.x, m_pos.y, m_pos.z), pos + glm::vec3(forward.x, forward.y, forward.z), {0,1,0});
 	tmp = thing * glm::vec4(tmp,1.f);
 	
 	m_updatedRot = true;
 
-	if(angles.coordZ)
+	if(angles.z)
 	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordZ), 0, 0, 1);
-		m_angles.coordZ = tmp.z;
+		m_rotate = Quat::quatRotationMat(glm::radians(angles.z), 0, 0, 1);
+		m_angles.z = tmp.z;
 	}
-	if(angles.coordY)
+	if(angles.y)
 	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordY), 0, 1, 0);
-		m_angles.coordY = tmp.y;
+		m_rotate = Quat::quatRotationMat(glm::radians(angles.y), 0, 1, 0);
+		m_angles.y = tmp.y;
 	}
-	if(angles.coordX)
+	if(angles.x)
 	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.coordX), 1, 0, 0);
-		m_angles.coordX = tmp.x;
+		m_rotate = Quat::quatRotationMat(glm::radians(angles.x), 1, 0, 0);
+		m_angles.x = tmp.x;
 	}
 
 	
@@ -45,10 +45,10 @@ void Transformer::rotateBy(Coord3D angles, Coord3D forward)
 {
 	m_updatedRot = true;
 	
-	glm::vec3 tmp(angles.coordX, angles.coordY, angles.coordZ);
+	glm::vec3 tmp(angles.x, angles.y, angles.z);
 	forward.normalize();
 	glm::vec3 pos;
-	glm::mat4 thing = glm::lookAt(pos = glm::vec3(m_pos.coordX, m_pos.coordY, m_pos.coordZ), pos + glm::vec3(forward.coordX, forward.coordY, forward.coordZ), { 0,1,0 });
+	glm::mat4 thing = glm::lookAt(pos = glm::vec3(m_pos.x, m_pos.y, m_pos.z), pos + glm::vec3(forward.x, forward.y, forward.z), { 0,1,0 });
 	tmp = thing * glm::vec4(tmp, 1.f);
 	
 	m_angles += {tmp.x,tmp.y,tmp.z};
@@ -56,6 +56,16 @@ void Transformer::rotateBy(Coord3D angles, Coord3D forward)
 	m_rotate = Quat::quatRotationMat(glm::radians(tmp.x), 1, 0, 0);
 	m_rotate *= Quat::quatRotationMat(glm::radians(tmp.y), 0, 1, 0);
 	m_rotate *= Quat::quatRotationMat(glm::radians(tmp.z), 0, 0, 1);
+}
+
+void Transformer::translateBy(float x, float y, float z, Coord3D forward)
+{
+	setPosition(m_pos + Coord3D{x,y,z});
+}
+
+void Transformer::translateBy(Coord3D pos, Coord3D forward)
+{
+	setPosition(m_pos + pos);
 }
 
 void Transformer::setPosition(float x, float y, float z, Coord3D forward)
@@ -70,13 +80,9 @@ void Transformer::setPosition(Coord3D pos, Coord3D forward)
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
 	float aspect = (float)w / h;
 	m_pos = pos * aspect;
-	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.coordX, m_pos.coordY, -m_pos.coordZ));
-	m_pos = m_pos / aspect;
-}
+	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.x, m_pos.y, -m_pos.z));
 
-void Transformer::translateBy(float x, float y, float z, Coord3D forward)
-{
-	setPosition(m_pos + Coord3D{x,y,z});
+	m_pos = m_pos / aspect;
 }
 
 void Transformer::setScale(float scale)

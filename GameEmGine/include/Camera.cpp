@@ -53,14 +53,14 @@ bool Camera::update()
 
 void Camera::setPosition(Coord3D position)
 {
-	*m_position = Quat{ position.coordX, position.coordY, position.coordZ };
+	*m_position = Quat{ position.x, position.y, position.z };
 
 	m_cameraUpdate = true;
 }
 
 void  Camera::movePositionBy(Coord3D position)
 {
-	*m_position += Quat{ position.coordX,position.coordY,position.coordZ };
+	*m_position += Quat{ position.x,position.y,position.z };
 
 	m_cameraUpdate = true;
 }
@@ -78,7 +78,7 @@ void Camera::setAngle(float angle, Coord3D direction)
 	//	m_rotMat = glm::rotate(m_rotMat, glm::radians(-angle), glm::vec3(direction.x, direction.y, direction.z));
 
 	//my rotation
-	m_rotMat = Quat::quatRotationMat(glm::radians(angle), -direction.coordX, direction.coordY, direction.coordZ);
+	m_rotMat = Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
 
 	m_cameraUpdate = true;
 }
@@ -91,7 +91,7 @@ void Camera::moveAngleBy(float angle, Coord3D direction)
 
 	//my rotation
 	if(angle != 0)
-		m_rotMat *= Quat::quatRotationMat(glm::radians(angle), -direction.coordX, direction.coordY, direction.coordZ);
+		m_rotMat *= Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
 
 	m_cameraUpdate = true;
 }
