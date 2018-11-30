@@ -289,7 +289,7 @@ void update(double dt)
 						bullets[a].back()->setColour(player->getColour());
 						Coord3D pos = mod[a]->getTransformer().getPosition();
 						bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-						bullets[a].back()->getTransformer().setScale(0.1);
+						bullets[a].back()->getTransformer().setScale(0.08);
 
 						bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
@@ -654,8 +654,14 @@ int main()
 	mod.push_back(new Model("Models/PizzaSign/PIZZA.obj"));
 	game.addModel(mod.back()); //53
 
-
-	//game.addModel(mod.back());//48
+	mod.push_back(new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj")); 
+	game.addModel(mod.back()); //54
+	mod.push_back(new Model(*mod[54]));
+	game.addModel(mod.back()); //55
+	mod.push_back(new Model(*mod[54]));
+	game.addModel(mod.back()); //56
+	mod.push_back(new Model(*mod[54]));
+	game.addModel(mod.back()); //57
 
 	//Pause Menu
 	//mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
@@ -752,6 +758,12 @@ int main()
 	//Pizza Sign
 	mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-9.5f, 5.4f, 22.3f);
 
+	//Assault Weapons
+	mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f),mod[51]->getTransformer().setRotation({ 0.0f,0.0f,30.0f });
+	mod[55]->getTransformer().setScale(0.1f);
+	mod[56]->getTransformer().setScale(0.1f);
+	mod[57]->getTransformer().setScale(0.1f);
+
 	/// - Set Model Colour - ///
 	//Players
 	mod[0]->setColour(1, 0.5, 0.5);
@@ -762,6 +774,10 @@ int main()
 	mod[1]->addChild(mod[27]);
 	mod[2]->addChild(mod[28]);
 	mod[3]->addChild(mod[29]);
+	mod[0]->addChild(mod[54]);
+	mod[1]->addChild(mod[55]);
+	mod[2]->addChild(mod[56]);
+	mod[3]->addChild(mod[57]);
 
 	LightSource::setLightAmount(14);
 	for (int a = 0; a < 6; a++)
