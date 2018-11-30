@@ -558,6 +558,33 @@ int main()
 	mod.push_back(new Model(*mod[30]));
 	game.addModel(mod.back());//32
 
+	//Building 4s
+	mod.push_back(new Model("Models/Buildings/Building4/tallBuilding.obj"));
+	game.addModel(mod.back());//33
+	mod.push_back(new Model(*mod[33]));
+	game.addModel(mod.back());//34
+
+	mod.push_back(new Model("Models/DiedTree/tree.obj"));
+	game.addModel(mod.back());//35
+	mod.push_back(new Model(*mod[35]));
+	game.addModel(mod.back());//36
+	mod.push_back(new Model(*mod[35]));
+	game.addModel(mod.back());//37
+	mod.push_back(new Model(*mod[35]));
+	game.addModel(mod.back());//38
+
+	mod.push_back(new Model("Models/Buildings/Building5/smallShop.obj"));
+	game.addModel(mod.back());//39
+	mod.push_back(new Model(*mod[39]));
+	game.addModel(mod.back());//40
+	mod.push_back(new Model(*mod[39]));
+	game.addModel(mod.back());//41
+
+	mod.push_back(new Model("Models/Buildings/Building6/Building6.obj"));
+	game.addModel(mod.back());//42
+	mod.push_back(new Model(*mod[42]));
+	game.addModel(mod.back());//43
+
 	/// - Set Model Transforms - ///
 	//Player Transforms
 	mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
@@ -578,6 +605,16 @@ int main()
 	mod[30]->getTransformer().setPosition(7.25f, 0.0f, 23.6f);
 	mod[31]->getTransformer().setPosition(19.5f, 0.0f, 5.35f), mod[31]->getTransformer().setRotation({ 0,180,0 });
 	mod[32]->getTransformer().setPosition(-8.6f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({ 0,-90,0 });
+	//Building 4s
+	mod[33]->getTransformer().setPosition(18.25f, 0.0f, 18.5f), mod[33]->getTransformer().setRotation({ 0,-90,0 });
+	mod[34]->getTransformer().setPosition(-18.25f, 0.0f, 8.25), mod[34]->getTransformer().setRotation({ 0,90,0 });
+	//Building 5s
+	mod[39]->getTransformer().setScale(1.0f,1.0f,1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 14.25f), mod[39]->getTransformer().setRotation({ 0,180,0 });
+	mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f),mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({ 0,90,0 });
+	mod[41]->getTransformer().setScale(1.0f, 1.3f, 1.6f), mod[41]->getTransformer().setPosition(1.0f, 0.0f, 25.5f), mod[41]->getTransformer().setRotation({ 0,-90,0 });
+	//Building 6s
+	mod[42]->getTransformer().setScale(1.0f, 1.5f, 1.8f), mod[42]->getTransformer().setPosition(-14.2f, 0.0f, 22.9f), mod[42]->getTransformer().setRotation({ 0,-90,0 });
+	mod[43]->getTransformer().setPosition(16.65f, 0.0f, -3.15f), mod[43]->getTransformer().setRotation({ 0,180,0 });
 
 	//Project Nebula Sign Transforms
 	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(7.5f, 5.34f, 22.5f);
@@ -602,6 +639,7 @@ int main()
 	mod[16]->getTransformer().setPosition(-13.0f, 0.0f, 3.0f);
 	mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
+	//ID rings?
 	mod[26]->setColour({ 255,0,0 });
 	mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
 
@@ -613,6 +651,14 @@ int main()
 
 	mod[29]->setColour({ 255,255,0 });
 	mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
+
+	//Trees
+	mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({ 0,-0,0 });
+	mod[36]->getTransformer().setScale(0.3f), mod[36]->getTransformer().setPosition(-13.0f, 0.0f, -3.0f), mod[36]->getTransformer().setRotation({ 0,-0,0 });
+	mod[37]->getTransformer().setScale(0.3f), mod[37]->getTransformer().setPosition(13.0f, 0.0f, 11.0f), mod[37]->getTransformer().setRotation({ 0,-0,0 });
+	mod[38]->getTransformer().setScale(0.3f), mod[38]->getTransformer().setPosition(-13.0f, 0.0f, 11.0f), mod[38]->getTransformer().setRotation({ 0,-0,0 });
+
+
 	/// - Set Model Colour - ///
 	//Players
 	mod[0]->setColour(1, 0.1, 0.1);

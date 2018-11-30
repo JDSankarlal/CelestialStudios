@@ -60,7 +60,7 @@ void Animation::update(Shader* shader, Mesh* mesh)
 			mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[(m_frame + 1) % m_unpackedData.size()]);
 
 		}
-	printf("%f\n\n", fmodf(time / m_speed,1));
+	//printf("%f\n\n", fmodf(time / m_speed,1));
 	shader->enable();
 	glUniform1f(shader->getUniformLocation("uTime"), fmodf(time / m_speed, 1));
 	shader->disable();
