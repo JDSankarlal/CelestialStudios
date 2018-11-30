@@ -356,6 +356,8 @@ void GamePlayInite()
 	mod.push_back(new Model(*mod[54]));
 	game.addModel(mod.back()); //57
 
+	mod.push_back(new Model("Models/Planet/Planet2/planet.obj"));
+	game.addModel(mod.back()); //58
 	//Pause Menu
 	//mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
 
@@ -398,7 +400,7 @@ void GamePlayInite()
 	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
 
 	//Floor Transforms
-	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
+	mod[9]->getTransformer().setScale(2.0f, 1.0f, 1.75f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
 
 	//Street Light Transforms
 	mod[10]->getTransformer().setScale(0.5f), mod[10]->getTransformer().setPosition(13.0f, 0.0f, -1.0f);
@@ -414,6 +416,7 @@ void GamePlayInite()
 
 	//Planet Transforms
 	mod[18]->getTransformer().setPosition(9.0f, 12.0f, 36.0f);
+	mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
 
 	//ID rings?
 	mod[26]->setColour({ 255,0,0 });
@@ -452,10 +455,10 @@ void GamePlayInite()
 	mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-9.5f, 5.4f, 22.3f);
 
 	//Assault Weapons
-	mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[51]->getTransformer().setRotation({ 0.0f,0.0f,30.0f });
-	mod[55]->getTransformer().setScale(0.1f);
-	mod[56]->getTransformer().setScale(0.1f);
-	mod[57]->getTransformer().setScale(0.1f);
+	mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[51]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+	mod[55]->getTransformer().setScale(0.075f), mod[55]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[55]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+	mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+	mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
 
 	/// - Set Model Colour - ///
 	//Players
@@ -621,7 +624,6 @@ void updateIntro()
 			game.removeModel(mod[0]);
 			mod.clear();
 			menuInite();
-
 		}
 	}
 }
@@ -694,7 +696,7 @@ void update(double dt)
 		static bool f = true;
 		static bool bossActive = true;
 
-		float move = .2f;
+		float move = .1f;
 
 		static float pointSize = 50.0f;
 		//printf("%f\n", dt);
@@ -706,7 +708,7 @@ void update(double dt)
 		static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
 		static float  curveroni = 0;
 		static bool hasTarget = false;
-		curveroni += .015;
+		curveroni += .008;
 		if (curveroni >= 1)
 		{
 			hasTarget = false;
@@ -754,14 +756,6 @@ void update(double dt)
 				}
 			}
 
-		//some function
-		//{
-
-		//when function plays, get player locations
-		//call 4 missles to shoot at those locations
-		//maybe call missles to shoot randomly
-		//}
-
 		static bool dead[4];
 
 		static float lastTime = (float)clock() / CLOCKS_PER_SEC;
@@ -807,7 +801,7 @@ void update(double dt)
 							if (collisions3D(player, mod[44 + b]))
 							{
 
-								player->setHealth(player->getHealth() - 50);
+								player->setHealth(player->getHealth() - 15);
 								Coord3D test = player->getTransformer().getPosition();
 								if (player->getHealth() <= 0)
 								{
@@ -832,7 +826,7 @@ void update(double dt)
 							bullets[a].back()->setColour(player->getColour());
 							Coord3D pos = mod[a]->getTransformer().getPosition();
 							bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-							bullets[a].back()->getTransformer().setScale(0.08);
+							bullets[a].back()->getTransformer().setScale(0.13);
 
 							bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
@@ -882,7 +876,7 @@ void update(double dt)
 									f = false;
 								}
 								move = 0.5f;
-								if (time - 0.2f >= duration)
+								if (time - 0.1f >= duration)
 								{
 									move = 0.1f;
 									//If triggers up then coolDown = time;
