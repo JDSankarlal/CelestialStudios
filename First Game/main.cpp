@@ -31,9 +31,9 @@ void shaderInit()
 }
 
 //instance key is pressed
-void keyInputPressed(int key, int mod)
+void keyInputPressed(int key, int modifier)
 {
-	mod;
+	modifier;
 	m_left = (key == 'A' ? true : m_left);
 	m_right = (key == 'D' ? true : m_right);
 	m_up = (key == 'E' ? true : m_up);
@@ -50,9 +50,9 @@ void keyInputPressed(int key, int mod)
 }
 
 //instace key is released
-void keyInputReleased(int key, int mod)
+void keyInputReleased(int key, int modifier)
 {
-	mod;
+	modifier;
 	m_left = (key == 'A' ? false : m_left);
 	m_right = (key == 'D' ? false : m_right);
 	m_in = (key == 'W' ? false : m_in);
