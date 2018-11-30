@@ -210,7 +210,7 @@ void update(double dt)
 				);
 			  pointPosition[a] = cat[a];
 			//mod[18]->getTransformer().setPosition(pointPosition.coordX, pointPosition.coordY, pointPosition.coordZ);
-			mod[44+a]->getTransformer().setPosition(pointPosition[a].coordX, pointPosition[a].coordY, pointPosition[a].coordZ);
+			mod[44+a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
 			}
 		}
 
@@ -284,11 +284,12 @@ void update(double dt)
 						makeShitLessCancer[a] = true;
 
 						bullets[a].push_back(nullptr);
-						game.addModel(bullets[a].back() = new Model(*mod[34]));
+						game.addModel(bullets[a].back() = new Model(*mod[48]));
 						bullets[a].back()->getTransformer().reset();
+						bullets[a].back()->setColour(player->getColour());
 						Coord3D pos = mod[a]->getTransformer().getPosition();
 						bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-						bullets[a].back()->getTransformer().setScale(0.25);
+						bullets[a].back()->getTransformer().setScale(0.1);
 
 						bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
@@ -371,8 +372,6 @@ void update(double dt)
 								timer[a].erase(timer[a].begin() + b);
 								break;
 							}
-
-
 
 							if(mod[8])
 								if(collisions(bullets[a][b], mod[8]))
@@ -531,7 +530,6 @@ int main()
 	}
 
 
-
 	//Building 1s
 	mod.push_back(new Model("Models/Buildings/Building1/building1.obj"));
 	game.addModel(mod.back());//4
@@ -573,7 +571,7 @@ int main()
 	mod.push_back(new Model(*mod[16]));
 	game.addModel(mod.back());//17
 
-	//Missile
+	//Planet
 	mod.push_back(new Model("Models/Planet/planet.obj"));
 	game.addModel(mod.back()); //18
 
@@ -590,9 +588,6 @@ int main()
 	mod.push_back(new Model(*mod[22]));//23
 	mod.push_back(new Model(*mod[22]));//24
 	mod.push_back(new Model(*mod[22]));//25
-
-
-
 
 	//Coloured ring "IDs"
 	mod.push_back(new Model("Models/ID/Identifier.obj"));//26
@@ -644,13 +639,26 @@ int main()
 	mod.push_back(new Model(*mod[44]));
 	game.addModel(mod.back());//47
 
+	mod.push_back(new Model("Models/Bullet/bullet.obj"));//48
+
+	mod.push_back(new Model("Models/Trash/TrashCan.obj"));
+	game.addModel(mod.back()); //49
+	mod.push_back(new Model(*mod[49]));
+	game.addModel(mod.back());//50
+
+	mod.push_back(new Model("Models/Picnic/PicnicTable.obj"));
+	game.addModel(mod.back()); //51
+	mod.push_back(new Model(*mod[51]));
+	game.addModel(mod.back());//52
+
+	mod.push_back(new Model("Models/PizzaSign/PIZZA.obj"));
+	game.addModel(mod.back()); //53
+
+
+	//game.addModel(mod.back());//48
 
 	//Pause Menu
-	mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
-
-	//Bullets
-	mod.push_back(new Model("Models/Bullet/bullet.obj"));//34
-
+	//mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -689,8 +697,6 @@ int main()
 
 	//Boss Trarrnsforms
 	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
-	//Missile
-	mod[18]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 
 	//Floor Transforms
 	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
@@ -708,7 +714,7 @@ int main()
 	mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 	//Planet Transforms
-	mod[18]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+	mod[18]->getTransformer().setPosition(9.0f, 12.0f, 36.0f);
 
 	//ID rings?
 	mod[26]->setColour({ 255,0,0 });
@@ -735,6 +741,16 @@ int main()
 	mod[46]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 	mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 
+	//Trash
+	mod[49]->getTransformer().setScale(1.0f,1.3f, 1.0f), mod[49]-> getTransformer().setPosition(-13.25f, 0.0f, 13.0f);
+	mod[50]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[50]->getTransformer().setPosition(13.25f, 0.0f, 0.5f);
+
+	//Picnic table wut, cyberpunk game?
+	mod[51]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[51]->getTransformer().setPosition(-11.0f, 0.0f, 19.0f), mod[51]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+	mod[52]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[52]->getTransformer().setPosition(-6.75f, 0.0f, 19.0f), mod[52]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+
+	//Pizza Sign
+	mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-9.5f, 5.4f, 22.3f);
 
 	/// - Set Model Colour - ///
 	//Players
