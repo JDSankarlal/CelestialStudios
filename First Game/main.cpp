@@ -402,8 +402,10 @@ void update(double dt)
 					mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 					float speed = sqrt(p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y);
 
-					if(!collisions3D(mod[a],mod[48]))
-						mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * -move, 0, p1.Coord2D_sticks[LS].y * -move);
+					if(!collisions3D(mod[a], mod[48]))
+						mod[a]->getTransformer().setPosition(abs(mod[a]->getTransformer().getPosition().x) > mod[48]->getWidth() / 2 ? mod[a]->getTransformer().getPosition().x < 0 ? -mod[48]->getWidth() / 2 : mod[48]->getWidth() / 2 : mod[a]->getTransformer().getPosition().x,
+															 0,
+															 abs(mod[a]->getTransformer().getPosition().z) > mod[48]->getDepth() / 2 ? mod[a]->getTransformer().getPosition().z < 0 ? -mod[48]->getDepth() / 2 : mod[48]->getDepth() / 2 : mod[a]->getTransformer().getPosition().z);
 
 					if(!speed)
 						mod[a]->getAnimation("walk")->pause();
@@ -658,11 +660,11 @@ int main()
 	game.addModel(mod.back());//47
 
 	//collision floor
-	mod.push_back(new Model(*mod[9]));//48
+	mod.push_back(new Model("Models/Floor/Floor2.obj"));//48
 	game.addModel(mod[48]);
 
-	mod[48]->setToRender(true);
-	mod[48]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[48]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
+	mod[48]->setToRender(false);
+	mod[48]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[48]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
 
 	/// - Set Model Transforms - ///
 	//Player Transforms
@@ -826,7 +828,7 @@ int main()
 	audio.play(true);
 
 	//engine stuff
-	//game.setFPSLimit(60);
+	game.setFPSLimit(60);
 	game.setBackgroundColour(0.05f, 0.0f, 0.1f);
 	game.keyPressed(keyInputPressed);
 	game.keyReleased(keyInputReleased);
