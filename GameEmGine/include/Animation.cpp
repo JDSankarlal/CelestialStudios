@@ -10,9 +10,7 @@ Animation::~Animation()
 {}
 
 void Animation::addFrame(Mesh * frame, float speed)
-{
-
-}
+{}
 
 void Animation::setAnimationSpeed(float speed)
 {
@@ -53,9 +51,24 @@ void Animation::update(Shader* shader, Mesh* mesh)
 		if(mesh)
 			if((time = (time - m_lastTime)) >= m_speed)
 			{
-				m_frame = int(time / m_speed) % m_unpackedData.size();
+				if(m_repeat)
+					m_frame = int(time / m_speed) % m_unpackedData.size();
+				else
+				{
+					m_frame = int(time / m_speed);
+					m_frame = m_frame >= m_unpackedData.size() - 1 ? (m_unpackedData.size() - 2) % m_unpackedData.size() : m_frame;
+				}
 
-				mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[(m_frame + 1) % m_unpackedData.size()]);
+				if(m_repeat)
+					mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[(m_frame + 1) % m_unpackedData.size()]);
+				else
+				{
+					if(m_frame < m_unpackedData.size() - 2)
+						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[(m_frame + 1) % m_unpackedData.size()]);
+					else
+						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frame]);
+				}
+
 			}
 	//printf("%f\n\n", fmodf(time / m_speed, 1));
 	shader->enable();
@@ -76,4 +89,9 @@ void Animation::play()
 void Animation::pause()
 {
 	m_pause = true;
+}
+
+void Animation::repeat(bool repeat)
+{
+	m_repeat = repeat;
 }

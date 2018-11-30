@@ -27,7 +27,6 @@ Model::Model(const char * path) :
 		m_bottom = m_mesh.bottom;
 		m_front = m_mesh.front;
 		m_back = m_mesh.back;
-		//	boundingBoxInit();
 	}
 }
 
@@ -39,6 +38,7 @@ void Model::render(Shader& shader, Camera& cam)
 	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
 	shader.enable();
+	m_shader = shader;
 
 	if(m_parent)
 		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_parent->m_transform.getTransformation() * m_transform.getTransformation())[0][0]));
@@ -49,6 +49,7 @@ void Model::render(Shader& shader, Camera& cam)
 
 	if(m_animations[m_animation])
 		m_animations[m_animation]->update(&shader,&m_mesh);
+	
 	//render the mesh
 	m_mesh.render(shader);
 	shader.disable();
@@ -224,6 +225,16 @@ Animation * Model::getAnimation(const char * tag)
 void Model::setAnimation(const char * tag)
 {
 	m_animation = tag;
+}
+
+Mesh * Model::getMesh()
+{
+	return &m_mesh;
+}
+
+Shader * Model::getShader()
+{
+	return &m_shader;
 }
 
 void Model::boundingBoxInit()

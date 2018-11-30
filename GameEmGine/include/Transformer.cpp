@@ -81,6 +81,7 @@ void Transformer::setPosition(Coord3D pos, Coord3D forward)
 	float aspect = (float)w / h;
 	m_pos = pos * aspect;
 	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.x, m_pos.y, -m_pos.z));
+
 	m_pos = m_pos / aspect;
 }
 

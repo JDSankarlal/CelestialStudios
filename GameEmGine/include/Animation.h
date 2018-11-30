@@ -25,10 +25,10 @@ public:
 	void play();
 
 	void pause();
-	
-	
+
+	void repeat(bool repeat);
 private:
-	bool m_pause=0, m_stop=0;
+	bool m_pause=0, m_stop=0,m_repeat=0;
 
 	std::vector<Mesh*> m_frames;
 	std::vector<std::vector< std::pair<std::string, std::vector<Vertex3D>>>> m_unpackedData;

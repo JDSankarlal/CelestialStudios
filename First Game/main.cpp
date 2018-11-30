@@ -145,46 +145,7 @@ bool collisions3D(Model *l, Model *k)
 //updates within game loop
 void update(double dt)
 {
-	//if(pause)
-	//	if(game.isControllerConnected(0))
-	//	{
-	//		Xinput p1 = game.getController(0);
-	//		static bool init = false;
-	//		if(!init)
-	//		{
-	//			game.setCameraPosition({ 0,15,-10 });
-	//			game.setCameraAngle(0, { 1,1,1 });
-	//			mod[33]->getTransformer().setPosition({ 0,15,0 }), mod[33]->getTransformer().setScale(1);
-	//			game.addModel(mod[33]);
-	//			init = true;
-	//		}
-	//
-	//
-	//		if(p1.buttonPressed(p1.buttons.SELECT))
-	//		{
-	//			game.removeModel(mod[33]);
-	//			init = false;
-	//			pause = !pause;
-	//			game.setCameraPosition({ 0,15,-10 });
-	//			game.setCameraAngle(-45, { 1,0,0 });
-	//		}
-	//	}
 
-	//if(!pause)
-	//{
-	//	static bool init = false;
-	//	if(init)
-	//		if(Xinput::buttonPressed(game.getController(0).buttons.SELECT))
-	//		{
-	//			game.setCameraPosition({ 0,15,-10 });
-	//			game.setCameraAngle(0, { 1,1,1 });
-	//			mod[33]->getTransformer().setPosition({ 0,15,0 }), mod[33]->getTransformer().setScale(1);
-	//			game.addModel(mod[33]);
-	//			pause = true;
-	//			init = false;
-	//			
-	//		}
-	//	init = true;
 	static float  time = 0;
 	time += dt;
 	static float coolDown = 0;
@@ -254,14 +215,30 @@ void update(double dt)
 	static bool dead[4];
 
 	static float lastTime = (float)clock() / CLOCKS_PER_SEC;
+
+	static Animation squash[4];
+
+	static bool init = false;
+
+	if(!init)
+	{
+		squash[0].addDir("Models/RIP/Rip Ani/");
+		squash[0].setAnimationSpeed(.2);
+
+		for(int a = 1; a < 4; a++)
+			squash[a] = squash[0];
+		init = true;
+	}
+
 	if(movePlayer)
 		for(int a = 0; a < 4; a++)
 			if(!dead[a])
+			{
 				if(game.isControllerConnected(a))
 				{
 					player = (Player*)mod[a];
 					Xinput p1 = game.getController(a);
-					
+
 					static float angle[4] = { 180,180,180,180 };
 					if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 					{
@@ -283,8 +260,11 @@ void update(double dt)
 						{
 							dead[a] = true;
 							mod[22 + a]->setColour(player->getColour());
-							mod[22 + a]->getTransformer().setScale(0.75f, 1, 0.5), mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+							mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
 							game.addModel(mod[22 + a]);
+							mod[22 + a]->addAnimation("squash", &squash[a]);
+							
+							mod[22 + a]->setAnimation("squash");
 							game.removeModel(player);
 						}
 					}
@@ -403,66 +383,52 @@ void update(double dt)
 									puts("Hit The BOSS\n");
 									break;
 								}
-
-							if(bullets[a][b])
-								for(int i = 4; i < 7; i++) // Bullet Object number parameter
-								{
-									bullets[a][b]->getTransformer().translateBy(velocity[a][b].x, velocity[a][b].y, velocity[a][b].z);
-
-									if(collisions(bullets[a][b], mod[i]))
-									{
-										game.removeModel(bullets[a][b]);
-										bullets[a].erase(bullets[a].begin() + b);
-										velocity[a].erase(velocity[a].begin() + b);
-										timer[a].erase(timer[a].begin() + b);
-										printf("Hit Wall\n\n");
-										break;
-									}
-								}
 						}
 
 
 					mod[a]->getTransformer().setRotation({ 0,angle[a], 0 });
 					mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
 					float speed = sqrt(p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y);
-					//	mod[a]->getAnimation("walk")->setAnimationSpeed(speed*.25);
-
-						//game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move });
 				}
-	lastTime = (float)clock() / CLOCKS_PER_SEC;
-
-	if(!movePlayer)
-		if(game.isControllerConnected(0))
-		{
-			Xinput p1 = game.getController(0);
-
-			p1.numButtons;
-			p1.numSticks;
-			float angle = 0;
-			if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+			} else
 			{
-
-				angle = acosf(p1.Coord2D_sticks[RS].x /
-							  sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-							  + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-				angle += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
-				angle = fmodf(angle, 360);
+		//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
 
-			if(Xinput::buttonPressed(p1.buttons.A))
-				printf("%d\n", p1.buttons.A);
+			lastTime = (float)clock() / CLOCKS_PER_SEC;
 
-			//move camera
-			move *= 2;
+			if(!movePlayer)
+				if(game.isControllerConnected(0))
+				{
+					Xinput p1 = game.getController(0);
 
-			game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
-			game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
-			//game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
-			game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
-			game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
-			move /= 2;
-		}
-	//}
+					p1.numButtons;
+					p1.numSticks;
+					float angle = 0;
+					if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+					{
+
+						angle = acosf(p1.Coord2D_sticks[RS].x /
+									  sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+									  + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
+						angle += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
+						angle = fmodf(angle, 360);
+					}
+
+					if(Xinput::buttonPressed(p1.buttons.A))
+						printf("%d\n", p1.buttons.A);
+
+					//move camera
+					move *= 2;
+
+					game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
+					game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
+					//game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+					game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
+					game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
+					move /= 2;
+				}
+			//}
 }
 
 void mouseButtonReleased(int button, int _mod)
@@ -533,28 +499,28 @@ int main()
 	mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
 	game.addModel(mod.back());//3
 
-	static Animation walk, idle;
-	walk.setAnimationSpeed(.25);
-	idle.stop();
+	static Animation walk[4], idle[4];
 
-	walk.addDir("Models/AssaultModel/walk/");
-	idle.addDir("Models/AssaultModel/idle/");
-
-	mod[0]->addAnimation("walk", &walk);
-	mod[0]->addAnimation("idle", &idle);
+	walk[0].addDir("Models/AssaultModel/walk/");
+	idle[0].addDir("Models/AssaultModel/idle/");
+	mod[0]->addAnimation("walk", &walk[0]);
+	mod[0]->addAnimation("idle", &idle[0]);
 	mod[0]->setAnimation("walk");
 
-	mod[1]->addAnimation("walk", &walk);
-	mod[1]->addAnimation("idle", &idle);
-	mod[1]->setAnimation("walk");
+	walk[0].setAnimationSpeed(.25);
+	walk[0].repeat(true);
+	idle[0].stop();
+	for(int a = 1; a < 4; a++)
+	{
+		walk[a] = walk[0];
+		idle[a] = idle[0];
 
-	mod[2]->addAnimation("walk", &walk);
-	mod[2]->addAnimation("idle", &idle);
-	mod[2]->setAnimation("walk");
+		mod[a]->addAnimation("walk", &walk[a]);
+		mod[a]->addAnimation("idle", &idle[a]);
+		mod[a]->setAnimation("walk");
+	}
 
-	mod[3]->addAnimation("walk", &walk);
-	mod[3]->addAnimation("idle", &idle);
-	mod[3]->setAnimation("walk");
+
 
 	//Building 1s
 	mod.push_back(new Model("Models/Buildings/Building1/building1.obj"));
@@ -571,7 +537,7 @@ int main()
 	//Boss
 	mod.push_back(new Boss("Models/BOSS/BOSS.obj"));
 	game.addModel(mod.back()); //8
-	mod[8]->enableBoundingBox(true);
+	//mod[8]->enableBoundingBox(true);
 
 	//Floor
 	mod.push_back(new Model("Models/Floor/Floor.obj"));
@@ -615,6 +581,9 @@ int main()
 	mod.push_back(new Model(*mod[22]));//24
 	mod.push_back(new Model(*mod[22]));//25
 
+
+
+
 	//Coloured ring "IDs"
 	mod.push_back(new Model("Models/ID/Identifier.obj"));//26
 	mod.push_back(new Model(*mod.back()));//27
@@ -649,7 +618,7 @@ int main()
 	mod[4]->getTransformer().setScale(2), mod[4]->getTransformer().setPosition(-16.75f, 0.0f, -2.0f);
 	mod[5]->getTransformer().setScale(2), mod[5]->getTransformer().setPosition(16.75f, 0.0f, 10.0f), mod[5]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 	mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4.0f, 0.0f, 22.75f), mod[6]->getTransformer().setRotation({ 0.0f,-90.0f,0.0f });
-	
+
 	//Building 2s
 	mod[19]->getTransformer().setScale(1.75f), mod[19]->getTransformer().setPosition(-16.4f, 0.0f, 3.0f);
 	mod[20]->getTransformer().setScale(1.75f), mod[20]->getTransformer().setPosition(16.4f, 0.0f, 1.2f), mod[20]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });;
