@@ -46,7 +46,8 @@ void Model::render(Shader& shader, Camera& cam)
 
 	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
 
-
+	if(ani)
+		ani->update(&shader,&m_mesh);
 	//render the mesh
 	m_mesh.render(shader);
 	shader.disable();
@@ -275,6 +276,3 @@ void Model::boundingBoxInit()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
-
-
-

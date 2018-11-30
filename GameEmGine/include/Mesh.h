@@ -20,14 +20,16 @@ public:
 
 	bool loadMesh(std::string);
 
+	std::vector< std::pair<std::string, std::vector<Vertex3D>>> loadAni(std::string);
+
+	void editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts1, std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts2);
+
 	void render(Shader& shader);
 
 	void unload();
 
 	GLuint getNumFaces(int index)const;
 	GLuint getNumVerticies(int index)const;
-
-
 
 	Coord3D top , bottom , left, right , front, back;
 
@@ -36,9 +38,10 @@ private:
 
 	void init();
 
-
+	bool ani;
 	std::vector< std::pair<std::string, GLuint>>  m_vaoID;
-	std::vector<GLuint> m_vboID,
+	std::vector<std::pair<GLuint, GLuint>> m_vboID;
+	std::vector<GLuint>
 		m_numFaces, m_numVerts;
 
 	std::vector< std::pair<std::string, std::vector<Vertex3D>>> m_unpackedData;
