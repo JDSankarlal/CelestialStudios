@@ -24,6 +24,18 @@ GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
 Shader colourProgram, colourProgram2;
 std::vector<Model*> mod;
 
+// Help screen lerp to fade in and out
+float splashT = 0;
+GLubyte splashAmbient = 0;
+bool fadein = true;
+bool fadeout = false;
+
+// Release the different update for each screen
+bool splash = false;
+bool menu = false;
+bool intro = false;
+bool playGame = false;
+
 //shader initialization
 void shaderInit()
 {
@@ -31,9 +43,9 @@ void shaderInit()
 }
 
 //instance key is pressed
-void keyInputPressed(int key, int mod)
+void keyInputPressed(int key, int modifier)
 {
-	mod;
+	modifier;
 	m_left = (key == 'A' ? true : m_left);
 	m_right = (key == 'D' ? true : m_right);
 	m_up = (key == 'E' ? true : m_up);
@@ -50,9 +62,9 @@ void keyInputPressed(int key, int mod)
 }
 
 //instace key is released
-void keyInputReleased(int key, int mod)
+void keyInputReleased(int key, int modifier)
 {
-	mod;
+	modifier;
 	m_left = (key == 'A' ? false : m_left);
 	m_right = (key == 'D' ? false : m_right);
 	m_in = (key == 'W' ? false : m_in);
@@ -101,6 +113,14 @@ void keyInputReleased(int key, int mod)
 	printf("key RELEASED code: %d\n\n", key);
 }
 
+void mouseButtonReleased(int button, int _mod)
+{
+	if (button == LEFT_BUTTON)
+		leftM = InputManager::getMouseCursorPosition();
+	if (button == RIGHT_BUTTON)
+		rightM = InputManager::getMouseCursorPosition();
+}
+
 /// - Collision Class - ///
 bool collisions(Model *l, Model *k)
 {
@@ -142,376 +162,37 @@ bool collisions3D(Model *l, Model *k)
 	return false;
 }
 
-//updates within game loop
-void update(double dt)
+// Set intro screen
+void IntroInite()
 {
+	intro = true;
 
-	static float  time = 0;
-	time += dt;
-	static float coolDown = 0;
-	static float duration = 0;
-	static bool f = true;
-	static bool bossActive = true;
-
-	float move = .2f;
-
-	static float pointSize = 50.0f;
-	//printf("%f\n", dt);
-	static Player* player;
-
-	static vector<float> timer[4];
-	static vector<Model*> bullets[4];
-	static vector<Coord3D> velocity[4];
-	static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
-	static float  curveroni = 0;
-	static bool hasTarget = false;
-	curveroni += .015;
-	if(curveroni >= 1)
-	{
-		hasTarget = false;
-	}
-	curveroni = fmodf(curveroni, 1);
-
-	static Coord3D bossTarget[4];
-
-	//gets a   target for missile (player 1,2,3 or 4) randomly
-	if(!hasTarget)
-	{
-		for(int a = 0; a < 4; a++)
-			bossTarget[a] = mod[a]->getTransformer().getPosition();
-
-		hasTarget = true;
-	}
-
-	if(mod[8])
-		if(hasTarget)
-		{
-			Coord3D
-				p1[4],
-				p2[4],
-				c1[4],
-				c2[4];
-			Coord3D cat[4];
-			Coord3D  pointPosition[4];
-			for(int a = 0; a < 4; a++)
-			{
-				p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
-					p2[a] = bossTarget[a],//end point 
-					c1[a] = p1[a] - Coord3D{ 0,50,100 },//controle point
-					c2[a] = p2[a] - Coord3D{ 0,100,100 };//controle point
-
-				cat[a] = catmull
-				(
-					c1[a],
-					p1[a],
-					p2[a],
-					c2[a],
-					curveroni
-				);
-				pointPosition[a] = cat[a];
-				mod[44 + a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
-			}
-		}
-
-	//some function
-	//{
-
-	//when function plays, get player locations
-	//call 4 missles to shoot at those locations
-	//maybe call missles to shoot randomly
-	//}
-
-	static bool dead[4];
-
-	static float lastTime = (float)clock() / CLOCKS_PER_SEC;
-
-	static Animation squash[4];
-
-	static bool init = false;
-
-	if(!init)
-	{
-
-		for(int a = 0; a < 4; a++)
-		{
-			squash[a].addDir("Models/RIP/Rip Ani/");
-			squash[a].setAnimationSpeed(.2);
-			//	squash[a].repeat(true);
-		}
-		init = true;
-	}
-
-	if(movePlayer)
-		for(int a = 0; a < 4; a++)
-			if(!dead[a])
-			{
-				if(game.isControllerConnected(a))
-				{
-					player = (Player*)mod[a];
-					Xinput p1 = game.getController(a);
-
-					static float angle[4] = { 180,180,180,180 };
-					if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
-					{
-
-						angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-										 sqrtf(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-										 + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-						angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
-						angle[a] = fmodf(angle[a], 360);
-					}
-
-					/// - Missile Collisions with Player - ///
-					for(int b = 0; b < 4; b++)
-						if(collisions3D(player, mod[44 + b]))
-						{
-
-							player->setHealth(player->getHealth() - 50);
-							Coord3D test = player->getTransformer().getPosition();
-							if(player->getHealth() <= 0)
-							{
-								dead[a] = true;
-								mod[22 + a]->setColour(player->getColour());
-								mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
-								game.addModel(mod[22 + a]);
-								mod[22 + a]->addAnimation("squash", &squash[a]);
-
-								mod[22 + a]->setAnimation("squash");
-								game.removeModel(player);
-							}
-						}
-
-					if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
-					{
-						makeShitLessCancer[a] = true;
-
-						bullets[a].push_back(nullptr);
-						game.addModel(bullets[a].back() = new Model(*mod[34]));
-						bullets[a].back()->getTransformer().reset();
-						Coord3D pos = mod[a]->getTransformer().getPosition();
-						bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-						bullets[a].back()->getTransformer().setScale(0.25);
-
-						bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
-
-
-						float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-						float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-
-						velocity[a].push_back(Coord3D());
-						velocity[a].back() = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
-
-						timer[a].push_back(0);
-						audio.createStream("pew.wav");
-						audio.play();
-					} else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
-						makeShitLessCancer[a] = false;
-
-					/// - Button Presses on controller - ///
-					//Start button quits game
-					if(p1.buttonPressed(p1.buttons.START))
-					{
-						puts("\nExiting Game\n");
-						game.exit();
-					}
-					if(p1.buttonPressed(p1.buttons.X))
-					{
-						puts("RELOADING!!!\n");
-					}
-					if(p1.buttonPressed(p1.buttons.Y))
-					{
-						puts("SPECIAL ABILITY\n");
-					}
-
-					/// - Left Trigger to Dash - ///
-
-					if(p1.triggers[LT] >= .95)
-					{
-						static float coolDown[4];
-
-						//get deltaTime put into duraction variable
-
-						if(time - coolDown[a] >= 3)
-						{
-							if(f == true)
-							{
-								duration = time;
-								f = false;
-							}
-							move = 0.5f;
-							if(time - 0.2f >= duration)
-							{
-								move = 0.1f;
-								//If triggers up then coolDown = time;
-								coolDown[a] = time;
-								f = true;
-							}
-						}
-
-					} else//Do the same with the LT button, have it so will only work every X seconds.
-					{
-						move -= .001;
-						if(move <= .1)
-							move = .1;
-						//f = false;
-						makeShitLessCancer2[a] = false;
-					}
-
-
-					/// - Bullet Collisions - ///
-					for(unsigned b = 0; b < bullets[a].size(); b++)
-						if(bullets[a][b])
-						{
-							timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
-							bullets[a][b]->getTransformer().translateBy(velocity[a][b].x, velocity[a][b].y, velocity[a][b].z);
-
-							if(timer[a][b] >= 1)
-							{
-								game.removeModel(bullets[a][b]);
-								bullets[a].erase(bullets[a].begin() + b);
-								velocity[a].erase(velocity[a].begin() + b);
-								timer[a].erase(timer[a].begin() + b);
-								break;
-							}
-
-
-
-							if(mod[8])
-								if(collisions(bullets[a][b], mod[8]))
-								{
-									game.removeModel(bullets[a][b]);
-									bullets[a].erase(bullets[a].begin() + b);
-									velocity[a].erase(velocity[a].begin() + b);
-									timer[a].erase(timer[a].begin() + b);
-									Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
-									CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
-									if(CandyMan->getHealth() <= 0)
-									{
-										game.removeModel(CandyMan); // If health = 0 then boss dead
-										//	mod[8] = nullptr;
-										bossActive = false;
-										puts("Killed The BOSS\n");
-									}
-									puts("Hit The BOSS\n");
-									break;
-								}
-						}
-
-
-					mod[a]->getTransformer().setRotation({ 0,angle[a], 0 });
-					mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
-					float speed = sqrt(p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y);
+	mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
+	game.addModel(mod.back());
+	mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
 					if(!collisions3D(mod[a], mod[48]))
 						mod[a]->getTransformer().setPosition(abs(mod[a]->getTransformer().getPosition().x) > mod[48]->getWidth() / 2 ? mod[a]->getTransformer().getPosition().x < 0 ? -mod[48]->getWidth() / 2 : mod[48]->getWidth() / 2 : mod[a]->getTransformer().getPosition().x,
 															 0,
 															 abs(mod[a]->getTransformer().getPosition().z) > mod[48]->getDepth() / 2 ? mod[a]->getTransformer().getPosition().z < 0 ? -mod[48]->getDepth() / 2 : mod[48]->getDepth() / 2 : mod[a]->getTransformer().getPosition().z);
-
-					if(!speed)
-						mod[a]->getAnimation("walk")->pause();
-					else
-					{
-						mod[a]->getAnimation("walk")->play();
-						mod[a]->setAnimation("walk");
-						mod[a]->getAnimation("walk")->setAnimationSpeed(.25 / speed);
-					}
-				}
-			} else
-			{
-				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
-			}
-
-			lastTime = (float)clock() / CLOCKS_PER_SEC;
-
-			if(!movePlayer)
-				if(game.isControllerConnected(0))
-				{
-					Xinput p1 = game.getController(0);
-
-					p1.numButtons;
-					p1.numSticks;
-					float angle = 0;
-					if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
-					{
-
-						angle = acosf(p1.Coord2D_sticks[RS].x /
-									  sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-									  + p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-						angle += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
-						angle = fmodf(angle, 360);
-					}
-
-					if(Xinput::buttonPressed(p1.buttons.A))
-						printf("%d\n", p1.buttons.A);
-
-					//move camera
-					move *= 2;
-
-					game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
-					game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
-					//game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
-					game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
-					game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
-					move /= 2;
-				}
-			//}
+	LightSource::setSceneAmbient({ 255,255,255,255 });
 }
-
-void mouseButtonReleased(int button, int _mod)
+// Set menu screen
+void menuInite()
 {
-	if(button == LEFT_BUTTON)
-		leftM = InputManager::getMouseCursorPosition();
-	if(button == RIGHT_BUTTON)
-		rightM = InputManager::getMouseCursorPosition();
+	menu = true;
+
+	mod.push_back(new Model("Models/Screen/Menu/menu.obj"));
+	game.addModel(mod.back());
+	mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+
+	LightSource::setSceneAmbient({ 255,255,255,255 });
 }
-
-void render()
-{}
-
-//// We need BogoBogo sort in our game right? NO!
-//template<class T>
-//bool sorted(T* sort, unsigned size)
-//{
-//	for(unsigned a = 1; a < size; a++)
-//		if(sort[a] < sort[a - 1])
-//			return false;
-//	return true;
-//}
-//
-//template<class T>
-//void randomize(T* sort, unsigned size)
-//{
-//	for(int a = 0; a < size; a++)
-//		swap(sort[a], sort[(rand() % size]);
-//}
-//
-//template<class T>
-//void bogo(T* sort, unsigned size)
-//{
-//	if(sorted(sort, size))
-//		return;
-//
-//	randomize(sort, size);
-//	bogo(sort, size);
-//}
-//
-//template<class T>
-//void bogobogo(T* sort, unsigned size)
-//{
-//	T *sort2 = new T[size];
-//	memcpy_s(sort2, sizeof(T)*size, sort, sizeof(T)*size);
-//	unsigned n = size - 1;
-//
-//	while(n)
-//	{
-//		bogo(sort2, n);
-//		if()
-//	}
-//}
-
-int main()
+// Set game screen
+void GamePlayInite()
 {
-	srand(clock());
+	playGame = true;
+	game.setCameraType(PERSPECTIVE);
 
 	/// - Load mod into Scene - ///
 
@@ -527,7 +208,7 @@ int main()
 
 	static Animation walk[4], idle[4];
 
-	for(int a = 0; a < 4; a++)
+	for (int a = 0; a < 4; a++)
 	{
 		walk[a].addDir("Models/AssaultModel/Walk/");
 		idle[a].addDir("Models/AssaultModel/Idle/");
@@ -544,7 +225,6 @@ int main()
 		mod[a]->addAnimation("idle", &idle[a]);
 		mod[a]->setAnimation("walk");
 	}
-
 
 
 	//Building 1s
@@ -588,7 +268,7 @@ int main()
 	mod.push_back(new Model(*mod[16]));
 	game.addModel(mod.back());//17
 
-	//Missile
+	//Planet
 	mod.push_back(new Model("Models/Planet/planet.obj"));
 	game.addModel(mod.back()); //18
 
@@ -605,9 +285,6 @@ int main()
 	mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj"));//23
 	mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj"));//24
 	mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj"));//25
-
-
-
 
 	//Coloured ring "IDs"
 	mod.push_back(new Model("Models/ID/Identifier.obj"));//26
@@ -659,6 +336,35 @@ int main()
 	mod.push_back(new Model(*mod[44]));
 	game.addModel(mod.back());//47
 
+	mod.push_back(new Model("Models/Bullet/bullet.obj"));//48
+
+	mod.push_back(new Model("Models/Trash/TrashCan.obj"));
+	game.addModel(mod.back()); //49
+	mod.push_back(new Model(*mod[49]));
+	game.addModel(mod.back());//50
+
+	mod.push_back(new Model("Models/Picnic/PicnicTable.obj"));
+	game.addModel(mod.back()); //51
+	mod.push_back(new Model(*mod[51]));
+	game.addModel(mod.back());//52
+
+	mod.push_back(new Model("Models/PizzaSign/PIZZA.obj"));
+	game.addModel(mod.back()); //53
+
+	mod.push_back(new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj"));
+	game.addModel(mod.back()); //54
+	mod.push_back(new Model(*mod[54]));
+	game.addModel(mod.back()); //55
+	mod.push_back(new Model(*mod[54]));
+	game.addModel(mod.back()); //56
+	mod.push_back(new Model(*mod[54]));
+	game.addModel(mod.back()); //57
+
+	mod.push_back(new Model("Models/Planet/Planet2/planet.obj"));
+	game.addModel(mod.back()); //58
+	//Pause Menu
+	//mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
+
 	//collision floor
 	mod.push_back(new Model("Models/Floor/Floor2.obj"));//48
 	game.addModel(mod[48]);
@@ -703,11 +409,9 @@ int main()
 
 	//Boss Trarrnsforms
 	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
-	//Missile
-	mod[18]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 
 	//Floor Transforms
-	mod[9]->getTransformer().setScale(1.875f, 1.0f, 1.5f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
+	mod[9]->getTransformer().setScale(2.0f, 1.0f, 1.75f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
 
 	//Street Light Transforms
 	mod[10]->getTransformer().setScale(0.5f), mod[10]->getTransformer().setPosition(13.0f, 0.0f, -1.0f);
@@ -722,7 +426,8 @@ int main()
 	mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 	//Planet Transforms
-	mod[18]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
+	mod[18]->getTransformer().setPosition(9.0f, 12.0f, 36.0f);
+	mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
 
 	//ID rings?
 	mod[26]->setColour({ 255,0,0 });
@@ -749,6 +454,22 @@ int main()
 	mod[46]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 	mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 
+	//Trash
+	mod[49]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[49]->getTransformer().setPosition(-13.25f, 0.0f, 13.0f);
+	mod[50]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[50]->getTransformer().setPosition(13.25f, 0.0f, 0.5f);
+
+	//Picnic table wut, cyberpunk game?
+	mod[51]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[51]->getTransformer().setPosition(-11.0f, 0.0f, 19.0f), mod[51]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+	mod[52]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[52]->getTransformer().setPosition(-6.75f, 0.0f, 19.0f), mod[52]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+
+	//Pizza Sign
+	mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-9.5f, 5.4f, 22.3f);
+
+	//Assault Weapons
+	mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[51]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+	mod[55]->getTransformer().setScale(0.075f), mod[55]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[55]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+	mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+	mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
 
 	/// - Set Model Colour - ///
 	//Players
@@ -760,9 +481,13 @@ int main()
 	mod[1]->addChild(mod[27]);
 	mod[2]->addChild(mod[28]);
 	mod[3]->addChild(mod[29]);
+	mod[0]->addChild(mod[54]);
+	mod[1]->addChild(mod[55]);
+	mod[2]->addChild(mod[56]);
+	mod[3]->addChild(mod[57]);
 
 	LightSource::setLightAmount(14);
-	for(int a = 0; a < 6; a++)
+	for (int a = 0; a < 6; a++)
 	{
 		mod[10 + a]->boundingBoxUpdate();
 		LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
@@ -826,6 +551,470 @@ int main()
 	audio.createStream("Game Jam(Full).wav");
 
 	audio.play(true);
+}
+// doing the update for splash screen
+void updateSplash()
+{
+	if (fadein)
+	{
+		splashT += 0.01f;
+		splashAmbient = lerp(0, 255, splashT);
+		LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+		if (splashAmbient >= 250)
+		{
+			fadein = false;
+			fadeout = true;
+			splashT = 0;
+			splashAmbient = 255;
+		}
+	}
+	if (fadeout)
+	{
+		splashT += 0.01f;
+		splashAmbient = lerp(255, 0, splashT);
+		LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+		if (splashAmbient <= 5)
+		{
+			fadein = true;
+			fadeout = false;
+			splashT = 0;
+			splashAmbient = 255;
+
+			splash = false;
+
+			game.removeModel(mod[0]);
+			mod.clear();
+			IntroInite();
+
+		}
+	}
+}
+// doing the update for intro screen
+void updateIntro()
+{
+	if (fadein)
+	{
+		splashT += 0.01f;
+		splashAmbient = lerp(0, 255, splashT);
+		LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+		if (splashAmbient >= 250)
+		{
+			fadein = false;
+			splashT = 0;
+			splashAmbient = 255;
+			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+		}
+	}
+	if (!fadein)
+	{
+		LightSource::setLightAmount(1);
+		LightSource::setLightType(LIGHT_TYPE::POINT, 0);
+		LightSource::setPosition({ 0.0f,45.0f,10.0f }, 0);
+		LightSource::setDiffuse({ 10,10,10,10 }, 0);
+		LightSource::setAttenuationQuadratic(0.04f, 0);
+		LightSource::setDirection({ 0.0f,0.0f,.0f }, 0);
+	}
+	if (Xinput::buttonPressed(game.getController(0).buttons.A))
+	{
+		fadeout = true;
+	}
+	if (fadeout)
+	{
+		LightSource::setLightAmount(0);
+		splashT += 0.01f;
+		splashAmbient = lerp(255, 0, splashT);
+		LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+		if (splashAmbient <= 5)
+		{
+			fadein = true;
+			fadeout = false;
+			splashT = 0;
+			splashAmbient = 255;
+
+			intro = false;
+			game.removeModel(mod[0]);
+			mod.clear();
+			menuInite();
+		}
+	}
+}
+// doing the update for menu screen
+void updateMenu()
+{
+	if (fadein)
+	{
+		splashT += 0.01f;
+		splashAmbient = lerp(0, 255, splashT);
+		LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+		if (splashAmbient >= 250)
+		{
+			fadein = false;
+			splashT = 0;
+			splashAmbient = 255;
+			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+		}
+	}
+	if (Xinput::buttonPressed(game.getController(0).buttons.B))
+	{
+		fadeout = true;
+	}
+	if (fadeout)
+	{
+		splashT += 0.01f;
+		splashAmbient = lerp(255, 0, splashT);
+		LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+		if (splashAmbient <= 5)
+		{
+			fadein = true;
+			fadeout = false;
+			splashT = 0;
+			splashAmbient = 255;
+
+			intro = false;
+
+			game.removeModel(mod[0]);
+			mod.clear();
+			GamePlayInite();
+
+		}
+	}
+
+}
+
+//updates within game loop
+void update(double dt)
+{
+	if (splash)
+	{
+		updateSplash();
+	}
+
+	if (intro)
+	{
+		updateIntro();
+	}
+
+	if (menu)
+	{
+		updateMenu();
+	}
+	if (playGame)
+	{
+		static float  time = 0;
+		time += dt;
+		static float coolDown = 0;
+		static float duration = 0;
+		static bool f = true;
+		static bool bossActive = true;
+
+		float move = .1f;
+
+		static float pointSize = 50.0f;
+		//printf("%f\n", dt);
+		static Player* player;
+
+		static vector<float> timer[4];
+		static vector<Model*> bullets[4];
+		static vector<Coord3D> velocity[4];
+		static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
+		static float  curveroni = 0;
+		static bool hasTarget = false;
+		curveroni += .008;
+		if (curveroni >= 1)
+		{
+			hasTarget = false;
+		}
+		curveroni = fmodf(curveroni, 1);
+
+		static Coord3D bossTarget[4];
+
+		//gets a   target for missile (player 1,2,3 or 4) randomly
+		if (!hasTarget)
+		{
+			for (int a = 0; a < 4; a++)
+				bossTarget[a] = mod[a]->getTransformer().getPosition();
+
+			hasTarget = true;
+		}
+
+		if (mod[8])
+			if (hasTarget)
+			{
+				Coord3D
+					p1[4],
+					p2[4],
+					c1[4],
+					c2[4];
+				Coord3D cat[4];
+				Coord3D  pointPosition[4];
+				for (int a = 0; a < 4; a++)
+				{
+					p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
+						p2[a] = bossTarget[a],//end point 
+						c1[a] = p1[a] - Coord3D{ 0,50,100 },//controle point
+						c2[a] = p2[a] - Coord3D{ 0,100,100 };//controle point
+
+					cat[a] = catmull
+					(
+						c1[a],
+						p1[a],
+						p2[a],
+						c2[a],
+						curveroni
+					);
+					pointPosition[a] = cat[a];
+					mod[44 + a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
+				}
+			}
+
+		static bool dead[4];
+
+		static float lastTime = (float)clock() / CLOCKS_PER_SEC;
+
+		static Animation squash[4];
+
+		static bool init = false;
+
+		if (!init)
+		{
+
+			for (int a = 0; a < 4; a++)
+			{
+				squash[a].addDir("Models/RIP/Rip Ani/");
+				squash[a].setAnimationSpeed(.2);
+				//	squash[a].repeat(true);
+			}
+			init = true;
+		}
+
+		if (movePlayer)
+			for (int a = 0; a < 4; a++)
+				if (!dead[a])
+				{
+					if (game.isControllerConnected(a))
+					{
+						player = (Player*)mod[a];
+						Xinput p1 = game.getController(a);
+
+						static float angle[4] = { 180,180,180,180 };
+						if (p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+						{
+
+							angle[a] = acosf(p1.Coord2D_sticks[RS].x /
+								sqrtf(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+									+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
+							angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
+							angle[a] = fmodf(angle[a], 360);
+						}
+
+						/// - Missile Collisions with Player - ///
+						for (int b = 0; b < 4; b++)
+							if (collisions3D(player, mod[44 + b]))
+							{
+
+								player->setHealth(player->getHealth() - 15);
+								Coord3D test = player->getTransformer().getPosition();
+								if (player->getHealth() <= 0)
+								{
+									dead[a] = true;
+									mod[22 + a]->setColour(player->getColour());
+									mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
+									game.addModel(mod[22 + a]);
+									mod[22 + a]->addAnimation("squash", &squash[a]);
+
+									mod[22 + a]->setAnimation("squash");
+									game.removeModel(player);
+								}
+							}
+
+						if (p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
+						{
+							makeShitLessCancer[a] = true;
+
+							bullets[a].push_back(nullptr);
+							game.addModel(bullets[a].back() = new Model(*mod[48]));
+							bullets[a].back()->getTransformer().reset();
+							bullets[a].back()->setColour(player->getColour());
+							Coord3D pos = mod[a]->getTransformer().getPosition();
+							bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
+							bullets[a].back()->getTransformer().setScale(0.13);
+
+							bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
+
+
+							float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+							float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+
+							velocity[a].push_back(Coord3D());
+							velocity[a].back() = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
+
+							timer[a].push_back(0);
+							audio.createStream("pew.wav");
+							audio.play();
+						}
+						else if (p1.triggers[RT] < .95 && makeShitLessCancer[a])
+							makeShitLessCancer[a] = false;
+
+						/// - Button Presses on controller - ///
+						//Start button quits game
+						if (p1.buttonPressed(p1.buttons.START))
+						{
+							puts("\nExiting Game\n");
+							game.exit();
+						}
+						if (p1.buttonPressed(p1.buttons.X))
+						{
+							puts("RELOADING!!!\n");
+						}
+						if (p1.buttonPressed(p1.buttons.Y))
+						{
+							puts("SPECIAL ABILITY\n");
+						}
+
+						/// - Left Trigger to Dash - ///
+
+						if (p1.triggers[LT] >= .95)
+						{
+							static float coolDown[4];
+
+							//get deltaTime put into duraction variable
+
+							if (time - coolDown[a] >= 3)
+							{
+								if (f == true)
+								{
+									duration = time;
+									f = false;
+								}
+								move = 0.5f;
+								if (time - 0.1f >= duration)
+								{
+									move = 0.1f;
+									//If triggers up then coolDown = time;
+									coolDown[a] = time;
+									f = true;
+								}
+							}
+
+						}
+						else//Do the same with the LT button, have it so will only work every X seconds.
+						{
+							move -= .001;
+							if (move <= .1)
+								move = .1;
+							//f = false;
+							makeShitLessCancer2[a] = false;
+						}
+
+
+						/// - Bullet Collisions - ///
+						for (unsigned b = 0; b < bullets[a].size(); b++)
+							if (bullets[a][b])
+							{
+								timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
+								bullets[a][b]->getTransformer().translateBy(velocity[a][b].x, velocity[a][b].y, velocity[a][b].z);
+
+								if (timer[a][b] >= 1)
+								{
+									game.removeModel(bullets[a][b]);
+									bullets[a].erase(bullets[a].begin() + b);
+									velocity[a].erase(velocity[a].begin() + b);
+									timer[a].erase(timer[a].begin() + b);
+									break;
+								}
+
+								if (mod[8])
+									if (collisions(bullets[a][b], mod[8]))
+									{
+										game.removeModel(bullets[a][b]);
+										bullets[a].erase(bullets[a].begin() + b);
+										velocity[a].erase(velocity[a].begin() + b);
+										timer[a].erase(timer[a].begin() + b);
+										Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
+										if (CandyMan->getHealth() <= 0)
+										{
+											game.removeModel(CandyMan); // If health = 0 then boss dead
+											//	mod[8] = nullptr;
+											bossActive = false;
+											puts("Killed The BOSS\n");
+										}
+										puts("Hit The BOSS\n");
+										break;
+									}
+							}
+
+
+						mod[a]->getTransformer().setRotation({ 0,angle[a], 0 });
+						mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
+						float speed = sqrt(p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y);
+
+						if (!speed)
+							mod[a]->getAnimation("walk")->pause();
+						else
+						{
+							mod[a]->getAnimation("walk")->play();
+							mod[a]->setAnimation("walk");
+							mod[a]->getAnimation("walk")->setAnimationSpeed(.25 / speed);
+						}
+					}
+				}
+				else
+				{
+					//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
+				}
+
+		lastTime = (float)clock() / CLOCKS_PER_SEC;
+
+		if (!movePlayer)
+			if (game.isControllerConnected(0))
+			{
+				Xinput p1 = game.getController(0);
+
+				p1.numButtons;
+				p1.numSticks;
+				float angle = 0;
+				if (p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+				{
+
+					angle = acosf(p1.Coord2D_sticks[RS].x /
+						sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
+							+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
+					angle += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
+					angle = fmodf(angle, 360);
+				}
+
+				if (Xinput::buttonPressed(p1.buttons.A))
+					printf("%d\n", p1.buttons.A);
+
+				//move camera
+				move *= 2;
+
+				game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
+				game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
+				//game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+				game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
+				game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
+				move /= 2;
+			}
+		//}
+	}
+}
+
+// Set splash screen and start update
+void splashInite()
+{
+	srand(clock());
+
+	splash = true;
+	mod.push_back(new Model("Models/Screen/Splash/splashScreen.obj"));
+	game.addModel(mod.back());
+	mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+
+	LightSource::setSceneAmbient({ 255,255,255,255 });
+
+	game.setCameraType(ORTHOGRAPHIC);
+	game.setCameraPosition({ 0,0,-100 });
 
 	//engine stuff
 	game.setFPSLimit(60);
@@ -834,8 +1023,56 @@ int main()
 	game.keyReleased(keyInputReleased);
 	game.mouseButtonReleased(mouseButtonReleased);
 	game.gameLoopUpdate(update);
-	game.run();//this one is pretty important
-	//the game ended... why are you here?... leave
-	//Or run it again... ;)
+	game.run();
+}
+
+void render()
+{}
+
+//// We need BogoBogo sort in our game right? NO!
+//template<class T>
+//bool sorted(T* sort, unsigned size)
+//{
+//	for(unsigned a = 1; a < size; a++)
+//		if(sort[a] < sort[a - 1])
+//			return false;
+//	return true;
+//}
+//
+//template<class T>
+//void randomize(T* sort, unsigned size)
+//{
+//	for(int a = 0; a < size; a++)
+//		swap(sort[a], sort[(rand() % size]);
+//}
+//
+//template<class T>
+//void bogo(T* sort, unsigned size)
+//{
+//	if(sorted(sort, size))
+//		return;
+//
+//	randomize(sort, size);
+//	bogo(sort, size);
+//}
+//
+//template<class T>
+//void bogobogo(T* sort, unsigned size)
+//{
+//	T *sort2 = new T[size];
+//	memcpy_s(sort2, sizeof(T)*size, sort, sizeof(T)*size);
+//	unsigned n = size - 1;
+//
+//	while(n)
+//	{
+//		bogo(sort2, n);
+//		if()
+//	}
+//}
+
+int main()
+{
+	splashInite();
+	
 	return 0;
 }

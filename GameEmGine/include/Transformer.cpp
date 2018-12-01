@@ -4,6 +4,10 @@
 Transformer::Transformer() :m_translate(1), m_rotate(1), m_scale(1)
 {}
 
+Transformer::Transformer(Transformer&trans) : m_translate(trans.m_translate), m_rotate(trans.m_rotate), m_scale(trans.m_scale)
+,m_pos(trans.m_pos),m_angles(trans.m_angles)
+{}
+
 Transformer::~Transformer()
 {}
 

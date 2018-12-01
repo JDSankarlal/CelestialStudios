@@ -11,6 +11,7 @@ class Transformer
 public:
 
 	Transformer();
+	Transformer(Transformer & trans);
 	~Transformer();
 
 	void reset();

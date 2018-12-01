@@ -9,7 +9,8 @@ Model::Model(Model& model) :
 	m_transform(model.m_transform),
 	m_mesh(model.m_mesh),
 	m_colour(model.m_colour),
-	m_transBB(glm::mat4(1))
+	m_transBB(glm::mat4(1)),
+	m_render(model.m_render)
 {
 	m_shaderBB.create("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
 	//boundingBoxInit();
@@ -52,7 +53,7 @@ void Model::render(Shader& shader, Camera& cam)
 
 	// update the position of the object
 	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
-	boundingBoxUpdate();
+	boundingBoxUpdate(cam);
 
 	if(m_render)
 	{
@@ -162,7 +163,7 @@ Coord3D Model::getCenter()
 	return m_center;
 }
 
-void Model::boundingBoxUpdate()
+void Model::boundingBoxUpdate(Camera& cam)
 {
 	m_front = m_back = m_top = m_bottom = m_left = m_right = Coord3D(0, 0, 0);
 	std::vector<glm::vec4> thing
@@ -183,11 +184,12 @@ void Model::boundingBoxUpdate()
 		glUniformMatrix4fv(m_shaderBB.getUniformLocation("trans"), 1, false, &(m_transBB)[0][0]);
 		m_shaderBB.disable();
 	}
-
+	glm::mat4 tmpMat= m_parent?m_parent->m_transform.getTransformation()*
+	m_transform.getTransformation(): m_transform.getTransformation();
 	for(auto &a : thing)
 	{
 
-		a = (m_transform.getRotationMatrix()*m_transform.getScaleMatrix() * a);
+		a = (tmpMat * a);
 
 
 		if(first)
@@ -204,18 +206,20 @@ void Model::boundingBoxUpdate()
 			m_bottom = a.y < m_bottom.y ? Coord3D(a.x, a.y, a.z) : m_bottom;
 		}
 	}
+
 	glm::vec4
-		top = m_transBB * glm::vec4(m_top.x, m_top.y, m_top.z, 1),
-		bottom = m_transBB * glm::vec4(m_bottom.x, m_bottom.y, m_bottom.z, 1),
-		left = m_transBB * glm::vec4(m_left.x, m_left.y, m_left.z, 1),
-		right = m_transBB * glm::vec4(m_right.x, m_right.y, m_right.z, 1),
-		front = m_transBB * glm::vec4(m_front.x, m_front.y, m_front.z, 1),
-		back = m_transBB * glm::vec4(m_back.x, m_back.y, m_back.z, 1);
+		top =  glm::vec4(m_top.x, m_top.y, m_top.z, 1),
+		bottom = glm::vec4(m_bottom.x, m_bottom.y, m_bottom.z, 1),
+		left =  glm::vec4(m_left.x, m_left.y, m_left.z, 1),
+		right =  glm::vec4(m_right.x, m_right.y, m_right.z, 1),
+		front =  glm::vec4(m_front.x, m_front.y, m_front.z, 1),
+		back =  glm::vec4(m_back.x, m_back.y, m_back.z, 1);
 
 	m_width = abs(right.x - left.x);
 	m_height = abs(top.y - bottom.y);
 	m_depth = abs(front.z - back.z);
 	m_center = Coord3D((right.x + left.x), (top.y + bottom.y), (front.z + back.z)) / 2;
+	
 	if(m_enableBB)
 		boundingBoxInit();
 }
