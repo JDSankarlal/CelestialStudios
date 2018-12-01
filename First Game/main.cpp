@@ -372,22 +372,22 @@ void GamePlayInit()
 	mod.push_back(new Model(*mod[44]));//60
 
 	game.addModel(mod.back()); //44
-	mod.push_back(new Model(*mod[44]));//61
+	mod[60]->setToRender(false);
+	mod[60]->getTransformer().setScale(6,1,1);
+	mod.push_back(new Model(*mod[60]));//61
 	game.addModel(mod.back());//45
-	mod.push_back(new Model(*mod[44]));//62
+	mod.push_back(new Model(*mod[60]));//62
 	game.addModel(mod.back());//46
-	mod.push_back(new Model(*mod[44]));//63
+	mod.push_back(new Model(*mod[60]));//63
 	game.addModel(mod.back());//47
 
 
-	mod[60]->setToRender(false);
-	mod[60]->getTransformer().setScale(1.3);
-	mod[61]->setToRender(false);
-	mod[61]->getTransformer().setScale(1.3);
-	mod[62]->setToRender(false);
-	mod[62]->getTransformer().setScale(1.3);
-	mod[63]->setToRender(false);
-	mod[63]->getTransformer().setScale(1.3);
+	//mod[61]->setToRender(false);
+	//mod[61]->getTransformer().setScale(2);
+	//mod[62]->setToRender(false);
+	//mod[62]->getTransformer().setScale(2);
+	//mod[63]->setToRender(false);
+	//mod[63]->getTransformer().setScale(2);
 
 	mod[44]->addChild(mod[60]);
 	mod[45]->addChild(mod[61]);
