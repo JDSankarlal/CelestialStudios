@@ -189,7 +189,7 @@ void GamePlayInite()
 {
 	playGame = true;
 	game.setCameraType(PERSPECTIVE);
-
+	game.setFPSLimit(60);
 	/// - Load mod into Scene - ///
 
 	//Players
@@ -367,6 +367,11 @@ void GamePlayInite()
 	mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
 	mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
 	mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
+	mod[0]->getTransformer().setRotation(Coord3D(0,180,0));
+	mod[1]->getTransformer().setRotation(Coord3D(0,180,0));
+	mod[2]->getTransformer().setRotation(Coord3D(0,180,0));
+	mod[3]->getTransformer().setRotation(Coord3D(0,180,0));
+
 
 	//Building Transforms
 	//Building 1s
