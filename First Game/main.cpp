@@ -20,7 +20,7 @@ Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 bool pause = true;
 
-#define modSize 50 //Number of mod that can exist
+#define modSize 60 //Number of mod that can exist
 GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
 Shader colourProgram, colourProgram2;
 std::vector<Model*> mod;
@@ -137,6 +137,24 @@ bool collisions(Model *l, Model *k)
 
 	if(std::abs(distanceX) <= capW)
 		if(std::abs(distanceZ) <= capD)
+			return true;
+
+	return false;
+}
+
+bool collisionsB(Model *l, Model *k)
+{
+	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	Coord3D thing = l->getCenter() - k->getCenter();
+
+	float distanceX = abs(thing.x);
+	float distanceZ = abs(thing.z);
+
+	float capW = (l->getWidth() + k->getWidth()) / 2;
+	float capD = (l->getDepth() + k->getDepth()) / 2;
+
+	if (std::abs(distanceX) <= capW + 4)
+		if (std::abs(distanceZ) <= capD + 4)
 			return true;
 
 	return false;
@@ -749,6 +767,7 @@ void update(double dt)
 		static float pointSize = 50.0f;
 		//printf("%f\n", dt);
 		static Player* player;
+		static Boss*CandyMan = (Boss*)mod[8];
 
 		static vector<float> timer[4];
 		static vector<Model*> bullets[4];
@@ -860,19 +879,25 @@ void update(double dt)
 									curveroni[a] = 1;
 									mod[44 + b]->getTransformer().setPosition(mod[8]->getCenter());
 									player->setHealth(player->getHealth() - 35);
-									Coord3D test = player->getTransformer().getPosition();
-									if(player->getHealth() <= 0)
-									{
-										dead[a] = true;
-										mod[22 + a]->setColour(player->getColour());
-										mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
-										game.addModel(mod[22 + a]);
-										mod[22 + a]->addAnimation("squash", &squash[a]);
-
-										mod[22 + a]->setAnimation("squash");
-										game.removeModel(player);
-									}
+									//Coord3D test = ;
+									
 								}
+							}
+							//Player comes near Boss
+							if (collisionsB(player, CandyMan))
+							{
+								player->setHealth(player->getHealth() - 100);
+							}
+							if (player->getHealth() <= 0)
+							{
+								dead[a] = true;
+								mod[22 + a]->setColour(player->getColour());
+								mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(player->getTransformer().getPosition()), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
+								game.addModel(mod[22 + a]);
+								mod[22 + a]->addAnimation("squash", &squash[a]);
+
+								mod[22 + a]->setAnimation("squash");
+								game.removeModel(player);
 							}
 							if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 							{
@@ -994,7 +1019,7 @@ void update(double dt)
 										bullets[a].erase(bullets[a].begin() + b);
 										velocity[a].erase(velocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
-										Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+										//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
