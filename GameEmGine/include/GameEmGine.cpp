@@ -305,6 +305,7 @@ void GameEmGine::addCamera(Camera *cam)
 
 void GameEmGine::update()
 {
+
 	glClearDepth(1.f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	//	m_mainBuffer.Clear();
@@ -313,9 +314,11 @@ void GameEmGine::update()
 
 	if(m_render != nullptr)
 		m_render();
+	
 	LightSource::setCamera(m_mainCamera);
 	LightSource::setShader(m_modelShader);
 	LightSource::update();
+	
 	if(m_mainCamera->getTransformer().isUpdated())
 	{
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix()*m_mainCamera->getViewMatrix())[0][0]));
@@ -348,6 +351,7 @@ void GameEmGine::update()
 
 	if(m_gameLoop != nullptr)
 		m_gameLoop(glfwGetTime());
+	
 }
 
 void GameEmGine::changeViewport(GLFWwindow *, int w, int h)

@@ -4,6 +4,7 @@
 Transformer::Transformer() :m_translate(1), m_rotate(1), m_scale(1)
 {}
 
+
 Transformer::~Transformer()
 {}
 
