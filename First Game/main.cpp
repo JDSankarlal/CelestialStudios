@@ -436,7 +436,7 @@ void GamePlayInit()
 	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(7.5f, 5.34f, 22.5f);
 
 	//Boss Trarrnsforms
-	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
+	mod[8]->getTransformer().setScale(6), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
 
 	//Floor Transforms
 	mod[9]->getTransformer().setScale(2.0f, 1.0f, 1.75f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
