@@ -919,7 +919,7 @@ void update(double dt)
 								float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 
 								velocity[a].push_back(Coord3D());
-								velocity[a].back() = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
+								velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
 
 								timer[a].push_back(0);
 								audio.createStream("pew.wav");
