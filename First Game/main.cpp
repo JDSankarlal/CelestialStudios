@@ -784,7 +784,7 @@ void update(double dt)
 		//printf("%f\n", dt);
 		static Player* player;
 		static Boss*CandyMan = (Boss*)mod[8];
-		drawHealth(CandyMan->getHealth());
+		//drawHealth(CandyMan->getHealth());
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
