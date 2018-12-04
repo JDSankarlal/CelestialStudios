@@ -183,6 +183,22 @@ bool collisions3D(Model *l, Model *k)
 	return false;
 }
 
+void drawHealth(float health) {
+	glBegin(GL_QUADS);
+	glColor3f(1, 0, 0);
+	glVertex2f(10, 10);
+	glVertex2f(-10, 10);
+	glColor3f(health, 0, 0);
+	glVertex2f(1, health);
+	glVertex2f(0, health);
+	glVertex2f(0, health);
+	glVertex2f(1, health);
+	glColor3f(0, 0, 0);
+	glVertex2f(1, 1);
+	glVertex2f(0, 1);
+	glEnd();
+}
+
 // Set intro screen
 void IntroInite()
 {
@@ -753,6 +769,7 @@ void update(double dt)
 
 	if(playGame)
 	{
+
 		menu = false;
 		static float  time = 0;
 		time += dt;
@@ -767,6 +784,7 @@ void update(double dt)
 		//printf("%f\n", dt);
 		static Player* player;
 		static Boss*CandyMan = (Boss*)mod[8];
+		drawHealth(CandyMan->getHealth());
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
@@ -786,6 +804,8 @@ void update(double dt)
 		static bool init = false;
 
 		static float angle[4] = { 180,180,180,180 };
+
+		
 
 		for(int a = 0; a < 4; a++)
 		{
