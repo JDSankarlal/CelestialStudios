@@ -886,7 +886,8 @@ void update(double dt)
 							//Player comes near Boss
 							if (collisionsB(player, CandyMan))
 							{
-								player->setHealth(player->getHealth() - 100);
+								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
+								player->setHealth(player->getHealth() - 35);
 							}
 							if (player->getHealth() <= 0)
 							{
