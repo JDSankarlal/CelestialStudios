@@ -22,6 +22,7 @@ bool pause = true;
 
 #define modSize 60 //Number of mod that can exist
 GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
+
 Shader colourProgram, colourProgram2;
 std::vector<Model*> mod;
 
@@ -750,8 +751,6 @@ void update(double dt)
 		updateMenu();
 	}
 
-
-
 	if(playGame)
 	{
 		menu = false;
@@ -820,10 +819,10 @@ void update(double dt)
 							c2[4];
 						Coord3D cat[4];
 						Coord3D  pointPosition[4];
-						p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
+						p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f,8.0f, 2.0f),//start point
 							p2[a] = bossTarget[a],//end point 
-							c1[a] = p1[a] - Coord3D{ 0,50,100 },//controle point
-							c2[a] = p2[a] - Coord3D{ 0,100,100 };//controle point
+							c1[a] = p1[a] - Coord3D{ 0,100,100 },//controle point
+							c2[a] = p2[a] - Coord3D{ 0,150,100 };//controle point
 
 						cat[a] = catmull
 						(
@@ -947,7 +946,7 @@ void update(double dt)
 							}
 							if(p1.buttonPressed(p1.buttons.Y))
 							{
-								if (time - player->getTimeSinceLastMissile() >= 1)
+								if (time - player->getTimeSinceLastMissile() >= 3)
 								{
 									pMissiles[a].push_back(nullptr);
 									game.addModel(pMissiles[a].back() = new Model(*mod[44]));
@@ -955,7 +954,7 @@ void update(double dt)
 									pMissiles[a].back()->setColour(player->getColour());
 									Coord3D pos = mod[a]->getTransformer().getPosition();
 									pMissiles[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-									pMissiles[a].back()->getTransformer().setScale(0.13);
+									pMissiles[a].back()->getTransformer().setScale(0.4);
 
 									pMissiles[a].back()->getTransformer().setRotation({ 0 , angle[a] ,0 });
 
