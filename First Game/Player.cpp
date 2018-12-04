@@ -26,3 +26,13 @@ void Player::setHealth(int v)
 {
 	health = v;
 }
+
+int Player::getBulletCount()
+{
+	return bulletCount;
+}
+
+void Player::setBulletCount(int v)
+{
+	bulletCount = v;
+}

@@ -902,28 +902,32 @@ void update(double dt)
 							}
 							if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 							{
-								makeShitLessCancer[a] = true;
+								if (player->getBulletCount() > 0)
+								{
+									makeShitLessCancer[a] = true;
 
-								bullets[a].push_back(nullptr);
-								game.addModel(bullets[a].back() = new Model(*mod[48]));
-								bullets[a].back()->getTransformer().reset();
-								bullets[a].back()->setColour(player->getColour());
-								Coord3D pos = mod[a]->getTransformer().getPosition();
-								bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-								bullets[a].back()->getTransformer().setScale(0.13);
+									bullets[a].push_back(nullptr);
+									game.addModel(bullets[a].back() = new Model(*mod[48]));
+									bullets[a].back()->getTransformer().reset();
+									bullets[a].back()->setColour(player->getColour());
+									Coord3D pos = mod[a]->getTransformer().getPosition();
+									bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
+									bullets[a].back()->getTransformer().setScale(0.13);
 
-								bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
+									bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
 
-								float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-								float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 
-								velocity[a].push_back(Coord3D());
-								velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
+									velocity[a].push_back(Coord3D());
+									velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
 
-								timer[a].push_back(0);
-								audio.createStream("pew.wav");
-								audio.play();
+									timer[a].push_back(0);
+									audio.createStream("pew.wav");
+									audio.play();
+									player->setBulletCount(player->getBulletCount() - 1);
+								}
 							} else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
 								makeShitLessCancer[a] = false;
 
@@ -936,6 +940,7 @@ void update(double dt)
 							}
 							if(p1.buttonPressed(p1.buttons.X))
 							{
+								player->setBulletCount(30);
 								puts("RELOADING!!!\n");
 							}
 							if(p1.buttonPressed(p1.buttons.Y))
