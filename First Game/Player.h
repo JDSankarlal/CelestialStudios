@@ -11,8 +11,11 @@ public:
 	void setHealth(int v);
 	int getBulletCount();
 	void setBulletCount(int v);
+	int getTimeSinceLastMissile();
+	void setTimeSinceLastMissile(float v);
 
 private:
 	int health = 100;
 	int bulletCount = 30;
+	float timeSinceLastMissile;
 };

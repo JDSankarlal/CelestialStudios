@@ -770,6 +770,8 @@ void update(double dt)
 		static Boss*CandyMan = (Boss*)mod[8];
 
 		static vector<float> timer[4];
+		static vector<Model*> pMissiles[4];
+		static vector<Coord3D> missileVelocity[4];
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
 		static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
@@ -945,6 +947,25 @@ void update(double dt)
 							}
 							if(p1.buttonPressed(p1.buttons.Y))
 							{
+								pMissiles[a].push_back(nullptr);
+								game.addModel(pMissiles[a].back() = new Model(*mod[44]));
+								pMissiles[a].back()->getTransformer().reset();
+								pMissiles[a].back()->setColour(player->getColour());
+								Coord3D pos = mod[a]->getTransformer().getPosition();
+								pMissiles[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
+								pMissiles[a].back()->getTransformer().setScale(0.13);
+
+								pMissiles[a].back()->getTransformer().setRotation({ 0 , angle[a] ,0 });
+
+								float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+								float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+
+								//missileVelocity[a].back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
+								//missileVelocity[a].push_back(Coord3D());
+
+								timer[a].push_back(0);
+								//audio.createStream("pew.wav");
+								//audio.play();
 								puts("SPECIAL ABILITY\n");
 							}
 
@@ -1038,6 +1059,41 @@ void update(double dt)
 										break;
 									}
 							}
+						for (unsigned b = 0; b < pMissiles[a].size(); b++)
+							if (pMissiles[a][b])
+							{
+								//timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
+								//pMissiles[a][b]->getTransformer().translateBy(missileVelocity[a][b].x, missileVelocity[a][b].y, missileVelocity[a][b].z);
+
+								//if (timer[a][b] >= 1)
+								//{
+								//	game.removeModel(pMissiles[a][b]);
+								//	pMissiles[a].erase(pMissiles[a].begin() + b);
+								//	missileVelocity[a].erase(missileVelocity[a].begin() + b);
+								//	timer[a].erase(timer[a].begin() + b);
+								//	break;
+								//}
+
+								//if (mod[8])
+								//	if (collisions(pMissiles[a][b], mod[8]))
+								//	{
+								//		game.removeModel(pMissiles[a][b]);
+								//		pMissiles[a].erase(pMissiles[a].begin() + b);
+								//		missileVelocity[a].erase(missileVelocity[a].begin() + b);
+								//		timer[a].erase(timer[a].begin() + b);
+								//		//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+								//		CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
+								//		if (CandyMan->getHealth() <= 0)
+								//		{
+								//			game.removeModel(CandyMan); // If health = 0 then boss dead
+								//			//	mod[8] = nullptr;
+								//			bossActive = false;
+								//			puts("Killed The BOSS\n");
+								//		}
+								//		puts("Hit The BOSS\n");
+								//		break;
+								//	}
+							}  //
 
 
 					}
