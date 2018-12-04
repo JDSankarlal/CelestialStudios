@@ -947,26 +947,30 @@ void update(double dt)
 							}
 							if(p1.buttonPressed(p1.buttons.Y))
 							{
-								pMissiles[a].push_back(nullptr);
-								game.addModel(pMissiles[a].back() = new Model(*mod[44]));
-								pMissiles[a].back()->getTransformer().reset();
-								pMissiles[a].back()->setColour(player->getColour());
-								Coord3D pos = mod[a]->getTransformer().getPosition();
-								pMissiles[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-								pMissiles[a].back()->getTransformer().setScale(0.13);
+								if (time - player->getTimeSinceLastMissile() >= 1)
+								{
+									pMissiles[a].push_back(nullptr);
+									game.addModel(pMissiles[a].back() = new Model(*mod[44]));
+									pMissiles[a].back()->getTransformer().reset();
+									pMissiles[a].back()->setColour(player->getColour());
+									Coord3D pos = mod[a]->getTransformer().getPosition();
+									pMissiles[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
+									pMissiles[a].back()->getTransformer().setScale(0.13);
 
-								pMissiles[a].back()->getTransformer().setRotation({ 0 , angle[a] ,0 });
+									pMissiles[a].back()->getTransformer().setRotation({ 0 , angle[a] ,0 });
 
-								float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-								float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 
-								//missileVelocity[a].back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
-								//missileVelocity[a].push_back(Coord3D());
+									missileVelocity[a].push_back(Coord3D());
+									missileVelocity[a].back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
+									player->setTimeSinceLastMissile(time);
 
-								timer[a].push_back(0);
-								//audio.createStream("pew.wav");
-								//audio.play();
-								puts("SPECIAL ABILITY\n");
+									timer[a].push_back(0);
+									//audio.createStream("pew.wav");
+									//audio.play();
+									puts("SPECIAL ABILITY\n");
+								}
 							}
 
 							/// - Left Trigger to Dash - ///
@@ -1063,7 +1067,7 @@ void update(double dt)
 							if (pMissiles[a][b])
 							{
 								//timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
-								//pMissiles[a][b]->getTransformer().translateBy(missileVelocity[a][b].x, missileVelocity[a][b].y, missileVelocity[a][b].z);
+								pMissiles[a][b]->getTransformer().translateBy(missileVelocity[a][b].x, missileVelocity[a][b].y, missileVelocity[a][b].z);
 
 								//if (timer[a][b] >= 1)
 								//{
