@@ -183,21 +183,21 @@ bool collisions3D(Model *l, Model *k)
 	return false;
 }
 
-void drawHealth(float health) {
-	glBegin(GL_QUADS);
-	glColor3f(1, 0, 0);
-	glVertex2f(10, 10);
-	glVertex2f(-10, 10);
-	glColor3f(health, 0, 0);
-	glVertex2f(1, health);
-	glVertex2f(0, health);
-	glVertex2f(0, health);
-	glVertex2f(1, health);
-	glColor3f(0, 0, 0);
-	glVertex2f(1, 1);
-	glVertex2f(0, 1);
-	glEnd();
-}
+//void drawHealth(float health) {
+//	glBegin(GL_QUADS);
+//	glColor3f(1, 0, 0);
+//	glVertex2f(10, 10);
+//	glVertex2f(-10, 10);
+//	glColor3f(health, 0, 0);
+//	glVertex2f(1, health);
+//	glVertex2f(0, health);
+//	glVertex2f(0, health);
+//	glVertex2f(1, health);
+//	glColor3f(0, 0, 0);
+//	glVertex2f(1, 1);
+//	glVertex2f(0, 1);
+//	glEnd();
+//}
 
 // Set intro screen
 void IntroInite()
@@ -1085,38 +1085,38 @@ void update(double dt)
 						for (unsigned b = 0; b < pMissiles[a].size(); b++)
 							if (pMissiles[a][b])
 							{
-								//timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
+								timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
 								pMissiles[a][b]->getTransformer().translateBy(missileVelocity[a][b].x, missileVelocity[a][b].y, missileVelocity[a][b].z);
 
-								//if (timer[a][b] >= 1)
-								//{
-								//	game.removeModel(pMissiles[a][b]);
-								//	pMissiles[a].erase(pMissiles[a].begin() + b);
-								//	missileVelocity[a].erase(missileVelocity[a].begin() + b);
-								//	timer[a].erase(timer[a].begin() + b);
-								//	break;
-								//}
+								if (timer[a][b] >= 1)
+								{
+									game.removeModel(pMissiles[a][b]);
+									pMissiles[a].erase(pMissiles[a].begin() + b);
+									missileVelocity[a].erase(missileVelocity[a].begin() + b);
+									timer[a].erase(timer[a].begin() + b);
+									break;
+								}
 
-								//if (mod[8])
-								//	if (collisions(pMissiles[a][b], mod[8]))
-								//	{
-								//		game.removeModel(pMissiles[a][b]);
-								//		pMissiles[a].erase(pMissiles[a].begin() + b);
-								//		missileVelocity[a].erase(missileVelocity[a].begin() + b);
-								//		timer[a].erase(timer[a].begin() + b);
-								//		//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
-								//		CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
-								//		if (CandyMan->getHealth() <= 0)
-								//		{
-								//			game.removeModel(CandyMan); // If health = 0 then boss dead
-								//			//	mod[8] = nullptr;
-								//			bossActive = false;
-								//			puts("Killed The BOSS\n");
-								//		}
-								//		puts("Hit The BOSS\n");
-								//		break;
-								//	}
-							}  //
+								if (mod[8])
+									if (collisions(pMissiles[a][b], mod[8]))
+									{
+										game.removeModel(pMissiles[a][b]);
+										pMissiles[a].erase(pMissiles[a].begin() + b);
+										missileVelocity[a].erase(missileVelocity[a].begin() + b);
+										timer[a].erase(timer[a].begin() + b);
+										//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
+										if (CandyMan->getHealth() <= 0)
+										{
+											game.removeModel(CandyMan); // If health = 0 then boss dead
+											//	mod[8] = nullptr;
+											bossActive = false;
+											puts("Killed The BOSS\n");
+										}
+										puts("Hit The BOSS\n");
+										break;
+									}
+							}
 
 
 					}
