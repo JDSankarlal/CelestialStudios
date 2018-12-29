@@ -26,3 +26,23 @@ void Player::setHealth(int v)
 {
 	health = v;
 }
+
+int Player::getBulletCount()
+{
+	return bulletCount;
+}
+
+void Player::setBulletCount(int v)
+{
+	bulletCount = v;
+}
+
+int Player::getTimeSinceLastMissile()
+{
+	return timeSinceLastMissile;
+}
+
+void Player::setTimeSinceLastMissile(float v)
+{
+	timeSinceLastMissile = v;
+}

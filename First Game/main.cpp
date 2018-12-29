@@ -20,8 +20,9 @@ Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 bool pause = true;
 
-#define modSize 50 //Number of mod that can exist
+#define modSize 60 //Number of mod that can exist
 GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
+
 Shader colourProgram, colourProgram2;
 std::vector<Model*> mod;
 
@@ -142,6 +143,24 @@ bool collisions(Model *l, Model *k)
 	return false;
 }
 
+bool collisionsB(Model *l, Model *k)
+{
+	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	Coord3D thing = l->getCenter() - k->getCenter();
+
+	float distanceX = abs(thing.x);
+	float distanceZ = abs(thing.z);
+
+	float capW = (l->getWidth() + k->getWidth()) / 2;
+	float capD = (l->getDepth() + k->getDepth()) / 2;
+
+	if (std::abs(distanceX) <= capW + 4)
+		if (std::abs(distanceZ) <= capD + 4)
+			return true;
+
+	return false;
+}
+
 /// - 3D Collision Function - ///
 bool collisions3D(Model *l, Model *k)
 {
@@ -163,6 +182,22 @@ bool collisions3D(Model *l, Model *k)
 
 	return false;
 }
+
+//void drawHealth(float health) {
+//	glBegin(GL_QUADS);
+//	glColor3f(1, 0, 0);
+//	glVertex2f(10, 10);
+//	glVertex2f(-10, 10);
+//	glColor3f(health, 0, 0);
+//	glVertex2f(1, health);
+//	glVertex2f(0, health);
+//	glVertex2f(0, health);
+//	glVertex2f(1, health);
+//	glColor3f(0, 0, 0);
+//	glVertex2f(1, 1);
+//	glVertex2f(0, 1);
+//	glEnd();
+//}
 
 // Set intro screen
 void IntroInite()
@@ -189,7 +224,7 @@ void GamePlayInit()
 {
 
 	game.setCameraType(PERSPECTIVE);
-
+	game.setFPSLimit(60);
 	/// - Load mod into Scene - ///
 
 	//Players
@@ -401,6 +436,11 @@ void GamePlayInit()
 	mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
 	mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
 	mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
+	mod[0]->getTransformer().setRotation(Coord3D(0,180,0));
+	mod[1]->getTransformer().setRotation(Coord3D(0,180,0));
+	mod[2]->getTransformer().setRotation(Coord3D(0,180,0));
+	mod[3]->getTransformer().setRotation(Coord3D(0,180,0));
+
 
 	//Building Transforms
 	//Building 1s
@@ -431,7 +471,7 @@ void GamePlayInit()
 	mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(7.5f, 5.34f, 22.5f);
 
 	//Boss Trarrnsforms
-	mod[8]->getTransformer().setScale(4), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
+	mod[8]->getTransformer().setScale(6), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({ 0.0f, 180.0f, 0.0f });
 
 	//Floor Transforms
 	mod[9]->getTransformer().setScale(2.0f, 1.0f, 1.75f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
@@ -727,10 +767,9 @@ void update(double dt)
 		updateMenu();
 	}
 
-
-
 	if(playGame)
 	{
+
 		menu = false;
 		static float  time = 0;
 		time += dt;
@@ -744,8 +783,12 @@ void update(double dt)
 		static float pointSize = 50.0f;
 		//printf("%f\n", dt);
 		static Player* player;
+		static Boss*CandyMan = (Boss*)mod[8];
+		//drawHealth(CandyMan->getHealth());
 
 		static vector<float> timer[4];
+		static vector<Model*> pMissiles[4];
+		static vector<Coord3D> missileVelocity[4];
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
 		static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
@@ -761,6 +804,8 @@ void update(double dt)
 		static bool init = false;
 
 		static float angle[4] = { 180,180,180,180 };
+
+		
 
 		for(int a = 0; a < 4; a++)
 		{
@@ -794,10 +839,10 @@ void update(double dt)
 							c2[4];
 						Coord3D cat[4];
 						Coord3D  pointPosition[4];
-						p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 5.0f, 1.5f),//start point
+						p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f,8.0f, 2.0f),//start point
 							p2[a] = bossTarget[a],//end point 
-							c1[a] = p1[a] - Coord3D{ 0,50,100 },//controle point
-							c2[a] = p2[a] - Coord3D{ 0,100,100 };//controle point
+							c1[a] = p1[a] - Coord3D{ 0,100,100 },//controle point
+							c2[a] = p2[a] - Coord3D{ 0,150,100 };//controle point
 
 						cat[a] = catmull
 						(
@@ -855,44 +900,55 @@ void update(double dt)
 									curveroni[a] = 1;
 									mod[44 + b]->getTransformer().setPosition(mod[8]->getCenter());
 									player->setHealth(player->getHealth() - 35);
-									Coord3D test = player->getTransformer().getPosition();
-									if(player->getHealth() <= 0)
-									{
-										dead[a] = true;
-										mod[22 + a]->setColour(player->getColour());
-										mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(test), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
-										game.addModel(mod[22 + a]);
-										mod[22 + a]->addAnimation("squash", &squash[a]);
-
-										mod[22 + a]->setAnimation("squash");
-										game.removeModel(player);
-									}
+									//Coord3D test = ;
+									
 								}
+							}
+							//Player comes near Boss
+							if (collisionsB(player, CandyMan))
+							{
+								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
+								player->setHealth(player->getHealth() - 35);
+							}
+							if (player->getHealth() <= 0)
+							{
+								dead[a] = true;
+								mod[22 + a]->setColour(player->getColour());
+								mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(player->getTransformer().getPosition()), mod[22 + a]->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
+								game.addModel(mod[22 + a]);
+								mod[22 + a]->addAnimation("squash", &squash[a]);
+
+								mod[22 + a]->setAnimation("squash");
+								game.removeModel(player);
 							}
 							if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 							{
-								makeShitLessCancer[a] = true;
+								if (player->getBulletCount() > 0)
+								{
+									makeShitLessCancer[a] = true;
 
-								bullets[a].push_back(nullptr);
-								game.addModel(bullets[a].back() = new Model(*mod[48]));
-								bullets[a].back()->getTransformer().reset();
-								bullets[a].back()->setColour(player->getColour());
-								Coord3D pos = mod[a]->getTransformer().getPosition();
-								bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
-								bullets[a].back()->getTransformer().setScale(0.13);
+									bullets[a].push_back(nullptr);
+									game.addModel(bullets[a].back() = new Model(*mod[48]));
+									bullets[a].back()->getTransformer().reset();
+									bullets[a].back()->setColour(player->getColour());
+									Coord3D pos = mod[a]->getTransformer().getPosition();
+									bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
+									bullets[a].back()->getTransformer().setScale(0.13);
 
-								bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
+									bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
 
-								float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-								float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 
-								velocity[a].push_back(Coord3D());
-								velocity[a].back() = Coord3D(cosVal * move * 2, 0, sinVal * move * 2);
+									velocity[a].push_back(Coord3D());
+									velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
 
-								timer[a].push_back(0);
-								audio.createStream("pew.wav");
-								audio.play();
+									timer[a].push_back(0);
+									audio.createStream("pew.wav");
+									audio.play();
+									player->setBulletCount(player->getBulletCount() - 1);
+								}
 							} else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
 								makeShitLessCancer[a] = false;
 
@@ -905,11 +961,35 @@ void update(double dt)
 							}
 							if(p1.buttonPressed(p1.buttons.X))
 							{
+								player->setBulletCount(30);
 								puts("RELOADING!!!\n");
 							}
 							if(p1.buttonPressed(p1.buttons.Y))
 							{
-								puts("SPECIAL ABILITY\n");
+								if (time - player->getTimeSinceLastMissile() >= 3)
+								{
+									pMissiles[a].push_back(nullptr);
+									game.addModel(pMissiles[a].back() = new Model(*mod[44]));
+									pMissiles[a].back()->getTransformer().reset();
+									pMissiles[a].back()->setColour(player->getColour());
+									Coord3D pos = mod[a]->getTransformer().getPosition();
+									pMissiles[a].back()->getTransformer().setPosition(pos.x, pos.y + .1, pos.z);
+									pMissiles[a].back()->getTransformer().setScale(0.4);
+
+									pMissiles[a].back()->getTransformer().setRotation({ 0 , angle[a] ,0 });
+
+									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+
+									missileVelocity[a].push_back(Coord3D());
+									missileVelocity[a].back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
+									player->setTimeSinceLastMissile(time);
+
+									timer[a].push_back(0);
+									//audio.createStream("pew.wav");
+									//audio.play();
+									puts("SPECIAL ABILITY\n");
+								}
 							}
 
 							/// - Left Trigger to Dash - ///
@@ -989,9 +1069,44 @@ void update(double dt)
 										bullets[a].erase(bullets[a].begin() + b);
 										velocity[a].erase(velocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
-										Boss*CandyMan = (Boss*)mod[8];//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+										//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
+										{
+											game.removeModel(CandyMan); // If health = 0 then boss dead
+											//	mod[8] = nullptr;
+											bossActive = false;
+											puts("Killed The BOSS\n");
+										}
+										puts("Hit The BOSS\n");
+										break;
+									}
+							}
+						for (unsigned b = 0; b < pMissiles[a].size(); b++)
+							if (pMissiles[a][b])
+							{
+								timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
+								pMissiles[a][b]->getTransformer().translateBy(missileVelocity[a][b].x, missileVelocity[a][b].y, missileVelocity[a][b].z);
+
+								if (timer[a][b] >= 1)
+								{
+									game.removeModel(pMissiles[a][b]);
+									pMissiles[a].erase(pMissiles[a].begin() + b);
+									missileVelocity[a].erase(missileVelocity[a].begin() + b);
+									timer[a].erase(timer[a].begin() + b);
+									break;
+								}
+
+								if (mod[8])
+									if (collisions(pMissiles[a][b], mod[8]))
+									{
+										game.removeModel(pMissiles[a][b]);
+										pMissiles[a].erase(pMissiles[a].begin() + b);
+										missileVelocity[a].erase(missileVelocity[a].begin() + b);
+										timer[a].erase(timer[a].begin() + b);
+										//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
+										if (CandyMan->getHealth() <= 0)
 										{
 											game.removeModel(CandyMan); // If health = 0 then boss dead
 											//	mod[8] = nullptr;
