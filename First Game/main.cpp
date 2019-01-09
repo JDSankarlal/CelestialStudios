@@ -1,5 +1,4 @@
 #define _USE_MATH_DEFINES 
-//#define 
 
 #include <GameEmGine.h>
 #include <EmGineAudioPlayer.h>
@@ -20,7 +19,7 @@ Coord2D leftM, rightM;
 EmGineAudioPlayer audio;
 bool pause = true;
 
-#define modSize 60 //Number of mod that can exist
+#define modSize 60 //Number of mod that can exist <----- lol no we have 63?
 GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
 
 Shader colourProgram, colourProgram2;
@@ -162,6 +161,7 @@ bool collisionsB(Model *l, Model *k)
 }
 
 /// - 3D Collision Function - ///
+
 bool collisions3D(Model *l, Model *k)
 {
 	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
@@ -183,24 +183,8 @@ bool collisions3D(Model *l, Model *k)
 	return false;
 }
 
-//void drawHealth(float health) {
-//	glBegin(GL_QUADS);
-//	glColor3f(1, 0, 0);
-//	glVertex2f(10, 10);
-//	glVertex2f(-10, 10);
-//	glColor3f(health, 0, 0);
-//	glVertex2f(1, health);
-//	glVertex2f(0, health);
-//	glVertex2f(0, health);
-//	glVertex2f(1, health);
-//	glColor3f(0, 0, 0);
-//	glVertex2f(1, 1);
-//	glVertex2f(0, 1);
-//	glEnd();
-//}
-
 // Set intro screen
-void IntroInite()
+void introInit()
 {
 	intro = true;
 
@@ -209,7 +193,7 @@ void IntroInite()
 	LightSource::setSceneAmbient({ 255,255,255,255 });
 }
 // Set menu screen
-void menuInite()
+void menuInit()
 {
 	menu = true;
 
@@ -404,17 +388,16 @@ void GamePlayInit()
 	mod[59]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
 
 	//missile hitbox
-	mod.push_back(new Model(*mod[44]));//60
-
-	game.addModel(mod.back()); //44
+	mod.push_back(new Model(*mod[44]));
+	game.addModel(mod.back()); //60
 	mod[60]->setToRender(false);
 	mod[60]->getTransformer().setScale(6,1,1);
-	mod.push_back(new Model(*mod[60]));//61
-	game.addModel(mod.back());//45
-	mod.push_back(new Model(*mod[60]));//62
-	game.addModel(mod.back());//46
-	mod.push_back(new Model(*mod[60]));//63
-	game.addModel(mod.back());//47
+	mod.push_back(new Model(*mod[60]));
+	game.addModel(mod.back());//61
+	mod.push_back(new Model(*mod[60]));
+	game.addModel(mod.back());//62
+	mod.push_back(new Model(*mod[60]));
+	game.addModel(mod.back());//63
 
 
 	//mod[61]->setToRender(false);
@@ -648,7 +631,7 @@ void updateSplash()
 
 			game.removeModel(mod[0]);
 			mod.clear();
-			IntroInite();
+			introInit();
 
 		}
 	}
@@ -698,7 +681,7 @@ void updateIntro()
 			intro = false;
 			game.removeModel(mod[0]);
 			mod.clear();
-			menuInite();
+			menuInit();
 		}
 	}
 }
@@ -791,7 +774,7 @@ void update(double dt)
 		static vector<Coord3D> missileVelocity[4];
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
-		static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
+		static bool makeShitLessCancer[4], makeShitLessCancer2[4]; //stops the creation of bullets when trigger is held down
 		static float  curveroni[4] = { 0 ,0,0,0 };
 		static bool hasTarget[4] = { 0 ,0,0,0 };
 
@@ -904,12 +887,15 @@ void update(double dt)
 									
 								}
 							}
-							//Player comes near Boss
+							//Player comes near Boss, player gets moved back on z axis
 							if (collisionsB(player, CandyMan))
 							{
 								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
 								player->setHealth(player->getHealth() - 35);
 							}
+
+							/// - Player Death - ///
+
 							if (player->getHealth() <= 0)
 							{
 								dead[a] = true;
@@ -1017,7 +1003,7 @@ void update(double dt)
 									}
 								}
 
-							} else//Do the same with the LT button, have it so will only work every X seconds.
+							} else //Do the same with the LT button, have it so will only work every X seconds.
 							{
 								move -= .001;
 								if(move <= .1)
@@ -1046,7 +1032,7 @@ void update(double dt)
 								mod[a]->getAnimation("walk")->setAnimationSpeed(.25 / speed);
 							}
 						}
-						/// - Bullet Collisions - ///
+						/// - Player Bullets - ///
 						for(unsigned b = 0; b < bullets[a].size(); b++)
 							if(bullets[a][b])
 							{
@@ -1061,6 +1047,8 @@ void update(double dt)
 									timer[a].erase(timer[a].begin() + b);
 									break;
 								}
+
+								/// - If Players Bulletss Hit Boss, Boss takes Damage - ///
 
 								if(mod[8])
 									if(collisions(bullets[a][b], mod[8]))
@@ -1082,6 +1070,9 @@ void update(double dt)
 										break;
 									}
 							}
+
+						/// - Players Missiles - ///
+
 						for (unsigned b = 0; b < pMissiles[a].size(); b++)
 							if (pMissiles[a][b])
 							{
@@ -1096,6 +1087,8 @@ void update(double dt)
 									timer[a].erase(timer[a].begin() + b);
 									break;
 								}
+
+								/// - If Players missiles Hit Boss, Boss takes Damage - ///
 
 								if (mod[8])
 									if (collisions(pMissiles[a][b], mod[8]))
@@ -1127,6 +1120,8 @@ void update(double dt)
 
 				lastTime = (float)clock() / CLOCKS_PER_SEC;
 
+				/// - Move CAmera if movePlayer is false - ///
+
 				if(!movePlayer)
 					if(game.isControllerConnected(0))
 					{
@@ -1146,16 +1141,15 @@ void update(double dt)
 						}
 
 						if(Xinput::buttonPressed(p1.buttons.A))
-							printf("%d\n", p1.buttons.A);
+							printf("%d\n", p1.buttons.A); 
 
-						//move camera
 						move *= 2;
 
 						game.moveCameraPositionBy({ p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move });//move camera
 						game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });//rotate camera
 						//game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
-						game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move out
-						game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move out
+						game.moveCameraPositionBy({ 0 ,p1.triggers[LT] * -move,0 });//move down
+						game.moveCameraPositionBy({ 0 ,p1.triggers[RT] * move,0 });//move up
 						move /= 2;
 					}
 				//}
@@ -1164,7 +1158,7 @@ void update(double dt)
 }
 
 // Set splash screen and start update
-void splashInite()
+void splashInit()
 {
 	srand(clock());
 
@@ -1191,50 +1185,10 @@ void splashInite()
 void render()
 {}
 
-//// We need BogoBogo sort in our game right? NO!
-//template<class T>
-//bool sorted(T* sort, unsigned size)
-//{
-//	for(unsigned a = 1; a < size; a++)
-//		if(sort[a] < sort[a - 1])
-//			return false;
-//	return true;
-//}
-//
-//template<class T>
-//void randomize(T* sort, unsigned size)
-//{
-//	for(int a = 0; a < size; a++)
-//		swap(sort[a], sort[(rand() % size]);
-//}
-//
-//template<class T>
-//void bogo(T* sort, unsigned size)
-//{
-//	if(sorted(sort, size))
-//		return;
-//
-//	randomize(sort, size);
-//	bogo(sort, size);
-//}
-//
-//template<class T>
-//void bogobogo(T* sort, unsigned size)
-//{
-//	T *sort2 = new T[size];
-//	memcpy_s(sort2, sizeof(T)*size, sort, sizeof(T)*size);
-//	unsigned n = size - 1;
-//
-//	while(n)
-//	{
-//		bogo(sort2, n);
-//		if()
-//	}
-//}
-
+/// - The Main Function - ///
 int main()
 {
-	splashInite();
+	splashInit();
 
 	return 0;
 }
