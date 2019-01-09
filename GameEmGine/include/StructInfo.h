@@ -9,13 +9,13 @@ struct Coord2D
 
 	float distance()
 	{
-		return sqrt(x * x + y * y);
+		return sqrtf(x * x + y * y);
 	}
 
 	static float distance(Coord2D v1, Coord2D v2)
 	{
 		Coord2D v3 = v2 - v1;
-		return sqrt(v3.x*v3.x + v3.y*v3.y);
+		return sqrtf(v3.x*v3.x + v3.y*v3.y);
 	}
 
 	Coord2D normal()
@@ -87,7 +87,7 @@ struct Coord3D
 
 	float distance()
 	{
-		return sqrt(x * x + y * y + z * z);
+		return sqrtf(x * x + y * y + z * z);
 	}
 
 	Coord3D normal()
@@ -142,7 +142,7 @@ struct Coord3D
 
 	void normalize()
 	{
-		float norm = sqrt(x * x + y * y + z * z);
+		float norm = sqrtf(x * x + y * y + z * z);
 		x *= norm;
 		y *= norm;
 		z *= norm;

@@ -5,33 +5,34 @@
 class FrameBuffer
 {
 public:
-	FrameBuffer() = delete;
-	FrameBuffer(unsigned numColorAttachments);
+	FrameBuffer(unsigned numColourAttach = 1);
 	~FrameBuffer();
 
-	void InitDepthTexture(unsigned width, unsigned height);
-	void InitColorTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap);
-	bool CheckFBO();
+	void setNumColourAttachments(unsigned num);
 
-	// Clears all OpenGL memory
-	void Unload();
+	void initDepthTexture(int width, int height);
+	void initColourTexture(unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap, unsigned index);
+	bool checkFBO();
 
-	// Clears all attached textures
-	void Clear();
+	void unload();
 
-	void Bind();
-	void UnBind();
+	void clear();
 
-	void MoveToBackBuffer(int windowWidth, int windowHeight);
+	void enable();
+	void disable();
 
-	GLuint GetDepthHandle() const;
-	GLuint GetColorHandle(unsigned index) const;
+	void moveToBackBuffer(int windWidth, int windHeight);
+
+	GLuint GetDepthHandle()const;
+	GLuint GetColourHandle(unsigned index)const;
 
 private:
-	GLuint _FBO = GL_NONE;
-	GLuint _DepthAttachment = GL_NONE;
-	GLuint *_ColorAttachments = nullptr;
-	GLenum *_Bufs = nullptr;
 
-	unsigned int _NumColorAttachments = 0;
+	GLuint	m_fboID = GL_NONE;
+	GLuint m_depthAttachment = GL_NONE;
+	GLuint	*m_colourAttachments = nullptr;
+	GLenum *m_buffs = nullptr;
+
+	unsigned m_numColourAttachments;
+
 };

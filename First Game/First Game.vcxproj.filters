@@ -40,5 +40,9 @@
   <ItemGroup>
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Splash.h" />
+    <ClInclude Include="Intro.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="Game.h" />
   </ItemGroup>
 </Project>

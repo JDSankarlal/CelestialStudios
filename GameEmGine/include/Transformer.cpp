@@ -61,21 +61,25 @@ void Transformer::rotateBy(Coord3D angles, Coord3D forward)
 
 void Transformer::translateBy(float x, float y, float z, Coord3D forward)
 {
+	forward;
 	setPosition(m_pos + Coord3D{x,y,z});
 }
 
 void Transformer::translateBy(Coord3D pos, Coord3D forward)
 {
+	forward;
 	setPosition(m_pos + pos);
 }
 
 void Transformer::setPosition(float x, float y, float z, Coord3D forward)
 {
+	forward;
 	setPosition(Coord3D{ x,y,z });
 }
 
 void Transformer::setPosition(Coord3D pos, Coord3D forward)
 {
+	forward;
 	m_updatedTrans = true;
 	int w, h;
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);

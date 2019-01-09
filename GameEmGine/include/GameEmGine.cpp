@@ -9,21 +9,19 @@ std::vector<Camera *>GameEmGine::m_cameras;
 Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
-ColourRGBA GameEmGine::m_colour{ 123,123,123 };
+ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer GameEmGine::m_mainBuffer(1);
+FrameBuffer* GameEmGine::m_mainBuffer;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
 float GameEmGine::m_fps;
 short GameEmGine::m_fpsLimit;
+Scene* GameEmGine::m_mainScene;
 
 //uniform vec4 LightPosition;
 //1uniform vec3 LightAmbient;
 
 #pragma endregion
-
-GameEmGine::GameEmGine()
-{}
 
 GameEmGine::GameEmGine(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
@@ -37,11 +35,10 @@ GameEmGine::~GameEmGine()
 
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
-	glfwInit();//initilize GLFW before ANYTHING
-
+	glfwInit();
 	printf("Creating The Window...\n");
 
-	m_window = new WindowCreator(name, { (float)width,(float)height }, { (float)x,(float)y }, monitor, fullScreen, visable);
+	m_window = new WindowCreator(name, {(float)width,(float)height}, {(float)x,(float)y}, monitor, fullScreen, visable);
 
 	if(m_window)
 		puts("Window Creation Successful\n");
@@ -54,11 +51,24 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	glfwSetFramebufferSizeCallback(m_window->getWindow(), changeViewport);
 
 	m_inputManager = new InputManager;
-	m_mainCamera = new Camera({ (float)width,(float)height,500 });
+	m_mainCamera = new Camera({(float)width,(float)height,500});
 
 	shaderInit();
 
 	printf("created the window\n");
+
+	m_mainBuffer = new FrameBuffer(1);
+	if(!m_mainBuffer->checkFBO())
+	{
+		puts("FBO failed Creation");
+		system("pause");
+		return;
+	}
+
+	m_mainBuffer->initDepthTexture(getWindowWidth(), getWindowHeight());
+	m_mainBuffer->initColourTexture(getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
+
+
 }
 
 void GameEmGine::run()
@@ -81,7 +91,6 @@ void GameEmGine::run()
 	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
 	{
 		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
-
 		InputManager::controllerUpdate();
 		update();
 		if(true)//fps calculation
@@ -172,8 +181,6 @@ void GameEmGine::calculateFPS()
 	glfwSetTime(0);
 }
 
-
-
 void GameEmGine::fpsLimiter()
 {
 	static bool enter = false;
@@ -195,44 +202,20 @@ void GameEmGine::fpsLimiter()
 	enter = true;
 }
 
-void GameEmGine::keyPressed(void key(int key, int mod))
+void GameEmGine::setScene(Scene* scene)
 {
-	m_inputManager->keyPressedCallback(key);
-}
-
-void GameEmGine::keyReleased(void key(int key, int mod))
-{
-	m_inputManager->keyReleasedCallback(key);
-}
-
-void GameEmGine::mouseButtonPressed(void button(int key, int mod))
-{
-	m_inputManager->mouseButtonPressCallback(button);
-}
-
-void GameEmGine::mouseButtonReleased(void button(int key, int mod))
-{
-	m_inputManager->mouseButtonReleaseCallback(button);
-}
-
-void GameEmGine::renderUpdate(void update())
-{
-	m_render = update;
-}
-
-void GameEmGine::shaderInit(void shaders())
-{
-	shaders();
-}
-
-void GameEmGine::gameLoopUpdate(void update(double))
-{
-	m_gameLoop = update;
+	this->m_mainScene = scene;
+	m_inputManager->keyPressedCallback(scene->keyPressed);
+	m_inputManager->keyReleasedCallback(scene->keyReleased);
+	m_inputManager->mouseButtonPressCallback(scene->mousePressed);
+	m_inputManager->mouseButtonReleaseCallback(scene->mouseReleased);
+	m_render = scene->render;
+	m_gameLoop = scene->update;
 }
 
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-	m_colour = { GLubyte(r * 255),GLubyte(g * 255),GLubyte(b * 255),GLubyte(a * 255) };
+	m_colour = {GLubyte(r * 255),GLubyte(g * 255),GLubyte(b * 255),GLubyte(a * 255)};
 }
 
 int GameEmGine::getWindowWidth()
@@ -288,7 +271,7 @@ void GameEmGine::removeModel(Model* model)
 
 	for(unsigned a = 0; a < m_models.size(); a++)
 		if(m_models[a] == model)
-		{			
+		{
 			m_models.erase(m_models.begin() + a);
 		}
 }
@@ -308,50 +291,53 @@ void GameEmGine::update()
 
 	glClearDepth(1.f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	//	m_mainBuffer.Clear();
+	m_mainBuffer->clear();
+
 	m_mainCamera->update();
-	//	m_mainBuffer.Bind();
 
 	if(m_render != nullptr)
 		m_render();
-	
+
 	LightSource::setCamera(m_mainCamera);
 	LightSource::setShader(m_modelShader);
 	LightSource::update();
-	
+
 	if(m_mainCamera->getTransformer().isUpdated())
 	{
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix()*m_mainCamera->getViewMatrix())[0][0]));
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
 	}
 	//3D-Graphics 1
+	m_mainBuffer->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
-	//	m_mainBuffer.UnBind();
-	//	m_mainBuffer.MoveToBackBuffer(m_window->getScreenWidth(),m_window->getScreenHeight());
 
-		////3D-Graphics 2
-		//m_modelBatch->render(*m_modelShader, *m_mainCamera);
+	m_mainBuffer->disable();
+	m_mainBuffer->moveToBackBuffer(m_window->getScreenWidth(), m_window->getScreenHeight());
 
 
-		////2D-Graphics 
-		//m_spriteBatch->begin();
-		//for(int a = 0; a < m_sprites.size(); a++)
-		//{
-		//	m_spriteBatch->draw(&m_sprites[a]->objectInfo, m_sprites[a]->depth, m_sprites[a]->texture);
-		//	if(a + 1 < m_sprites.size())
-		//		a++,
-		//		m_spriteBatch->draw(&m_sprites[a]->objectInfo, m_sprites[a]->depth, m_sprites[a]->texture);
-		//}
-		//m_spriteBatch->end();
-		//m_spriteBatch->render(*m_cameraShader,*m_mainCamera);
+	////3D-Graphics 2
+	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
 
 
-	glfwPollEvents();//updates the event handelers
+	////2D-Graphics 
+	//m_spriteBatch->begin();
+	//for(int a = 0; a < m_sprites.size(); a++)
+	//{
+	//	m_spriteBatch->draw(&m_sprites[a]->objectInfo, m_sprites[a]->depth, m_sprites[a]->texture);
+	//	if(a + 1 < m_sprites.size())
+	//		a++,
+	//		m_spriteBatch->draw(&m_sprites[a]->objectInfo, m_sprites[a]->depth, m_sprites[a]->texture);
+	//}
+	//m_spriteBatch->end();
+	//m_spriteBatch->render(*m_cameraShader,*m_mainCamera);
+
+
+	glfwPollEvents();//updates the event handlers
 
 	if(m_gameLoop != nullptr)
 		m_gameLoop(glfwGetTime());
-	
+
 }
 
 void GameEmGine::changeViewport(GLFWwindow *, int w, int h)
@@ -361,6 +347,12 @@ void GameEmGine::changeViewport(GLFWwindow *, int w, int h)
 	//	   "Height: %d\n\n", w, h);
 
 	//m_window->getScreenWidth(); //just for updating window width & height
+
+	if(m_mainBuffer)
+	{
+		m_mainBuffer->initDepthTexture(w, h);
+		m_mainBuffer->initColourTexture(w, h, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
+	}
 
 	glViewport(0, 0, w, h);
 	glFrustum(0, w, 0, h, 0, h);//eye view
