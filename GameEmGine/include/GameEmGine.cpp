@@ -205,13 +205,13 @@ void GameEmGine::fpsLimiter()
 
 void GameEmGine::setScene(Scene* scene)
 {
-	this->m_mainScene = scene;
+	m_mainScene = scene;
 	m_inputManager->keyPressedCallback(scene->keyPressed);
 	m_inputManager->keyReleasedCallback(scene->keyReleased);
 	m_inputManager->mouseButtonPressCallback(scene->mousePressed);
 	m_inputManager->mouseButtonReleaseCallback(scene->mouseReleased);
 	m_render = scene->render;
-	m_gameLoop = [&](double a)->void {scene->update(a); };
+	m_gameLoop = [&](double a)->void {m_mainScene->update(a); };
 }
 
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)

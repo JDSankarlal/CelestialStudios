@@ -30,7 +30,7 @@ GLubyte splashAmbient = 0;
 bool fadein = true;
 bool fadeout = false;
 
-Splash splash ;//splash screen
+
 #pragma endregion
 
 //shader initialization
@@ -159,7 +159,10 @@ void mouseButtonReleased(int button, int _mod)
 
 int main()
 {
-	game.setScene(&splash);
+	Splash* splash=new Splash;//splash screen
+
+	splash->setContext(&game);
+	game.setScene(splash);
 
 	game.run();
 	return 0;
