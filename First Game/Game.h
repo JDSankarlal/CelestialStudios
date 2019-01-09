@@ -5,6 +5,7 @@
 
 class Game:public Scene
 {
+public:
 	/// - Collision Class - ///
 	bool collisions(Model *l, Model *k)
 	{

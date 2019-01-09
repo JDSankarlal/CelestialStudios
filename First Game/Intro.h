@@ -2,6 +2,7 @@
 #include <GameEmGine.h>
 class Intro:public Scene
 {
+public:
 	// Set splash screen and start update
 	void IntroInite()
 	{

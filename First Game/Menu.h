@@ -2,6 +2,7 @@
 #include <GameEmGine.h>
 class Menu:public Scene
 {
+public:
 	// Set menu screen
 	void menuInite()
 	{

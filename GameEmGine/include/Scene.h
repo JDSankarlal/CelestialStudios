@@ -1,5 +1,5 @@
 #pragma once
-#include "GameEmGine.h"
+ class GameEmGine;
 
 class Scene
 {
@@ -14,7 +14,7 @@ public:
 	inline void setContext(GameEmGine* game) { context = game; }
 
 	//updates within game loop
-	void(*update)(double dt);
+	virtual void update(double dt) { dt; }
 
 	void(*render)(void);
 
@@ -31,6 +31,6 @@ public:
 	void(*mouseReleased)(int key, int mod);
 
 protected:
-	GameEmGine* context;
+	GameEmGine* context;//this should ALWAYS be a GameEmGine object
 };
 

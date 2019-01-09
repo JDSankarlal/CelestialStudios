@@ -3,7 +3,8 @@
 #include "EmGineAudioPlayer.h"
 
 #pragma region Static Variables
-void(*GameEmGine::m_compileShaders)(), (*GameEmGine::m_render)(), (*GameEmGine::m_gameLoop)(double);
+void(*GameEmGine::m_compileShaders)(), (*GameEmGine::m_render)();
+std::function<void(double)>GameEmGine::m_gameLoop;
 Camera *GameEmGine::m_mainCamera;
 std::vector<Camera *>GameEmGine::m_cameras;
 Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
@@ -210,7 +211,7 @@ void GameEmGine::setScene(Scene* scene)
 	m_inputManager->mouseButtonPressCallback(scene->mousePressed);
 	m_inputManager->mouseButtonReleaseCallback(scene->mouseReleased);
 	m_render = scene->render;
-	m_gameLoop = scene->update;
+	m_gameLoop = [&](double a)->void {scene->update(a); };
 }
 
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)

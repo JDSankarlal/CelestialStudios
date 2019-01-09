@@ -125,7 +125,8 @@ private:
 	*/
 	static void update();
 	static void changeViewport(GLFWwindow * win, int w, int h);
-	static void(*m_compileShaders)(), (*m_render)(), (*m_gameLoop)(double);
+	static void(*m_compileShaders)(), (*m_render)();
+	static std::function<void(double)> m_gameLoop;
 	static WindowCreator *m_window;
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;

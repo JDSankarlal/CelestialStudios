@@ -4,6 +4,7 @@
 
 class Splash:public Scene
 {
+public:
 	// Set intro screen
 	Splash()
 	{
@@ -22,9 +23,7 @@ class Splash:public Scene
 		context->setFPSLimit(60);
 		context->setBackgroundColour(0.05f, 0.0f, 0.1f);
 
-		thisUpdate = update;
-
-		Scene::update = update;
+		
 
 	}
 
@@ -70,12 +69,11 @@ class Splash:public Scene
 	//updates within game loop
 	void update(double dt)
 	{
+		dt;
 		updateSplash();
 	}
 
 private:
-	static std::function<void(double)> thisUpdate;
-
 	std::vector<Model*> mod;
 	bool fadein = true;
 	bool fadeout = false;
