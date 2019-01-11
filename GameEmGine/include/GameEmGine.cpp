@@ -3,7 +3,8 @@
 #include "EmGineAudioPlayer.h"
 
 #pragma region Static Variables
-void(*GameEmGine::m_compileShaders)(), (*GameEmGine::m_render)();
+void(*GameEmGine::m_compileShaders)();
+std::function<void()>GameEmGine::m_render;
 std::function<void(double)>GameEmGine::m_gameLoop;
 Camera *GameEmGine::m_mainCamera;
 std::vector<Camera *>GameEmGine::m_cameras;
@@ -206,6 +207,7 @@ void GameEmGine::fpsLimiter()
 void GameEmGine::setScene(Scene* scene)
 {
 	m_mainScene = scene;
+	scene->init();
 	m_inputManager->keyPressedCallback(scene->keyPressed);
 	m_inputManager->keyReleasedCallback(scene->keyReleased);
 	m_inputManager->mouseButtonPressCallback(scene->mousePressed);

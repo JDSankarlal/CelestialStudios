@@ -1,12 +1,13 @@
 #pragma once
 #include <GameEmGine.h>
 #include <functional>
+#include "Intro.h"
 
 class Splash:public Scene
 {
 public:
 	// Set intro screen
-	Splash()
+	void init()
 	{
 		srand(clock());
 
@@ -14,7 +15,7 @@ public:
 		context->addModel(mod.back());
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
-		LightSource::setSceneAmbient({255,255,255,255});
+		LightSource::setSceneAmbient({0,0,0,255});
 
 		context->setCameraType(ORTHOGRAPHIC);
 		context->setCameraPosition({0,0,-100});
@@ -62,6 +63,7 @@ public:
 
 
 				//IntroInite();
+				context->setScene(new Intro);
 			}
 		}
 	}

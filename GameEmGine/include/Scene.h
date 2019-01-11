@@ -1,12 +1,14 @@
 #pragma once
+#include <functional>
+
 class GameEmGine;
 
 class Scene
 {
 public:
-	Scene() {}
 	virtual ~Scene() {}
 
+	virtual void init(){}
 
 	//shader initialization
 	virtual void shaderInit() {}
@@ -16,19 +18,20 @@ public:
 	//updates within game loop
 	virtual void update(double dt) { dt; }
 
-	void(*render)(void);
+	std::function<void(void)>render;
 
+	std::function<void(int,int)>
 	//instance key is pressed or held
-	void(*keyPressed)(int key, int mod);
+	keyPressed,
 
 	//instance key is released
-	void(*keyReleased)(int key, int mod);
+	keyReleased,
 
 	//instance button is pressed or held
-	void(*mousePressed)(int key, int mod);
+	mousePressed,
 
 	//instance button is released
-	void(*mouseReleased)(int key, int mod);
+	mouseReleased;
 
 protected:
 	GameEmGine* context;//this should ALWAYS be a GameEmGine object

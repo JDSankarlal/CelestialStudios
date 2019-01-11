@@ -1,7 +1,12 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include <GameEmGine.h>
+#include <EmGineAudioPlayer.h>
+#include <vector>
 #include "Player.h"
 #include "Boss.h"
+using std::vector;
+
 
 class Game:public Scene
 {
@@ -66,7 +71,7 @@ public:
 	}
 	
 	//instance key is pressed
-	static void keyInputPressed(int key, int modifier)
+	void keyInputPressed(int key, int modifier)
 	{
 		modifier;
 		m_left = (key == 'A' ? true : m_left);
@@ -85,7 +90,7 @@ public:
 	}
 
 	//instance key is released
-	static void keyInputReleased(int key, int modifier)
+	 void keyInputReleased(int key, int modifier)
 	{
 		modifier;
 		m_left = (key == 'A' ? false : m_left);
@@ -102,21 +107,21 @@ public:
 
 		//changes fps limit
 		if(key == GLFW_KEY_KP_6)
-			game.setFPSLimit(game.getFPSLimit() + 1);
+			context->setFPSLimit(context->getFPSLimit() + 1);
 		if(key == GLFW_KEY_KP_4)
-			game.setFPSLimit(game.getFPSLimit() - 1);
+			context->setFPSLimit(context->getFPSLimit() - 1);
 
 		if(key == GLFW_KEY_F) //Toggles Fullscreen
 		{
 			static bool full;
-			game.getWindow()->setFullScreen(full = !full);
+			context->getWindow()->setFullScreen(full = !full);
 			printf("Full Screen: %s\n", full ? "true" : "false");
 		}
 
 		if(key == GLFW_KEY_SPACE) //changes the model that is being moved
 		{
 			static CAMERA_TYPE type = PERSPECTIVE;
-			game.setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
+			context->setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 		}
 
 		if(key == GLFW_KEY_TAB)
@@ -126,17 +131,17 @@ public:
 		{
 			GameEmGine::m_modelShader->refresh();
 
-			//game.setCameraAngle(0, { 1, 1, 1 });
-			//	game.setCameraPosition({0,0,0});
+			//context->setCameraAngle(0, { 1, 1, 1 });
+			//	context->setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
-			game.setCameraAngle(0, {1,1,1});
+			context->setCameraAngle(0, {1,1,1});
 
 		printf("key RELEASED code: %d\n\n", key);
 	}
 
-	static void mouseButtonReleased(int button, int _mod)
+	 void mouseButtonReleased(int button, int _mod)
 	{
 		_mod;
 		if(button == LEFT_BUTTON)
@@ -146,22 +151,22 @@ public:
 	}
 
 	// Set game screen
-	void GamePlayInit()
+	void init()
 	{
 
-		game.setCameraType(PERSPECTIVE);
-		game.setFPSLimit(60);
+		context->setCameraType(PERSPECTIVE);
+		context->setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
 		//Players
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		game.addModel(mod.back());//0
+		context->addModel(mod.back());//0
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		game.addModel(mod.back());//1
+		context->addModel(mod.back());//1
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		game.addModel(mod.back());//2
+		context->addModel(mod.back());//2
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		game.addModel(mod.back());//3
+		context->addModel(mod.back());//3
 
 		static Animation walk[4], idle[4];
 
@@ -186,56 +191,56 @@ public:
 
 		//Building 1s
 		mod.push_back(new Model("Models/Buildings/Building1/building1.obj"));
-		game.addModel(mod.back());//4
+		context->addModel(mod.back());//4
 		mod.push_back(new Model(*mod[4]));
-		game.addModel(mod.back());//5
+		context->addModel(mod.back());//5
 		mod.push_back(new Model(*mod[4]));
-		game.addModel(mod.back());//6
+		context->addModel(mod.back());//6
 
 		//Project Nebula Sign
 		mod.push_back(new Model("Models/Neon Signs/Project Nebula/signn.obj"));
-		game.addModel(mod.back()); //7
+		context->addModel(mod.back()); //7
 
 		//Boss
 		mod.push_back(new Boss("Models/BOSS/BOSS.obj"));
-		game.addModel(mod.back()); //8
+		context->addModel(mod.back()); //8
 		//mod[8]->enableBoundingBox(true);
 
 		//Floor
 		mod.push_back(new Model("Models/Floor/Floor.obj"));
-		game.addModel(mod.back()); //9
+		context->addModel(mod.back()); //9
 
 		//Light Posts
 		mod.push_back(new Model("Models/Lamp/lampPost.obj"));
-		game.addModel(mod.back()); //10
+		context->addModel(mod.back()); //10
 		mod.push_back(new Model(*mod[10]));
-		game.addModel(mod.back());//11
+		context->addModel(mod.back());//11
 		mod.push_back(new Model(*mod[10]));
-		game.addModel(mod.back());//12
+		context->addModel(mod.back());//12
 		mod.push_back(new Model(*mod[10]));
-		game.addModel(mod.back());//13
+		context->addModel(mod.back());//13
 		mod.push_back(new Model(*mod[10]));
-		game.addModel(mod.back());//14
+		context->addModel(mod.back());//14
 		mod.push_back(new Model(*mod[10]));
-		game.addModel(mod.back());//15
+		context->addModel(mod.back());//15
 
 		//Bench
 		mod.push_back(new Model("Models/Bench/Bench.obj"));
-		game.addModel(mod.back()); //16
+		context->addModel(mod.back()); //16
 		mod.push_back(new Model(*mod[16]));
-		game.addModel(mod.back());//17
+		context->addModel(mod.back());//17
 
 		//Planet
 		mod.push_back(new Model("Models/Planet/planet.obj"));
-		game.addModel(mod.back()); //18
+		context->addModel(mod.back()); //18
 
 		//Building 2s
 		mod.push_back(new Model("Models/Buildings/Building2/building2.obj"));
-		game.addModel(mod.back());//19
+		context->addModel(mod.back());//19
 		mod.push_back(new Model(*mod[19]));
-		game.addModel(mod.back());//20
+		context->addModel(mod.back());//20
 		mod.push_back(new Model(*mod[19]));
-		game.addModel(mod.back());//21
+		context->addModel(mod.back());//21
 
 		//GraveStones
 		mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj")); //22
@@ -251,80 +256,80 @@ public:
 
 		//Building 3s
 		mod.push_back(new Model("Models/Buildings/Building3/House.obj"));
-		game.addModel(mod.back());//30
+		context->addModel(mod.back());//30
 		mod.push_back(new Model(*mod[30]));
-		game.addModel(mod.back());//31
+		context->addModel(mod.back());//31
 		mod.push_back(new Model(*mod[30]));
-		game.addModel(mod.back());//32
+		context->addModel(mod.back());//32
 
 		//Building 4s
 		mod.push_back(new Model("Models/Buildings/Building4/tallBuilding.obj"));
-		game.addModel(mod.back());//33
+		context->addModel(mod.back());//33
 		mod.push_back(new Model(*mod[33]));
-		game.addModel(mod.back());//34
+		context->addModel(mod.back());//34
 
 		mod.push_back(new Model("Models/DiedTree/tree.obj"));
-		game.addModel(mod.back());//35
+		context->addModel(mod.back());//35
 		mod.push_back(new Model(*mod[35]));
-		game.addModel(mod.back());//36
+		context->addModel(mod.back());//36
 		mod.push_back(new Model(*mod[35]));
-		game.addModel(mod.back());//37
+		context->addModel(mod.back());//37
 		mod.push_back(new Model(*mod[35]));
-		game.addModel(mod.back());//38
+		context->addModel(mod.back());//38
 
 		mod.push_back(new Model("Models/Buildings/Building5/smallShop.obj"));
-		game.addModel(mod.back());//39
+		context->addModel(mod.back());//39
 		mod.push_back(new Model(*mod[39]));
-		game.addModel(mod.back());//40
+		context->addModel(mod.back());//40
 		mod.push_back(new Model(*mod[39]));
-		game.addModel(mod.back());//41
+		context->addModel(mod.back());//41
 
 		mod.push_back(new Model("Models/Buildings/Building6/Building6.obj"));
-		game.addModel(mod.back());//42
+		context->addModel(mod.back());//42
 		mod.push_back(new Model(*mod[42]));
-		game.addModel(mod.back());//43
+		context->addModel(mod.back());//43
 
 		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
-		game.addModel(mod.back()); //44
+		context->addModel(mod.back()); //44
 		mod.push_back(new Model(*mod[44]));
-		game.addModel(mod.back());//45
+		context->addModel(mod.back());//45
 		mod.push_back(new Model(*mod[44]));
-		game.addModel(mod.back());//46
+		context->addModel(mod.back());//46
 		mod.push_back(new Model(*mod[44]));
-		game.addModel(mod.back());//47
+		context->addModel(mod.back());//47
 
 		mod.push_back(new Model("Models/Bullet/bullet.obj"));//48
 
 		mod.push_back(new Model("Models/Trash/TrashCan.obj"));
-		game.addModel(mod.back()); //49
+		context->addModel(mod.back()); //49
 		mod.push_back(new Model(*mod[49]));
-		game.addModel(mod.back());//50
+		context->addModel(mod.back());//50
 
 		mod.push_back(new Model("Models/Picnic/PicnicTable.obj"));
-		game.addModel(mod.back()); //51
+		context->addModel(mod.back()); //51
 		mod.push_back(new Model(*mod[51]));
-		game.addModel(mod.back());//52
+		context->addModel(mod.back());//52
 
 		mod.push_back(new Model("Models/PizzaSign/PIZZA.obj"));
-		game.addModel(mod.back()); //53
+		context->addModel(mod.back()); //53
 
 		mod.push_back(new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj"));
-		game.addModel(mod.back()); //54
+		context->addModel(mod.back()); //54
 		mod.push_back(new Model(*mod[54]));
-		game.addModel(mod.back()); //55
+		context->addModel(mod.back()); //55
 		mod.push_back(new Model(*mod[54]));
-		game.addModel(mod.back()); //56
+		context->addModel(mod.back()); //56
 		mod.push_back(new Model(*mod[54]));
-		game.addModel(mod.back()); //57
+		context->addModel(mod.back()); //57
 
 		mod.push_back(new Model("Models/Planet/Planet2/planet.obj"));
-		game.addModel(mod.back()); //58
+		context->addModel(mod.back()); //58
 		//Pause Menu
 		//mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
 
 		//collision floor
 		mod.push_back(new Model("Models/Floor/Floor2.obj"));//59
-		game.addModel(mod[59]);
+		context->addModel(mod[59]);
 
 		mod[59]->setToRender(false);
 		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
@@ -332,15 +337,15 @@ public:
 		//missile hit box
 		mod.push_back(new Model(*mod[44]));//60
 
-		game.addModel(mod.back()); //44
+		context->addModel(mod.back()); //44
 		mod[60]->setToRender(false);
 		mod[60]->getTransformer().setScale(6, 1, 1);
 		mod.push_back(new Model(*mod[60]));//61
-		game.addModel(mod.back());//45
+		context->addModel(mod.back());//45
 		mod.push_back(new Model(*mod[60]));//62
-		game.addModel(mod.back());//46
+		context->addModel(mod.back());//46
 		mod.push_back(new Model(*mod[60]));//63
-		game.addModel(mod.back());//47
+		context->addModel(mod.back());//47
 
 
 		//mod[61]->setToRender(false);
@@ -534,24 +539,23 @@ public:
 
 		/// - Set Camera - ///
 
-		game.setCameraPosition({0,15,-10});
-		game.setCameraAngle(-45, {1,0,0});
+		context->setCameraPosition({0,15,-10});
+		context->setCameraAngle(-45, {1,0,0});
 
 		/// not needed ///
-		keyPressed = (keyInputPressed);
-		keyReleased = (keyInputReleased);
-		mouseReleased = (mouseButtonReleased);
+		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
+		keyReleased = [=](int a, int b) {keyInputReleased(a, b); };
+		mouseReleased = [=](int a, int b) {mouseButtonReleased(a, b); };
 
 
-		audio.createAudioStream("Game Jam(Full).wav");
-
-		audio.play(true);
+		//audio.createAudioStream("Game Jam(Full).wav");
+		//
+		//audio.play(true);
 	}
 
 	//updates within game loop
 	void update(double dt)
 	{
-		menu = false;
 		static float  time = 0;
 		time += (float)dt;
 		//static float coolDown = 0;
@@ -655,12 +659,12 @@ public:
 			if(movePlayer)
 				for(int a = 0; a < 4; a++)
 				{
-					if(game.isControllerConnected(a))
+					if(context->isControllerConnected(a))
 					{
 						if(!dead[a])
 						{
 							player = (Player*)mod[a];
-							Xinput p1 = game.getController(a);
+							Xinput p1 = context->getController(a);
 
 							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 							{
@@ -696,11 +700,11 @@ public:
 								dead[a] = true;
 								mod[22 + a]->setColour(player->getColour());
 								mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(player->getTransformer().getPosition()), mod[22 + a]->getTransformer().setRotation({0.0f,270.0f,0.0f});
-								game.addModel(mod[22 + a]);
+								context->addModel(mod[22 + a]);
 								mod[22 + a]->addAnimation("squash", &squash[a]);
 
 								mod[22 + a]->setAnimation("squash");
-								game.removeModel(player);
+								context->removeModel(player);
 							}
 							if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 							{
@@ -709,7 +713,7 @@ public:
 									makeShitLessCancer[a] = true;
 
 									bullets[a].push_back(nullptr);
-									game.addModel(bullets[a].back() = new Model(*mod[48]));
+									context->addModel(bullets[a].back() = new Model(*mod[48]));
 									bullets[a].back()->getTransformer().reset();
 									bullets[a].back()->setColour(player->getColour());
 									Coord3D pos = mod[a]->getTransformer().getPosition();
@@ -739,7 +743,7 @@ public:
 							if(p1.buttonPressed(p1.buttons.START))
 							{
 								puts("\nExiting Game\n");
-								game.exit();
+								context->exit();
 							}
 							if(p1.buttonPressed(p1.buttons.X))
 							{
@@ -751,7 +755,7 @@ public:
 								if(time - player->getTimeSinceLastMissile() >= 3)
 								{
 									pMissiles[a].push_back(nullptr);
-									game.addModel(pMissiles[a].back() = new Model(*mod[44]));
+									context->addModel(pMissiles[a].back() = new Model(*mod[44]));
 									pMissiles[a].back()->getTransformer().reset();
 									pMissiles[a].back()->setColour(player->getColour());
 									Coord3D pos = mod[a]->getTransformer().getPosition();
@@ -838,7 +842,7 @@ public:
 
 								if(timer[a][b] >= 1)
 								{
-									game.removeModel(bullets[a][b]);
+									context->removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
 									velocity[a].erase(velocity[a].begin() + b);
 									timer[a].erase(timer[a].begin() + b);
@@ -848,7 +852,7 @@ public:
 								if(mod[8])
 									if(collisions(bullets[a][b], mod[8]))
 									{
-										game.removeModel(bullets[a][b]);
+										context->removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
 										velocity[a].erase(velocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
@@ -856,7 +860,7 @@ public:
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
-											game.removeModel(CandyMan); // If health = 0 then boss dead
+											context->removeModel(CandyMan); // If health = 0 then boss dead
 											//	mod[8] = nullptr;
 											bossActive = false;
 											puts("Killed The BOSS\n");
@@ -873,7 +877,7 @@ public:
 
 								if(timer[a][b] >= 1)
 								{
-									game.removeModel(pMissiles[a][b]);
+									context->removeModel(pMissiles[a][b]);
 									pMissiles[a].erase(pMissiles[a].begin() + b);
 									missileVelocity[a].erase(missileVelocity[a].begin() + b);
 									timer[a].erase(timer[a].begin() + b);
@@ -883,7 +887,7 @@ public:
 								if(mod[8])
 									if(collisions(pMissiles[a][b], mod[8]))
 									{
-										game.removeModel(pMissiles[a][b]);
+										context->removeModel(pMissiles[a][b]);
 										pMissiles[a].erase(pMissiles[a].begin() + b);
 										missileVelocity[a].erase(missileVelocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
@@ -891,7 +895,7 @@ public:
 										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
-											game.removeModel(CandyMan); // If health = 0 then boss dead
+											context->removeModel(CandyMan); // If health = 0 then boss dead
 											//	mod[8] = nullptr;
 											bossActive = false;
 											puts("Killed The BOSS\n");
@@ -912,9 +916,9 @@ public:
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 
 		if(!movePlayer)
-			if(game.isControllerConnected(0))
+			if(context->isControllerConnected(0))
 			{
-				Xinput p1 = game.getController(0);
+				Xinput p1 = context->getController(0);
 
 				p1.numButtons;
 				p1.numSticks;
@@ -935,15 +939,31 @@ public:
 				//move camera
 				move *= 2;
 
-				game.moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
-				game.moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
-				//game.getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
-				game.moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
-				game.moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
+				context->moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
+				context->moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
+				//context->getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+				context->moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
+				context->moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;
 			}
 		//}
 		init = true;
 	}
+
+private:
+	std::vector<Model*> mod;
+	bool fadein = true;
+	bool fadeout = false;
+	float splashT = 0;
+	GLubyte splashAmbient = 0; 
+
+	float ang = 2;
+	int numModel = 0;
+	bool m_left = 0, m_right = 0, m_in = 0, m_out = 0, m_up = 0, m_down = 0,
+		rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0,
+		movePlayer = true;
+	Coord2D leftM, rightM;
+	EmGineAudioPlayer audio;
+	bool pause = true;
 };
 

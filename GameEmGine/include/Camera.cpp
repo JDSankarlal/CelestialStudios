@@ -12,7 +12,7 @@ Camera::~Camera()
 void Camera::init(Size3D size, CAMERA_TYPE type)
 {
 	int w, h;
-	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h); //window size in pixles
+	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h); //window size in pixels
 	size.width /= w;
 	size.height /= h;
 	*m_size = size;
@@ -30,6 +30,7 @@ void Camera::setType(CAMERA_TYPE type)
 		break;
 	case PERSPECTIVE:
 		m_projMat = glm::perspective(glm::radians(90.f), m_size->width / m_size->height, .001f, m_size->depth);
+		break;
 	default:
 		m_projMat = glm::mat4(1);
 	}

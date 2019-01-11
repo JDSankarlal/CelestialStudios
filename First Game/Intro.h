@@ -1,16 +1,16 @@
 #pragma once
 #include <GameEmGine.h>
+#include "Menu.h"
 class Intro:public Scene
 {
 public:
 	// Set splash screen and start update
-	void IntroInite()
+	void init()
 	{
-		intro = true;
-
+		
 		mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
-		game.addModel(mod.back());
-		LightSource::setSceneAmbient({255,255,255,255});
+		context->addModel(mod.back());
+		LightSource::setSceneAmbient({0,0,0,255});
 	}
 
 	// doing the update for intro screen
@@ -38,7 +38,7 @@ public:
 			LightSource::setAttenuationQuadratic(0.04f, 0);
 			LightSource::setDirection({0.0f,0.0f,.0f}, 0);
 		}
-		if(Xinput::buttonPressed(game.getController(0).buttons.A))
+		if(Xinput::buttonPressed(context->getController(0).buttons.A))
 		{
 			fadeout = true;
 		}
@@ -55,10 +55,12 @@ public:
 				splashT = 0;
 				splashAmbient = 255;
 
-				intro = false;
-				game.removeModel(mod[0]);
+				context->removeModel(mod[0]);
 				mod.clear();
-				menuInite();
+				
+				
+				//menuInite();
+				context->setScene(new Menu);
 			}
 		}
 	}
@@ -66,10 +68,17 @@ public:
 	//updates within game loop
 	void update(double dt)
 	{
-
+		dt;
 		updateIntro();
 
 	}
+
+private:
+	std::vector<Model*> mod;
+	bool fadein = true;
+	bool fadeout = false;
+	float splashT = 0;
+	GLubyte splashAmbient = 0;
 };
 
 
