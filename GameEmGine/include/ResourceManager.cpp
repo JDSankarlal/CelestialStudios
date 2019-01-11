@@ -1,8 +1,8 @@
 #include "ResourceManager.h"
 
-Texture2DCache ResourceManager::m_texter2DCache;
+std::map<std::string, Texture2D> Texture2DCache::m_textures;
 //Texture3DCache ResourceManager::m_texture3DCache;
-ShaderCache ResourceManager::m_shaderCache;
+std::map<std::vector<std::string>, Shader>  ShaderCache::m_shaders;
 
 Texture2D& Texture2DCache::getTexture(const char * path)
 {
@@ -33,7 +33,7 @@ Texture2D& Texture2DCache::getTexture(const char * path)
 
 Shader& ShaderCache::getShader(const char * vtsh, const char* fmsh)
 {	
-	auto it = m_shaders.find({vtsh,fmsh});
+	auto it = m_shaders.find({std::string(vtsh),std::string(fmsh)});
 
 	if(it == m_shaders.end())
 	{
@@ -50,7 +50,7 @@ Shader& ShaderCache::getShader(const char * vtsh, const char* fmsh)
 Texture2D ResourceManager::getTexture2D(const char *path)
 {
 	Texture2D tmp;
-	return tmp = m_texter2DCache.getTexture(path);
+	return tmp = Texture2DCache::getTexture(path);
 }
 
 
@@ -59,9 +59,9 @@ Texture2D ResourceManager::getTexture2D(const char *path)
 //	return m_texture3DCache.getTexture(path);
 //}
 
-Shader ResourceManager::getShader(const char *vtsh, const char *fmsh)
+Shader& ResourceManager::getShader(const char *vtsh, const char *fmsh)
 {
 	Shader tmp;
-	return tmp = m_shaderCache.getShader(vtsh, fmsh);
+	return tmp = ShaderCache::getShader(vtsh, fmsh);
 }
 

@@ -160,8 +160,7 @@ void GameEmGine::shaderInit()
 {
 	//m_cameraShader = new GLSLCompiler;
 	//m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
-	m_modelShader = new Shader;
-	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
+	m_modelShader = &ResourceManager::getShader("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 }
 
 void GameEmGine::calculateFPS()
