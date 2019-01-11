@@ -1,6 +1,10 @@
 #pragma once
 #include <functional>
 
+/*
+Tricking the  system to think the 
+GameEmgine class is created
+*/
 class GameEmGine;
 
 class Scene
@@ -8,15 +12,16 @@ class Scene
 public:
 	virtual ~Scene() {}
 
-	virtual void init(){}
 
 	//shader initialization
 	virtual void shaderInit() {}
 
+	//works without it for some reason
 	inline void setContext(GameEmGine* game) { context = game; }
 
 	//updates within game loop
-	virtual void update(double dt) { dt; }
+	virtual void update(double dt) = 0;
+	virtual void init() = 0;
 
 	std::function<void(void)>render;
 

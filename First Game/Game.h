@@ -5,12 +5,16 @@
 #include <vector>
 #include "Player.h"
 #include "Boss.h"
+
+typedef EmGineAudioPlayer AudioPlayer;
 using std::vector;
 
 
 class Game:public Scene
 {
 public:
+	Game():audio(AudioPlayer()) {}
+
 	/// - Collision Class - ///
 	bool collisions(Model *l, Model *k)
 	{
@@ -69,7 +73,7 @@ public:
 
 		return false;
 	}
-	
+
 	//instance key is pressed
 	void keyInputPressed(int key, int modifier)
 	{
@@ -90,7 +94,7 @@ public:
 	}
 
 	//instance key is released
-	 void keyInputReleased(int key, int modifier)
+	void keyInputReleased(int key, int modifier)
 	{
 		modifier;
 		m_left = (key == 'A' ? false : m_left);
@@ -141,7 +145,7 @@ public:
 		printf("key RELEASED code: %d\n\n", key);
 	}
 
-	 void mouseButtonReleased(int button, int _mod)
+	void mouseButtonReleased(int button, int _mod)
 	{
 		_mod;
 		if(button == LEFT_BUTTON)
@@ -547,10 +551,11 @@ public:
 		keyReleased = [=](int a, int b) {keyInputReleased(a, b); };
 		mouseReleased = [=](int a, int b) {mouseButtonReleased(a, b); };
 
+		AudioPlayer::init();
 
-		//audio.createAudioStream("Game Jam(Full).wav");
-		//
-		//audio.play(true);
+		audio.createAudioStream("Game Jam(Full).wav");
+
+		audio.play(true);
 	}
 
 	//updates within game loop
@@ -652,7 +657,7 @@ public:
 				squash[a].setAnimationSpeed(.2f);
 				//	squash[a].repeat(true);
 			}
-
+			init = true;
 		}
 
 		if(init)
@@ -946,8 +951,8 @@ public:
 				context->moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;
 			}
-		//}
-		init = true;
+
+
 	}
 
 private:
@@ -955,7 +960,7 @@ private:
 	bool fadein = true;
 	bool fadeout = false;
 	float splashT = 0;
-	GLubyte splashAmbient = 0; 
+	GLubyte splashAmbient = 0;
 
 	float ang = 2;
 	int numModel = 0;
@@ -963,7 +968,7 @@ private:
 		rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0,
 		movePlayer = true;
 	Coord2D leftM, rightM;
-	EmGineAudioPlayer audio;
+	AudioPlayer audio;
 	bool pause = true;
 };
 

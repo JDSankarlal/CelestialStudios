@@ -11,7 +11,7 @@ public:
 		context->addModel(mod.back());
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
-		LightSource::setSceneAmbient({255,255,255,255});
+		LightSource::setSceneAmbient({0,0,0,255});
 	}
 
 	// doing the update for menu screen

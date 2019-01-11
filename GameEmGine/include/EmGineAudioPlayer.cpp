@@ -36,7 +36,6 @@ void EmGineAudioPlayer::disable()
 	m_channels->clear();
 }
 
-
 void EmGineAudioPlayer::createAudio(const char * file)
 {
 	Audio* newSound;
@@ -167,10 +166,10 @@ void EmGineAudioPlayer::stopAll()
 	cg->setPaused(paused);
 }
 
-uint EmGineAudioPlayer::getPosition(uint index)
+uint EmGineAudioPlayer::getPosition(uint index, FMOD_TIMEUNIT type)
 {
 	uint pos;
-	m_channels[0][index]->getPosition(&pos, FMOD_TIMEUNIT_MS);
+	m_channels[0][index]->getPosition(&pos, type);
 	return pos;
 }
 
