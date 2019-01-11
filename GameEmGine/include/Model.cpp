@@ -165,6 +165,7 @@ Coord3D Model::getCenter()
 
 void Model::boundingBoxUpdate(Camera& cam)
 {
+	cam;
 	m_front = m_back = m_top = m_bottom = m_left = m_right = Coord3D(0, 0, 0);
 	std::vector<glm::vec4> thing
 	{

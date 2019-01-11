@@ -1,31 +1,28 @@
 #pragma once
 #include <GL\glew.h>
-#include <GLFW/glfw3.h>
+#include <GLFW\glfw3.h>
 #include <ctime>
 #include <vector>
 #include <string>
 #include <thread>
+#include <functional>
+#include "Scene.h"
 #include "ShaderCombiner.h"
-//#include "EmGineAudioPlayer.h"
-//#include "Sprite.h"
 #include "Shader.h"
 #include "WindowCreator.h"
 #include "Camera.h"
 #include "Model.h"
 #include "ExtraMath.h"
-//#include "ModelBatch.h"
 #include "InputManager.h"
 #include "FrameBuffer.h"
 #include "LightSource.h"
-
-//will get joystic input latter :>
 
 
 
 class GameEmGine
 {
 public:
-	GameEmGine();
+	GameEmGine()=delete;
 	GameEmGine(std::string name, int width, int height, int x = 0, int y = 0, int monitor = 0, bool fullScreen = false, bool visable = true);
 	~GameEmGine();
 #define sleep(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
@@ -44,49 +41,20 @@ public:
 	Exists the game
 	*/
 	void exit();
+	
 
-	/*
-	Callback for whenever any key is pressed
-	*/
-	void keyPressed(void key(int key, int mod));
-	/*
-	Callback for whenever any key is released
-	*/
-	void keyReleased(void key(int key, int mod));
-	/*
+	void setScene(Scene* scene);
 
-	/*
-	Callback for whenever any mouse button is pressed
-	*/
-	void mouseButtonPressed(void button(int key, int mod));
-	/*
-	Callback for whenever any mouse button is released
-	*/
-	void mouseButtonReleased(void button(int key, int mod));
-	/*
-
-
-	What the game must render each update
-	*/
-	void renderUpdate(void update());
-	/*
-	  intializes any shaders
-	*/
-	void shaderInit(void shaders());
-	/*
-	 What the game must do each update
-	*/
-	void gameLoopUpdate(void update(double));
 	/*
 	Set background colour
 	*/
 	void setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1);
 	/*
-	Gets window width in pixles
+	Gets window width in pixels
 	*/
 	int getWindowWidth();
 	/*
-	Gets window height in pixles
+	Gets window height in pixels
 	*/
 	int getWindowHeight();
 
@@ -95,11 +63,11 @@ public:
 	void setCameraType(CAMERA_TYPE type);
 
 	/*
-	moves the camera position in pixles
+	moves the camera position in pixels
 	*/
 	void moveCameraPositionBy(Coord3D pos);
 	/*
-	sets the camera position in pixles
+	sets the camera position in pixels
 	*/
 	void setCameraPosition(Coord3D pos);
 
@@ -151,21 +119,25 @@ private:
 	void shaderInit();
 	void calculateFPS();
 	void fpsLimiter();
-
+	void initFullScreenQuad();
+	void drawQuad();
 	/*static void InitOpenGlCallback ();
 	static void OpenGLDebugCallback (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * data);
 	*/
 	static void update();
 	static void changeViewport(GLFWwindow * win, int w, int h);
-	static void(*m_compileShaders)(), (*m_render)(), (*m_gameLoop)(double);
+	static void(*m_compileShaders)();
+	static std::function<void()>m_render;
+	static std::function<void(double)> m_gameLoop;
 	static WindowCreator *m_window;
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
 //	static ModelBatch* m_modelBatch;
-	static FrameBuffer m_mainBuffer;
+	static FrameBuffer* m_mainBuffer;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;
+	static Scene* m_mainScene;
 
 	static bool exitGame;
 	static float m_fps;

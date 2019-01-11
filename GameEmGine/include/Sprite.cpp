@@ -183,7 +183,9 @@ void Sprite::setRotation(float deg)
 }
 
 void Sprite::rotateBy(float deg)
-{}
+{
+	deg;
+}
 
 Size2D & Sprite::getSize()
 {

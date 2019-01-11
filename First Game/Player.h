@@ -11,7 +11,7 @@ public:
 	void setHealth(int v);
 	int getBulletCount();
 	void setBulletCount(int v);
-	int getTimeSinceLastMissile();
+	float getTimeSinceLastMissile();
 	void setTimeSinceLastMissile(float v);
 
 private:

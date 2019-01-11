@@ -31,13 +31,13 @@ void cDir(char *dir)
 {
 	char* tmp;
 	if(strlen(dir) > 0)
-		while(tmp = strchr(dir, '\\'))
+		while(bool(tmp = strchr(dir, '\\')))
 		{
 			tmp[0] = '/';
 		}
 
 	if(strlen(dir) > 1)
-		while(tmp = strstr(dir, "//"))
+		while(bool(tmp = strstr(dir, "//")))
 		{
 			memmove_s(tmp, strlen(tmp), tmp + 1, strlen(tmp + 1));
 			dir[strlen(dir) - 1] = 0;
@@ -218,7 +218,7 @@ bool Mesh::loadMesh(std::string path)
 			faces.push_back({ std::string(str),std::vector< Vertex3D>() });
 		} else if(strstr(inputBuff, "vt"))
 		{
-			//UV Dat
+			//UV data
 
 			UV tmp;
 			sscanf_s(inputBuff, "vt %f %f", &tmp.uv_u, &tmp.uv_v);
@@ -235,13 +235,13 @@ bool Mesh::loadMesh(std::string path)
 			continue;
 		else if(strchr(inputBuff, 'f'))//Collect Face Data
 		{
-			//Face Dat
+			//Face data
 
 			Vertex3D tmp;
 
 			char check = 0;
 			unsigned counter = 0, count = 0;
-			while(check = inputBuff[counter++])
+			while(bool(check = inputBuff[counter++]))
 				count += (check == '/');
 
 			count /= 2;
@@ -340,7 +340,7 @@ bool Mesh::loadMesh(std::string path)
 			{
 				Vertex3D tmp;
 
-				//set Verticies
+				//set Vertices
 				tmp.setCoord(
 					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].x,
 					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].y,
@@ -429,7 +429,7 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 			faces.push_back({ std::string(str),std::vector< Vertex3D>() });
 		} else if(strstr(inputBuff, "vt"))
 		{
-			//UV Dat
+			//UV Data
 
 			UV tmp;
 			sscanf_s(inputBuff, "vt %f %f", &tmp.uv_u, &tmp.uv_v);
@@ -446,13 +446,13 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 			continue;
 		else if(strchr(inputBuff, 'f'))//Collect Face Data
 		{
-			//Face Dat
+			//Face Data
 
 			Vertex3D tmp;
 
 			char check = 0;
 			unsigned counter = 0, count = 0;
-			while(check = inputBuff[counter++])
+			while(bool(check = inputBuff[counter++]))
 				count += (check == '/');
 
 			count /= 2;
@@ -551,7 +551,7 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 			{
 				Vertex3D tmp;
 
-				//set Verticies
+				//set Vertices
 				tmp.setCoord(
 					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].x,
 					verts[(unsigned int)(faces[a].second[c].coord[b] - 1)].y,
@@ -592,6 +592,7 @@ void Mesh::render(Shader& shader)
 	{
 		bool textured = false;
 		int c = 0;
+
 		for(unsigned b = 0; b < m_textures.size(); b++)
 		{
 			if(m_textures[b].first == m_vaoID[a].first)
@@ -656,22 +657,22 @@ void Mesh::init()
 		glEnableVertexAttribArray(3);
 		glEnableVertexAttribArray(4);
 
-		//vertex 1   atributes
+		//vertex 1   attributes
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
 
-		//UV         atributes
+		//UV         attributes
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, uv));
 
-		//normal 1   atributes
+		//normal 1   attributes
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vboID[a].second);
 		glBufferData(GL_ARRAY_BUFFER, m_unpackedData[a].second.size() * sizeof(Vertex3D), m_unpackedData[a].second.data(), GL_STATIC_DRAW);
-		//vertex 2   atributes
+		//vertex 2   attributes
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
 
-		//normal 2   atributes
+		//normal 2   attributes
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
 	}
 
@@ -695,13 +696,13 @@ void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>>
 
 		glBufferData(GL_ARRAY_BUFFER, verts1[a].second.size() * sizeof(Vertex3D), verts1[a].second.data(), GL_DYNAMIC_DRAW);
 
-		//vertex 1   atributes
+		//vertex 1   attributes
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
 
-		//UV         atributes
+		//UV         attributes
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, uv));
 
-		//normal 1   atributes
+		//normal 1   attributes
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
 
 
@@ -710,10 +711,10 @@ void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>>
 		glBufferData(GL_ARRAY_BUFFER, verts2[a].second.size() * sizeof(Vertex3D), verts2[a].second.data(), GL_DYNAMIC_DRAW);
 
 
-		//vertex 2   atributes
+		//vertex 2   attributes
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)(offsetof(Vertex3D, coord)));
 
-		//normal 2   atributes
+		//normal 2   attributes
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)(offsetof(Vertex3D, norm)));
 	}
 

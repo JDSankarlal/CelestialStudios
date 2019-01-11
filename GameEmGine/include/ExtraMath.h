@@ -14,7 +14,7 @@ inline T bezier(const T &p0, const T &t1, const T &t2, const T &p3, const float 
 template<typename T>
 inline T lerp(const T &v0, const T &v1, const float& t)
 {
-	return (1.0f - t) * v0 + (t)* v1;
+	return (T)((1.0f - t) * v0 + (t)* v1);
 }
 
 inline int vectorWrap(int num, int mod)

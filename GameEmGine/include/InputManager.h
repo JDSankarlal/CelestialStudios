@@ -1,6 +1,7 @@
 #pragma once
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
+#include <functional>
 #include "StructInfo.h"
 
 /***Enums***/
@@ -72,10 +73,10 @@ struct Xinput
 
 	union
 	{
-		struct 
+		struct
 		{
 			unsigned char A, B, X, Y, LB, RB, SELECT, START, L_STICK_BUTTON, R_STICK_BUTTON, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, DPAD_LEFT;
-		} ;
+		};
 		unsigned char data[14];
 	}buttons;
 
@@ -86,7 +87,7 @@ struct Xinput
 	void updateSticks(int index)
 	{
 		delete[] Coord2D_sticks;
-		float* sticks = (float*) glfwGetJoystickAxes(index, &numSticks);
+		float* sticks = (float*)glfwGetJoystickAxes(index, &numSticks);
 		this->Coord2D_sticks = new Coord2D[(numSticks - 2) / 2];
 		for(int a = 0; a < numSticks - 2; a += 2)
 			this->Coord2D_sticks[a / 2] = {sticks[a],sticks[a + 1]};
@@ -133,6 +134,10 @@ public:
 	InputManager();
 	~InputManager();
 
+	void mouseButtonPressCallback(std::function<void(int, int)> mouseButton);
+
+	void mouseButtonReleaseCallback(std::function<void(int, int)> mouseButton);
+
 	void mouseButtonPressCallback(void mouseButton(int button, int mods));
 
 	void mouseButtonReleaseCallback(void mouseButton(int button, int mods));
@@ -140,6 +145,18 @@ public:
 	void mouseButtonAllCallback(void mouseButton(int state, int button, int mods));
 
 	static Coord2D getMouseCursorPosition();
+
+	void keyPressedCallback(std::function<void(int, int)> key);
+
+	void keyReleasedCallback(std::function<void(int, int)> key);
+
+	void keyAllCallback(std::function<void(int, int, int)> key);
+
+	void controllerConnectedCallback(std::function<void(int)> controllerConnection);
+
+	void controllerDisconnectedCallback(std::function<void(int)> controllerConnection);
+
+	void controllerAllConnectionCallback(std::function<void(int, int)> connected);
 
 	/*
 	Callback for whenever any key is pressed or held
@@ -178,9 +195,21 @@ private:
 	static void mouseButtonUpdate(GLFWwindow *, int button, int action, int mods);
 	static void keyUpdate(GLFWwindow *, int key, int scancode, int action, int mods);
 	static void xinputConnectionUpdate(int controller, int connected);
-	static void(*_keyUp)(int, int), (*_keyInitDown)(int, int), (*_keyAll)(int, int, int),
-		(*_mouseButtonPress)(int, int), (*_mouseButtonRelease)(int, int), (*_mouseButtonAll)(int, int, int),
-		(*m_controllerConnection)(int, int), (*m_controllerConneced)(int), (*m_controllerDisconnected)(int);
+
+	void mouseButtonAllCallback(std::function<void(int, int, int)> mouseButton);
+	
+	static std::function<void(int)>
+		m_controllerConneced,
+		m_controllerDisconnected;
+	static std::function<void(int, int)>
+		_keyUp, 
+		_keyInitDown, 
+		_mouseButtonPress,
+		_mouseButtonRelease,
+		m_controllerConnection;
+	static std::function<void(int, int, int)>
+		_keyAll,
+		_mouseButtonAll;
 };
 
 //template<class T>

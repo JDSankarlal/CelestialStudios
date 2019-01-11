@@ -10,13 +10,23 @@
     <Filter Include="Logs">
       <UniqueIdentifier>{baffc3e5-45fb-4afd-a53d-0d3844a665bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Characters">
+      <UniqueIdentifier>{9a46be63-5f46-4a84-ace4-ff8ba4fc0184}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{1edef0dd-89e1-478e-8335-f3e92bc59db6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Main Game</Filter>
     </ClCompile>
-    <ClCompile Include="Boss.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Boss.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Logs\New Log">
@@ -38,7 +48,23 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Boss.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="Boss.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Intro.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Splash.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

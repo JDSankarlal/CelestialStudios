@@ -37,7 +37,7 @@ void Player::setBulletCount(int v)
 	bulletCount = v;
 }
 
-int Player::getTimeSinceLastMissile()
+float Player::getTimeSinceLastMissile()
 {
 	return timeSinceLastMissile;
 }

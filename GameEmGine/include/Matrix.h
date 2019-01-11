@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-
+#include <string>
 #define degtorad(deg) (deg*M_PI/180)
 
 struct Size

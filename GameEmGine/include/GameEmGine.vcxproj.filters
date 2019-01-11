@@ -68,6 +68,7 @@
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
