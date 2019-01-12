@@ -351,19 +351,10 @@ public:
 		mod.push_back(new Model(*mod[60]));//63
 		context->addModel(mod.back());//47
 
-
-		//mod[61]->setToRender(false);
-		//mod[61]->getTransformer().setScale(2);
-		//mod[62]->setToRender(false);
-		//mod[62]->getTransformer().setScale(2);
-		//mod[63]->setToRender(false);
-		//mod[63]->getTransformer().setScale(2);
-
 		mod[44]->addChild(mod[60]);
 		mod[45]->addChild(mod[61]);
 		mod[46]->addChild(mod[62]);
 		mod[47]->addChild(mod[63]);
-
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -375,7 +366,6 @@ public:
 		mod[1]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[3]->getTransformer().setRotation(Coord3D(0, 180, 0));
-
 
 		//Building Transforms
 		//Building 1s
@@ -581,7 +571,7 @@ public:
 		static vector<Coord3D> missileVelocity[4];
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
-		static bool makeShitLessCancer[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
+		static bool gunControlLaw[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
 		static float  curveroni[4] = {0 ,0,0,0};
 		static bool hasTarget[4] = {0 ,0,0,0};
 
@@ -619,6 +609,7 @@ public:
 					hasTarget[a] = true;
 				}
 
+				//Sets points for catmull Rom curve for missiles
 				if(mod[8])
 					if(hasTarget[a])
 					{
@@ -648,6 +639,7 @@ public:
 			}
 		}
 
+		//Tombstones Animations
 		if(!init)
 		{
 
@@ -660,7 +652,9 @@ public:
 			init = true;
 		}
 
+
 		if(init)
+			/// - If game mode (NOT CAMERA MODE) - ///
 			if(movePlayer)
 				for(int a = 0; a < 4; a++)
 				{
@@ -671,6 +665,7 @@ public:
 							player = (Player*)mod[a];
 							Xinput p1 = context->getController(a);
 
+							
 							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 							{
 
@@ -694,12 +689,13 @@ public:
 
 								}
 							}
-							//Player comes near Boss
+							//Player comes near Boss, gets teleported backwards
 							if(collisionsB(player, CandyMan))
 							{
 								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
 								player->setHealth(player->getHealth() - 35);
 							}
+							//If player dies
 							if(player->getHealth() <= 0)
 							{
 								dead[a] = true;
@@ -711,22 +707,21 @@ public:
 								mod[22 + a]->setAnimation("squash");
 								context->removeModel(player);
 							}
-							if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
+							//
+							if(p1.triggers[RT] >= .95 && !gunControlLaw[a])
 							{
 								if(player->getBulletCount() > 0)
 								{
-									makeShitLessCancer[a] = true;
+									gunControlLaw[a] = true; //gun Control Law makes it so the guns function "semi-automatically" instead of "fully automatic"
 
 									bullets[a].push_back(nullptr);
 									context->addModel(bullets[a].back() = new Model(*mod[48]));
 									bullets[a].back()->getTransformer().reset();
-									bullets[a].back()->setColour(player->getColour());
+									bullets[a].back()->setColour(player->getColour());//bullet color = player color
 									Coord3D pos = mod[a]->getTransformer().getPosition();
 									bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
 									bullets[a].back()->getTransformer().setScale(0.13f);
-
 									bullets[a].back()->getTransformer().setRotation({90 , angle[a] ,0});
-
 
 									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
 									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
@@ -740,8 +735,8 @@ public:
 									player->setBulletCount(player->getBulletCount() - 1);
 								}
 							}
-							else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
-								makeShitLessCancer[a] = false;
+							else if(p1.triggers[RT] < .95 && gunControlLaw[a])
+								gunControlLaw[a] = false;
 
 							/// - Button Presses on controller - ///
 							//Start button quits game
@@ -829,6 +824,7 @@ public:
 									0,
 									abs(mod[a]->getTransformer().getPosition().z) > mod[59]->getDepth() / 2 ? mod[a]->getTransformer().getPosition().z < 0 ? -mod[59]->getDepth() / 2 : mod[59]->getDepth() / 2 : mod[a]->getTransformer().getPosition().z);
 
+							//Player Animations
 							if(!speed)
 								mod[a]->getAnimation("walk")->pause();
 							else
@@ -861,7 +857,7 @@ public:
 										bullets[a].erase(bullets[a].begin() + b);
 										velocity[a].erase(velocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
-										//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+										//Boss a.k.a model 8, is now called "CandyMan" for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
@@ -920,6 +916,7 @@ public:
 
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 
+		//If game not active and Camera is active (Move camera mode)
 		if(!movePlayer)
 			if(context->isControllerConnected(0))
 			{
