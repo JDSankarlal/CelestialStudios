@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Quat.h"
-#include "StructInfo.h"
+#include "Utilities.h"
 
 class Transformer
 {

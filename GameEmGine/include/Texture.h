@@ -1,7 +1,7 @@
 #pragma once
 #include <GL\glew.h>
 #include <string>
-#include "StructInfo.h"
+#include "Utilities.h"
 
 enum class TEXTURE_TYPE
 {

@@ -69,6 +69,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 	m_mainBuffer->initDepthTexture(getWindowWidth(), getWindowHeight());
 	m_mainBuffer->initColourTexture(getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
+	initFullScreenQuad();
 
 
 }
@@ -204,6 +205,59 @@ void GameEmGine::fpsLimiter()
 	enter = true;
 }
 
+void GameEmGine::initFullScreenQuad()
+{
+	float vboData[] =
+	{
+		-1.0f,-1.0f,0.0f,
+		 1.0f,-1.0f,0.0f,
+		-1.0f, 1.0f,0.0f,
+
+		 1.0f, 1.0f,0.0f,
+		-1.0f, 1.0f,0.0f,
+		 1.0f,-1.0f,0.0f,
+
+		0.0f,0.0f,
+		1.0f,0.0f,
+		0.0f,1.0f,
+
+		1.0f,1.0f,
+		0.0f,1.0f,
+		1.0f,0.0f
+	};
+
+	if(!fsQuadVAO_ID)
+		glGenVertexArrays(1, &fsQuadVAO_ID);
+
+	glBindVertexArray(fsQuadVAO_ID);
+
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+
+	if(!fsQuadVBO_ID)
+		glGenBuffers(1, &fsQuadVBO_ID);
+
+	glBindBuffer(GL_ARRAY_BUFFER, fsQuadVBO_ID);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18+ sizeof(float) * 12, vboData, GL_STATIC_DRAW);
+	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+	glBindBuffer(GL_ARRAY_BUFFER,GL_NONE);
+
+	glBindVertexArray(GL_NONE);
+}
+
+void GameEmGine::drawFullScreenQuad()
+{
+	glBindVertexArray(fsQuadVAO_ID);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(GL_NONE);
+
+}
+
 void GameEmGine::setScene(Scene* scene)
 {
 	m_mainScene = scene;
@@ -319,8 +373,11 @@ void GameEmGine::update()
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
 
 	m_mainBuffer->disable();
-	m_mainBuffer->moveToBackBuffer(m_window->getScreenWidth(), m_window->getScreenHeight());
+	//m_mainBuffer->moveToBackBuffer(m_window->getScreenWidth(), m_window->getScreenHeight());
 
+	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->GetColourHandle(0));
+	drawFullScreenQuad();
+	glBindTexture(GL_TEXTURE_2D,GL_NONE);
 
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
@@ -342,6 +399,8 @@ void GameEmGine::update()
 	glfwPollEvents();//updates the event handlers
 
 }
+
+
 
 void GameEmGine::changeViewport(GLFWwindow *, int w, int h)
 {

@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
-#include "StructInfo.h"
+#include "Utilities.h"
 
 class WindowCreator
 {

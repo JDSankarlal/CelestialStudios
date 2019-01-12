@@ -595,7 +595,7 @@ public:
 
 		static float angle[4] = {180,180,180,180};
 
-
+		static vector<Boss*> nimimis;
 
 		for(int a = 0; a < 4; a++)
 		{

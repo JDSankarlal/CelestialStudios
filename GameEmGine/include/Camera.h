@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Transformer.h"
-#include "StructInfo.h"
+#include "Utilities.h"
 #include "Quat.h"
 
 enum CAMERA_TYPE

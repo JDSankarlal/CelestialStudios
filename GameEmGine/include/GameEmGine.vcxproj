@@ -201,7 +201,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderCombiner.h" />
     <ClInclude Include="Sprite.h" />
-    <ClInclude Include="StructInfo.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformer.h" />
     <ClInclude Include="WindowCreator.h" />
