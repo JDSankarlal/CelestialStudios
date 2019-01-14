@@ -6,7 +6,7 @@
 #include <map>
 #include "Transformer.h"
 #include "Shader.h"
-#include "StructInfo.h"
+#include "Utilities.h"
 #include "ResourceManager.h"
 
 #define CHAR_BUFF_SIZE 1000

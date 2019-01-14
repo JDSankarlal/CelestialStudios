@@ -2,7 +2,7 @@
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 #include <functional>
-#include "StructInfo.h"
+#include "Utilities.h"
 
 /***Enums***/
 

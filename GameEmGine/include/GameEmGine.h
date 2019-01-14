@@ -119,16 +119,20 @@ private:
 	void shaderInit();
 	void calculateFPS();
 	void fpsLimiter();
-	void initFullScreenQuad();
-	void drawQuad();
-	/*static void InitOpenGlCallback ();
+	static void initFullScreenQuad();
+	static void drawFullScreenQuad();
+
+	/*
+	static void InitOpenGlCallback ();
 	static void OpenGLDebugCallback (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * data);
 	*/
+
 	static void update();
 	static void changeViewport(GLFWwindow * win, int w, int h);
 	static void(*m_compileShaders)();
 	static std::function<void()>m_render;
 	static std::function<void(double)> m_gameLoop;
+	static GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 	static WindowCreator *m_window;
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;

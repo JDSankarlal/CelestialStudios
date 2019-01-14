@@ -25,9 +25,6 @@
     <ClInclude Include="Quat.h">
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
-    <ClInclude Include="StructInfo.h">
-      <Filter>EmGine\Data Types</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
@@ -69,6 +66,9 @@
     </ClInclude>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Utilities.h">
+      <Filter>EmGine\Data Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
