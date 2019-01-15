@@ -150,9 +150,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Assault.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Medic.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Specialist.cpp" />
+    <ClCompile Include="Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Logs\New Log" />
@@ -164,12 +168,16 @@
     <Text Include="Logs\ShaderLog.log" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assault.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Intro.h" />
+    <ClInclude Include="Medic.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Specialist.h" />
     <ClInclude Include="Splash.h" />
+    <ClInclude Include="Tank.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
