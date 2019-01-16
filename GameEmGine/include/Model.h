@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "Camera.h"
 #include "Shader.h"
-#include "StructInfo.h"
+#include "Utilities.h"
 #include "Transformer.h"
 #include "Physics3D.h"
 #include "Mesh.h"

@@ -38,13 +38,13 @@ Quat & Quat::rotation(float a_ang, float a_dirX, float a_dirY, float a_dirZ)
 		q{cos(a_ang / 2),sin(a_ang / 2)*  (a_dirX / unit),sin(a_ang / 2)*  (a_dirY / unit),sin(a_ang / 2)*  (a_dirY / unit)},//rotation quaternion
 		qc{cos(a_ang / 2),sin(a_ang / 2)* -(a_dirX / unit),sin(a_ang / 2)* -(a_dirY / unit),sin(a_ang / 2)* -(a_dirZ / unit)},//rotation quatenion conjugate
 		p{0, x,y,z};//pure quaternion
-	Quat rot = q * p * qc;
+	static Quat rot;rot = q * p * qc;
 	return rot;
 }
 
 Quat & Quat::rotation(Quat p, Quat q, Quat qc)
 {
-	Quat rot = q * p * qc;
+	static Quat rot;rot = q * p * qc;
 	return rot;
 }
 

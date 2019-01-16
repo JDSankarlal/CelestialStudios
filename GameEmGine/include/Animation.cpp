@@ -10,7 +10,9 @@ Animation::~Animation()
 {}
 
 void Animation::addFrame(Mesh * frame, float speed)
-{}
+{
+	frame, speed;
+}
 
 void Animation::setAnimationSpeed(float speed)
 {
@@ -31,7 +33,11 @@ void Animation::addDir(const char * dir)
 		if(check < 0)continue;
 
 		Mesh tmp;
-		m_unpackedData.push_back(tmp.loadAni(std::string(tmpPath.begin(), tmpPath.end())));
+		std::string str;
+		for(auto&b : tmpPath)
+			str += (char)b;
+
+		m_unpackedData.push_back(tmp.loadAni(str));
 	}
 
 }

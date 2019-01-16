@@ -66,3 +66,5 @@ GameEmGine/include/x64/Debug/
 *.iobj
 
 *.ipdb
+
+x64/

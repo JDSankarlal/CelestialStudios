@@ -1,12 +1,12 @@
 #pragma once
-#include <GL\glew.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <assimp/mesh.h>
 #include <vector>
 #include <map>
 #include "Transformer.h"
 #include "Shader.h"
-#include "StructInfo.h"
+#include "Utilities.h"
 #include "ResourceManager.h"
 
 #define CHAR_BUFF_SIZE 1000

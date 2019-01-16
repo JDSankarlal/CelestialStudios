@@ -2,9 +2,18 @@
 
 #pragma region Static Variables
 Xinput InputManager::m_controllers[16];
-void(*InputManager::_keyUp)(int, int), (*InputManager::_keyInitDown)(int, int), (*InputManager::_keyAll)(int, int, int),
-(*InputManager::_mouseButtonPress)(int, int), (*InputManager::_mouseButtonRelease)(int, int), (*InputManager::_mouseButtonAll)(int, int, int),
-(*InputManager::m_controllerConnection)(int, int), (*InputManager::m_controllerConneced)(int), (*InputManager::m_controllerDisconnected)(int);
+std::function<void(int)>
+InputManager::m_controllerConneced,
+InputManager::m_controllerDisconnected;
+std::function<void(int, int)>
+InputManager::_keyUp,
+InputManager::_keyInitDown,
+InputManager::_mouseButtonPress,
+InputManager::_mouseButtonRelease,
+InputManager::m_controllerConnection;
+std::function<void(int, int, int)>
+InputManager::_keyAll,
+InputManager::_mouseButtonAll;
 #pragma endregion
 
 InputManager::InputManager()
@@ -18,12 +27,12 @@ InputManager::InputManager()
 InputManager::~InputManager()
 {}
 
-void InputManager::mouseButtonPressCallback(void mouseButton(int button, int mods))
+void InputManager::mouseButtonPressCallback(std::function<void(int, int)>mouseButton)
 {
 	_mouseButtonPress = mouseButton;
 }
 
-void InputManager::mouseButtonReleaseCallback(void mouseButton(int button, int mods))
+void InputManager::mouseButtonReleaseCallback(std::function<void(int, int)>mouseButton)
 {
 	_mouseButtonRelease = mouseButton;
 }
@@ -46,7 +55,7 @@ void InputManager::keyUpdate(GLFWwindow *, int key, int scancode, int state, int
 	scancode;
 	if(_keyAll != nullptr)
 		_keyAll(state, key, mods);
-	
+
 	if(state == KEY_PRESSED)  //Key has been pressed initially
 		if(_keyInitDown != nullptr)
 			_keyInitDown(key, mods);
@@ -70,7 +79,7 @@ void InputManager::xinputConnectionUpdate(int controller, int connected)
 			m_controllerDisconnected(controller);
 }
 
-void InputManager::mouseButtonAllCallback(void mouseButton(int state, int button, int mods))
+void InputManager::mouseButtonAllCallback(std::function<void(int, int, int)>mouseButton)
 {
 	_mouseButtonAll = mouseButton;
 }
@@ -79,35 +88,35 @@ Coord2D InputManager::getMouseCursorPosition()
 {
 	double x, y;
 	glfwGetCursorPos(glfwGetCurrentContext(), &x, &y);
-	return {(float) x,(float) y};
+	return {(float)x,(float)y};
 }
 
-void InputManager::keyPressedCallback(void key(int key, int mod))
+void InputManager::keyPressedCallback(std::function<void(int, int)>key)
 {
 	_keyInitDown = key;
 }
 
-void InputManager::keyReleasedCallback(void key(int key, int mod))
+void InputManager::keyReleasedCallback(std::function<void(int, int)>key)
 {
 	_keyUp = key;
 }
 
-void InputManager::keyAllCallback(void key(int state, int key, int mod))
+void InputManager::keyAllCallback(std::function<void(int, int, int)>key)
 {
 	_keyAll = key;
 }
 
-void InputManager::controllerConnectedCallback(void controllerConnection(int controllerNum))
+void InputManager::controllerConnectedCallback(std::function<void(int)>controllerConnection)
 {
 	m_controllerConneced = controllerConnection;
 }
 
-void InputManager::controllerDisconnectedCallback(void controllerConnection(int controllerNum))
+void InputManager::controllerDisconnectedCallback(std::function<void(int)>controllerConnection)
 {
 	m_controllerDisconnected = controllerConnection;
 }
 
-void InputManager::controllerAllConnectionCallback(void connected(int controllerNum, int connected))
+void InputManager::controllerAllConnectionCallback(std::function<void(int, int)>connected)
 {
 	m_controllerConnection = connected;
 }
@@ -132,16 +141,16 @@ Xinput& InputManager::getController(unsigned int index)
 
 void InputManager::controllerUpdate()
 {
-							
+
 	for(int a = 0; a < GLFW_JOYSTICK_LAST; a++)
 		if(glfwJoystickPresent(a))
 		{
 			m_controllers[a].name = glfwGetJoystickName(a);
-			unsigned char* tmp = (unsigned char*) glfwGetJoystickButtons(a, &m_controllers[a].numButtons);
+			unsigned char* tmp = (unsigned char*)glfwGetJoystickButtons(a, &m_controllers[a].numButtons);
 			for(int b = 0; b < m_controllers[a].numButtons; b++)
 				m_controllers[a].buttons.data[b] = tmp[b];
 			m_controllers[a].updateSticks(a);
-			m_controllers[a].triggers = (float*) glfwGetJoystickAxes(a, &m_controllers[a].numSticks) + m_controllers[a].numSticks - 2;
+			m_controllers[a].triggers = (float*)glfwGetJoystickAxes(a, &m_controllers[a].numSticks) + m_controllers[a].numSticks - 2;
 			m_controllers[a].numSticks -= 2;
 			m_controllers[a].numSticks /= 2;
 			m_controllers[a].numTriggers = 2;

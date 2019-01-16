@@ -6,7 +6,7 @@
 #include "ResourceManager.h"
 #include "Shader.h"
 #include "Quat.h"
-#include "StructInfo.h"
+#include "Utilities.h"
 class Sprite : protected VboInfo2D
 {
 public:
