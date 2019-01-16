@@ -23,7 +23,7 @@ void FrameBuffer::setNumColourAttachments(unsigned num)
 		new GLuint[m_numColourAttachments] :
 		(GLuint*)std::realloc(m_colourAttachments, sizeof(GLuint)*num);
 
-	std::memset(m_colourAttachments+tmp,0,sizeof(GLuint)*(num-tmp>0?num-tmp:0));
+	std::memset(m_colourAttachments + tmp, 0, sizeof(GLuint)*(num - tmp > 0 ? num - tmp : 0));
 
 	m_buffs = !m_buffs ?
 		new GLenum[m_numColourAttachments] :
@@ -108,7 +108,6 @@ void FrameBuffer::clear()
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 	glClear(tmp);
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-
 }
 
 void FrameBuffer::enable()
@@ -124,8 +123,8 @@ void FrameBuffer::disable()
 
 void FrameBuffer::moveToBackBuffer(int windWidth, int windHeight)
 {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, GL_NONE);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, GL_NONE);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 
 	glBlitFramebuffer(0, 0, windWidth, windHeight, 0, 0, windWidth, windHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 

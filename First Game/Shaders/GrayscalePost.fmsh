@@ -1,0 +1,19 @@
+#version 420
+
+uniform sampler2D uTex;
+
+in vec2 outUV;
+
+out vec4 outColour;
+
+void main()
+{
+    vec4 source  = texture(uTex, outUV);
+
+    float luminance = 
+    0.2989 * source.r + 
+    0.587  * source.g + 
+    0.114  * source.b;
+
+    outColour = vec4(luminance, luminance, luminance, 1);
+}

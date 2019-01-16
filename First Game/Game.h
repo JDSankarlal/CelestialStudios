@@ -9,7 +9,6 @@
 typedef EmGineAudioPlayer AudioPlayer;
 using std::vector;
 
-
 class Game:public Scene
 {
 public:
@@ -134,9 +133,9 @@ public:
 		if(key == GLFW_KEY_F5) //resets the camera
 		{
 			GameEmGine::m_modelShader->refresh();
-
-			//context->setCameraAngle(0, { 1, 1, 1 });
-			//	context->setCameraPosition({0,0,0});
+			GameEmGine::m_grayScalePost->refresh();
+				//context->setCameraAngle(0, { 1, 1, 1 });
+				//	context->setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')

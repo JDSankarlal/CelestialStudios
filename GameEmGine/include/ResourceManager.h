@@ -25,8 +25,9 @@ private:
 //	std::map<std::string, Texture3D> m_textures;
 //};
 
-struct ShaderCache
+class ShaderCache
 {
+public:
 	//creates a texture
 	static Shader& getShader(const char*, const char*);
 

@@ -113,7 +113,7 @@ public:
 
 	Xinput& getController(int index);
 
-	static Shader *m_cameraShader, *m_modelShader;
+	static Shader *m_cameraShader, *m_modelShader,*m_grayScalePost;
 
 private:
 	void shaderInit();

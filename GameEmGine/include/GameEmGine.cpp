@@ -8,7 +8,8 @@ std::function<void()>GameEmGine::m_render;
 std::function<void(double)>GameEmGine::m_gameLoop;
 Camera *GameEmGine::m_mainCamera;
 std::vector<Camera *>GameEmGine::m_cameras;
-Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader;
+Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader, *GameEmGine::m_grayScalePost;
+GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
@@ -60,6 +61,9 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	printf("created the window\n");
 
 	m_mainBuffer = new FrameBuffer(1);
+	m_mainBuffer->initDepthTexture(width, height);
+	m_mainBuffer->initColourTexture(width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
+	
 	if(!m_mainBuffer->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -67,8 +71,6 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 		return;
 	}
 
-	m_mainBuffer->initDepthTexture(getWindowWidth(), getWindowHeight());
-	m_mainBuffer->initColourTexture(getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
 	initFullScreenQuad();
 
 
@@ -163,6 +165,9 @@ void GameEmGine::shaderInit()
 	//m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
 	m_modelShader = new Shader;
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
+
+	m_grayScalePost = new Shader;
+	m_grayScalePost->create("Shaders/GrayscalePost.vtsh", "Shaders/GrayscalePost.fmsh");
 }
 
 void GameEmGine::calculateFPS()
@@ -231,8 +236,8 @@ void GameEmGine::initFullScreenQuad()
 
 	glBindVertexArray(fsQuadVAO_ID);
 
+	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
 
 	if(!fsQuadVBO_ID)
@@ -240,10 +245,10 @@ void GameEmGine::initFullScreenQuad()
 
 	glBindBuffer(GL_ARRAY_BUFFER, fsQuadVBO_ID);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18+ sizeof(float) * 12, vboData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18 + sizeof(float) * 12, vboData, GL_STATIC_DRAW);
 	
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 18));
 
 	glBindBuffer(GL_ARRAY_BUFFER,GL_NONE);
 
@@ -267,7 +272,7 @@ void GameEmGine::setScene(Scene* scene)
 	m_inputManager->mouseButtonPressCallback(scene->mousePressed);
 	m_inputManager->mouseButtonReleaseCallback(scene->mouseReleased);
 	m_render = scene->render;
-	m_gameLoop = [&](double a)->void {m_mainScene->update(a); };
+	m_gameLoop = [](double a)->void {m_mainScene->update(a); };
 }
 
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
@@ -367,22 +372,23 @@ void GameEmGine::update()
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix()*m_mainCamera->getViewMatrix())[0][0]));
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
 	}
+
 	//3D-Graphics 1
-	m_mainBuffer->enable();
+	//m_mainBuffer->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
-		m_models[a]->render(*m_modelShader, *m_mainCamera);
+		m_models[a]->render(*m_modelShader, *m_mainCamera,m_mainBuffer);
+	//m_mainBuffer->disable();
 
-	m_mainBuffer->disable();
-	//m_mainBuffer->moveToBackBuffer(m_window->getScreenWidth(), m_window->getScreenHeight());
-
+	m_grayScalePost->enable();
 	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->GetColourHandle(0));
 	drawFullScreenQuad();
 	glBindTexture(GL_TEXTURE_2D,GL_NONE);
+	m_grayScalePost->disable();
 
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
 
-
+	///-will never be used but I'll keep it here anyways-///
 	////2D-Graphics 
 	//m_spriteBatch->begin();
 	//for(int a = 0; a < m_sprites.size(); a++)
