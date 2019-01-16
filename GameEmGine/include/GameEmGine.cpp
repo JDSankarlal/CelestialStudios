@@ -369,15 +369,15 @@ void GameEmGine::update()
 
 	if(m_mainCamera->getTransformer().isUpdated())
 	{
-		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix()*m_mainCamera->getViewMatrix())[0][0]));
+		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix() * m_mainCamera->getViewMatrix())[0][0]));
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
 	}
 
 	//3D-Graphics 1
-	//m_mainBuffer->enable();
+	m_mainBuffer->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
-		m_models[a]->render(*m_modelShader, *m_mainCamera,m_mainBuffer);
-	//m_mainBuffer->disable();
+		m_models[a]->render(*m_modelShader, *m_mainCamera);
+	m_mainBuffer->disable();
 
 	m_grayScalePost->enable();
 	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->GetColourHandle(0));
