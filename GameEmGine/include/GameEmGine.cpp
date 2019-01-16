@@ -7,6 +7,8 @@ void(*GameEmGine::m_compileShaders)();
 std::function<void()>GameEmGine::m_render;
 std::function<void(double)>GameEmGine::m_gameLoop;
 Camera *GameEmGine::m_mainCamera;
+//GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
+//GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera *>GameEmGine::m_cameras;
 Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader, *GameEmGine::m_grayScalePost;
 GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
@@ -376,7 +378,7 @@ void GameEmGine::update()
 	//3D-Graphics 1
 	//m_mainBuffer->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
-		m_models[a]->render(*m_modelShader, *m_mainCamera,m_mainBuffer);
+		m_models[a]->render(*m_modelShader, *m_mainCamera);
 	//m_mainBuffer->disable();
 
 	m_grayScalePost->enable();

@@ -547,7 +547,8 @@ public:
 		audio.play(true);
 	}
 
-	//updates within game loop
+	/// - The Update Loop - ///
+
 	void update(double dt)
 	{
 		static float  time = 0;
@@ -570,7 +571,7 @@ public:
 		static vector<Coord3D> missileVelocity[4];
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
-		static bool gunControlLaw[4], makeShitLessCancer2[4];//stops the creation of bullets when trigger is healed down
+		static bool gunControlLaw[4], dashControl[4];//stops the creation of bullets when trigger is healed down
 		static float  curveroni[4] = {0 ,0,0,0};
 		static bool hasTarget[4] = {0 ,0,0,0};
 
@@ -809,7 +810,7 @@ public:
 								if(move <= .1f)
 									move = .1f;
 								//f = false;
-								makeShitLessCancer2[a] = false;
+								dashControl[a] = false;
 							}
 
 							mod[a]->getTransformer().setRotation({0,angle[a], 0});
@@ -891,7 +892,7 @@ public:
 										pMissiles[a].erase(pMissiles[a].begin() + b);
 										missileVelocity[a].erase(missileVelocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
-										//Boss a.k.a model 8, is now called CandyMan for teh purposes of functions.
+										//Boss a.k.a model 8, is now called CandyMan for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
