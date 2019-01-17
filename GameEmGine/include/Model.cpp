@@ -34,7 +34,7 @@ Model::Model(const char * path) :
 Model::~Model()
 {}
 
-void Model::render(Shader& shader, Camera& cam)
+void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
 {
 	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
@@ -58,7 +58,7 @@ void Model::render(Shader& shader, Camera& cam)
 	if(m_render)
 	{
 		//render the mesh
-		m_mesh.render(shader);
+		m_mesh.render(shader,frame);
 		shader.disable();
 
 		if(m_enableBB)
@@ -67,7 +67,7 @@ void Model::render(Shader& shader, Camera& cam)
 		m_transform.resetUpdated();
 
 		for(auto&a : m_children)
-			a->render(shader, cam);
+			a->render(shader, cam,frame);
 	}
 }
 

@@ -374,16 +374,16 @@ void GameEmGine::update()
 	}
 
 	//3D-Graphics 1
-	m_mainBuffer->enable();
+	
 	for(unsigned a = 0; a < m_models.size(); a++)
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
-	m_mainBuffer->disable();
+	
 
-	m_grayScalePost->enable();
-	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->GetColourHandle(0));
-	drawFullScreenQuad();
-	glBindTexture(GL_TEXTURE_2D,GL_NONE);
-	m_grayScalePost->disable();
+	//m_grayScalePost->enable();
+	//glBindTexture(GL_TEXTURE_2D, m_mainBuffer->GetColourHandle(0));
+	//drawFullScreenQuad();
+	//glBindTexture(GL_TEXTURE_2D,GL_NONE);
+	//m_grayScalePost->disable();
 
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);

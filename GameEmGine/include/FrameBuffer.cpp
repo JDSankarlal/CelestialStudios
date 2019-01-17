@@ -60,7 +60,7 @@ void FrameBuffer::initColourTexture(unsigned width, unsigned height, GLint inter
 		glGenTextures(1, &m_colourAttachments[index]);
 
 	glBindTexture(GL_TEXTURE_2D, m_colourAttachments[index]);
-	glTextureStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
+	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
@@ -123,10 +123,10 @@ void FrameBuffer::disable()
 
 void FrameBuffer::moveToBackBuffer(int windWidth, int windHeight)
 {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, GL_NONE);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, GL_NONE);
 
-	glBlitFramebuffer(0, 0, windWidth, windHeight, 0, 0, windWidth, windHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	glBlitFramebuffer(0, 0, windWidth, windHeight, 0, 0, windWidth, windHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
