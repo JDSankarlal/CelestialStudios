@@ -24,8 +24,9 @@ public:
 	adds atributes to the shader
 	(ONLY USE if in-shader indexes are not specified)
 	*/
-	void addAtribute(const std::string attributeName, short attribSize = 1);
+	void addAtribute(const std::string attributeName, short index = 1);
 
+	GLint getAttribLocation(const std::string attributeName);
 	GLint getUniformLocation(const char *uniform);
 
 	//enables shader program for use

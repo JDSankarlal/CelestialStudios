@@ -607,6 +607,11 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 
 void Mesh::render(Shader& shader, FrameBuffer *frame)
 {
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
 	for(unsigned a = 0; a < m_vaoID.size(); a++)
 	{
 		bool textured = false;

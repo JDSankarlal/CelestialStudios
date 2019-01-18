@@ -84,13 +84,16 @@ void GameEmGine::run()
 	//#endif
 
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	
 	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
+	
 	glEnable(GL_CULL_FACE);
-
+	
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDepthFunc(GL_LEQUAL);
+
 	glm::mat4 proj = glm::perspective(45.f, (float)m_window->getScreenWidth() / m_window->getScreenHeight(), 1.f, 1000.f);
 
 	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
@@ -375,16 +378,16 @@ void GameEmGine::update()
 
 	//3D-Graphics 1
 	
-	m_mainBuffer->enable();
+	//m_mainBuffer->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
-	m_mainBuffer->disable();
+	//m_mainBuffer->disable();
 
-	m_grayScalePost->enable();
-	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->GetColourHandle(0));
-	drawFullScreenQuad();
-	glBindTexture(GL_TEXTURE_2D,GL_NONE);
-	m_grayScalePost->disable();
+	//m_grayScalePost->enable();
+	//glBindTexture(GL_TEXTURE_2D, m_mainBuffer->GetColourHandle(0));
+	//drawFullScreenQuad();
+	//glBindTexture(GL_TEXTURE_2D,GL_NONE);
+	//m_grayScalePost->disable();
 
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
