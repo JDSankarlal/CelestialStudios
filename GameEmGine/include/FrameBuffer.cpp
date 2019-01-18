@@ -6,42 +6,49 @@ FrameBuffer::FrameBuffer(unsigned numColourAttach)
 {
 	glGenBuffers(1, &m_fboID);
 
-	setNumColourAttachments(numColourAttach);
+	m_numColourAttachments = numColourAttach;
+
+	m_colourAttachments = new GLuint[m_numColourAttachments];
+
+	m_buffs = new GLenum[m_numColourAttachments];
+	for(unsigned a = 0; a < m_numColourAttachments; a++)
+		m_buffs[a] = GL_COLOR_ATTACHMENT0 + a;
+
+	//setNumColourAttachments(numColourAttach);
 }
+
+//void FrameBuffer::setNumColourAttachments(unsigned num)
+//{
+//	unsigned tmp = m_numColourAttachments;
+//	m_numColourAttachments = num;
+//	
+//	m_colourAttachments = !m_colourAttachments ?
+//		new GLuint[m_numColourAttachments] :
+//		(GLuint*)std::realloc(m_colourAttachments, sizeof(GLuint)*num);
+//	
+//	std::memset(m_colourAttachments + tmp, 0, sizeof(GLuint)*(num - tmp > 0 ? num - tmp : 0));
+//	
+//	m_buffs = !m_buffs ?
+//		new GLenum[m_numColourAttachments] :
+//		(GLenum*)std::realloc(m_buffs, sizeof(GLenum)*num);
+//	
+//	for(unsigned a = 0; a < m_numColourAttachments; a++)
+//		m_buffs[a] = GL_COLOR_ATTACHMENT0 + a;
+//}
 
 FrameBuffer::~FrameBuffer()
 {
 	unload();
 }
 
-void FrameBuffer::setNumColourAttachments(unsigned num)
-{
-	unsigned tmp = m_numColourAttachments;
-	m_numColourAttachments = num;
-
-	m_colourAttachments = !m_colourAttachments ?
-		new GLuint[m_numColourAttachments] :
-		(GLuint*)std::realloc(m_colourAttachments, sizeof(GLuint)*num);
-
-	std::memset(m_colourAttachments + tmp, 0, sizeof(GLuint)*(num - tmp > 0 ? num - tmp : 0));
-
-	m_buffs = !m_buffs ?
-		new GLenum[m_numColourAttachments] :
-		(GLenum*)std::realloc(m_buffs, sizeof(GLenum)*num);
-
-	for(unsigned a = 0; a < m_numColourAttachments; a++)
-		m_buffs[a] = GL_COLOR_ATTACHMENT0 + a;
-}
-
 void FrameBuffer::initDepthTexture(int width, int height)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-	if(!m_depthAttachment)
-		glGenTextures(1, &m_depthAttachment);
-
+	glGenTextures(1, &m_depthAttachment);
 	glBindTexture(GL_TEXTURE_2D, m_depthAttachment);
-	glTextureStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
+
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -56,11 +63,10 @@ void FrameBuffer::initColourTexture(unsigned width, unsigned height, GLint inter
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-	if(!m_colourAttachments[index])
-		glGenTextures(1, &m_colourAttachments[index]);
+	glGenTextures(1, &m_colourAttachments[index]);
 
 	glBindTexture(GL_TEXTURE_2D, m_colourAttachments[index]);
-	glTextureStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
+	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
@@ -74,7 +80,12 @@ void FrameBuffer::initColourTexture(unsigned width, unsigned height, GLint inter
 bool FrameBuffer::checkFBO()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		unload();
+		return false;
+	}
+	return true;
 }
 
 void FrameBuffer::unload()
@@ -89,6 +100,7 @@ void FrameBuffer::unload()
 			glDeleteTextures(1, &m_colourAttachments[a]);
 
 		delete[] m_colourAttachments;
+		m_colourAttachments = nullptr;
 	}
 
 	if(m_depthAttachment)
@@ -100,10 +112,12 @@ void FrameBuffer::unload()
 
 void FrameBuffer::clear()
 {
-	GLbitfield tmp = 0;
+	GLbitfield tmp = 0x0;
+	if(m_depthAttachment)
+		tmp = tmp | GL_DEPTH_BUFFER_BIT;
 
-	tmp |= m_depthAttachment ? GL_DEPTH_BUFFER_BIT : 0;
-	tmp |= m_colourAttachments ? GL_COLOR_BUFFER_BIT : 0;
+	if(m_colourAttachments)
+		tmp = tmp | GL_COLOR_BUFFER_BIT;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 	glClear(tmp);
@@ -123,10 +137,10 @@ void FrameBuffer::disable()
 
 void FrameBuffer::moveToBackBuffer(int windWidth, int windHeight)
 {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, GL_NONE);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, GL_NONE);
 
-	glBlitFramebuffer(0, 0, windWidth, windHeight, 0, 0, windWidth, windHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	glBlitFramebuffer(0, 0, windWidth, windHeight, 0, 0, windWidth, windHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }

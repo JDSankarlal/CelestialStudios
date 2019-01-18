@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Utilities.h"
 #include "ResourceManager.h"
+#include "FrameBuffer.h"
 
 #define CHAR_BUFF_SIZE 1000
 
@@ -24,7 +25,7 @@ public:
 
 	void editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts1, std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts2);
 
-	void render(Shader& shader);
+	void render(Shader & shader, FrameBuffer * frame);
 
 	void unload();
 

@@ -5,10 +5,11 @@
 class FrameBuffer
 {
 public:
-	FrameBuffer(unsigned numColourAttach = 1);
+	FrameBuffer() = delete;
+	FrameBuffer(unsigned numColourAttach);
 	~FrameBuffer();
 
-	void setNumColourAttachments(unsigned num);
+	//void setNumColourAttachments(unsigned num);
 
 	void initDepthTexture(int width, int height);
 	void initColourTexture(unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap, unsigned index);

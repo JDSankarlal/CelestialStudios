@@ -10,6 +10,7 @@
 #include "Physics3D.h"
 #include "Mesh.h"
 #include "Animation.h"
+#include "FrameBuffer.h"
 
 class Model
 {
@@ -19,7 +20,7 @@ public:
 	Model(const char* path);
 	~Model();
 
-	void render(Shader& shader, Camera& cam);
+	void render(Shader & shader, Camera & cam, FrameBuffer * frame=nullptr);
 
 	Transformer& getTransformer();
 
