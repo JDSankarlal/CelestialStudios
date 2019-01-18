@@ -17,8 +17,6 @@
 #include "FrameBuffer.h"
 #include "LightSource.h"
 
-
-
 class GameEmGine
 {
 public:
