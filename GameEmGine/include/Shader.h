@@ -7,6 +7,7 @@ class Shader
 {
 public:
 	Shader();
+	Shader(Shader& shad);
 	~Shader();
 
 	void refresh();

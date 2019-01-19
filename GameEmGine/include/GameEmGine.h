@@ -7,7 +7,7 @@
 #include <thread>
 #include <functional>
 #include "Scene.h"
-#include "ShaderCombiner.h"
+//#include "ShaderCombiner.h"
 #include "Shader.h"
 #include "WindowCreator.h"
 #include "Camera.h"
