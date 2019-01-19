@@ -12,17 +12,17 @@ public:
 		srand(clock());
 
 		mod.push_back(new Model("Models/Screen/Splash/splashScreen.obj"));
-		context->addModel(mod.back());
+		GameEmGine::addModel(mod.back());
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
 		LightSource::setSceneAmbient({0,0,0,255});
 
-		context->setCameraType(ORTHOGRAPHIC);
-		context->setCameraPosition({0,0,-100});
+		GameEmGine::setCameraType(ORTHOGRAPHIC);
+		GameEmGine::setCameraPosition({0,0,-100});
 
 		//engine stuff
-		context->setFPSLimit(60);
-		context->setBackgroundColour(0.05f, 0.0f, 0.1f);
+		GameEmGine::setFPSLimit(60);
+		GameEmGine::setBackgroundColour(0.05f, 0.0f, 0.1f);
 
 		
 
@@ -58,12 +58,12 @@ public:
 				splashAmbient = 255;
 
 
-				context->removeModel(mod[0]);
+				GameEmGine::removeModel(mod[0]);
 				mod.clear();
 
 
 				//IntroInite();
-				context->setScene(new Intro);
+				GameEmGine::setScene(new Intro);
 			}
 		}
 	}

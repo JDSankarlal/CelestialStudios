@@ -110,21 +110,21 @@ public:
 
 		//changes fps limit
 		if(key == GLFW_KEY_KP_6)
-			context->setFPSLimit(context->getFPSLimit() + 1);
+			GameEmGine::setFPSLimit(GameEmGine::getFPSLimit() + 1);
 		if(key == GLFW_KEY_KP_4)
-			context->setFPSLimit(context->getFPSLimit() - 1);
+			GameEmGine::setFPSLimit(GameEmGine::getFPSLimit() - 1);
 
 		if(key == GLFW_KEY_F) //Toggles Fullscreen
 		{
 			static bool full;
-			context->getWindow()->setFullScreen(full = !full);
+			GameEmGine::getWindow()->setFullScreen(full = !full);
 			printf("Full Screen: %s\n", full ? "true" : "false");
 		}
 
 		if(key == GLFW_KEY_SPACE) //changes the model that is being moved
 		{
 			static CAMERA_TYPE type = PERSPECTIVE;
-			context->setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
+			GameEmGine::setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 		}
 
 		if(key == GLFW_KEY_TAB)
@@ -134,12 +134,12 @@ public:
 		{
 			GameEmGine::m_modelShader->refresh();
 			GameEmGine::m_grayScalePost->refresh();
-				//context->setCameraAngle(0, { 1, 1, 1 });
-				//	context->setCameraPosition({0,0,0});
+				//GameEmGine::setCameraAngle(0, { 1, 1, 1 });
+				//	GameEmGine::setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
-			context->setCameraAngle(0, {1,1,1});
+			GameEmGine::setCameraAngle(0, {1,1,1});
 
 		printf("key RELEASED code: %d\n\n", key);
 	}
@@ -157,19 +157,19 @@ public:
 	void init()
 	{
 
-		context->setCameraType(PERSPECTIVE);
-		context->setFPSLimit(60);
+		GameEmGine::setCameraType(PERSPECTIVE);
+		GameEmGine::setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
 		//Players
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		context->addModel(mod.back());//0
+		GameEmGine::addModel(mod.back());//0
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		context->addModel(mod.back());//1
+		GameEmGine::addModel(mod.back());//1
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		context->addModel(mod.back());//2
+		GameEmGine::addModel(mod.back());//2
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		context->addModel(mod.back());//3
+		GameEmGine::addModel(mod.back());//3
 
 		static Animation walk[4], idle[4];
 
@@ -194,56 +194,56 @@ public:
 
 		//Building 1s
 		mod.push_back(new Model("Models/Buildings/Building1/building1.obj"));
-		context->addModel(mod.back());//4
+		GameEmGine::addModel(mod.back());//4
 		mod.push_back(new Model(*mod[4]));
-		context->addModel(mod.back());//5
+		GameEmGine::addModel(mod.back());//5
 		mod.push_back(new Model(*mod[4]));
-		context->addModel(mod.back());//6
+		GameEmGine::addModel(mod.back());//6
 
 		//Project Nebula Sign
 		mod.push_back(new Model("Models/Neon Signs/Project Nebula/signn.obj"));
-		context->addModel(mod.back()); //7
+		GameEmGine::addModel(mod.back()); //7
 
 		//Boss
 		mod.push_back(new Boss("Models/BOSS/BOSS.obj"));
-		context->addModel(mod.back()); //8
+		GameEmGine::addModel(mod.back()); //8
 		//mod[8]->enableBoundingBox(true);
 
 		//Floor
 		mod.push_back(new Model("Models/Floor/Floor.obj"));
-		context->addModel(mod.back()); //9
+		GameEmGine::addModel(mod.back()); //9
 
 		//Light Posts
 		mod.push_back(new Model("Models/Lamp/lampPost.obj"));
-		context->addModel(mod.back()); //10
+		GameEmGine::addModel(mod.back()); //10
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//11
+		GameEmGine::addModel(mod.back());//11
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//12
+		GameEmGine::addModel(mod.back());//12
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//13
+		GameEmGine::addModel(mod.back());//13
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//14
+		GameEmGine::addModel(mod.back());//14
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//15
+		GameEmGine::addModel(mod.back());//15
 
 		//Bench
 		mod.push_back(new Model("Models/Bench/Bench.obj"));
-		context->addModel(mod.back()); //16
+		GameEmGine::addModel(mod.back()); //16
 		mod.push_back(new Model(*mod[16]));
-		context->addModel(mod.back());//17
+		GameEmGine::addModel(mod.back());//17
 
 		//Planet
 		mod.push_back(new Model("Models/Planet/planet.obj"));
-		context->addModel(mod.back()); //18
+		GameEmGine::addModel(mod.back()); //18
 
 		//Building 2s
 		mod.push_back(new Model("Models/Buildings/Building2/building2.obj"));
-		context->addModel(mod.back());//19
+		GameEmGine::addModel(mod.back());//19
 		mod.push_back(new Model(*mod[19]));
-		context->addModel(mod.back());//20
+		GameEmGine::addModel(mod.back());//20
 		mod.push_back(new Model(*mod[19]));
-		context->addModel(mod.back());//21
+		GameEmGine::addModel(mod.back());//21
 
 		//GraveStones
 		mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj")); //22
@@ -259,80 +259,80 @@ public:
 
 		//Building 3s
 		mod.push_back(new Model("Models/Buildings/Building3/House.obj"));
-		context->addModel(mod.back());//30
+		GameEmGine::addModel(mod.back());//30
 		mod.push_back(new Model(*mod[30]));
-		context->addModel(mod.back());//31
+		GameEmGine::addModel(mod.back());//31
 		mod.push_back(new Model(*mod[30]));
-		context->addModel(mod.back());//32
+		GameEmGine::addModel(mod.back());//32
 
 		//Building 4s
 		mod.push_back(new Model("Models/Buildings/Building4/tallBuilding.obj"));
-		context->addModel(mod.back());//33
+		GameEmGine::addModel(mod.back());//33
 		mod.push_back(new Model(*mod[33]));
-		context->addModel(mod.back());//34
+		GameEmGine::addModel(mod.back());//34
 
 		mod.push_back(new Model("Models/DiedTree/tree.obj"));
-		context->addModel(mod.back());//35
+		GameEmGine::addModel(mod.back());//35
 		mod.push_back(new Model(*mod[35]));
-		context->addModel(mod.back());//36
+		GameEmGine::addModel(mod.back());//36
 		mod.push_back(new Model(*mod[35]));
-		context->addModel(mod.back());//37
+		GameEmGine::addModel(mod.back());//37
 		mod.push_back(new Model(*mod[35]));
-		context->addModel(mod.back());//38
+		GameEmGine::addModel(mod.back());//38
 
 		mod.push_back(new Model("Models/Buildings/Building5/smallShop.obj"));
-		context->addModel(mod.back());//39
+		GameEmGine::addModel(mod.back());//39
 		mod.push_back(new Model(*mod[39]));
-		context->addModel(mod.back());//40
+		GameEmGine::addModel(mod.back());//40
 		mod.push_back(new Model(*mod[39]));
-		context->addModel(mod.back());//41
+		GameEmGine::addModel(mod.back());//41
 
 		mod.push_back(new Model("Models/Buildings/Building6/Building6.obj"));
-		context->addModel(mod.back());//42
+		GameEmGine::addModel(mod.back());//42
 		mod.push_back(new Model(*mod[42]));
-		context->addModel(mod.back());//43
+		GameEmGine::addModel(mod.back());//43
 
 		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
-		context->addModel(mod.back()); //44
+		GameEmGine::addModel(mod.back()); //44
 		mod.push_back(new Model(*mod[44]));
-		context->addModel(mod.back());//45
+		GameEmGine::addModel(mod.back());//45
 		mod.push_back(new Model(*mod[44]));
-		context->addModel(mod.back());//46
+		GameEmGine::addModel(mod.back());//46
 		mod.push_back(new Model(*mod[44]));
-		context->addModel(mod.back());//47
+		GameEmGine::addModel(mod.back());//47
 
 		mod.push_back(new Model("Models/Bullet/bullet.obj"));//48
 
 		mod.push_back(new Model("Models/Trash/TrashCan.obj"));
-		context->addModel(mod.back()); //49
+		GameEmGine::addModel(mod.back()); //49
 		mod.push_back(new Model(*mod[49]));
-		context->addModel(mod.back());//50
+		GameEmGine::addModel(mod.back());//50
 
 		mod.push_back(new Model("Models/Picnic/PicnicTable.obj"));
-		context->addModel(mod.back()); //51
+		GameEmGine::addModel(mod.back()); //51
 		mod.push_back(new Model(*mod[51]));
-		context->addModel(mod.back());//52
+		GameEmGine::addModel(mod.back());//52
 
 		mod.push_back(new Model("Models/PizzaSign/PIZZA.obj"));
-		context->addModel(mod.back()); //53
+		GameEmGine::addModel(mod.back()); //53
 
 		mod.push_back(new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj"));
-		context->addModel(mod.back()); //54
+		GameEmGine::addModel(mod.back()); //54
 		mod.push_back(new Model(*mod[54]));
-		context->addModel(mod.back()); //55
+		GameEmGine::addModel(mod.back()); //55
 		mod.push_back(new Model(*mod[54]));
-		context->addModel(mod.back()); //56
+		GameEmGine::addModel(mod.back()); //56
 		mod.push_back(new Model(*mod[54]));
-		context->addModel(mod.back()); //57
+		GameEmGine::addModel(mod.back()); //57
 
 		mod.push_back(new Model("Models/Planet/Planet2/planet.obj"));
-		context->addModel(mod.back()); //58
+		GameEmGine::addModel(mod.back()); //58
 		//Pause Menu
 		//mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
 
 		//collision floor
 		mod.push_back(new Model("Models/Floor/Floor2.obj"));//59
-		context->addModel(mod[59]);
+		GameEmGine::addModel(mod[59]);
 
 		mod[59]->setToRender(false);
 		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
@@ -340,15 +340,15 @@ public:
 		//missile hit box
 		mod.push_back(new Model(*mod[44]));//60
 
-		context->addModel(mod.back()); //44
+		GameEmGine::addModel(mod.back()); //44
 		mod[60]->setToRender(false);
 		mod[60]->getTransformer().setScale(6, 1, 1);
 		mod.push_back(new Model(*mod[60]));//61
-		context->addModel(mod.back());//45
+		GameEmGine::addModel(mod.back());//45
 		mod.push_back(new Model(*mod[60]));//62
-		context->addModel(mod.back());//46
+		GameEmGine::addModel(mod.back());//46
 		mod.push_back(new Model(*mod[60]));//63
-		context->addModel(mod.back());//47
+		GameEmGine::addModel(mod.back());//47
 
 
 		//mod[61]->setToRender(false);
@@ -542,8 +542,8 @@ public:
 
 		/// - Set Camera - ///
 
-		context->setCameraPosition({0,15,-10});
-		context->setCameraAngle(-45, {1,0,0});
+		GameEmGine::setCameraPosition({0,15,-10});
+		GameEmGine::setCameraAngle(-45, {1,0,0});
 
 		/// not needed ///
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
@@ -663,12 +663,12 @@ public:
 			if(movePlayer)
 				for(int a = 0; a < 4; a++)
 				{
-					if(context->isControllerConnected(a))
+					if(GameEmGine::isControllerConnected(a))
 					{
 						if(!dead[a])
 						{
 							player = (Player*)mod[a];
-							Xinput p1 = context->getController(a);
+							Xinput p1 = GameEmGine::getController(a);
 
 							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 							{
@@ -704,11 +704,11 @@ public:
 								dead[a] = true;
 								mod[22 + a]->setColour(player->getColour());
 								mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(player->getTransformer().getPosition()), mod[22 + a]->getTransformer().setRotation({0.0f,270.0f,0.0f});
-								context->addModel(mod[22 + a]);
+								GameEmGine::addModel(mod[22 + a]);
 								mod[22 + a]->addAnimation("squash", &squash[a]);
 
 								mod[22 + a]->setAnimation("squash");
-								context->removeModel(player);
+								GameEmGine::removeModel(player);
 							}
 							if(p1.triggers[RT] >= .95 && !makeShitLessCancer[a])
 							{
@@ -717,7 +717,7 @@ public:
 									makeShitLessCancer[a] = true;
 
 									bullets[a].push_back(nullptr);
-									context->addModel(bullets[a].back() = new Model(*mod[48]));
+									GameEmGine::addModel(bullets[a].back() = new Model(*mod[48]));
 									bullets[a].back()->getTransformer().reset();
 									bullets[a].back()->setColour(player->getColour());
 									Coord3D pos = mod[a]->getTransformer().getPosition();
@@ -747,7 +747,7 @@ public:
 							if(p1.buttonPressed(p1.buttons.START))
 							{
 								puts("\nExiting Game\n");
-								context->exit();
+								GameEmGine::exit();
 							}
 							if(p1.buttonPressed(p1.buttons.X))
 							{
@@ -759,7 +759,7 @@ public:
 								if(time - player->getTimeSinceLastMissile() >= 3)
 								{
 									pMissiles[a].push_back(nullptr);
-									context->addModel(pMissiles[a].back() = new Model(*mod[44]));
+									GameEmGine::addModel(pMissiles[a].back() = new Model(*mod[44]));
 									pMissiles[a].back()->getTransformer().reset();
 									pMissiles[a].back()->setColour(player->getColour());
 									Coord3D pos = mod[a]->getTransformer().getPosition();
@@ -846,7 +846,7 @@ public:
 
 								if(timer[a][b] >= 1)
 								{
-									context->removeModel(bullets[a][b]);
+									GameEmGine::removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
 									velocity[a].erase(velocity[a].begin() + b);
 									timer[a].erase(timer[a].begin() + b);
@@ -856,7 +856,7 @@ public:
 								if(mod[8])
 									if(collisions(bullets[a][b], mod[8]))
 									{
-										context->removeModel(bullets[a][b]);
+										GameEmGine::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
 										velocity[a].erase(velocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
@@ -864,7 +864,7 @@ public:
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
-											context->removeModel(CandyMan); // If health = 0 then boss dead
+											GameEmGine::removeModel(CandyMan); // If health = 0 then boss dead
 											//	mod[8] = nullptr;
 											bossActive = false;
 											puts("Killed The BOSS\n");
@@ -881,7 +881,7 @@ public:
 
 								if(timer[a][b] >= 1)
 								{
-									context->removeModel(pMissiles[a][b]);
+									GameEmGine::removeModel(pMissiles[a][b]);
 									pMissiles[a].erase(pMissiles[a].begin() + b);
 									missileVelocity[a].erase(missileVelocity[a].begin() + b);
 									timer[a].erase(timer[a].begin() + b);
@@ -891,7 +891,7 @@ public:
 								if(mod[8])
 									if(collisions(pMissiles[a][b], mod[8]))
 									{
-										context->removeModel(pMissiles[a][b]);
+										GameEmGine::removeModel(pMissiles[a][b]);
 										pMissiles[a].erase(pMissiles[a].begin() + b);
 										missileVelocity[a].erase(missileVelocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
@@ -899,7 +899,7 @@ public:
 										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
-											context->removeModel(CandyMan); // If health = 0 then boss dead
+											GameEmGine::removeModel(CandyMan); // If health = 0 then boss dead
 											//	mod[8] = nullptr;
 											bossActive = false;
 											puts("Killed The BOSS\n");
@@ -920,9 +920,9 @@ public:
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 
 		if(!movePlayer)
-			if(context->isControllerConnected(0))
+			if(GameEmGine::isControllerConnected(0))
 			{
-				Xinput p1 = context->getController(0);
+				Xinput p1 = GameEmGine::getController(0);
 
 				p1.numButtons;
 				p1.numSticks;
@@ -943,11 +943,11 @@ public:
 				//move camera
 				move *= 2;
 
-				context->moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
-				context->moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
-				//context->getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
-				context->moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
-				context->moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
+				GameEmGine::moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
+				GameEmGine::moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
+				//GameEmGine::getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+				GameEmGine::moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
+				GameEmGine::moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;
 			}
 

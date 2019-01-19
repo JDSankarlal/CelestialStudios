@@ -8,7 +8,7 @@ public:
 	void init()
 	{
 		mod.push_back(new Model("Models/Screen/Menu/menu.obj"));
-		context->addModel(mod.back());
+		GameEmGine::addModel(mod.back());
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
 		LightSource::setSceneAmbient({0,0,0,255});
@@ -31,7 +31,7 @@ public:
 			}
 		}
 
-		if(Xinput::buttonPressed(context->getController(0).buttons.B))
+		if(Xinput::buttonPressed(GameEmGine::getController(0).buttons.B))
 		{
 			fadeout = true;
 		}
@@ -49,11 +49,11 @@ public:
 				splashT = 0;
 				splashAmbient = 255;
 
-				context->removeModel(mod[0]);
+				GameEmGine::removeModel(mod[0]);
 				mod.clear();
 
 				//GamePlayInit();
-				context->setScene(new Game);
+				GameEmGine::setScene(new Game);
 			}
 		}
 	}

@@ -1,4 +1,5 @@
 #include "FrameBuffer.h"
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -64,8 +65,8 @@ void FrameBuffer::initColourTexture(unsigned width, unsigned height, GLint inter
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
 	glGenTextures(1, &m_colourAttachments[index]);
-
 	glBindTexture(GL_TEXTURE_2D, m_colourAttachments[index]);
+
 	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
@@ -83,8 +84,11 @@ bool FrameBuffer::checkFBO()
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		unload();
+		std::puts("your frame buffers aint working bud");
+		system("pause");
 		return false;
 	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return true;
 }
 
@@ -115,10 +119,10 @@ void FrameBuffer::clear()
 	GLbitfield tmp = 0x0;
 	if(m_depthAttachment)
 		tmp = tmp | GL_DEPTH_BUFFER_BIT;
-
+	
 	if(m_colourAttachments)
 		tmp = tmp | GL_COLOR_BUFFER_BIT;
-
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 	glClear(tmp);
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
@@ -127,7 +131,7 @@ void FrameBuffer::clear()
 void FrameBuffer::enable()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-	glDrawBuffers(m_numColourAttachments, m_buffs);
+	//glDrawBuffers(m_numColourAttachments, m_buffs);
 }
 
 void FrameBuffer::disable()

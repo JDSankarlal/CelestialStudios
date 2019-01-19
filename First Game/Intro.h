@@ -9,7 +9,8 @@ public:
 	{
 		
 		mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
-		context->addModel(mod.back());
+		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+		GameEmGine::addModel(mod.back());
 		LightSource::setSceneAmbient({0,0,0,255});
 	}
 
@@ -38,7 +39,7 @@ public:
 			LightSource::setAttenuationQuadratic(0.04f, 0);
 			LightSource::setDirection({0.0f,0.0f,.0f}, 0);
 		}
-		if(Xinput::buttonPressed(context->getController(0).buttons.A))
+		if(Xinput::buttonPressed(GameEmGine::getController(0).buttons.A))
 		{
 			fadeout = true;
 		}
@@ -55,12 +56,12 @@ public:
 				splashT = 0;
 				splashAmbient = 255;
 
-				context->removeModel(mod[0]);
+				GameEmGine::removeModel(mod[0]);
 				mod.clear();
 				
 				
 				//menuInite();
-				context->setScene(new Menu);
+				GameEmGine::setScene(new Menu);
 			}
 		}
 	}

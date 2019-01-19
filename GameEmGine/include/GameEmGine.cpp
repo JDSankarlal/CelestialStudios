@@ -26,15 +26,15 @@ Scene* GameEmGine::m_mainScene;
 
 #pragma endregion
 
-GameEmGine::GameEmGine(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
+void GameEmGine::init(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	createNewWindow(name, width, height, x, y, monitor, fullScreen, visable);
 }
 
-GameEmGine::~GameEmGine()
-{
-	glfwTerminate();
-}
+//GameEmGine::~GameEmGine()
+//{
+//	glfwTerminate();
+//}
 
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
@@ -63,7 +63,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_mainBuffer = new FrameBuffer(1);
 	m_mainBuffer->initDepthTexture(width, height);
 	m_mainBuffer->initColourTexture(width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
-	
+
 	if(!m_mainBuffer->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -85,32 +85,28 @@ void GameEmGine::run()
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	
+
 	glEnable(GL_TEXTURE_2D);
-	
+
 	glEnable(GL_CULL_FACE);
-	
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-	glm::mat4 proj = glm::perspective(45.f, (float)m_window->getScreenWidth() / m_window->getScreenHeight(), 1.f, 1000.f);
-
 	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
 	{
-		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
 		InputManager::controllerUpdate();
 		update();
 		if(true)//fps calculation
 		{
-			calculateFPS();
-			char str[20];
-			sprintf_s(str, "fps: %.2f", m_fps);
-			glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
+			//calculateFPS();
+			//char str[20];
+			//sprintf_s(str, "fps: %.2f", m_fps);
+			//glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
 		}
-
 		glfwSwapBuffers(m_window->getWindow());
-		glFlush();
+		//glFlush();
 		fpsLimiter();
 	}
 	glfwInit();
@@ -249,11 +245,11 @@ void GameEmGine::initFullScreenQuad()
 	glBindBuffer(GL_ARRAY_BUFFER, fsQuadVBO_ID);
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18 + sizeof(float) * 12, vboData, GL_STATIC_DRAW);
-	
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 18));
 
-	glBindBuffer(GL_ARRAY_BUFFER,GL_NONE);
+	glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
 
 	glBindVertexArray(GL_NONE);
 }
@@ -281,6 +277,8 @@ void GameEmGine::setScene(Scene* scene)
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
 	m_colour = {GLubyte(r * 255),GLubyte(g * 255),GLubyte(b * 255),GLubyte(a * 255)};
+	glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
+
 }
 
 int GameEmGine::getWindowWidth()
@@ -354,8 +352,8 @@ void GameEmGine::addCamera(Camera *cam)
 void GameEmGine::update()
 {
 
-	glClearDepth(1.f);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//glClearDepth(1.f);
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	m_mainBuffer->clear();
 
 	m_mainCamera->update();
@@ -372,15 +370,17 @@ void GameEmGine::update()
 
 	if(m_mainCamera->getTransformer().isUpdated())
 	{
+		m_modelShader->enable();
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix() * m_mainCamera->getViewMatrix())[0][0]));
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
+		m_modelShader->disable();
 	}
 
 	//3D-Graphics 1
-	
+
 	//m_mainBuffer->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
-		m_models[a]->render(*m_modelShader, *m_mainCamera);
+		m_models[a]->render(*m_modelShader, *m_mainCamera,m_mainBuffer);
 	//m_mainBuffer->disable();
 
 	//m_grayScalePost->enable();

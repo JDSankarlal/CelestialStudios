@@ -116,10 +116,8 @@ bool Shader::compileShaders(const std::string & vertFilePath, const std::string 
 {
 	m_vtPath = vertFilePath;
 	m_fmPath = fragFilePath;
-
-
-	if(m_programID)
-		glDeleteProgram(m_programID);
+	
+	glDeleteProgram(m_programID);
 
 	m_programID = glCreateProgram();
 	m_vertID = glCreateShader(GL_VERTEX_SHADER);
@@ -152,14 +150,18 @@ void Shader::linkShaders()
 
 		// We don't need the program anymore.
 		glDeleteProgram(m_programID);
+
 		// Don't leak shaders either.
 		glDeleteShader(m_vertID);
 		glDeleteShader(m_fragID);
 
+		//Reset to zero.
 		m_programID = m_vertID = m_fragID = 0;
 
 		// Use the infoLog as you see fit.
 		printf(infoLog + '\n');
+
+		system("pause");
 		// In this simple program, we'll just leave
 		return;
 	}
@@ -173,7 +175,7 @@ void Shader::linkShaders()
 void Shader::addAtribute(const std::string attributeName, short index)
 {
 	glBindAttribLocation(m_programID, index, attributeName.c_str());
-	
+	linkShaders();
 }
 
 GLint Shader::getAttribLocation(const std::string attributeName)
