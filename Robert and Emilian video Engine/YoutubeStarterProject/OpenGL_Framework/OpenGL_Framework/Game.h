@@ -17,9 +17,6 @@
 #define WINDOW_WIDTH			800
 #define WINDOW_HEIGHT			600
 #define FRAMES_PER_SECOND		60
-#define BLOOM_THRESHOLD			0.25f
-#define BLOOM_DOWNSCALE			2.0f
-#define BLOOM_BLUR_PASSES		4
 
 class Game
 {
@@ -41,25 +38,13 @@ public:
 	Timer *updateTimer	= nullptr;
 	float TotalGameTime = 0.0f;
 
-	/// Programs ///
-	ShaderProgram StaticGeometry;
-	ShaderProgram BloomHighPass;
-	ShaderProgram BlurHorizontal;
-	ShaderProgram BlurVertical;
-	ShaderProgram BloomComposite;
-
-	/// Enitities ///
+	ShaderProgram PassThrough;
+	ShaderProgram GreyScalePost;
 	Mesh Monkey;
 	Texture GrassTexture;
-
-	/// FrameBuffers ///
-	FrameBuffer MainBuffer;
-	//Bloom work Buffers
-	FrameBuffer WorkBuffer1;
-	FrameBuffer WorkBuffer2;
-
 	Camera camera;
-	
+	FrameBuffer MainBuffer;
+
 	mat4 CameraTransform;
 	mat4 CameraProjection;
 	mat4 MonkeyTransform;
