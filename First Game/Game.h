@@ -5,6 +5,7 @@
 #include <vector>
 #include "Player.h"
 #include "Boss.h"
+#include "Minions.h"
 
 typedef EmGineAudioPlayer AudioPlayer;
 using std::vector;
@@ -340,20 +341,27 @@ public:
 		//missile hit box
 		mod.push_back(new Model(*mod[44]));//60
 
-		context->addModel(mod.back()); //44
+		context->addModel(mod.back()); //
 		mod[60]->setToRender(false);
 		mod[60]->getTransformer().setScale(6, 1, 1);
 		mod.push_back(new Model(*mod[60]));//61
-		context->addModel(mod.back());//45
+		context->addModel(mod.back());//
 		mod.push_back(new Model(*mod[60]));//62
-		context->addModel(mod.back());//46
+		context->addModel(mod.back());//
 		mod.push_back(new Model(*mod[60]));//63
-		context->addModel(mod.back());//47
+		context->addModel(mod.back());//
 
 		mod[44]->addChild(mod[60]);
 		mod[45]->addChild(mod[61]);
 		mod[46]->addChild(mod[62]);
 		mod[47]->addChild(mod[63]);
+
+		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
+		mod.push_back(new Minions("Models/Lamp/LampPost.obj"));
+		context->addModel(mod.back());
+		mod[64]->setToRender(false);
+		mod[64]->getTransformer().setScale(0.2);
+		//context->addModel(mod.back()); //64
 
 		/// - Set Model Transforms - ///
 		//Player Transforms

@@ -1,5 +1,6 @@
 #pragma once
-class Minions
+#include <Model.h>
+class Minions : public Model
 {
 public:
 	Minions();
