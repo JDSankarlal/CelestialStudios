@@ -99,6 +99,7 @@ void GameEmGine::run()
 		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
 		InputManager::controllerUpdate();
 		update();
+
 		if(true)//fps calculation
 		{
 			calculateFPS();
@@ -107,7 +108,7 @@ void GameEmGine::run()
 			glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
 		}
 		glfwSwapBuffers(m_window->getWindow());
-		glFlush();
+		//glFlush();
 		fpsLimiter();
 	}
 	glfwInit();
@@ -351,8 +352,8 @@ void GameEmGine::addCamera(Camera *cam)
 void GameEmGine::update()
 {
 
-	//glClearDepth(1.f);
-	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClearDepth(1.f);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	m_mainBuffer->clear();
 
 	m_mainCamera->update();
