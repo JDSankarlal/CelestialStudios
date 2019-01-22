@@ -16,9 +16,6 @@ public:
 	//shader initialization
 	virtual void shaderInit() {}
 
-	//works without it for some reason
-	inline void setContext(GameEmGine* game) { context = game; }
-
 	//updates within game loop
 	virtual void update(double dt) = 0;
 	virtual void init() = 0;
@@ -37,8 +34,5 @@ public:
 
 	//instance button is released
 	mouseReleased;
-
-protected:
-	GameEmGine* context;//this should ALWAYS be a GameEmGine object
 };
 

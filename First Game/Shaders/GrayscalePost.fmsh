@@ -15,6 +15,6 @@ void main()
     0.587  * source.g + 
     0.114  * source.b;
 
-    outColour = vec4(source.r,source.g , source.b, 1);
+    outColour = vec4(luminance, luminance, luminance, 1);
     //outColour = vec4(1,0,0,1);
 }

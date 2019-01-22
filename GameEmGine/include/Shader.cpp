@@ -7,9 +7,14 @@ m_enabled(false), m_programID(0),
 m_vertID(0),
 m_fragID(0)
 {
+	glewInit();
+}
 
-
-
+Shader::Shader(Shader& shad):m_vtsh(shad.m_vtsh), m_vtPath(shad.m_vtPath), m_fmPath(shad.m_fmPath), m_attribNum(shad.m_attribNum),
+m_enabled(shad.m_enabled), m_programID(shad.m_programID),
+m_vertID(0),
+m_fragID(0)
+{
 	glewInit();
 }
 
@@ -111,10 +116,8 @@ bool Shader::compileShaders(const std::string & vertFilePath, const std::string 
 {
 	m_vtPath = vertFilePath;
 	m_fmPath = fragFilePath;
-
-
-	if(m_programID)
-		glDeleteProgram(m_programID);
+	
+	glDeleteProgram(m_programID);
 
 	m_programID = glCreateProgram();
 	m_vertID = glCreateShader(GL_VERTEX_SHADER);
@@ -135,6 +138,7 @@ void Shader::linkShaders()
 
 	GLint isLinked = 0;
 	glGetProgramiv(m_programID, GL_LINK_STATUS, (int *)&isLinked);
+	
 	if(isLinked == GL_FALSE)
 	{
 		GLint maxLength = 0;
@@ -146,27 +150,37 @@ void Shader::linkShaders()
 
 		// We don't need the program anymore.
 		glDeleteProgram(m_programID);
+
 		// Don't leak shaders either.
 		glDeleteShader(m_vertID);
 		glDeleteShader(m_fragID);
 
+		//Reset to zero.
 		m_programID = m_vertID = m_fragID = 0;
 
 		// Use the infoLog as you see fit.
 		printf(infoLog + '\n');
+
+		system("pause");
 		// In this simple program, we'll just leave
 		return;
 	}
+	
 	glDetachShader(m_programID, m_vertID);
 	glDetachShader(m_programID, m_fragID);
 	glDeleteShader(m_vertID);
 	glDeleteShader(m_fragID);
 }
 
-void Shader::addAtribute(const std::string attributeName, short attribSize)
+void Shader::addAtribute(const std::string attributeName, short index)
 {
-	glBindAttribLocation(m_programID, m_attribNum, attributeName.c_str());
-	m_attribNum += attribSize;
+	glBindAttribLocation(m_programID, index, attributeName.c_str());
+	linkShaders();
+}
+
+GLint Shader::getAttribLocation(const std::string attributeName)
+{
+	return glGetAttribLocation(m_programID,attributeName.c_str());
 }
 
 GLint Shader::getUniformLocation(const char * uniform)
@@ -177,43 +191,15 @@ GLint Shader::getUniformLocation(const char * uniform)
 
 void Shader::enable()
 {
-	//glUseProgram (m_programID);
+	glUseProgram (m_programID);
 
-	if(!m_enabled)
-	{
-		m_attribs = (GLuint*)realloc(m_attribs, ++m_num * sizeof(GLuint));
-		m_programs = (GLuint*)realloc(m_programs, m_num * sizeof(GLuint));
-
-		m_programs[m_num - 1] = m_programID;
-		findAtributes();
-		m_attribs[m_num - 1] = m_attribNum;
-
-		glUseProgram(m_programID);
-		for(int a = 0; a < m_attribNum; a++)
-			glEnableVertexAttribArray(a);
-		m_enabled = true;
-	}
+	
 }
 
 void Shader::disable()
 {
-	if(m_enabled)
-	{
-		for(int a = 0; a < m_attribNum; a++)
-			glDisableVertexAttribArray(a);
-
-		if(m_num - 1 > 0)
-		{
-			glUseProgram(m_programs[--m_num - 1]);
-			for(unsigned a = 0; a < m_attribs[m_num - 1]; a++)
-				glEnableVertexAttribArray(a);
-		} else
-			glUseProgram(0);
-
-		m_enabled = false;
-	}
-
-	//glUseProgram(0);
+	
+	glUseProgram(0);
 
 }
 

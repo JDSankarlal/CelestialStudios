@@ -1,133 +1,130 @@
 #include "FrameBuffer.h"
-#include <cstdlib>
-#include <cstring>
 
-FrameBuffer::FrameBuffer(unsigned numColourAttach)
+FrameBuffer::FrameBuffer(unsigned numColorAttachments)
 {
-	glGenBuffers(1, &m_fboID);
 
-	m_numColourAttachments = numColourAttach;
+	glGenFramebuffers(1, &m_fboID);
+	m_numColorAttachments = numColorAttachments;
 
-	m_colourAttachments = new GLuint[m_numColourAttachments];
+	m_colorAttachments = new GLuint[m_numColorAttachments];
 
-	m_buffs = new GLenum[m_numColourAttachments];
-	for(unsigned a = 0; a < m_numColourAttachments; a++)
-		m_buffs[a] = GL_COLOR_ATTACHMENT0 + a;
+	//Buffs is required as a parameter for glDrawBuffers()
+	m_buffs = new GLenum[m_numColorAttachments];
+	for (unsigned i = 0; i < m_numColorAttachments; i++)
+	{
+		m_buffs[i] = GL_COLOR_ATTACHMENT0 + i;
+	}
 
-	//setNumColourAttachments(numColourAttach);
 }
-
-//void FrameBuffer::setNumColourAttachments(unsigned num)
-//{
-//	unsigned tmp = m_numColourAttachments;
-//	m_numColourAttachments = num;
-//	
-//	m_colourAttachments = !m_colourAttachments ?
-//		new GLuint[m_numColourAttachments] :
-//		(GLuint*)std::realloc(m_colourAttachments, sizeof(GLuint)*num);
-//	
-//	std::memset(m_colourAttachments + tmp, 0, sizeof(GLuint)*(num - tmp > 0 ? num - tmp : 0));
-//	
-//	m_buffs = !m_buffs ?
-//		new GLenum[m_numColourAttachments] :
-//		(GLenum*)std::realloc(m_buffs, sizeof(GLenum)*num);
-//	
-//	for(unsigned a = 0; a < m_numColourAttachments; a++)
-//		m_buffs[a] = GL_COLOR_ATTACHMENT0 + a;
-//}
 
 FrameBuffer::~FrameBuffer()
 {
 	unload();
 }
 
-void FrameBuffer::initDepthTexture(int width, int height)
+void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
+	//create depth texture
 	glGenTextures(1, &m_depthAttachment);
 	glBindTexture(GL_TEXTURE_2D, m_depthAttachment);
-
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+	//Bind texture to the fbo
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-}
 
-void FrameBuffer::initColourTexture(unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap, unsigned index)
+}
+void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-
-	glGenTextures(1, &m_colourAttachments[index]);
-
-	glBindTexture(GL_TEXTURE_2D, m_colourAttachments[index]);
+	
+	//create depth texture
+	glGenTextures(1, &m_colorAttachments[index]);
+	glBindTexture(GL_TEXTURE_2D, m_colorAttachments[index]);
 	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colourAttachments[index], 0);
+	//Bind texture to the fbo
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index], 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
-
 bool FrameBuffer::checkFBO()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		unload();
 		return false;
 	}
+
 	return true;
 }
 
+// Clears all OpenGL memory
 void FrameBuffer::unload()
 {
-	if(m_buffs)
-		delete[] m_buffs,
-		m_buffs = nullptr;
-
-	if(m_colourAttachments)
+	if (m_buffs != nullptr)
 	{
-		for(unsigned a = 0; a < m_numColourAttachments; a++)
-			glDeleteTextures(1, &m_colourAttachments[a]);
-
-		delete[] m_colourAttachments;
-		m_colourAttachments = nullptr;
+		delete[] m_buffs;
+		m_buffs = nullptr;
 	}
 
-	if(m_depthAttachment)
-		glDeleteTextures(1, &m_depthAttachment),
-		m_depthAttachment = GL_NONE;
+	if (m_colorAttachments != nullptr)
+	{
+		for (unsigned i = 0; i < m_numColorAttachments; i++)
+		{
+			glDeleteTextures(1, &m_colorAttachments[i]);
+		}
 
-	m_numColourAttachments = 0;
+		delete[] m_colorAttachments;
+		m_colorAttachments = nullptr;
+	}
+
+	if (m_depthAttachment != GL_NONE)
+	{
+		glDeleteTextures(1, &m_depthAttachment);
+		m_depthAttachment = GL_NONE;
+	}
+
+	m_numColorAttachments = 0;
 }
 
+// Clears all attached textures
 void FrameBuffer::clear()
 {
-	GLbitfield tmp = 0x0;
-	if(m_depthAttachment)
-		tmp = tmp | GL_DEPTH_BUFFER_BIT;
+	GLbitfield temp = 0;
 
-	if(m_colourAttachments)
-		tmp = tmp | GL_COLOR_BUFFER_BIT;
+	if (m_depthAttachment != GL_NONE)
+	{
+		temp = temp | GL_DEPTH_BUFFER_BIT;
+	}
+
+	if (m_colorAttachments != nullptr)
+	{
+		temp = temp | GL_COLOR_BUFFER_BIT;
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-	glClear(tmp);
+	glClear(temp);
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
 void FrameBuffer::enable()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-	glDrawBuffers(m_numColourAttachments, m_buffs);
+	glDrawBuffers(m_numColorAttachments, m_buffs);
 }
 
 void FrameBuffer::disable()
@@ -135,22 +132,21 @@ void FrameBuffer::disable()
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
-void FrameBuffer::moveToBackBuffer(int windWidth, int windHeight)
+void FrameBuffer::moveToBackBuffer(int windowWidth, int windowHeight)
 {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, GL_NONE);
 
-	glBlitFramebuffer(0, 0, windWidth, windHeight, 0, 0, windWidth, windHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
-GLuint FrameBuffer::GetDepthHandle() const
+GLuint FrameBuffer::getDepthHandle() const
 {
 	return m_depthAttachment;
 }
-
-GLuint FrameBuffer::GetColourHandle(unsigned index) const
+GLuint FrameBuffer::getColorHandle(unsigned index) const
 {
-	return m_colourAttachments[index];
+	return m_colorAttachments[index];
 }

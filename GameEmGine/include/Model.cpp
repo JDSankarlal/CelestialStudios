@@ -84,8 +84,6 @@ void Model::drawBoundingBox()
 	glBindVertexArray(0);
 
 	m_shaderBB.disable();
-	//shader.enable();
-
 }
 
 Transformer& Model::getTransformer()

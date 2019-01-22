@@ -630,12 +630,14 @@ void Mesh::render(Shader& shader, FrameBuffer *frame)
 
 		glUniform1i(shader.getUniformLocation("textured"), textured);
 
+		if(frame)
+			frame->enable() ;
 
-		frame ? frame->enable() : void();
 		glBindVertexArray(m_vaoID[a].second);
 		glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
 		glBindVertexArray(0);
-		frame ? frame->disable() : void();
+		if(frame)
+			frame->disable();
 
 		for(; c >= 0; c--)
 		{

@@ -1,5 +1,4 @@
 #version 420
-#define MAX_ANIMATIONS_SIZE 10
 
 uniform mat4 uModel;
 uniform mat4 uView;
