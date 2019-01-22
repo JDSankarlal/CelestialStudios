@@ -193,40 +193,12 @@ void Shader::enable()
 {
 	glUseProgram (m_programID);
 
-	//if(!m_enabled)
-	//{
-	//	m_attribs = (GLuint*)realloc(m_attribs, ++m_num * sizeof(GLuint));
-	//	m_programs = (GLuint*)realloc(m_programs, m_num * sizeof(GLuint));
-	//
-	//	m_programs[m_num - 1] = m_programID;
-	//	findAtributes();
-	//	m_attribs[m_num - 1] = m_attribNum;
-	//
-	//	glUseProgram(m_programID);
-	//	for(int a = 0; a < m_attribNum; a++)
-	//		glEnableVertexAttribArray(a);
-	//	m_enabled = true;
-	//}
+	
 }
 
 void Shader::disable()
 {
-	//if(m_enabled)
-	//{
-	//	for(int a = 0; a < m_attribNum; a++)
-	//		glDisableVertexAttribArray(a);
-	//
-	//	if(m_num - 1 > 0)
-	//	{
-	//		glUseProgram(m_programs[--m_num - 1]);
-	//		for(unsigned a = 0; a < m_attribs[m_num - 1]; a++)
-	//			glEnableVertexAttribArray(a);
-	//	} else
-	//		glUseProgram(0);
-	//
-	//	m_enabled = false;
-	//}
-
+	
 	glUseProgram(0);
 
 }

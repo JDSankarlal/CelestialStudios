@@ -28,9 +28,9 @@ public:
 	GLuint getColorHandle(unsigned index) const;
 
 private:
-	GLuint _FBO = GL_NONE;
-	GLuint _DepthAttachment = GL_NONE;
-	GLuint *_ColorAttachments = nullptr;
+	GLuint m_fboID = GL_NONE
+	, m_depthAttachment = GL_NONE
+	, *m_colorAttachments = nullptr;
 	GLenum *m_buffs = nullptr;
 
 	unsigned int m_numColorAttachments = 0;

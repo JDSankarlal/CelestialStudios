@@ -33,7 +33,7 @@ public:
 	//enables shader program for use
 	void enable();
 	//disables shader program 
-	void disable();
+	static void disable();
 
 private:
 	enum Shaders

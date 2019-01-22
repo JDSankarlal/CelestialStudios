@@ -96,17 +96,18 @@ void GameEmGine::run()
 
 	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
 	{
+		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
 		InputManager::controllerUpdate();
 		update();
 		if(true)//fps calculation
 		{
-			//calculateFPS();
-			//char str[20];
-			//sprintf_s(str, "fps: %.2f", m_fps);
-			//glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
+			calculateFPS();
+			char str[20];
+			sprintf_s(str, "fps: %.2f", m_fps);
+			glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
 		}
 		glfwSwapBuffers(m_window->getWindow());
-		//glFlush();
+		glFlush();
 		fpsLimiter();
 	}
 	glfwInit();
@@ -277,8 +278,6 @@ void GameEmGine::setScene(Scene* scene)
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
 	m_colour = {GLubyte(r * 255),GLubyte(g * 255),GLubyte(b * 255),GLubyte(a * 255)};
-	glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
-
 }
 
 int GameEmGine::getWindowWidth()
@@ -384,11 +383,13 @@ void GameEmGine::update()
 	m_mainBuffer->disable();
 
 	m_grayScalePost->enable();
+	glUniform1i(m_grayScalePost->getUniformLocation("uTex"), 0);
 	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->getColorHandle(0));
 	drawFullScreenQuad();
 	glBindTexture(GL_TEXTURE_2D,GL_NONE);
 	m_grayScalePost->disable();
 
+	//m_mainBuffer->moveToBackBuffer(getWindowWidth(),getWindowHeight());
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
 

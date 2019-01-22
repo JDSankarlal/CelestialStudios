@@ -53,7 +53,7 @@ void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
 
 	// update the position of the object
 	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
-	//boundingBoxUpdate(cam);
+	boundingBoxUpdate(cam);
 
 	if(m_render)
 	{
@@ -84,8 +84,6 @@ void Model::drawBoundingBox()
 	glBindVertexArray(0);
 
 	m_shaderBB.disable();
-	//shader.enable();
-
 }
 
 Transformer& Model::getTransformer()
