@@ -62,7 +62,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 	m_mainBuffer = new FrameBuffer(1);
 	m_mainBuffer->initDepthTexture(width, height);
-	m_mainBuffer->initColourTexture(width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
+	m_mainBuffer->initColourTexture(0,width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 
 	if(!m_mainBuffer->checkFBO())
 	{
@@ -378,16 +378,16 @@ void GameEmGine::update()
 
 	//3D-Graphics 1
 
-	//m_mainBuffer->enable();
+	m_mainBuffer->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
-		m_models[a]->render(*m_modelShader, *m_mainCamera,m_mainBuffer);
-	//m_mainBuffer->disable();
+		m_models[a]->render(*m_modelShader, *m_mainCamera);
+	m_mainBuffer->disable();
 
-	//m_grayScalePost->enable();
-	//glBindTexture(GL_TEXTURE_2D, m_mainBuffer->GetColourHandle(0));
-	//drawFullScreenQuad();
-	//glBindTexture(GL_TEXTURE_2D,GL_NONE);
-	//m_grayScalePost->disable();
+	m_grayScalePost->enable();
+	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->getColorHandle(0));
+	drawFullScreenQuad();
+	glBindTexture(GL_TEXTURE_2D,GL_NONE);
+	m_grayScalePost->disable();
 
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
