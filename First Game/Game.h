@@ -357,10 +357,10 @@ public:
 		mod[47]->addChild(mod[63]);
 
 		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
-		//mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
-		//context->addModel(mod[64]);
+		mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
+		context->addModel(mod[64]);
 		//mod[64]->getTransformer().setScale(0.2);
-		//mod[64]->setToRender(false);
+		mod[64]->setToRender(false);
 		
 		//context->addModel(mod.back()); //64
 
@@ -574,7 +574,8 @@ public:
 		static Player* player;
 		static Boss*CandyMan = (Boss*)mod[8];
 		//drawHealth(CandyMan->getHealth());
-		static Minion* minion;
+		static vector<Minion*>minions[4];
+		static int minionCounter = 0;
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
@@ -788,6 +789,28 @@ public:
 								}
 							}
 
+							/// - Boss Spawns Minions - ///
+
+							if (minionCounter <= 0)
+							{
+								minions[a].push_back(nullptr);
+								context->addModel(minions[a].back() = new Minion(*mod[64]));
+								minions[a].back()->setToRender(true);
+								minions[a].back()->getTransformer().reset();
+								minions[a].back()->setColour(200,100,50);
+								Coord3D pos = mod[a]->getTransformer().getPosition();
+								minions[a].back()->getTransformer().setPosition(10,0,-3);
+								minions[a].back()->getTransformer().setScale(4.f);
+
+								//printf(minions[a].back()->getTransformer().getPosition());
+								minionCounter += 1;
+								//minions[a].back()
+							}
+
+								Coord3D norm = player->getTransformer().getPosition() -minions[a].back()->getTransformer().getPosition();
+								norm.normalize();
+								 
+								minions[a].back()->getTransformer().translateBy(norm*.001f);
 							/// - Left Trigger to Dash - ///
 
 							if(p1.triggers[LT] >= .95)
