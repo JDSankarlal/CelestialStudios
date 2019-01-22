@@ -5,7 +5,7 @@
 #include <vector>
 #include "Player.h"
 #include "Boss.h"
-#include "Minions.h"
+#include "Minion.h"
 
 typedef EmGineAudioPlayer AudioPlayer;
 using std::vector;
@@ -357,10 +357,11 @@ public:
 		mod[47]->addChild(mod[63]);
 
 		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
-		mod.push_back(new Minions("Models/Lamp/LampPost.obj"));
-		context->addModel(mod.back());
-		mod[64]->setToRender(false);
-		mod[64]->getTransformer().setScale(0.2);
+		//mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
+		//context->addModel(mod[64]);
+		//mod[64]->getTransformer().setScale(0.2);
+		//mod[64]->setToRender(false);
+		
 		//context->addModel(mod.back()); //64
 
 		/// - Set Model Transforms - ///
@@ -573,6 +574,7 @@ public:
 		static Player* player;
 		static Boss*CandyMan = (Boss*)mod[8];
 		//drawHealth(CandyMan->getHealth());
+		static Minion* minion;
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];

@@ -154,7 +154,7 @@
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Medic.cpp" />
-    <ClCompile Include="Minions.cpp" />
+    <ClCompile Include="Minion.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Specialist.cpp" />
     <ClCompile Include="Tank.cpp" />
@@ -175,7 +175,7 @@
     <ClInclude Include="Intro.h" />
     <ClInclude Include="Medic.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="Minions.h" />
+    <ClInclude Include="Minion.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Specialist.h" />
     <ClInclude Include="Splash.h" />
