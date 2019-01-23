@@ -115,8 +115,8 @@ public:
 		{
 			GameEmGine::m_modelShader->refresh();
 			GameEmGine::m_grayScalePost->refresh();
-			//context->setCameraAngle(0, { 1, 1, 1 });
-			//	context->setCameraPosition({0,0,0});
+			//GameEmGine::setCameraAngle(0, { 1, 1, 1 });
+			//	GameEmGine::setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
@@ -321,15 +321,15 @@ public:
 		//missile hit box
 		mod.push_back(new Model(*mod[44]));//60
 
-		context->addModel(mod.back()); //
+		GameEmGine::addModel(mod.back()); //
 		mod[60]->setToRender(false);
 		mod[60]->getTransformer().setScale(6, 1, 1);
 		mod.push_back(new Model(*mod[60]));//61
-		context->addModel(mod.back());//
+		GameEmGine::addModel(mod.back());//
 		mod.push_back(new Model(*mod[60]));//62
-		context->addModel(mod.back());//
+		GameEmGine::addModel(mod.back());//
 		mod.push_back(new Model(*mod[60]));//63
-		context->addModel(mod.back());//
+		GameEmGine::addModel(mod.back());//
 
 		mod[44]->addChild(mod[60]);
 		mod[45]->addChild(mod[61]);
@@ -338,11 +338,11 @@ public:
 
 		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
 		mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
-		context->addModel(mod[64]);
+		GameEmGine::addModel(mod[64]);
 		//mod[64]->getTransformer().setScale(0.2);
 		mod[64]->setToRender(false);
 
-		//context->addModel(mod.back()); //64
+		//GameEmGine::addModel(mod.back()); //64
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -681,7 +681,7 @@ public:
 								}
 							}
 							//Player comes near Boss, gets teleported backwards
-							if(collisionsB(player, CandyMan))
+							if(collision(player, CandyMan))
 							{
 								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
 								player->setHealth(player->getHealth() - 35);
@@ -775,7 +775,7 @@ public:
 							if(minionCounter <= 0)
 							{
 								minions.push_back(nullptr);
-								context->addModel(minions.back() = new Minion(*mod[64]));
+								GameEmGine::addModel(minions.back() = new Minion(*mod[64]));
 								minions.back()->setToRender(true);
 								minions.back()->getTransformer().reset();
 								minions.back()->setColour(200, 100, 50);
@@ -889,15 +889,15 @@ public:
 
 								//TODO: Fix Minion Collisions
 								for(auto& minion : minions)
-									if(collisions(bullets[a][b], minion))
+									if(collision(bullets[a][b], minion))
 									{
 										minion->setHealth(minion->getHealth() - 10);
-										context->removeModel(bullets[a][b]);
+										GameEmGine::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
 
 										if(minion->getHealth() <= 0)
 										{
-											context->removeModel(minion);
+											GameEmGine::removeModel(minion);
 											minions.erase(std::find(minions.begin(), minions.end(), minion));
 											puts("Killed a boi\n");
 											minionCounter -= 1;

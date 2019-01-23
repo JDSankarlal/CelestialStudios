@@ -170,7 +170,7 @@ void GameEmGine::shaderInit()
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 
 	m_grayScalePost = new Shader;
-	m_grayScalePost->create("Shaders/Main Buffer.vtsh", "Shaders/Main Buffer.fmsh");
+	m_grayScalePost->create("Shaders/Main Buffer.vtsh", "Shaders/GrayscalePost.fmsh");
 }
 
 void GameEmGine::calculateFPS()
