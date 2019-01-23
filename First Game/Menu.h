@@ -31,7 +31,7 @@ public:
 			}
 		}
 
-		if(Xinput::buttonPressed(context->getController(0).buttons.B))
+		if(Xinput::buttonPressed(context->getController(0).buttons.A))
 		{
 			fadeout = true;
 		}
