@@ -6,6 +6,7 @@
 #include <string>
 #include <thread>
 #include <functional>
+#include <utility>
 #include "Scene.h"
 //#include "ShaderCombiner.h"
 #include "Shader.h"
@@ -113,12 +114,12 @@ public:
 
 	static Shader *m_cameraShader, *m_modelShader,*m_grayScalePost;
 
+	static void drawFullScreenQuad();
 private:
 	static void shaderInit();
 	static void calculateFPS();
 	static void fpsLimiter();
 	static void initFullScreenQuad();
-	static void drawFullScreenQuad();
 
 	/*
 	static void InitOpenGlCallback ();
@@ -128,14 +129,13 @@ private:
 	static void update();
 	static void changeViewport(GLFWwindow * win, int w, int h);
 	static void(*m_compileShaders)();
-	static std::function<void()>m_render;
+	static std::function<void()>m_buffer;
 	static std::function<void(double)> m_gameLoop;
-	static GLuint fsQuadVAO_ID, fsQuadVBO_ID;
+	static GLuint m_fsQuadVAO_ID, m_fsQuadVBO_ID;
 	static WindowCreator *m_window;
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
-//	static ModelBatch* m_modelBatch;
 	static FrameBuffer* m_mainBuffer;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;

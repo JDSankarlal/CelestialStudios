@@ -1,12 +1,13 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <functional>
 
 class FrameBuffer
 {
 public:
 	FrameBuffer() = delete;
-	FrameBuffer(unsigned numColorAttachments);
+	FrameBuffer(std::string tag,unsigned numColorAttachments);
 	~FrameBuffer();
 
 	void initDepthTexture(unsigned width, unsigned height);
@@ -27,11 +28,23 @@ public:
 	GLuint getDepthHandle() const;
 	GLuint getColorHandle(unsigned index) const;
 
+	void setPostProcess(std::function<void()>, unsigned layer=0);
+	std::function<void()> getPostProcess();
+
+	std::string getTag();
+	unsigned getLayer();
+
 private:
-	GLuint m_fboID = GL_NONE
-	, m_depthAttachment = GL_NONE
-	, *m_colorAttachments = nullptr;
+	GLuint
+		m_layer = GL_NONE,
+		m_fboID = GL_NONE, 
+		m_depthAttachment = GL_NONE, 
+		*m_colorAttachments = nullptr;
+
 	GLenum *m_buffs = nullptr;
 
 	unsigned int m_numColorAttachments = 0;
+
+	std::string m_tag;
+	std::function<void()>m_postProcess;
 };

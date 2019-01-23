@@ -1,8 +1,8 @@
 #include "FrameBuffer.h"
 
-FrameBuffer::FrameBuffer(unsigned numColorAttachments)
+FrameBuffer::FrameBuffer(std::string tag,unsigned numColorAttachments)
 {
-
+	m_tag = tag;
 	glGenFramebuffers(1, &m_fboID);
 	m_numColorAttachments = numColorAttachments;
 
@@ -10,7 +10,7 @@ FrameBuffer::FrameBuffer(unsigned numColorAttachments)
 
 	//Buffs is required as a parameter for glDrawBuffers()
 	m_buffs = new GLenum[m_numColorAttachments];
-	for (unsigned i = 0; i < m_numColorAttachments; i++)
+	for(unsigned i = 0; i < m_numColorAttachments; i++)
 	{
 		m_buffs[i] = GL_COLOR_ATTACHMENT0 + i;
 	}
@@ -44,7 +44,7 @@ void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-	
+
 	//create depth texture
 	glGenTextures(1, &m_colorAttachments[index]);
 	glBindTexture(GL_TEXTURE_2D, m_colorAttachments[index]);
@@ -63,7 +63,7 @@ bool FrameBuffer::checkFBO()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		unload();
 		return false;
@@ -75,15 +75,15 @@ bool FrameBuffer::checkFBO()
 // Clears all OpenGL memory
 void FrameBuffer::unload()
 {
-	if (m_buffs != nullptr)
+	if(m_buffs != nullptr)
 	{
 		delete[] m_buffs;
 		m_buffs = nullptr;
 	}
 
-	if (m_colorAttachments != nullptr)
+	if(m_colorAttachments != nullptr)
 	{
-		for (unsigned i = 0; i < m_numColorAttachments; i++)
+		for(unsigned i = 0; i < m_numColorAttachments; i++)
 		{
 			glDeleteTextures(1, &m_colorAttachments[i]);
 		}
@@ -92,7 +92,7 @@ void FrameBuffer::unload()
 		m_colorAttachments = nullptr;
 	}
 
-	if (m_depthAttachment != GL_NONE)
+	if(m_depthAttachment != GL_NONE)
 	{
 		glDeleteTextures(1, &m_depthAttachment);
 		m_depthAttachment = GL_NONE;
@@ -106,12 +106,12 @@ void FrameBuffer::clear()
 {
 	GLbitfield temp = 0;
 
-	if (m_depthAttachment != GL_NONE)
+	if(m_depthAttachment != GL_NONE)
 	{
 		temp = temp | GL_DEPTH_BUFFER_BIT;
 	}
 
-	if (m_colorAttachments != nullptr)
+	if(m_colorAttachments != nullptr)
 	{
 		temp = temp | GL_COLOR_BUFFER_BIT;
 	}
@@ -149,4 +149,25 @@ GLuint FrameBuffer::getDepthHandle() const
 GLuint FrameBuffer::getColorHandle(unsigned index) const
 {
 	return m_colorAttachments[index];
+}
+
+void FrameBuffer::setPostProcess(std::function<void()>post, unsigned layer)
+{
+	m_postProcess =post;
+	m_layer = layer;
+}
+
+std::function<void()> FrameBuffer::getPostProcess()
+{
+	return m_postProcess;
+}
+
+std::string FrameBuffer::getTag()
+{
+	return m_tag;
+}
+
+unsigned FrameBuffer::getLayer()
+{
+	return m_layer;
 }

@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <assimp/mesh.h>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include "Transformer.h"
 #include "Shader.h"
 #include "Utilities.h"
@@ -25,7 +25,7 @@ public:
 
 	void editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts1, std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts2);
 
-	void render(Shader & shader, FrameBuffer * frame);
+	void render(Shader & shader, std::unordered_map<std::string, FrameBuffer*>& buffers);
 
 	void unload();
 
@@ -40,6 +40,7 @@ private:
 	void init();
 
 	bool ani;
+
 	std::vector< std::pair<std::string, GLuint>>  m_vaoID;
 	std::vector<std::pair<GLuint, GLuint>> m_vboID;
 	std::vector<GLuint>
@@ -47,4 +48,5 @@ private:
 
 	std::vector< std::pair<std::string, std::vector<Vertex3D>>> m_unpackedData;
 	std::vector<std::pair<std::string, std::vector<Texture2D>>>m_textures;
+
 };

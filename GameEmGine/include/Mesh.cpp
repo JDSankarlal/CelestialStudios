@@ -605,45 +605,48 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 	return m_unpackedData;
 }
 
-void Mesh::render(Shader& shader, FrameBuffer *frame)
+void Mesh::render(Shader& shader, std::unordered_map<std::string, FrameBuffer*>& buffers)
 {
-	for(unsigned a = 0; a < m_vaoID.size(); a++)
+	for(auto&frame : buffers)
 	{
-		bool textured = false;
-		int c = 0;
-
-		for(unsigned b = 0; b < m_textures.size(); b++)
+	
+		for(unsigned a = 0; a < m_vaoID.size(); a++)
 		{
-			if(m_textures[b].first == m_vaoID[a].first)
+			bool textured = false;
+			int c = 0;
+
+			for(unsigned b = 0; b < m_textures.size(); b++)
+			{
+				if(m_textures[b].first == m_vaoID[a].first)
+				{
+					glActiveTexture(GL_TEXTURE0 + c);
+
+					for(auto &d : m_textures[b].second)
+						if(d.type == TEXTURE_TYPE::DIFFUSE)
+							textured = true,
+							glUniform1i(shader.getUniformLocation("uTex"), c),
+							glBindTexture(GL_TEXTURE_2D, d.id);
+
+					c++;
+				}
+			}
+
+			glUniform1i(shader.getUniformLocation("textured"), textured);
+
+			frame.second->enable();
+
+			glBindVertexArray(m_vaoID[a].second);
+			glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
+			glBindVertexArray(0);
+
+			frame.second->disable();
+
+			for(; c >= 0; c--)
 			{
 				glActiveTexture(GL_TEXTURE0 + c);
-
-				for(auto &d : m_textures[b].second)
-					if(d.type == TEXTURE_TYPE::DIFFUSE)
-						textured = true,
-						glUniform1i(shader.getUniformLocation("uTex"), c),
-						glBindTexture(GL_TEXTURE_2D, d.id);
-
-				c++;
+				glBindTexture(GL_TEXTURE_2D, 0);
+				//glActiveTexture(0);
 			}
-		}
-
-		glUniform1i(shader.getUniformLocation("textured"), textured);
-
-		if(frame)
-			frame->enable() ;
-
-		glBindVertexArray(m_vaoID[a].second);
-		glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
-		glBindVertexArray(0);
-		if(frame)
-			frame->disable();
-
-		for(; c >= 0; c--)
-		{
-			glActiveTexture(GL_TEXTURE0 + c);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			//glActiveTexture(0);
 		}
 	}
 }

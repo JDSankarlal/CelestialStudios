@@ -38,8 +38,8 @@ public:
 private:
 	enum Shaders
 	{
-		VT_SHADER,
-		FG_SHADER
+		VERT_SHADER,
+		FRAG_SHADER
 	};
 
 	bool compileShader(Shaders shadNum, const std::string filePath, GLuint id);

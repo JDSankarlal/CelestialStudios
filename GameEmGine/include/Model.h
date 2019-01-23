@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>	  
 #include <vector>
+#include <string>
 #include <unordered_map>
 #include "Camera.h"
 #include "Shader.h"
@@ -20,7 +21,7 @@ public:
 	Model(const char* path);
 	~Model();
 
-	void render(Shader & shader, Camera & cam, FrameBuffer * frame=nullptr);
+	void render(Shader & shader, Camera & cam);
 
 	Transformer& getTransformer();
 
@@ -41,6 +42,12 @@ public:
 	void enableBoundingBox(bool enable);
 
 	void addAnimation(std::string tag, Animation *animation);
+
+	void addFrameBuffer(FrameBuffer* buffer);
+
+	void removeFrameBuffer(std::string tag);
+
+	std::unordered_map<std::string, FrameBuffer*>& getFrameBuffers();
 
 	float getWidth();
 	float getHeight();
@@ -79,6 +86,7 @@ private:
 	glm::mat4 m_transBB;
 	bool m_enableBB = false;
 
+	std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
 	std::vector<Model*> m_children;
 	Model* m_parent;
 	//std::vector <Texture2D> loadedTextures;

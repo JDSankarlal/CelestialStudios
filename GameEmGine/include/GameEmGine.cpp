@@ -4,12 +4,12 @@
 
 #pragma region Static Variables
 void(*GameEmGine::m_compileShaders)();
-std::function<void()>GameEmGine::m_render;
+//std::function<void()>GameEmGine::m_render;
 std::function<void(double)>GameEmGine::m_gameLoop;
 Camera *GameEmGine::m_mainCamera;
 std::vector<Camera *>GameEmGine::m_cameras;
 Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader, *GameEmGine::m_grayScalePost;
-GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
+GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
@@ -60,9 +60,9 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 	printf("created the window\n");
 
-	m_mainBuffer = new FrameBuffer(1);
+	m_mainBuffer = new FrameBuffer("Main Buffer", 1);
 	m_mainBuffer->initDepthTexture(width, height);
-	m_mainBuffer->initColourTexture(0,width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_mainBuffer->initColourTexture(0, width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 
 	if(!m_mainBuffer->checkFBO())
 	{
@@ -168,7 +168,7 @@ void GameEmGine::shaderInit()
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 
 	m_grayScalePost = new Shader;
-	m_grayScalePost->create("Shaders/GrayscalePost.vtsh", "Shaders/GrayscalePost.fmsh");
+	m_grayScalePost->create("Shaders/Main Buffer.vtsh", "Shaders/Main Buffer.fmsh");
 }
 
 void GameEmGine::calculateFPS()
@@ -232,19 +232,19 @@ void GameEmGine::initFullScreenQuad()
 		1.0f,0.0f
 	};
 
-	if(!fsQuadVAO_ID)
-		glGenVertexArrays(1, &fsQuadVAO_ID);
+	if(!m_fsQuadVAO_ID)
+		glGenVertexArrays(1, &m_fsQuadVAO_ID);
 
-	glBindVertexArray(fsQuadVAO_ID);
+	glBindVertexArray(m_fsQuadVAO_ID);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
 
-	if(!fsQuadVBO_ID)
-		glGenBuffers(1, &fsQuadVBO_ID);
+	if(!m_fsQuadVBO_ID)
+		glGenBuffers(1, &m_fsQuadVBO_ID);
 
-	glBindBuffer(GL_ARRAY_BUFFER, fsQuadVBO_ID);
+	glBindBuffer(GL_ARRAY_BUFFER, m_fsQuadVBO_ID);
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18 + sizeof(float) * 12, vboData, GL_STATIC_DRAW);
 
@@ -258,7 +258,7 @@ void GameEmGine::initFullScreenQuad()
 
 void GameEmGine::drawFullScreenQuad()
 {
-	glBindVertexArray(fsQuadVAO_ID);
+	glBindVertexArray(m_fsQuadVAO_ID);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(GL_NONE);
 
@@ -272,7 +272,7 @@ void GameEmGine::setScene(Scene* scene)
 	m_inputManager->keyReleasedCallback(scene->keyReleased);
 	m_inputManager->mouseButtonPressCallback(scene->mousePressed);
 	m_inputManager->mouseButtonReleaseCallback(scene->mouseReleased);
-	m_render = scene->render;
+	//m_render = scene->render;
 	m_gameLoop = [](double a)->void {m_mainScene->update(a); };
 }
 
@@ -325,8 +325,8 @@ void GameEmGine::addModel(Model* model)
 {
 	//m_models = (Model**) realloc(m_models, sizeof(Model*)*++m_numModels);
 	//m_models[m_numModels - 1] = model;
-
 	m_models.push_back(model);
+	m_models.back()->addFrameBuffer(m_mainBuffer);
 }
 
 void GameEmGine::removeModel(Model* model)
@@ -361,8 +361,8 @@ void GameEmGine::update()
 	if(m_gameLoop != nullptr)
 		m_gameLoop(glfwGetTime());
 
-	if(m_render != nullptr)
-		m_render();
+	//if(m_render != nullptr)
+	//	m_render();
 
 	LightSource::setCamera(m_mainCamera);
 	LightSource::setShader(m_modelShader);
@@ -376,19 +376,33 @@ void GameEmGine::update()
 		m_modelShader->disable();
 	}
 
-	//3D-Graphics 1
-
-	m_mainBuffer->enable();
+	///~ 3D-Graphics 1 ~///
+	std::unordered_map<std::string, FrameBuffer*> buffers;
 	for(unsigned a = 0; a < m_models.size(); a++)
+	{
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
-	m_mainBuffer->disable();
 
+		buffers.insert(m_models[a]->getFrameBuffers().begin(), m_models[a]->getFrameBuffers().end());
+	}
+
+	//main frame buffer render
 	m_grayScalePost->enable();
 	glUniform1i(m_grayScalePost->getUniformLocation("uTex"), 0);
 	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->getColorHandle(0));
 	drawFullScreenQuad();
-	glBindTexture(GL_TEXTURE_2D,GL_NONE);
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	m_grayScalePost->disable();
+
+	//additional frame buffer renders
+	std::vector<std::pair<std::string, FrameBuffer*>>tmp(buffers.begin(), buffers.end());
+	std::sort(tmp.begin(), tmp.end(),
+		[](std::pair< std::string, FrameBuffer*>a, std::pair< std::string, FrameBuffer*>b)->bool
+		{return a.second->getLayer() > b.second->getLayer(); }
+	);
+
+	for(auto &a : tmp)
+		if(a.first != "Main Buffer")
+			a.second->getPostProcess()();
 
 	//m_mainBuffer->moveToBackBuffer(getWindowWidth(),getWindowHeight());
 	////3D-Graphics 2

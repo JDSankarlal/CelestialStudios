@@ -123,8 +123,8 @@ bool Shader::compileShaders(const std::string & vertFilePath, const std::string 
 	m_vertID = glCreateShader(GL_VERTEX_SHADER);
 	m_fragID = glCreateShader(GL_FRAGMENT_SHADER);
 
-	if(!compileShader(VT_SHADER, vertFilePath, m_vertID))return false;
-	if(!compileShader(FG_SHADER, fragFilePath, m_fragID))return false;
+	if(!compileShader(VERT_SHADER, vertFilePath, m_vertID))return false;
+	if(!compileShader(FRAG_SHADER, fragFilePath, m_fragID))return false;
 
 	return true;
 }
@@ -214,7 +214,7 @@ bool Shader::compileShader(Shaders shadType, const std::string filePath, GLuint 
 		fileContent += line + '\n';
 	shader.close();
 
-	if(shadType == VT_SHADER) //stores vtsh
+	if(shadType == VERT_SHADER) //stores vtsh
 		m_vtsh = fileContent;
 
 	const char* tmpFileContent = fileContent.c_str();

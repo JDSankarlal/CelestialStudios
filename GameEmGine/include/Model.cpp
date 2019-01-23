@@ -34,7 +34,7 @@ Model::Model(const char * path) :
 Model::~Model()
 {}
 
-void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
+void Model::render(Shader& shader, Camera& cam)
 {
 	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
@@ -58,7 +58,7 @@ void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
 	if(m_render)
 	{
 		//render the mesh
-		m_mesh.render(shader,frame);
+		m_mesh.render(shader,m_frameBuffers);
 		shader.disable();
 
 		if(m_enableBB)
@@ -67,7 +67,7 @@ void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
 		m_transform.resetUpdated();
 
 		for(auto&a : m_children)
-			a->render(shader, cam,frame);
+			a->render(shader, cam);
 	}
 }
 
@@ -137,6 +137,21 @@ void Model::enableBoundingBox(bool enable)
 void Model::addAnimation(std::string tag, Animation * animation)
 {
 	m_animations[tag] = animation;
+}
+
+void Model::addFrameBuffer(FrameBuffer * buffer)
+{
+	m_frameBuffers[buffer->getTag()] = buffer;
+}
+
+void Model::removeFrameBuffer(std::string tag)
+{
+	m_frameBuffers.erase(tag);
+}
+
+std::unordered_map<std::string, FrameBuffer*>& Model::getFrameBuffers()
+{
+	return m_frameBuffers;
 }
 
 float Model::getWidth()

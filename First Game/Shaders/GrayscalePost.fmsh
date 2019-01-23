@@ -16,5 +16,4 @@ void main()
     0.114  * source.b;
 
     outColour = vec4(luminance, luminance, luminance, 1);
-    //outColour = vec4(1,0,0,1);
 }
