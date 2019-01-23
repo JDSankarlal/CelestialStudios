@@ -574,7 +574,7 @@ public:
 		static Player* player;
 		static Boss*CandyMan = (Boss*)mod[8];
 		//drawHealth(CandyMan->getHealth());
-		static vector<Minion*>minions[4];
+		static vector<Minion*>minions;
 		static int minionCounter = 0;
 
 		static vector<float> timer[4];
@@ -794,24 +794,26 @@ public:
 							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
 							if (minionCounter <= 0)
 							{
-								minions[a].push_back(nullptr);
-								context->addModel(minions[a].back() = new Minion(*mod[64]));
-								minions[a].back()->setToRender(true);
-								minions[a].back()->getTransformer().reset();
-								minions[a].back()->setColour(200,100,50);
-								minions[a].back()->getTransformer().getPosition();
-								minions[a].back()->getTransformer().setPosition(10,0,-3);
-								minions[a].back()->getTransformer().setScale(4.f);
+								minions.push_back(nullptr);
+								context->addModel(minions.back() = new Minion(*mod[64]));
+								minions.back()->setToRender(true);
+								minions.back()->getTransformer().reset();
+								minions.back()->setColour(200,100,50);
+								minions.back()->getTransformer().getPosition();
+								minions.back()->getTransformer().setPosition(10,0,-3);
+								minions.back()->getTransformer().setScale(4.f);
 
-								//printf(minions[a].back()->getTransformer().getPosition());
+								//printf(minions.back()->getTransformer().getPosition());
 								minionCounter += 1;
-								//minions[a].back()
+								//minions.back()
 							}
 
-								Coord3D norm = player->getTransformer().getPosition() -minions[a].back()->getTransformer().getPosition();
+								Coord3D norm = player->getTransformer().getPosition() -minions.back()->getTransformer().getPosition();
 								norm.normalize();
 								 
-								minions[a].back()->getTransformer().translateBy(norm*.001f);
+								minions.back()->getTransformer().translateBy(norm*.001f);
+
+							
 							/// - Left Trigger to Dash - ///
 
 							if(p1.triggers[LT] >= .95)
@@ -904,6 +906,19 @@ public:
 										puts("Hit The BOSS\n");
 										break;
 									}
+								
+								if (collisions(bullets[a][b], minions.back()))
+								{
+									minions.back()->setHealth(minions.back()->getHealth() - 10);
+									if (minions.back()->getHealth() <= 0)
+									{
+										context->removeModel(minions.back());
+										minions.erase(minions.begin() + minions.size() - 1);
+										puts("Killed a boi\n");
+										minionCounter -= 1;
+									}
+									
+								}
 							}
 						for(unsigned b = 0; b < pMissiles[a].size(); b++)
 							if(pMissiles[a][b])
