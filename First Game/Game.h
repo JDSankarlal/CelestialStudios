@@ -135,8 +135,8 @@ public:
 		{
 			GameEmGine::m_modelShader->refresh();
 			GameEmGine::m_grayScalePost->refresh();
-				//context->setCameraAngle(0, { 1, 1, 1 });
-				//	context->setCameraPosition({0,0,0});
+			//context->setCameraAngle(0, { 1, 1, 1 });
+			//	context->setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
@@ -361,7 +361,7 @@ public:
 		context->addModel(mod[64]);
 		//mod[64]->getTransformer().setScale(0.2);
 		mod[64]->setToRender(false);
-		
+
 		//context->addModel(mod.back()); //64
 
 		/// - Set Model Transforms - ///
@@ -676,7 +676,7 @@ public:
 							player = (Player*)mod[a];
 							Xinput p1 = context->getController(a);
 
-							
+
 							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 							{
 
@@ -792,28 +792,28 @@ public:
 							/// - Boss Spawns Minions - ///
 
 							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
-							if (minionCounter <= 0)
+							if(minionCounter <= 0)
 							{
 								minions.push_back(nullptr);
 								context->addModel(minions.back() = new Minion(*mod[64]));
 								minions.back()->setToRender(true);
 								minions.back()->getTransformer().reset();
-								minions.back()->setColour(200,100,50);
+								minions.back()->setColour(200, 100, 50);
 								minions.back()->getTransformer().getPosition();
-								minions.back()->getTransformer().setPosition(10,0,-3);
-								minions.back()->getTransformer().setScale(4.f);
+								minions.back()->getTransformer().setPosition(10, 0, -3);
+								minions.back()->getTransformer().setScale(0.25f);
 
 								//printf(minions.back()->getTransformer().getPosition());
 								minionCounter += 1;
 								//minions.back()
 							}
 
-								Coord3D norm = player->getTransformer().getPosition() -minions.back()->getTransformer().getPosition();
-								norm.normalize();
-								 
-								minions.back()->getTransformer().translateBy(norm*.001f);
+							Coord3D norm = player->getTransformer().getPosition() - minions.back()->getTransformer().getPosition();
+							norm.normalize();
 
-							
+							minions.back()->getTransformer().translateBy(norm*.001f);
+
+
 							/// - Left Trigger to Dash - ///
 
 							if(p1.triggers[LT] >= .95)
@@ -906,19 +906,24 @@ public:
 										puts("Hit The BOSS\n");
 										break;
 									}
-								
-								if (collisions(bullets[a][b], minions.back()))
-								{
-									minions.back()->setHealth(minions.back()->getHealth() - 10);
-									if (minions.back()->getHealth() <= 0)
+
+								//TODO: Fix Minion Collisions
+								for(auto& minion : minions)
+									if(collisions(bullets[a][b], minion))
 									{
-										context->removeModel(minions.back());
-										minions.erase(minions.begin() + minions.size() - 1);
-										puts("Killed a boi\n");
-										minionCounter -= 1;
+										minion->setHealth(minion->getHealth() - 10);
+										context->removeModel(bullets[a][b]);
+										bullets[a].erase(bullets[a].begin() + b);
+
+										if(minion->getHealth() <= 0)
+										{
+											context->removeModel(minion);
+											minions.erase(std::find(minions.begin(), minions.end(), minion));
+											puts("Killed a boi\n");
+											minionCounter -= 1;
+										}
+
 									}
-									
-								}
 							}
 						for(unsigned b = 0; b < pMissiles[a].size(); b++)
 							if(pMissiles[a][b])
@@ -955,8 +960,6 @@ public:
 										break;
 									}
 							}
-
-
 					}
 				}
 			else
