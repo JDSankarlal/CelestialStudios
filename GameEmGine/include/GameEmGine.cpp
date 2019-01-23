@@ -7,6 +7,8 @@ void(*GameEmGine::m_compileShaders)();
 //std::function<void()>GameEmGine::m_render;
 std::function<void(double)>GameEmGine::m_gameLoop;
 Camera *GameEmGine::m_mainCamera;
+//GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
+//GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera *>GameEmGine::m_cameras;
 Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader, *GameEmGine::m_grayScalePost;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;

@@ -1,9 +1,7 @@
 #define _USE_MATH_DEFINES 
-//#define 
 
 #include <GameEmGine.h>
 #include "Splash.h"
-
 
 
 int main()

@@ -17,6 +17,10 @@ Player::Player(const char * path) :Model(path)
 
 }
 
+Player::~Player()
+{
+}
+
 int Player::getHealth()
 {
 	return health;

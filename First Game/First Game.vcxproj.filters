@@ -27,6 +27,21 @@
     <ClCompile Include="Player.cpp">
       <Filter>Characters</Filter>
     </ClCompile>
+    <ClCompile Include="Assault.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Medic.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Specialist.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Tank.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Minion.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Logs\New Log">
@@ -65,6 +80,21 @@
     </ClInclude>
     <ClInclude Include="Splash.h">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Assault.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Medic.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Specialist.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Tank.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Minion.h">
+      <Filter>Characters</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

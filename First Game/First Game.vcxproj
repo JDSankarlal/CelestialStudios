@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{051A3A76-492B-4F97-B991-D3245151623C}</ProjectGuid>
     <RootNamespace>FirstGame</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>The Game</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -150,9 +150,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Assault.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Medic.cpp" />
+    <ClCompile Include="Minion.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Specialist.cpp" />
+    <ClCompile Include="Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Logs\New Log" />
@@ -164,12 +169,17 @@
     <Text Include="Logs\ShaderLog.log" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assault.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Intro.h" />
+    <ClInclude Include="Medic.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Minion.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Specialist.h" />
     <ClInclude Include="Splash.h" />
+    <ClInclude Include="Tank.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
