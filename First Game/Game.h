@@ -791,6 +791,7 @@ public:
 
 							/// - Boss Spawns Minions - ///
 
+							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
 							if (minionCounter <= 0)
 							{
 								minions[a].push_back(nullptr);
@@ -798,7 +799,7 @@ public:
 								minions[a].back()->setToRender(true);
 								minions[a].back()->getTransformer().reset();
 								minions[a].back()->setColour(200,100,50);
-								Coord3D pos = mod[a]->getTransformer().getPosition();
+								minions[a].back()->getTransformer().getPosition();
 								minions[a].back()->getTransformer().setPosition(10,0,-3);
 								minions[a].back()->getTransformer().setScale(4.f);
 
@@ -837,6 +838,7 @@ public:
 								}
 
 							}
+
 							else//Do the same with the LT button, have it so will only work every X seconds.
 							{
 								move -= .001f;

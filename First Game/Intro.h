@@ -11,6 +11,7 @@ public:
 		mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
 		context->addModel(mod.back());
 		LightSource::setSceneAmbient({0,0,0,255});
+		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 	}
 
 	// doing the update for intro screen
@@ -31,12 +32,12 @@ public:
 		}
 		if(!fadein)
 		{
-			LightSource::setLightAmount(1);
-			LightSource::setLightType(LIGHT_TYPE::POINT, 0);
-			LightSource::setPosition({0.0f,45.0f,700.0f}, 0);
-			LightSource::setDiffuse({10,10,10,10}, 0);
-			LightSource::setAttenuationQuadratic(0.04f, 0);
-			LightSource::setDirection({0.0f,0.0f,.0f}, 0);
+			//LightSource::setLightAmount(1);
+			//LightSource::setLightType(LIGHT_TYPE::POINT, 0);
+			//LightSource::setPosition({0.0f,45.0f,700.0f}, 0);
+			//LightSource::setDiffuse({10,10,10,10}, 0);
+			//LightSource::setAttenuationQuadratic(0.04f, 0);
+			//LightSource::setDirection({0.0f,0.0f,.0f}, 0);
 		}
 		if(Xinput::buttonPressed(context->getController(0).buttons.A))
 		{
