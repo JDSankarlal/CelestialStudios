@@ -12,10 +12,8 @@ using std::vector;
 class Game:public Scene
 {
 public:
-	Game():audio(AudioPlayer()) {}
-
 	/// - Collision Class - ///
-	bool collisions(Model *l, Model *k)
+	bool collision(Model *l, Model *k)
 	{
 		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 		Coord3D thing = l->getCenter() - k->getCenter();
@@ -33,26 +31,8 @@ public:
 		return false;
 	}
 
-	bool collisionsB(Model *l, Model *k)
-	{
-		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
-		Coord3D thing = l->getCenter() - k->getCenter();
-
-		float distanceX = abs(thing.x);
-		float distanceZ = abs(thing.z);
-
-		float capW = (l->getWidth() + k->getWidth()) / 2;
-		float capD = (l->getDepth() + k->getDepth()) / 2;
-
-		if(std::abs(distanceX) <= capW + 4)
-			if(std::abs(distanceZ) <= capD + 4)
-				return true;
-
-		return false;
-	}
-
-	/// - 3D Collision Function - ///
-	bool collisions3D(Model *l, Model *k)
+	///~ 3D Collision Function ~///
+	bool collision3D(Model *l, Model *k)
 	{
 		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 		Coord3D thing = l->getCenter() - k->getCenter();
@@ -158,17 +138,17 @@ public:
 	{
 
 		GameEmGine::setCameraType(PERSPECTIVE);
-		GameEmGine::setFPSLimit(60);
+		//GameEmGine::setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
 		//Players
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
 		GameEmGine::addModel(mod.back());//0
-		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
+		mod.push_back(new Player(*mod.back()));
 		GameEmGine::addModel(mod.back());//1
-		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
+		mod.push_back(new Player(*mod.back()));
 		GameEmGine::addModel(mod.back());//2
-		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
+		mod.push_back(new Player(*mod.back()));
 		GameEmGine::addModel(mod.back());//3
 
 		static Animation walk[4], idle[4];
@@ -364,7 +344,7 @@ public:
 		mod[47]->addChild(mod[63]);
 
 
-		/// - Set Model Transforms - ///
+		///~ Set Model Transforms ~///
 		//Player Transforms
 		mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
 		mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
@@ -468,7 +448,7 @@ public:
 		mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({0.0f,0.0f,0.0f});
 		mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({0.0f,0.0f,0.0f});
 
-		/// - Set Model Colour - ///
+		///~ Set Model Colour ~///
 		//Players
 		mod[0]->setColour(1, 0.5, 0.5);
 		mod[1]->setColour(0.5, 0.5, 1);
@@ -540,7 +520,7 @@ public:
 
 		LightSource::setSceneAmbient({255,255,255,255});
 
-		/// - Set Camera - ///
+		///~ Set Camera ~///
 
 		GameEmGine::setCameraPosition({0,15,-10});
 		GameEmGine::setCameraAngle(-45, {1,0,0});
@@ -680,10 +660,10 @@ public:
 								angle[a] = fmodf(angle[a], 360);
 							}
 
-							/// - Missile Collisions with Player - ///
+							///~ Missile Collisions with Player ~///
 							for(int b = 0; b < 4; b++)
 							{
-								bool collision = collisions3D(player, mod[60 + b]);
+								bool collision = collision3D(player, mod[60 + b]);
 								if(collision)
 								{
 									curveroni[a] = 1;
@@ -694,7 +674,7 @@ public:
 								}
 							}
 							//Player comes near Boss
-							if(collisionsB(player, CandyMan))
+							if(collision(player, CandyMan))
 							{
 								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
 								player->setHealth(player->getHealth() - 35);
@@ -742,7 +722,7 @@ public:
 							else if(p1.triggers[RT] < .95 && makeShitLessCancer[a])
 								makeShitLessCancer[a] = false;
 
-							/// - Button Presses on controller - ///
+							///~ Button Presses on controller ~///
 							//Start button quits game
 							if(p1.buttonPressed(p1.buttons.START))
 							{
@@ -782,7 +762,7 @@ public:
 								}
 							}
 
-							/// - Left Trigger to Dash - ///
+							///~ Left Trigger to Dash ~///
 
 							if(p1.triggers[LT] >= .95)
 							{
@@ -823,7 +803,7 @@ public:
 
 							mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
-							if(!collisions(mod[a], mod[59]))
+							if(!collision(mod[a], mod[59]))
 								mod[a]->getTransformer().setPosition(abs(mod[a]->getTransformer().getPosition().x) > mod[59]->getWidth() / 2 ? mod[a]->getTransformer().getPosition().x < 0 ? -mod[59]->getWidth() / 2 : mod[59]->getWidth() / 2 : mod[a]->getTransformer().getPosition().x,
 									0,
 									abs(mod[a]->getTransformer().getPosition().z) > mod[59]->getDepth() / 2 ? mod[a]->getTransformer().getPosition().z < 0 ? -mod[59]->getDepth() / 2 : mod[59]->getDepth() / 2 : mod[a]->getTransformer().getPosition().z);
@@ -837,7 +817,7 @@ public:
 								mod[a]->getAnimation("walk")->setAnimationSpeed(.25f / speed);
 							}
 						}
-						/// - Bullet Collisions - ///
+						///~ Bullet Collisions ~///
 						for(unsigned b = 0; b < bullets[a].size(); b++)
 							if(bullets[a][b])
 							{
@@ -854,7 +834,7 @@ public:
 								}
 
 								if(mod[8])
-									if(collisions(bullets[a][b], mod[8]))
+									if(collision(bullets[a][b], mod[8]))
 									{
 										GameEmGine::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
@@ -889,7 +869,7 @@ public:
 								}
 
 								if(mod[8])
-									if(collisions(pMissiles[a][b], mod[8]))
+									if(collision(pMissiles[a][b], mod[8]))
 									{
 										GameEmGine::removeModel(pMissiles[a][b]);
 										pMissiles[a].erase(pMissiles[a].begin() + b);

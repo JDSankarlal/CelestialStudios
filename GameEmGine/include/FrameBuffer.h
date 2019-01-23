@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <functional>
+#include <string>
 
 class FrameBuffer
 {

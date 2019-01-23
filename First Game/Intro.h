@@ -12,6 +12,13 @@ public:
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 		GameEmGine::addModel(mod.back());
 		LightSource::setSceneAmbient({0,0,0,255});
+
+		///~ Key Input ~///
+		keyPressed = [&](int key,int modifier) 
+		{
+			key, modifier;
+			fadeout = true;
+		};
 	}
 
 	// doing the update for intro screen
