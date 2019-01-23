@@ -576,6 +576,8 @@ public:
 		//drawHealth(CandyMan->getHealth());
 		static vector<Minion*>minions[4];
 		static int minionCounter = 0;
+		static int maxMinionsOnScreen = 20;
+
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
@@ -791,8 +793,9 @@ public:
 
 							/// - Boss Spawns Minions - ///
 
-							if (minionCounter <= 0)
+							if (minionCounter <= maxMinionsOnScreen)
 							{
+								printf("New Minion Spawned");
 								minions[a].push_back(nullptr);
 								context->addModel(minions[a].back() = new Minion(*mod[64]));
 								minions[a].back()->setToRender(true);
@@ -800,17 +803,17 @@ public:
 								minions[a].back()->setColour(200,100,50);
 								Coord3D pos = mod[a]->getTransformer().getPosition();
 								minions[a].back()->getTransformer().setPosition(10,0,-3);
-								minions[a].back()->getTransformer().setScale(4.f);
+								minions[a].back()->getTransformer().setScale(1.4f);
 
 								//printf(minions[a].back()->getTransformer().getPosition());
 								minionCounter += 1;
 								//minions[a].back()
 							}
-
-								Coord3D norm = player->getTransformer().getPosition() -minions[a].back()->getTransformer().getPosition();
+								Coord3D norm = player->getTransformer().getPosition() - minions[a].back()->getTransformer().getPosition();
 								norm.normalize();
 								 
 								minions[a].back()->getTransformer().translateBy(norm*.001f);
+
 							/// - Left Trigger to Dash - ///
 
 							if(p1.triggers[LT] >= .95)
