@@ -8,13 +8,24 @@ public:
 	void init()
 	{
 		mod.push_back(new Model("Models/Screen/Menu/menu.obj"));
-		context->addModel(mod.back());
+		context->addModel(mod.back()); //Mod 0 
+		mod.push_back(new Model("Models/Screen/Menu/Start.obj"));
+		context->addModel(mod.back()); //Mod 1
+		mod.push_back(new Model("Models/Screen/Menu/Exit.obj"));
+		context->addModel(mod.back()); //Mod 2
+		mod.push_back(new Model("Models/Screen/Menu/Options.obj"));
+		context->addModel(mod.back()); //Mod 3
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
+		for (unsigned int i = 1; i < mod.size(); i++)
+		{
+			mod[i]->getTransformer().setRotation({90,0,0});
+			mod[i]->getTransformer().setScale(5.0f);
+		}
 		LightSource::setSceneAmbient({0,0,0,255});
 	}
 
-	// doing the update for menu screen
+	// doing the update for menu screenb
 	void updateMenu()
 	{
 		if(fadein)
