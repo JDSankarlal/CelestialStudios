@@ -8,13 +8,13 @@ public:
 	void init()
 	{
 		mod.push_back(new Model("Models/Screen/Menu/menu.obj"));
-		context->addModel(mod.back()); //Mod 0 
+		GameEmGine::addModel(mod.back()); //Mod 0 
 		mod.push_back(new Model("Models/Screen/Menu/Start.obj"));
-		context->addModel(mod.back()); //Mod 1
+		GameEmGine::addModel(mod.back()); //Mod 1
 		mod.push_back(new Model("Models/Screen/Menu/Options.obj"));
-		context->addModel(mod.back()); //Mod 2
+		GameEmGine::addModel(mod.back()); //Mod 2
 		mod.push_back(new Model("Models/Screen/Menu/Exit.obj"));
-		context->addModel(mod.back()); //Mod 3
+		GameEmGine::addModel(mod.back()); //Mod 3
 
 		mod[0]->addChild(mod[1]);
 		mod[0]->addChild(mod[2]);
@@ -23,8 +23,8 @@ public:
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 		LightSource::setSceneAmbient({0,0,0,255});
 
-		//float windowHeight = (float)context->getWindowHeight();
-		//float windowWidth = (float)context->getWindowWidth();
+		//float windowHeight = (float)GameEmGine::getWindowHeight();
+		//float windowWidth = (float)GameEmGine::getWindowWidth();
 		//mod[1]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
 		//mod[2]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
 		//mod[3]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
@@ -58,14 +58,14 @@ public:
 			}
 		}
 
-		if (Xinput::buttonPressed(context->getController(0).buttons.A))
+		if (Xinput::buttonPressed(GameEmGine::getController(0).buttons.A))
 		{
 			fadeout = true;
 		}
 
 		static Coord3D tmp=Coord3D(20.0f);
 				static int lastOption;
-		if (context->getController(0).Coord2D_sticks[LS].y >= 0.8)
+		if (GameEmGine::getController(0).Coord2D_sticks[LS].y >= 0.8)
 		{
 			if (!menuMoved)
 			{
@@ -79,7 +79,7 @@ public:
 				menuMoved = true;
 			}
 		}
-		if (context->getController(0).Coord2D_sticks[LS].y <= -0.8)
+		if (GameEmGine::getController(0).Coord2D_sticks[LS].y <= -0.8)
 		{
 			if (!menuMoved)
 			{
@@ -94,7 +94,7 @@ public:
 			}
 		}
 
-		if (abs(context->getController(0).Coord2D_sticks[LS].y) < .3f)
+		if (abs(GameEmGine::getController(0).Coord2D_sticks[LS].y) < .3f)
 			menuMoved = false;
 		mod[option]->getTransformer().setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
 		lerpParam += .1f;

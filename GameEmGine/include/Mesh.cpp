@@ -701,16 +701,32 @@ void Mesh::init()
 
 		//normal 2   attributes
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
+	
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 }
 
 void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts1, std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts2)
 {
-	for(unsigned a = 0; a < m_numFaces.size(); a++)
+	std::vector<GLuint>tmpVerts= m_numVerts, tmpFaces= m_numFaces;
+	unload();
+	m_numVerts = tmpVerts;
+	m_numFaces = tmpFaces;
+
+	for(unsigned a = 0; a < verts1.size(); a++)
 	{
+		m_numVerts.push_back(verts1.size()*3);
+		m_numFaces.push_back(verts1.size());
+
+		m_vaoID.push_back({verts1[a].first ,0});
+		m_vboID.push_back({0 ,0});
+
+		glGenVertexArrays(1, &m_vaoID[a].second);
+		glGenBuffers(1, &m_vboID[a].first);
+		glGenBuffers(1, &m_vboID[a].second);
+
 		glBindVertexArray(m_vaoID[a].second);
 
 		glEnableVertexAttribArray(0);
