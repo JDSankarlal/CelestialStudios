@@ -28,6 +28,7 @@ Model::Model(const char * path) :
 		m_bottom = m_mesh.bottom;
 		m_front = m_mesh.front;
 		m_back = m_mesh.back;
+		boundingBoxUpdate();
 	}
 }
 
@@ -53,7 +54,7 @@ void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
 
 	// update the position of the object
 	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
-	boundingBoxUpdate(cam);
+	boundingBoxUpdate();
 
 	if(m_render)
 	{
@@ -163,9 +164,9 @@ Coord3D Model::getCenter()
 	return m_center;
 }
 
-void Model::boundingBoxUpdate(Camera& cam)
+void Model::boundingBoxUpdate()
 {
-	cam;
+
 	m_front = m_back = m_top = m_bottom = m_left = m_right = Coord3D(0, 0, 0);
 	std::vector<glm::vec4> thing
 	{
