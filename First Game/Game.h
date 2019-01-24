@@ -556,6 +556,8 @@ public:
 		//drawHealth(CandyMan->getHealth());
 		static vector<Minion*>minions;
 		static int minionCounter = 0;
+		static int maxMinionsOnScreen = 20;
+
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
@@ -774,6 +776,7 @@ public:
 							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
 							if(minionCounter <= 0)
 							{
+
 								minions.push_back(nullptr);
 								GameEmGine::addModel(minions.back() = new Minion(*mod[64]));
 								minions.back()->setToRender(true);
@@ -784,6 +787,7 @@ public:
 								minions.back()->getTransformer().setScale(0.25f);
 
 								//printf(minions.back()->getTransformer().getPosition());
+
 								minionCounter += 1;
 								//minions.back()
 							}
@@ -792,6 +796,7 @@ public:
 							norm.normalize();
 
 							minions.back()->getTransformer().translateBy(norm*.001f);
+
 
 
 							/// - Left Trigger to Dash - ///

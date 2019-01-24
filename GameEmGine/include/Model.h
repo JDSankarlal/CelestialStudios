@@ -55,7 +55,7 @@ public:
 
 	Coord3D getCenter();
 
-	void boundingBoxUpdate(Camera & cam);
+	void boundingBoxUpdate();
 
 	Animation* getAnimation(const char* tag);
 	void  setAnimation(const char* tag);

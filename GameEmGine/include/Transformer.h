@@ -32,12 +32,14 @@ public:
 
 	void setScale(float scale);
 	void scaleBy(float scale);
+	void setScale(Coord3D);
 	void setScale(float x, float y, float z);
 	void scaleBy(float x, float y, float z);
 
 	/*GETERS*/
 	Coord3D getPosition();
 	Coord3D getRotation();
+	Coord3D getScale();
 	glm::mat4& getRotationMatrix();
 	glm::mat4& getScaleMatrix();
 	glm::mat4& getTranslationMatrix();
@@ -52,7 +54,7 @@ public:
 	bool isRotationUpdated();
 	bool isTranslatinUpdated();
 private:
-	Coord3D m_pos, m_angles;
+	Coord3D m_pos, m_angles, m_scale2;
 	glm::mat4
 		m_translate,
 		m_rotate,

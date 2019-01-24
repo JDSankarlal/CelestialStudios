@@ -359,8 +359,6 @@ void GameEmGine::update()
 
 	m_mainCamera->update();
 
-	if(m_gameLoop != nullptr)
-		m_gameLoop(glfwGetTime());
 
 	//if(m_render != nullptr)
 	//	m_render();
@@ -422,6 +420,8 @@ void GameEmGine::update()
 	//m_spriteBatch->end();
 	//m_spriteBatch->render(*m_cameraShader,*m_mainCamera);
 
+	if(m_gameLoop != nullptr)
+		m_gameLoop(glfwGetTime());
 
 	glfwPollEvents();//updates the event handlers
 
