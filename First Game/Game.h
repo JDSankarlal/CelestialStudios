@@ -548,14 +548,10 @@ public:
 		mod[77]->setColour({ 255,255,0,150 });
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
+		//Minions
+		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
 		context->addModel(mod[78]);
-		//mod[64]->getTransformer().setScale(0.2);
-		mod[78]->setToRender(false);
-
-		/*mod[64]->getTransformer().setPosition(mod[0]->getTransformer().getPosition() + Coord3D{ 0.0f,1.4f,0.0f });
-		mod[64]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);*/
+		mod[78]->setToRender(false); 
 
 		/// - Set Model Colour - ///
 		//Players
@@ -895,8 +891,8 @@ public:
 								minions.back()->getTransformer().reset();
 								minions.back()->setColour(200, 100, 50);
 								minions.back()->getTransformer().getPosition();
-								minions.back()->getTransformer().setPosition(10, 0, -3);
-								minions.back()->getTransformer().setScale(0.25f);
+								minions.back()->getTransformer().setPosition(10, 1, -3);
+								minions.back()->getTransformer().setScale(0.4f, 0.6f, 0.4f);
 
 								//printf(minions.back()->getTransformer().getPosition());
 								minionCounter += 1;

@@ -41,18 +41,12 @@ public:
 		}
 		if(!fadein)
 		{
-			//LightSource::setLightAmount(1);
-			//LightSource::setLightType(LIGHT_TYPE::POINT, 0);
-			//LightSource::setPosition({0.0f,45.0f,-1000.0f}, 0);
-			//LightSource::setDiffuse({10,10,10,10}, 0);
-			//LightSource::setAttenuationQuadratic(0.04f, 0);
-			//LightSource::setDirection({0.0f,0.0f,.0f}, 0);
-			//LightSource::setLightAmount(1);
-			//LightSource::setLightType(LIGHT_TYPE::POINT, 0);
-			//LightSource::setPosition({0.0f,45.0f,700.0f}, 0);
-			//LightSource::setDiffuse({10,10,10,10}, 0);
-			//LightSource::setAttenuationQuadratic(0.04f, 0);
-			//LightSource::setDirection({0.0f,0.0f,.0f}, 0);
+			LightSource::setLightAmount(1);
+			LightSource::setLightType(LIGHT_TYPE::POINT, 0);
+			LightSource::setPosition({0.0f,45.0f,-1000.0f}, 0);
+			LightSource::setDiffuse({10,10,10,10}, 0);
+			LightSource::setAttenuationQuadratic(0.04f, 0);
+			LightSource::setDirection({0.0f,0.0f,.0f}, 0);
 		}
 		if(Xinput::buttonPressed(context->getController(0).buttons.A))
 		{
