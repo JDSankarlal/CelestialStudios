@@ -22,6 +22,7 @@ class GameEmGine
 {
 public:
 	GameEmGine()=delete;
+	static void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void * userParam);
 	static void init(std::string name, int width, int height, int x = 0, int y = 0, int monitor = 0, bool fullScreen = false, bool visable = true);
 	//~GameEmGine();
 //#define sleep(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))

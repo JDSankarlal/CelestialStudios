@@ -39,8 +39,6 @@ int WindowCreator::createWindow(std::string name, Size3D size, Coord2D position,
 	setFullScreen(fullScreeen);
 	setVisable(visable);
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	return m_window != nullptr ? WINDOW_CREATED : WINDOW_FAILED;
 }
 

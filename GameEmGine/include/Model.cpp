@@ -28,7 +28,7 @@ Model::Model(const char * path) :
 		m_bottom = m_mesh.bottom;
 		m_front = m_mesh.front;
 		m_back = m_mesh.back;
-		boundingBoxUpdate();
+		//boundingBoxUpdate();
 	}
 }
 

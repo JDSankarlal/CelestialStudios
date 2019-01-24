@@ -28,6 +28,21 @@ Scene* GameEmGine::m_mainScene;
 
 #pragma endregion
 
+void GLAPIENTRY
+GameEmGine::MessageCallback(GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	const void* userParam)
+{
+	source,id,length,userParam;
+	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+		type, severity, message);
+}
+
 void GameEmGine::init(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	createNewWindow(name, width, height, x, y, monitor, fullScreen, visable);
@@ -41,6 +56,8 @@ void GameEmGine::init(std::string name, int width, int height, int x, int y, int
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	glfwInit();
+
+
 	printf("Creating The Window...\n");
 
 	m_window = new WindowCreator(name, {(float)width,(float)height}, {(float)x,(float)y}, monitor, fullScreen, visable);
@@ -75,6 +92,9 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 	initFullScreenQuad();
 
+	//// During init, enable debug output
+	//glEnable(GL_DEBUG_OUTPUT);
+	//glDebugMessageCallback(MessageCallback, 0);
 
 }
 
