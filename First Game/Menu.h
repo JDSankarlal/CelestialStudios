@@ -44,14 +44,14 @@ public:
 	void keyInputPressed(int key, int modfier)
 	{
 		modfier;
-		if (key == 'B')
+		if(key == 'B')
 			fadeout = true;
 	}
 
 	// doing the update for menu screenb
 	void updateMenu()
 	{
-		static bool menuMoved = false;
+		static bool menuMoved[] = {false,false,false,false};
 
 		if(fadein)
 		{
@@ -68,48 +68,52 @@ public:
 		}
 
 		static Coord3D tmp = Coord3D(20.0f);
-		if(GameEmGine::isControllerConnected(0))
-		{
-			if(Xinput::buttonPressed(GameEmGine::getController(0).buttons.A))
-			{
-				fadeout = true;
-			}
 
-			static int lastOption;
-			if(GameEmGine::getController(0).Coord2D_sticks[LS].y >= 0.8)
+		for(int a = 0; a < 4; a++)
+			if(GameEmGine::isControllerConnected(a))
 			{
-				if(!menuMoved)
+				static int lastOption;
+				if(abs(GameEmGine::getController(a).Coord2D_sticks[LS].y) >= 0.8)
 				{
-					lastOption = option;
-					option--;
-					if(option < 1)
-						option = 3;
-					lerpParam = 0;
-					mod[lastOption]->getTransformer().setScale(10);
-					tmp = mod[option]->getTransformer().getScale();
-					menuMoved = true;
+					if(!menuMoved[a])
+					{
+						lastOption = option;
+						option += GameEmGine::getController(a).Coord2D_sticks[LS].y < 0 ? 1 : -1;
+
+						option = option > 3 ? 1 : option < 1 ? 3 : option;
+
+						lerpParam = 0;
+						mod[lastOption]->getTransformer().setScale(10);
+						mod[lastOption]->setColour({255,255,255});
+						tmp = mod[option]->getTransformer().getScale();
+						menuMoved[a] = true;
+					}
+				}
+
+				if(abs(GameEmGine::getController(a).Coord2D_sticks[LS].y) < .3f)
+					menuMoved[a] = false;
+
+				if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
+				{
+					switch(option)
+					{
+					case 1:
+						fadeout = true;
+						break;
+					case 2:
+
+						break;
+					case 3:
+						GAME::exit();
+						break;
+					default:
+						break;
+					}
 				}
 			}
-			if(GameEmGine::getController(0).Coord2D_sticks[LS].y <= -0.8)
-			{
-				if(!menuMoved)
-				{
-					lastOption = option;
-					option++;
-					if(option > 3)
-						option = 1;
-					lerpParam = 0;
-					mod[lastOption]->getTransformer().setScale(10);
-					tmp = mod[option]->getTransformer().getScale();
-					menuMoved = true;
-				}
-			}
-
-			if(abs(GameEmGine::getController(0).Coord2D_sticks[LS].y) < .3f)
-				menuMoved = false;
-		}
 
 		mod[option]->getTransformer().setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
+		mod[option]->setColour(lerp(ColourRGBA{255,255,255,255}, ColourRGBA{255,0,0,255}, lerpParam));
 		lerpParam += .1f;
 
 		if(lerpParam >= 1)
@@ -129,9 +133,6 @@ public:
 				fadeout = false;
 				splashT = 0;
 				splashAmbient = 255;
-
-				GameEmGine::removeModel(mod[0]);
-				mod.clear();
 
 				//GamePlayInit();
 				GameEmGine::setScene(new Game);

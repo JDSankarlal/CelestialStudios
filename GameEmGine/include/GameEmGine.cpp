@@ -288,6 +288,8 @@ void GameEmGine::drawFullScreenQuad()
 
 void GameEmGine::setScene(Scene* scene)
 {
+	m_models.clear();
+
 	m_mainScene = scene;
 	scene->init();
 	m_inputManager->keyPressedCallback(scene->keyPressed);

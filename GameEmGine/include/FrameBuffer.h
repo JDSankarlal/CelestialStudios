@@ -3,12 +3,13 @@
 #include <GL/glew.h>
 #include <functional>
 #include <string>
+#include "Shader.h"
 
 class FrameBuffer
 {
 public:
 	FrameBuffer() = delete;
-	FrameBuffer(std::string tag,unsigned numColorAttachments);
+	FrameBuffer(std::string tag, unsigned numColorAttachments);
 	~FrameBuffer();
 
 	void initDepthTexture(unsigned width, unsigned height);
@@ -29,7 +30,7 @@ public:
 	GLuint getDepthHandle() const;
 	GLuint getColorHandle(unsigned index) const;
 
-	void setPostProcess(std::function<void()>, unsigned layer=0);
+	void setPostProcess(std::function<void()>, unsigned layer = 0);
 	std::function<void()> getPostProcess();
 
 	std::string getTag();
@@ -38,8 +39,8 @@ public:
 private:
 	GLuint
 		m_layer = GL_NONE,
-		m_fboID = GL_NONE, 
-		m_depthAttachment = GL_NONE, 
+		m_fboID = GL_NONE,
+		m_depthAttachment = GL_NONE,
 		*m_colorAttachments = nullptr;
 
 	GLenum *m_buffs = nullptr;
@@ -48,4 +49,5 @@ private:
 
 	std::string m_tag;
 	std::function<void()>m_postProcess;
+	Shader* m_shader;
 };

@@ -13,6 +13,11 @@ public:
 	// Set intro screen
 	void init()
 	{
+		GAME::m_grayScalePost->enable();
+		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), 0.f);
+		GAME::m_grayScalePost->disable();
+
+
 		gray = new Shader;
 		grayPost = new FrameBuffer("Gray Scale", 1);
 		

@@ -1,6 +1,7 @@
 #version 420
 
 uniform sampler2D uTex;
+uniform float uTime;
 
 in vec2 outUV;
 
@@ -15,5 +16,5 @@ void main()
     0.587  * source.g + 
     0.114  * source.b;
 
-    outColour = vec4(luminance, luminance, luminance, 1);
+    outColour = vec4(mix(source.rgb,vec3(luminance, luminance, luminance),uTime), 1);
 }
