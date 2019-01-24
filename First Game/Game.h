@@ -238,6 +238,7 @@ public:
 		//Planet
 		mod.push_back(new Model("Models/Planet/planet.obj"));
 		context->addModel(mod.back()); //18
+		mod[18]->setToRender(false);
 
 		//Building 2s
 		mod.push_back(new Model("Models/Buildings/Tunnel/tunnelWIP.obj"));
@@ -407,10 +408,7 @@ public:
 		mod.push_back(new Model(*mod.back()));//77
 
 		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
-		mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
-		context->addModel(mod[64]);
-		//mod[64]->getTransformer().setScale(0.2);
-		mod[64]->setToRender(false);
+
 
 		//context->addModel(mod.back()); //64
 
@@ -530,7 +528,7 @@ public:
 		}
 
 		//Boss Blood Bar
-		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{ 13.0f,13.5f,0.0f });
+		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{ 13.0f,18.5f,0.0f });
 		mod[72]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
 		mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
@@ -550,6 +548,10 @@ public:
 		mod[77]->setColour({ 255,255,0,150 });
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
 
+		mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
+		context->addModel(mod[78]);
+		//mod[64]->getTransformer().setScale(0.2);
+		mod[78]->setToRender(false);
 
 		/*mod[64]->getTransformer().setPosition(mod[0]->getTransformer().getPosition() + Coord3D{ 0.0f,1.4f,0.0f });
 		mod[64]->getTransformer().setRotation(Coord3D(0, 90, 0));
@@ -888,7 +890,7 @@ public:
 							if(minionCounter <= 0)
 							{
 								minions.push_back(nullptr);
-								context->addModel(minions.back() = new Minion(*mod[64]));
+								context->addModel(minions.back() = new Minion(*mod[78]));
 								minions.back()->setToRender(true);
 								minions.back()->getTransformer().reset();
 								minions.back()->setColour(200, 100, 50);
