@@ -192,9 +192,8 @@ public:
 			mod[a]->setAnimation("walk");
 		}
 
-
 		//Building 1s
-		mod.push_back(new Model("Models/Buildings/Building1/building1.obj"));
+		mod.push_back(new Model("Models/Buildings/Tunnel/CashcorpBuildingWIP.obj"));
 		context->addModel(mod.back());//4
 		mod.push_back(new Model(*mod[4]));
 		context->addModel(mod.back());//5
