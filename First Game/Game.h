@@ -532,7 +532,7 @@ public:
 
 		//Minions
 		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
-		context->addModel(mod[78]);
+		GAME::addModel(mod[78]);
 		mod[78]->setToRender(false); 
 
 		/// - Set Model Colour - ///
