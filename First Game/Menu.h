@@ -113,7 +113,7 @@ public:
 			}
 
 		mod[option]->getTransformer().setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
-		mod[option]->setColour(lerp(ColourRGBA{255,255,255,255}, ColourRGBA{255,0,0,255}, lerpParam));
+		mod[option]->setColour(lerp(ColourRGBA{255,255,255}, ColourRGBA{0,255,255}, lerpParam));
 		lerpParam += .1f;
 
 		if(lerpParam >= 1)

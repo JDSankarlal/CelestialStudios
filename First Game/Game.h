@@ -1083,7 +1083,7 @@ public:
 			glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
 			GAME::m_grayScalePost->disable();
 
-			deathCounter += .005f;
+			deathCounter += .007f;
 			deathCounter = deathCounter <= 1 ? deathCounter : 1;
 			if(youDead)
 			{
