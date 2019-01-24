@@ -7,10 +7,19 @@ public:
 	// Set splash screen and start update
 	void init()
 	{
-		
 		mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
+		mod[0]->getTransformer().setScale(1.0f,1.5f, 1.0f);
 		context->addModel(mod.back());
 		LightSource::setSceneAmbient({0,0,0,255});
+
+		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
+	}
+
+	void keyInputPressed(int key, int modfier)
+	{
+		modfier;
+		if (key == 'A')
+			fadeout = true;
 	}
 
 	// doing the update for intro screen
@@ -33,7 +42,7 @@ public:
 		{
 			LightSource::setLightAmount(1);
 			LightSource::setLightType(LIGHT_TYPE::POINT, 0);
-			LightSource::setPosition({0.0f,45.0f,700.0f}, 0);
+			LightSource::setPosition({0.0f,45.0f,-1000.0f}, 0);
 			LightSource::setDiffuse({10,10,10,10}, 0);
 			LightSource::setAttenuationQuadratic(0.04f, 0);
 			LightSource::setDirection({0.0f,0.0f,.0f}, 0);
@@ -60,7 +69,7 @@ public:
 				
 				
 				//menuInite();
-				context->setScene(new Menu);
+				context->setScene(new Game);
 			}
 		}
 	}
