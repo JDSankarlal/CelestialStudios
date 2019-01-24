@@ -229,9 +229,6 @@ public:
 		GAME::addModel(mod.back());//20
 		mod.push_back(new Model(*mod[19]));
 		GAME::addModel(mod.back());//21
-
-		//mod[19]->setToRender(false);
-		//mod[20]->setToRender(false);
 		mod[21]->setToRender(false);
 
 		//GraveStones
@@ -242,9 +239,13 @@ public:
 
 		//Coloured ring "IDs"
 		mod.push_back(new Model("Models/ID/Identifier.obj"));//26
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//27
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//28
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//29
+		GAME::addModel(mod.back());
 
 		//Building 3s
 		mod.push_back(new Model("Models/Buildings/Building3/House.obj"));
@@ -385,9 +386,13 @@ public:
 
 		//bullet's circle
 		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//74
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//75
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//76
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//77
+		GAME::addModel(mod.back());
 
 		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
 
@@ -458,16 +463,16 @@ public:
 
 		//ID rings?
 		mod[26]->setColour({255,0,0});
-		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({0,-90,0});
+		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[26]->getTransformer().setRotation({0,-90,0});
 
 		mod[27]->setColour({0,0,255});
-		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({0,-90,0});
+		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[27]->getTransformer().setRotation({0,-90,0});
 
 		mod[28]->setColour({0,255,0});
-		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({0,-90,0});
+		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[28]->getTransformer().setRotation({0,-90,0});
 
 		mod[29]->setColour({255,255,0});
-		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({0,-90,0});
+		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[29]->getTransformer().setRotation({0,-90,0});
 
 		//Trees
 		mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({0,-0,0});
@@ -1074,21 +1079,7 @@ public:
 				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
 
-		GAME::m_grayScalePost->enable();
-		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
-		GAME::m_grayScalePost->disable();
-
-		deathCounter += .005f;
-		deathCounter = deathCounter <= 1 ? deathCounter : 1;
-		if(youDead)
-		{
-			//TODO: do something when the party is dead
-
-		}
-		else
-		{
-
-		}
+		
 
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 
