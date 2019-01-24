@@ -626,7 +626,6 @@ void Mesh::render(Shader& shader, std::unordered_map<std::string, FrameBuffer*>&
 							textured = true,
 							glUniform1i(shader.getUniformLocation("uTex"), c),
 							glBindTexture(GL_TEXTURE_2D, d.id);
-
 					c++;
 				}
 			}
@@ -696,6 +695,7 @@ void Mesh::init()
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vboID[a].second);
 		glBufferData(GL_ARRAY_BUFFER, m_unpackedData[a].second.size() * sizeof(Vertex3D), m_unpackedData[a].second.data(), GL_STATIC_DRAW);
+
 		//vertex 2   attributes
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
 
@@ -721,7 +721,7 @@ void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>>
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vboID[a].first);
 
-		glBufferData(GL_ARRAY_BUFFER, verts1[a].second.size() * sizeof(Vertex3D), verts1[a].second.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, verts1[a].second.size() * sizeof(Vertex3D), verts1[a].second.data(), GL_STATIC_DRAW);
 
 		//vertex 1   attributes
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
@@ -735,7 +735,7 @@ void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>>
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vboID[a].second);
 
-		glBufferData(GL_ARRAY_BUFFER, verts2[a].second.size() * sizeof(Vertex3D), verts2[a].second.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, verts2[a].second.size() * sizeof(Vertex3D), verts2[a].second.data(), GL_STATIC_DRAW);
 
 
 		//vertex 2   attributes

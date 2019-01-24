@@ -1,5 +1,5 @@
 #version 420
-#define MAX_LIGHTS_SIZE 100
+#define MAX_LIGHTS_SIZE 50
 
 //
 const int DEFAULT=0;
