@@ -671,6 +671,8 @@ public:
 		//drawHealth(CandyMan->getHealth());
 		static vector<Minion*>minions;
 		static int minionCounter = 0;
+		static float minionTimer;
+		static float minionSpeed = .05f	;
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
@@ -887,27 +889,32 @@ public:
 							/// - Boss Spawns Minions - ///
 
 							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
-							if(minionCounter <= 0)
+							if(minionCounter < 1)
 							{
-								minions.push_back(nullptr);
-								context->addModel(minions.back() = new Minion(*mod[78]));
-								minions.back()->setToRender(true);
-								minions.back()->getTransformer().reset();
-								minions.back()->setColour(200, 100, 50);
-								minions.back()->getTransformer().getPosition();
-								minions.back()->getTransformer().setPosition(10, 0, -3);
-								minions.back()->getTransformer().setScale(0.25f);
+								//if (time - minions.back()->getTimeSinceLastSpawn() >= 2)
+								//{
+									minions.push_back(nullptr);
+									context->addModel(minions.back() = new Minion(*mod[78]));
+									minions.back()->setToRender(true);
+									minions.back()->getTransformer().reset();
+									minions.back()->setColour(200, 100, 50);
+									minions.back()->getTransformer().getPosition();
+									minions.back()->getTransformer().setPosition(10, 0, -3);
+									minions.back()->getTransformer().setScale(0.35f);
 
-								//printf(minions.back()->getTransformer().getPosition());
-								minionCounter += 1;
-								//minions.back()
+									//printf(minions.back()->getTransformer().getPosition());
+									minionCounter += 1;
+									//minions.back()->setTimeSinceLastSpawn(time);
+									//minions.back()
+								//}
 							}
+							//for (unsigned int k = 0; k < minions.size(); k++)
+							//{
+								Coord3D norm = player->getTransformer().getPosition() - minions.back()->getTransformer().getPosition();
+								norm.normalize();
 
-							Coord3D norm = player->getTransformer().getPosition() - minions.back()->getTransformer().getPosition();
-							norm.normalize();
-
-							minions.back()->getTransformer().translateBy(norm*.001f);
-
+								minions.back()->getTransformer().translateBy(norm*.001f);
+							//}
 
 							/// - Left Trigger to Dash - ///
 
