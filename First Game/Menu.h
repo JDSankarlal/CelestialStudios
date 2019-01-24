@@ -12,6 +12,15 @@ public:
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
 		LightSource::setSceneAmbient({0,0,0,255});
+
+		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
+	}
+
+	void keyInputPressed(int key, int modfier)
+	{
+		modfier;
+		if (key == 'B')
+			fadeout = true;
 	}
 
 	// doing the update for menu screen

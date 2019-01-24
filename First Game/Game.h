@@ -376,6 +376,36 @@ public:
 		mod[46]->addChild(mod[62]);
 		mod[47]->addChild(mod[63]);
 
+		//player's blood bar
+		mod.push_back(new Model("Models/BloodBar/RedBar/blood.obj"));//64
+		context->addModel(mod.back());
+		mod.push_back(new Model("Models/BloodBar/BlueBar/blood.obj"));//65
+		context->addModel(mod.back());
+		mod.push_back(new Model("Models/BloodBar/GreenBar/blood.obj"));//66
+		context->addModel(mod.back());
+		mod.push_back(new Model("Models/BloodBar/YellowBar/blood.obj"));//67
+		context->addModel(mod.back());
+		mod.push_back(new Model("Models/BloodBar/RedBarLighter/blood.obj"));//68
+		context->addModel(mod.back());
+		mod.push_back(new Model("Models/BloodBar/BlueBarLighter/blood.obj"));//69
+		context->addModel(mod.back());
+		mod.push_back(new Model("Models/BloodBar/GreenBarLighter/blood.obj"));//70
+		context->addModel(mod.back());
+		mod.push_back(new Model("Models/BloodBar/YellowBarLighter/blood.obj"));//71
+		context->addModel(mod.back());
+
+		//boss's blood bar
+		mod.push_back(new Model("Models/BloodBar/PinkBar/blood.obj"));//72
+		context->addModel(mod.back());
+		mod.push_back(new Model("Models/BloodBar/PinkBarLighter/blood.obj"));//73
+		context->addModel(mod.back());
+
+		//bullet's circle
+		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//74
+		mod.push_back(new Model(*mod.back()));//75
+		mod.push_back(new Model(*mod.back()));//76
+		mod.push_back(new Model(*mod.back()));//77
+
 		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
 		mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
 		context->addModel(mod[64]);
@@ -488,6 +518,43 @@ public:
 		mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({0.0f,0.0f,0.0f});
 		mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({0.0f,0.0f,0.0f});
 
+		//Player Blood Bar
+		for (int i = 0; i < 4; i++)
+		{
+			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{ 0.35f,1.4f,0.0f });
+			mod[i + 64]->getTransformer().setRotation(Coord3D(0, 90, 0));
+			mod[i + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
+			mod[i + 68]->getTransformer().setPosition(mod[i + 64]->getTransformer().getPosition());
+			mod[i + 68]->getTransformer().setRotation(Coord3D(0, 90, 0));
+			mod[i + 68]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
+		}
+
+		//Boss Blood Bar
+		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{ 13.0f,13.5f,0.0f });
+		mod[72]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+		mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
+		mod[73]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[73]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+
+		//Bullet Circle
+		mod[74]->setColour({ 255,0,0,150 });
+		mod[74]->getTransformer().setScale(0.65f), mod[74]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[74]->getTransformer().setRotation({ 0,-90,0 });
+
+		mod[75]->setColour({ 0,0,255,150 });
+		mod[75]->getTransformer().setScale(0.65f), mod[75]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[75]->getTransformer().setRotation({ 0,-90,0 });
+
+		mod[76]->setColour({ 0,255,0,150 });
+		mod[76]->getTransformer().setScale(0.65f), mod[76]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[76]->getTransformer().setRotation({ 0,-90,0 });
+
+		mod[77]->setColour({ 255,255,0,150 });
+		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
+
+
+		/*mod[64]->getTransformer().setPosition(mod[0]->getTransformer().getPosition() + Coord3D{ 0.0f,1.4f,0.0f });
+		mod[64]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);*/
+
 		/// - Set Model Colour - ///
 		//Players
 		mod[0]->setColour(1, 0.5, 0.5);
@@ -502,6 +569,10 @@ public:
 		mod[1]->addChild(mod[55]);
 		mod[2]->addChild(mod[56]);
 		mod[3]->addChild(mod[57]);
+		mod[0]->addChild(mod[74]);
+		mod[1]->addChild(mod[75]);
+		mod[2]->addChild(mod[76]);
+		mod[3]->addChild(mod[77]);
 
 		LightSource::setLightAmount(14);
 		for(int a = 0; a < 6; a++)
@@ -892,6 +963,19 @@ public:
 								mod[a]->setAnimation("walk");
 								mod[a]->getAnimation("walk")->setAnimationSpeed(.25f / speed);
 							}
+
+							//Update each player's Blood Bar
+							mod[a + 64]->getTransformer().setPosition(mod[a]->getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
+							mod[a + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f * (player->getHealth() / 100.0f));
+							mod[a + 68]->getTransformer().setPosition(mod[a + 64]->getTransformer().getPosition());
+							if (dead[a] == true)
+							{
+								context->removeModel(mod[a + 64]);
+								context->removeModel(mod[a + 68]);
+							}
+
+							//Update each player's Bullet Circle
+							mod[a + 74]->getTransformer().setScale(0.65f * (player->getBulletCount() / 30.0f));
 						}
 						/// - Bullet Collisions - ///
 						for(unsigned b = 0; b < bullets[a].size(); b++)
@@ -982,6 +1066,17 @@ public:
 										break;
 									}
 							}
+
+						mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f * (CandyMan->getHealth() / 1000.0f));
+						if (bossActive == false)
+						{
+							context->removeModel(mod[72]);
+							context->removeModel(mod[73]);
+							mod[44]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
+							mod[45]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
+							mod[46]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
+							mod[47]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
+						}
 					}
 				}
 			else
