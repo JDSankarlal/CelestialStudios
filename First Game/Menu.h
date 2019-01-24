@@ -103,6 +103,8 @@ public:
 			lerpParam = 1;
 		}
 
+
+
 		if (fadeout)
 		{
 			splashT += 0.01f;
