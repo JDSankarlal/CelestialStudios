@@ -1078,8 +1078,22 @@ public:
 			{
 				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
+			
+			GAME::m_grayScalePost->enable();
+			glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+			GAME::m_grayScalePost->disable();
 
-		
+			deathCounter += .005f;
+			deathCounter = deathCounter <= 1 ? deathCounter : 1;
+			if(youDead)
+			{
+				//TODO: do something when the party is dead
+
+			}
+			else
+			{
+
+			}
 
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 

@@ -414,16 +414,16 @@ void GameEmGine::update()
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	m_grayScalePost->disable();
 
-	////additional frame buffer renders
-	//std::vector<std::pair<std::string, FrameBuffer*>>tmp(buffers.begin(), buffers.end());
-	//std::sort(tmp.begin(), tmp.end(),
-	//	[](std::pair< std::string, FrameBuffer*>a, std::pair< std::string, FrameBuffer*>b)->bool
-	//	{return a.second->getLayer() > b.second->getLayer(); }
-	//);
-	//
-	//for(auto &a : tmp)
-	//	if(a.first != "Main Buffer")
-	//		a.second->getPostProcess()();
+	//additional frame buffer renders
+	std::vector<std::pair<std::string, FrameBuffer*>>tmp(buffers.begin(), buffers.end());
+	std::sort(tmp.begin(), tmp.end(),
+		[](std::pair< std::string, FrameBuffer*>a, std::pair< std::string, FrameBuffer*>b)->bool
+		{return a.second->getLayer() > b.second->getLayer(); }
+	);
+	
+	for(auto &a : tmp)
+		if(a.first != "Main Buffer")
+			a.second->getPostProcess()();
 
 	//m_mainBuffer->moveToBackBuffer(getWindowWidth(),getWindowHeight());
 	////3D-Graphics 2
