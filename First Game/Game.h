@@ -135,8 +135,8 @@ public:
 		{
 			GameEmGine::m_modelShader->refresh();
 			GameEmGine::m_grayScalePost->refresh();
-				//context->setCameraAngle(0, { 1, 1, 1 });
-				//	context->setCameraPosition({0,0,0});
+			//context->setCameraAngle(0, { 1, 1, 1 });
+			//	context->setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
@@ -192,21 +192,22 @@ public:
 			mod[a]->setAnimation("walk");
 		}
 
-
 		//Building 1s
-		mod.push_back(new Model("Models/Buildings/Building1/building1.obj"));
+		mod.push_back(new Model("Models/Buildings/CashCorp/CashcorpBuildingWIP.obj"));
 		context->addModel(mod.back());//4
 		mod.push_back(new Model(*mod[4]));
 		context->addModel(mod.back());//5
 		mod.push_back(new Model(*mod[4]));
 		context->addModel(mod.back());//6
 
+		mod[6]->setToRender(false);
+
 		//Project Nebula Sign
 		mod.push_back(new Model("Models/Neon Signs/Project Nebula/signn.obj"));
 		context->addModel(mod.back()); //7
 
 		//Boss
-		mod.push_back(new Boss("Models/BOSS/BOSS.obj"));
+		mod.push_back(new Boss("Models/BOSS/robotTEST2.obj"));
 		context->addModel(mod.back()); //8
 		//mod[8]->enableBoundingBox(true);
 
@@ -237,14 +238,19 @@ public:
 		//Planet
 		mod.push_back(new Model("Models/Planet/planet.obj"));
 		context->addModel(mod.back()); //18
+		mod[18]->setToRender(false);
 
 		//Building 2s
-		mod.push_back(new Model("Models/Buildings/Building2/building2.obj"));
+		mod.push_back(new Model("Models/Buildings/Tunnel/tunnelWIP.obj"));
 		context->addModel(mod.back());//19
 		mod.push_back(new Model(*mod[19]));
 		context->addModel(mod.back());//20
 		mod.push_back(new Model(*mod[19]));
 		context->addModel(mod.back());//21
+
+		//mod[19]->setToRender(false);
+		//mod[20]->setToRender(false);
+		mod[21]->setToRender(false);
 
 		//GraveStones
 		mod.push_back(new Model("Models/RIP/Rip Ani/RIP1.obj")); //22
@@ -272,6 +278,7 @@ public:
 		mod.push_back(new Model(*mod[33]));
 		context->addModel(mod.back());//34
 
+		//Trees
 		mod.push_back(new Model("Models/DiedTree/tree.obj"));
 		context->addModel(mod.back());//35
 		mod.push_back(new Model(*mod[35]));
@@ -281,6 +288,7 @@ public:
 		mod.push_back(new Model(*mod[35]));
 		context->addModel(mod.back());//38
 
+		//Building 5s
 		mod.push_back(new Model("Models/Buildings/Building5/smallShop.obj"));
 		context->addModel(mod.back());//39
 		mod.push_back(new Model(*mod[39]));
@@ -288,13 +296,18 @@ public:
 		mod.push_back(new Model(*mod[39]));
 		context->addModel(mod.back());//41
 
+		mod[41]->setToRender(false);
+
 		mod.push_back(new Model("Models/Buildings/Building6/Building6.obj"));
 		context->addModel(mod.back());//42
 		mod.push_back(new Model(*mod[42]));
 		context->addModel(mod.back());//43
 
+		mod[42]->setToRender(false); 
+		mod[43]->setToRender(false);
+
 		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
-		context->addModel(mod.back()); //44
+		context->addModel(mod.back());//44
 		mod.push_back(new Model(*mod[44]));
 		context->addModel(mod.back());//45
 		mod.push_back(new Model(*mod[44]));
@@ -309,10 +322,16 @@ public:
 		mod.push_back(new Model(*mod[49]));
 		context->addModel(mod.back());//50
 
+		mod[49]->setToRender(false);
+		mod[50]->setToRender(false);
+
 		mod.push_back(new Model("Models/Picnic/PicnicTable.obj"));
 		context->addModel(mod.back()); //51
 		mod.push_back(new Model(*mod[51]));
 		context->addModel(mod.back());//52
+
+		mod[51]->setToRender(false);
+		mod[52]->setToRender(false);
 
 		mod.push_back(new Model("Models/PizzaSign/PIZZA.obj"));
 		context->addModel(mod.back()); //53
@@ -328,6 +347,8 @@ public:
 
 		mod.push_back(new Model("Models/Planet/Planet2/planet.obj"));
 		context->addModel(mod.back()); //58
+
+		mod[58]->setToRender(false);
 		//Pause Menu
 		//mod.push_back(new Model("Models/Pause Menu/Pause Menu.obj"));//33
 
@@ -387,19 +408,16 @@ public:
 		mod.push_back(new Model(*mod.back()));//77
 
 		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
-		//mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
-		//context->addModel(mod[64]);
-		//mod[64]->getTransformer().setScale(0.2);
-		//mod[64]->setToRender(false);
-		
+
+
 		//context->addModel(mod.back()); //64
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
-		mod[0]->getTransformer().setScale(1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
-		mod[1]->getTransformer().setScale(1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
-		mod[2]->getTransformer().setScale(1.2f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
-		mod[3]->getTransformer().setScale(1.2f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
+		mod[0]->getTransformer().setScale(1.35f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
+		mod[1]->getTransformer().setScale(1.35f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
+		mod[2]->getTransformer().setScale(1.35f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
+		mod[3]->getTransformer().setScale(1.35f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
 		mod[0]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[1]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
@@ -407,53 +425,54 @@ public:
 
 		//Building Transforms
 		//Building 1s
-		mod[4]->getTransformer().setScale(2), mod[4]->getTransformer().setPosition(-16.75f, 0.0f, -2.0f);
-		mod[5]->getTransformer().setScale(2), mod[5]->getTransformer().setPosition(16.75f, 0.0f, 10.0f), mod[5]->getTransformer().setRotation({0.0f,180.0f,0.0f});
-		mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4.0f, 0.0f, 22.75f), mod[6]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
+		mod[4]->getTransformer().setScale(1), mod[4]->getTransformer().setPosition(-15.175f, 0.0f, -2.0f), mod[4]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });;
+		mod[5]->getTransformer().setScale(1), mod[5]->getTransformer().setPosition(6.0f, 0.0f, 29.0f), mod[5]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
+		//mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4.0f, 0.0f, 22.75f), mod[6]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
 
 		//Building 2s
-		mod[19]->getTransformer().setScale(1.75f), mod[19]->getTransformer().setPosition(-16.4f, 0.0f, 3.0f);
-		mod[20]->getTransformer().setScale(1.75f), mod[20]->getTransformer().setPosition(16.4f, 0.0f, 1.2f), mod[20]->getTransformer().setRotation({0.0f, 180.0f, 0.0f});;
-		mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0.0f, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+		mod[19]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-16.8f, 0.0f, 7.8f), mod[19]->getTransformer().setRotation({ 0.0f, 90.0f,0.0f });
+		mod[20]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(16.8f, 0.0f, 8.0f), mod[20]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});;
+		//mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0.0f, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+
 		//Buildings 3s
-		mod[30]->getTransformer().setPosition(7.25f, 0.0f, 23.6f);
-		mod[31]->getTransformer().setPosition(19.5f, 0.0f, 5.35f), mod[31]->getTransformer().setRotation({0,180,0});
-		mod[32]->getTransformer().setPosition(-8.6f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({0,-90,0});
+		mod[30]->getTransformer().setPosition(10.5f, 0.0f, 23.6f);
+		mod[31]->getTransformer().setPosition(19.5f, 0.0f, 3.75f), mod[31]->getTransformer().setRotation({0,180,0});
+		mod[32]->getTransformer().setPosition(-9.3f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({0,-90,0});
 		//Building 4s
-		mod[33]->getTransformer().setPosition(18.25f, 0.0f, 18.5f), mod[33]->getTransformer().setRotation({0,-90,0});
-		mod[34]->getTransformer().setPosition(-18.25f, 0.0f, 8.25), mod[34]->getTransformer().setRotation({0,90,0});
+		mod[33]->getTransformer().setPosition(17.35f, 0.0f, 20.9f), mod[33]->getTransformer().setRotation({0,-90,0});
+		mod[34]->getTransformer().setPosition(-14.25f, 0.0f, 24.30f), mod[34]->getTransformer().setRotation({0,180,0});
 		//Building 5s
-		mod[39]->getTransformer().setScale(1.0f, 1.0f, 1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 14.25f), mod[39]->getTransformer().setRotation({0,180,0});
+		mod[39]->getTransformer().setScale(1.0f, 1.0f, 1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 16.5f), mod[39]->getTransformer().setRotation({0,180,0});
 		mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f), mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({0,90,0});
-		mod[41]->getTransformer().setScale(1.0f, 1.3f, 1.6f), mod[41]->getTransformer().setPosition(1.0f, 0.0f, 25.5f), mod[41]->getTransformer().setRotation({0,-90,0});
+		//mod[41]->getTransformer().setScale(1.0f, 1.3f, 1.6f), mod[41]->getTransformer().setPosition(1.0f, 0.0f, 25.5f), mod[41]->getTransformer().setRotation({0,-90,0});
 		//Building 6s
-		mod[42]->getTransformer().setScale(1.0f, 1.5f, 1.8f), mod[42]->getTransformer().setPosition(-14.2f, 0.0f, 22.9f), mod[42]->getTransformer().setRotation({0,-90,0});
-		mod[43]->getTransformer().setPosition(16.65f, 0.0f, -3.15f), mod[43]->getTransformer().setRotation({0,180,0});
+		//mod[42]->getTransformer().setScale(1.0f, 1.5f, 1.8f), mod[42]->getTransformer().setPosition(-14.2f, 0.0f, 22.9f), mod[42]->getTransformer().setRotation({0,-90,0});
+		//mod[43]->getTransformer().setPosition(16.65f, 0.0f, -3.15f), mod[43]->getTransformer().setRotation({0,180,0});
 
 		//Project Nebula Sign Transforms
-		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(7.5f, 5.34f, 22.5f);
+		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.5f, 5.34f, 22.5f);
 
 		//Boss Trarrnsforms
-		mod[8]->getTransformer().setScale(6), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 16.0f), mod[8]->getTransformer().setRotation({0.0f, 180.0f, 0.0f});
+		mod[8]->getTransformer().setScale(1.3f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 19.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
 
 		//Floor Transforms
-		mod[9]->getTransformer().setScale(2.0f, 1.0f, 1.75f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
+		mod[9]->getTransformer().setScale(2.25f, 1.0f, 5.0f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
 
 		//Street Light Transforms
-		mod[10]->getTransformer().setScale(0.5f), mod[10]->getTransformer().setPosition(13.0f, 0.0f, -1.0f);
-		mod[11]->getTransformer().setScale(0.5f), mod[11]->getTransformer().setPosition(13.0f, 0.0f, 7.0f);
-		mod[12]->getTransformer().setScale(0.5f), mod[12]->getTransformer().setPosition(13.0f, 0.0f, 15.0f);
-		mod[13]->getTransformer().setScale(0.5f), mod[13]->getTransformer().setPosition(-13.0f, 0.0f, -1.0f), mod[13]->getTransformer().setRotation({0.0f,180.0f,0.0f});
-		mod[14]->getTransformer().setScale(0.5f), mod[14]->getTransformer().setPosition(-13.0f, 0.0f, 7.0f), mod[14]->getTransformer().setRotation({0.0f,180.0f,0.0f});
-		mod[15]->getTransformer().setScale(0.5f), mod[15]->getTransformer().setPosition(-13.0f, 0.0f, 15.0f), mod[15]->getTransformer().setRotation({0.0f,180.0f,0.0f});
+		mod[10]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[10]->getTransformer().setPosition(13.0f, 0.0f, -1.0f);
+		mod[11]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[11]->getTransformer().setPosition(13.0f, 0.0f, 7.0f);
+		mod[12]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[12]->getTransformer().setPosition(13.0f, 0.0f, 15.0f);
+		mod[13]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[13]->getTransformer().setPosition(-13.0f, 0.0f, -1.0f), mod[13]->getTransformer().setRotation({0.0f,180.0f,0.0f});
+		mod[14]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[14]->getTransformer().setPosition(-13.0f, 0.0f, 7.0f), mod[14]->getTransformer().setRotation({0.0f,180.0f,0.0f});
+		mod[15]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[15]->getTransformer().setPosition(-13.0f, 0.0f, 15.0f), mod[15]->getTransformer().setRotation({0.0f,180.0f,0.0f});
 
 		//Bench Transforms
 		mod[16]->getTransformer().setPosition(-13.0f, 0.0f, 3.0f);
 		mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({0.0f,180.0f,0.0f});
 
 		//Planet Transforms
-		mod[18]->getTransformer().setPosition(9.0f, 12.0f, 36.0f);
-		mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
+		mod[18]->getTransformer().setPosition(9.0f, 17.0f, 36.0f);
+		//mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
 
 		//ID rings?
 		mod[26]->setColour({255,0,0});
@@ -481,18 +500,18 @@ public:
 		mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 
 		//Trash
-		mod[49]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[49]->getTransformer().setPosition(-13.25f, 0.0f, 13.0f);
-		mod[50]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[50]->getTransformer().setPosition(13.25f, 0.0f, 0.5f);
+		//mod[49]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[49]->getTransformer().setPosition(-13.25f, 0.0f, 13.0f);
+		//mod[50]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[50]->getTransformer().setPosition(13.25f, 0.0f, 0.5f);
 
 		//Picnic table wut, cyberpunk game?
-		mod[51]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[51]->getTransformer().setPosition(-11.0f, 0.0f, 19.0f), mod[51]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		mod[52]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[52]->getTransformer().setPosition(-6.75f, 0.0f, 19.0f), mod[52]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		//mod[51]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[51]->getTransformer().setPosition(-11.0f, 0.0f, 19.0f), mod[51]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		//mod[52]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[52]->getTransformer().setPosition(-6.75f, 0.0f, 19.0f), mod[52]->getTransformer().setRotation({0.0f,90.0f,0.0f});
 
 		//Pizza Sign
-		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-9.5f, 5.4f, 22.3f);
+		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-10.25f, 5.4f, 22.3f);
 
 		//Assault Weapons
-		mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[51]->getTransformer().setRotation({0.0f,0.0f,0.0f});
+		mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[54]->getTransformer().setRotation({0.0f,0.0f,0.0f});
 		mod[55]->getTransformer().setScale(0.075f), mod[55]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[55]->getTransformer().setRotation({0.0f,0.0f,0.0f});
 		mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({0.0f,0.0f,0.0f});
 		mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({0.0f,0.0f,0.0f});
@@ -509,7 +528,7 @@ public:
 		}
 
 		//Boss Blood Bar
-		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{ 13.0f,13.5f,0.0f });
+		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{ 13.0f,18.5f,0.0f });
 		mod[72]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
 		mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
@@ -529,6 +548,10 @@ public:
 		mod[77]->setColour({ 255,255,0,150 });
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
 
+		mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
+		context->addModel(mod[78]);
+		//mod[64]->getTransformer().setScale(0.2);
+		mod[78]->setToRender(false);
 
 		/*mod[64]->getTransformer().setPosition(mod[0]->getTransformer().getPosition() + Coord3D{ 0.0f,1.4f,0.0f });
 		mod[64]->getTransformer().setRotation(Coord3D(0, 90, 0));
@@ -561,7 +584,8 @@ public:
 			LightSource::setParent(mod[10 + a], a);
 			LightSource::setPosition({-5.0f,4.5,0.0f}, a);
 			LightSource::setDirection({0.0f,-1.0f,0.0f}, a);
-
+			//LightSource::setDiffuse({ 255,100,0,100 }, 6);
+			//LightSource::setAttenuationQuadratic(0.06f, 6);
 		}
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 6);
@@ -612,8 +636,8 @@ public:
 
 		/// - Set Camera - ///
 
-		context->setCameraPosition({0,15,-10});
-		context->setCameraAngle(-45, {1,0,0});
+		context->setCameraPosition({0,18.5f,-14});
+		context->setCameraAngle(-35, {1,0,0});
 
 		/// not needed ///
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
@@ -645,7 +669,8 @@ public:
 		static Player* player;
 		static Boss*CandyMan = (Boss*)mod[8];
 		//drawHealth(CandyMan->getHealth());
-		static Minion* minion;
+		static vector<Minion*>minions;
+		static int minionCounter = 0;
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
@@ -746,7 +771,7 @@ public:
 							player = (Player*)mod[a];
 							Xinput p1 = context->getController(a);
 
-							
+
 							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 							{
 
@@ -859,6 +884,31 @@ public:
 								}
 							}
 
+							/// - Boss Spawns Minions - ///
+
+							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
+							if(minionCounter <= 0)
+							{
+								minions.push_back(nullptr);
+								context->addModel(minions.back() = new Minion(*mod[78]));
+								minions.back()->setToRender(true);
+								minions.back()->getTransformer().reset();
+								minions.back()->setColour(200, 100, 50);
+								minions.back()->getTransformer().getPosition();
+								minions.back()->getTransformer().setPosition(10, 0, -3);
+								minions.back()->getTransformer().setScale(0.25f);
+
+								//printf(minions.back()->getTransformer().getPosition());
+								minionCounter += 1;
+								//minions.back()
+							}
+
+							Coord3D norm = player->getTransformer().getPosition() - minions.back()->getTransformer().getPosition();
+							norm.normalize();
+
+							minions.back()->getTransformer().translateBy(norm*.001f);
+
+
 							/// - Left Trigger to Dash - ///
 
 							if(p1.triggers[LT] >= .95)
@@ -885,6 +935,7 @@ public:
 								}
 
 							}
+
 							else//Do the same with the LT button, have it so will only work every X seconds.
 							{
 								move -= .001f;
@@ -962,6 +1013,24 @@ public:
 										}
 										puts("Hit The BOSS\n");
 										break;
+									}
+
+								//TODO: Fix Minion Collisions
+								for(auto& minion : minions)
+									if(collisions(bullets[a][b], minion))
+									{
+										minion->setHealth(minion->getHealth() - 10);
+										context->removeModel(bullets[a][b]);
+										bullets[a].erase(bullets[a].begin() + b);
+
+										if(minion->getHealth() <= 0)
+										{
+											context->removeModel(minion);
+											minions.erase(std::find(minions.begin(), minions.end(), minion));
+											puts("Killed a boi\n");
+											minionCounter -= 1;
+										}
+
 									}
 							}
 						for(unsigned b = 0; b < pMissiles[a].size(); b++)
