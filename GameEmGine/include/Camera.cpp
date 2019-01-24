@@ -29,7 +29,7 @@ void Camera::setType(CAMERA_TYPE type)
 		m_projMat = glm::ortho(-m_size->width * 100, m_size->width * 100, -m_size->height * 100, m_size->height * 100, -m_size->depth, m_size->depth);
 		break;
 	case PERSPECTIVE:
-		m_projMat = glm::perspective(glm::radians(90.f), m_size->width / m_size->height, .001f, m_size->depth);
+		m_projMat = glm::perspective(glm::radians(75.f), m_size->width / m_size->height, .001f, m_size->depth);
 		break;
 	default:
 		m_projMat = glm::mat4(1);
