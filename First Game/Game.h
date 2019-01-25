@@ -997,12 +997,12 @@ public:
 						}
 						///~ Bullet Collisions ~///
 						for(unsigned b = 0; b < bullets[a].size(); b++)
-							if(bullets[a][b])
+							if (bullets[a][b])
 							{
 								timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].x, velocity[a][b].y, velocity[a][b].z);
 
-								if(timer[a][b] >= 1)
+								if (timer[a][b] >= 1)
 								{
 									GAME::removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
@@ -1011,6 +1011,15 @@ public:
 									break;
 								}
 
+								/// Bullet Collisions with Train
+								for (int t = 0; t < 6; t++)
+								{
+									if (collision(bullets[a][b], mod[79 + t]))
+									{
+										GAME::removeModel(bullets[a][b]);
+										bullets[a].erase(bullets[a].begin() + b);
+									}
+								}
 								if(mod[8])
 									if(collision(bullets[a][b], mod[8]))
 									{
@@ -1062,6 +1071,17 @@ public:
 									missileVelocity[a].erase(missileVelocity[a].begin() + b);
 									timer[a].erase(timer[a].begin() + b);
 									break;
+								}
+
+								/// - Missile Collisions with Train - ///
+
+								for (int t = 0; t < 6; t++)
+								{
+									if (collision(pMissiles[a][b], mod[79 + t]))
+									{
+										GAME::removeModel(pMissiles[a][b]);
+										pMissiles[a].erase(pMissiles[a].begin() + b);
+									}
 								}
 
 								if(mod[8])
