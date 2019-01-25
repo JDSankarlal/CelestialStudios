@@ -1,7 +1,7 @@
 #include "Transformer.h"
 
 
-Transformer::Transformer() :m_translate(1), m_rotate(1), m_scale(1)
+Transformer::Transformer() :m_translate(1), m_rotate(1), m_scale(1),m_scale2(1)
 {}
 
 
@@ -102,8 +102,15 @@ void Transformer::scaleBy(float scale)
 	scaleBy(scale, scale, scale);
 }
 
+void Transformer::setScale(Coord3D _Scale)
+{
+	m_updatedScale = true;
+	setScale(_Scale.x, _Scale.y, _Scale.z);
+}
+
 void Transformer::setScale(float x, float y, float z)
 {
+	m_scale2 = Coord3D(x, y, z);
 	m_updatedScale = true;
 	m_scale = glm::scale(glm::mat4(1.f), glm::vec3(x, y, z));
 }
@@ -111,6 +118,7 @@ void Transformer::setScale(float x, float y, float z)
 void Transformer::scaleBy(float x, float y, float z)
 {
 	m_updatedScale = true;
+	m_scale2 += Coord3D(x, y, z);
 	m_scale = glm::scale(m_scale, glm::vec3(x, y, z));
 }
 
@@ -122,6 +130,11 @@ Coord3D Transformer::getPosition()
 Coord3D Transformer::getRotation()
 {
 	return m_angles;
+}
+
+Coord3D Transformer::getScale()
+{
+	return m_scale2;
 }
 
 glm::mat4 & Transformer::getRotationMatrix()

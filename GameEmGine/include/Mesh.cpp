@@ -605,45 +605,52 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 	return m_unpackedData;
 }
 
-void Mesh::render(Shader& shader, FrameBuffer *frame)
+void Mesh::render(Shader& shader, std::unordered_map<std::string, FrameBuffer*>& buffers)
 {
-	for(unsigned a = 0; a < m_vaoID.size(); a++)
-	{
-		bool textured = false;
-		int c = 0;
-
-		for(unsigned b = 0; b < m_textures.size(); b++)
+	shader.enable();
+	for(auto&frame : buffers)
+	{	
+		for(unsigned a = 0; a < m_vaoID.size(); a++)
 		{
-			if(m_textures[b].first == m_vaoID[a].first)
+			bool textured = false;
+			int c = 0;
+
+			for(unsigned b = 0; b < m_textures.size(); b++)
+			{
+				if(m_textures[b].first == m_vaoID[a].first)
+				{
+					glActiveTexture(GL_TEXTURE0 + c);
+
+					for(auto &d : m_textures[b].second)
+						if(d.type == TEXTURE_TYPE::DIFFUSE)
+						{
+							textured = true;
+							glUniform1i(shader.getUniformLocation("uTex"), c);
+							glBindTexture(GL_TEXTURE_2D, d.id);
+						}
+					c++;
+				}
+			}
+
+			glUniform1i(shader.getUniformLocation("textured"), textured);
+
+			frame.second->enable();
+
+			glBindVertexArray(m_vaoID[a].second);
+			glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
+			glBindVertexArray(0);
+
+			frame.second->disable();
+
+			for(; c >= 0; c--)
 			{
 				glActiveTexture(GL_TEXTURE0 + c);
-
-				for(auto &d : m_textures[b].second)
-					if(d.type == TEXTURE_TYPE::DIFFUSE)
-						textured = true,
-						glUniform1i(shader.getUniformLocation("uTex"), c),
-						glBindTexture(GL_TEXTURE_2D, d.id);
-
-				c++;
+				glBindTexture(GL_TEXTURE_2D, 0);
+				//glActiveTexture(0);
 			}
 		}
-
-		glUniform1i(shader.getUniformLocation("textured"), textured);
-
-
-		frame ? frame->enable() : void();
-		glBindVertexArray(m_vaoID[a].second);
-		glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
-		glBindVertexArray(0);
-		frame ? frame->disable() : void();
-
-		for(; c >= 0; c--)
-		{
-			glActiveTexture(GL_TEXTURE0 + c);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			//glActiveTexture(0);
-		}
 	}
+	shader.disable();
 }
 
 GLuint Mesh::getNumFaces(int index) const
@@ -691,21 +698,23 @@ void Mesh::init()
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vboID[a].second);
 		glBufferData(GL_ARRAY_BUFFER, m_unpackedData[a].second.size() * sizeof(Vertex3D), m_unpackedData[a].second.data(), GL_STATIC_DRAW);
+
 		//vertex 2   attributes
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
 
 		//normal 2   attributes
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
+	
 	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 }
 
 void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts1, std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts2)
 {
-	for(unsigned a = 0; a < m_numFaces.size(); a++)
+	for(unsigned a = 0; a < verts1.size(); a++)
 	{
+		
 		glBindVertexArray(m_vaoID[a].second);
 
 		glEnableVertexAttribArray(0);
@@ -716,7 +725,7 @@ void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>>
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vboID[a].first);
 
-		glBufferData(GL_ARRAY_BUFFER, verts1[a].second.size() * sizeof(Vertex3D), verts1[a].second.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, verts1[a].second.size() * sizeof(Vertex3D), verts1[a].second.data(), GL_STATIC_DRAW);
 
 		//vertex 1   attributes
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
@@ -730,7 +739,7 @@ void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>>
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vboID[a].second);
 
-		glBufferData(GL_ARRAY_BUFFER, verts2[a].second.size() * sizeof(Vertex3D), verts2[a].second.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, verts2[a].second.size() * sizeof(Vertex3D), verts2[a].second.data(), GL_STATIC_DRAW);
 
 
 		//vertex 2   attributes

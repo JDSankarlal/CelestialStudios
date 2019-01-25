@@ -1,39 +1,53 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <functional>
+#include <string>
+#include "Shader.h"
 
 class FrameBuffer
 {
 public:
 	FrameBuffer() = delete;
-	FrameBuffer(unsigned numColourAttach);
+	FrameBuffer(std::string tag, unsigned numColorAttachments);
 	~FrameBuffer();
 
-	//void setNumColourAttachments(unsigned num);
-
-	void initDepthTexture(int width, int height);
-	void initColourTexture(unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap, unsigned index);
+	void initDepthTexture(unsigned width, unsigned height);
+	void initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap);
 	bool checkFBO();
 
+	// Clears all OpenGL memory
 	void unload();
 
+	// Clears all attached textures
 	void clear();
 
 	void enable();
 	void disable();
 
-	void moveToBackBuffer(int windWidth, int windHeight);
+	void moveToBackBuffer(int windowWidth, int windowHeight);
 
-	GLuint GetDepthHandle()const;
-	GLuint GetColourHandle(unsigned index)const;
+	GLuint getDepthHandle() const;
+	GLuint getColorHandle(unsigned index) const;
+
+	void setPostProcess(std::function<void()>, unsigned layer = 0);
+	std::function<void()> getPostProcess();
+
+	std::string getTag();
+	unsigned getLayer();
 
 private:
+	GLuint
+		m_layer = GL_NONE,
+		m_fboID = GL_NONE,
+		m_depthAttachment = GL_NONE,
+		*m_colorAttachments = nullptr;
 
-	GLuint	m_fboID = GL_NONE;
-	GLuint m_depthAttachment = GL_NONE;
-	GLuint	*m_colourAttachments = nullptr;
 	GLenum *m_buffs = nullptr;
 
-	unsigned m_numColourAttachments;
+	unsigned int m_numColorAttachments = 0;
 
+	std::string m_tag;
+	std::function<void()>m_postProcess;
+	Shader* m_shader;
 };

@@ -1,5 +1,5 @@
 #version 420
-#define MAX_LIGHTS_SIZE 100
+#define MAX_LIGHTS_SIZE 50
 
 //
 const int DEFAULT=0;
@@ -36,7 +36,7 @@ in vec2 texcoord;
 in vec3 norm;
 in vec3 pos;
 
-out vec4 outColor;
+layout(location = 0) out vec4 outColor;
 
 void pointLight(int a);
 

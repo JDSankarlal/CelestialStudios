@@ -28,13 +28,14 @@ Model::Model(const char * path) :
 		m_bottom = m_mesh.bottom;
 		m_front = m_mesh.front;
 		m_back = m_mesh.back;
+		boundingBoxUpdate();
 	}
 }
 
 Model::~Model()
 {}
 
-void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
+void Model::render(Shader& shader, Camera& cam)
 {
 	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
 
@@ -53,12 +54,12 @@ void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
 
 	// update the position of the object
 	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
-	boundingBoxUpdate(cam);
+	boundingBoxUpdate();
 
 	if(m_render)
 	{
 		//render the mesh
-		m_mesh.render(shader,frame);
+		m_mesh.render(shader,m_frameBuffers);
 		shader.disable();
 
 		if(m_enableBB)
@@ -67,7 +68,7 @@ void Model::render(Shader& shader, Camera& cam,FrameBuffer* frame)
 		m_transform.resetUpdated();
 
 		for(auto&a : m_children)
-			a->render(shader, cam,frame);
+			a->render(shader, cam);
 	}
 }
 
@@ -84,8 +85,6 @@ void Model::drawBoundingBox()
 	glBindVertexArray(0);
 
 	m_shaderBB.disable();
-	//shader.enable();
-
 }
 
 Transformer& Model::getTransformer()
@@ -141,6 +140,21 @@ void Model::addAnimation(std::string tag, Animation * animation)
 	m_animations[tag] = animation;
 }
 
+void Model::addFrameBuffer(FrameBuffer * buffer)
+{
+	m_frameBuffers[buffer->getTag()] = buffer;
+}
+
+void Model::removeFrameBuffer(std::string tag)
+{
+	m_frameBuffers.erase(tag);
+}
+
+std::unordered_map<std::string, FrameBuffer*>& Model::getFrameBuffers()
+{
+	return m_frameBuffers;
+}
+
 float Model::getWidth()
 {
 	return m_width;
@@ -163,9 +177,9 @@ Coord3D Model::getCenter()
 	return m_center;
 }
 
-void Model::boundingBoxUpdate(Camera& cam)
+void Model::boundingBoxUpdate()
 {
-	cam;
+
 	m_front = m_back = m_top = m_bottom = m_left = m_right = Coord3D(0, 0, 0);
 	std::vector<glm::vec4> thing
 	{

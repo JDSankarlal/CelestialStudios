@@ -64,10 +64,12 @@
     <ClInclude Include="ExtraMath.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Utilities.h">
       <Filter>EmGine\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -128,7 +130,9 @@
     <ClCompile Include="ShaderCombiner.cpp">
       <Filter>EmGine</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Animation.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EmGine">

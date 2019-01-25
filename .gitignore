@@ -68,3 +68,5 @@ GameEmGine/include/x64/Debug/
 *.ipdb
 
 x64/
+
+*.csv

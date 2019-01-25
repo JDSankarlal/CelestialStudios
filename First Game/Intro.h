@@ -8,8 +8,8 @@ public:
 	void init()
 	{
 		mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
-		mod[0]->getTransformer().setScale(1.0f,1.5f, 1.0f);
-		context->addModel(mod.back());
+		mod[0]->getTransformer().setScale(1.0f, 1.5f, 1.0f);
+		GameEmGine::addModel(mod.back());
 		LightSource::setSceneAmbient({0,0,0,255});
 
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
@@ -19,7 +19,7 @@ public:
 	void keyInputPressed(int key, int modfier)
 	{
 		modfier;
-		if (key == 'A')
+		if(key == 'A')
 			fadeout = true;
 	}
 
@@ -41,23 +41,18 @@ public:
 		}
 		if(!fadein)
 		{
-			//LightSource::setLightAmount(1);
-			//LightSource::setLightType(LIGHT_TYPE::POINT, 0);
-			//LightSource::setPosition({0.0f,45.0f,-1000.0f}, 0);
-			//LightSource::setDiffuse({10,10,10,10}, 0);
-			//LightSource::setAttenuationQuadratic(0.04f, 0);
-			//LightSource::setDirection({0.0f,0.0f,.0f}, 0);
-			//LightSource::setLightAmount(1);
-			//LightSource::setLightType(LIGHT_TYPE::POINT, 0);
-			//LightSource::setPosition({0.0f,45.0f,700.0f}, 0);
-			//LightSource::setDiffuse({10,10,10,10}, 0);
-			//LightSource::setAttenuationQuadratic(0.04f, 0);
-			//LightSource::setDirection({0.0f,0.0f,.0f}, 0);
+			LightSource::setLightAmount(1);
+			LightSource::setLightType(LIGHT_TYPE::POINT, 0);
+			LightSource::setPosition({0.0f,45.0f,-1000.0f}, 0);
+			LightSource::setDiffuse({10,10,10,10}, 0);
+			LightSource::setAttenuationQuadratic(0.04f, 0);
+			LightSource::setDirection({0.0f,0.0f,.0f}, 0);
 		}
-		if(Xinput::buttonPressed(context->getController(0).buttons.A))
-		{
-			fadeout = true;
-		}
+		for(int a = 0; a < 4; a++)
+			if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
+			{
+				fadeout = true;
+			}
 		if(fadeout)
 		{
 			LightSource::setLightAmount(0);
@@ -71,12 +66,12 @@ public:
 				splashT = 0;
 				splashAmbient = 255;
 
-				context->removeModel(mod[0]);
+				GameEmGine::removeModel(mod[0]);
 				mod.clear();
-				
-				
+
+
 				//menuInite();
-				context->setScene(new Game);
+				GameEmGine::setScene(new Menu);
 			}
 		}
 	}
@@ -86,7 +81,6 @@ public:
 	{
 		dt;
 		updateIntro();
-
 	}
 
 private:

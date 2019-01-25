@@ -52,7 +52,6 @@ void Animation::update(Shader* shader, Mesh* mesh)
 		init = true;
 	}
 
-
 	if(!m_pause && !m_stop)
 	{
 		if(mesh)
@@ -88,6 +87,7 @@ void Animation::update(Shader* shader, Mesh* mesh)
 				}
 			}
 	}
+
 	//printf("%f\n\n", fmodf(time / m_speed, 1));
 	shader->enable();
 	glUniform1f(shader->getUniformLocation("uTime"), fmodf(time / m_speed, 1));

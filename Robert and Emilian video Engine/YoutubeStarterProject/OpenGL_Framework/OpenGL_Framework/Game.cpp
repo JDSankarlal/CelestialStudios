@@ -2,7 +2,7 @@
 #include "Utilities.h"
 
 Game::Game()
-	: MainBuffer(1), WorkBuffer1(1), WorkBuffer2(1)
+	: MainBuffer(1)
 {
 
 }
@@ -11,7 +11,7 @@ Game::~Game()
 {
 	delete updateTimer;
 
-	StaticGeometry.UnLoad();
+	PassThrough.UnLoad();
 	Monkey.Unload();
 	GrassTexture.Unload();
 }
@@ -24,35 +24,14 @@ void Game::initializeGame()
 
 	glEnable(GL_DEPTH_TEST);
 
-	if (!StaticGeometry.Load("./Assets/Shaders/StaticGeometry.vert", "./Assets/Shaders/Phong.frag"))
+	if (!PassThrough.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/PassThrough.frag"))
 	{
 		std::cout << "Shaders failed to initialize. \n";
 		system("pause");
 		exit(0);
 	}
 
-	if (!BloomHighPass.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/Bloom/BloomHighPass.frag"))
-	{
-		std::cout << "Shaders failed to initialize. \n";
-		system("pause");
-		exit(0);
-	}
-
-	if (!BlurHorizontal.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/Bloom/BlurHorizontal.frag"))
-	{
-		std::cout << "Shaders failed to initialize. \n";
-		system("pause");
-		exit(0);
-	}
-
-	if (!BlurVertical.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/Bloom/BlurVertical.frag"))
-	{
-		std::cout << "Shaders failed to initialize. \n";
-		system("pause");
-		exit(0);
-	}
-
-	if (!BloomComposite.Load("./Assets/Shaders/PassThrough.vert", "./Assets/Shaders/Bloom/BloomComposite.frag"))
+	if (!PassThrough.Load("./Assets/Shaders/GreyScalePost.vert", "./Assets/Shaders/GreyScalePost.frag"))
 	{
 		std::cout << "Shaders failed to initialize. \n";
 		system("pause");
@@ -77,23 +56,7 @@ void Game::initializeGame()
 	//MainBuffer.InitColorTexture(1, WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	if (!MainBuffer.CheckFBO())
 	{
-		std::cout << "FBO failed to initialize. \n";
-		system("Pause");
-		exit(0);
-	}
-
-	WorkBuffer1.InitColorTexture(0, WINDOW_WIDTH / BLOOM_DOWNSCALE, WINDOW_HEIGHT / BLOOM_DOWNSCALE, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	if (!WorkBuffer1.CheckFBO())
-	{
-		std::cout << "FBO failed to initialize. \n";
-		system("Pause");
-		exit(0);
-	}
-
-	WorkBuffer2.InitColorTexture(0, WINDOW_WIDTH / BLOOM_DOWNSCALE, WINDOW_HEIGHT / BLOOM_DOWNSCALE, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	if (!WorkBuffer2.CheckFBO())
-	{
-		std::cout << "FBO failed to initialize. \n";
+		std::cout << "FBO faild to initialize. \n";
 		system("Pause");
 		exit(0);
 	}
@@ -115,32 +78,27 @@ void Game::update()
 
 void Game::draw()
 {
-	/// Clear Buffers ///
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	MainBuffer.Clear();
-	WorkBuffer1.Clear();
-	WorkBuffer2.Clear();
 
-
-	/// Render the Scene ///
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-	
-	StaticGeometry.Bind();
+	PassThrough.Bind();
 	//glEnable(GL_BLEND);
 
-	StaticGeometry.SendUniformMat4("uModel", MonkeyTransform.data, true);
-	StaticGeometry.SendUniformMat4("uView", CameraTransform.GetInverse().data, true);
-	StaticGeometry.SendUniformMat4("uProj", CameraProjection.data, true);
-	StaticGeometry.SendUniform("uTex", 0);
-	StaticGeometry.SendUniform("LightPosition", CameraTransform.GetInverse() * vec4(4.0f, 0.0f, 0.0f, 1.0f));
-	StaticGeometry.SendUniform("LightAmbient", vec3(0.2f, 0.2f, 0.2f));
-	StaticGeometry.SendUniform("LightDiffuse", vec3(1.0f, 0.5f, 0.5f));
-	StaticGeometry.SendUniform("LightSpecular", vec3(0.8f, 0.2f, 0.2f));
-	StaticGeometry.SendUniform("LightSpecularExponent", 50.0f);
-	StaticGeometry.SendUniform("Attenuation_Constant", 1.0f);
-	StaticGeometry.SendUniform("Attenuation_Linear", 0.1f);
-	StaticGeometry.SendUniform("Attenuation_Quadratic", 0.01f);
+	PassThrough.SendUniformMat4("uModel", MonkeyTransform.data, true);
+	PassThrough.SendUniformMat4("uView", CameraTransform.GetInverse().data, true);
+	PassThrough.SendUniformMat4("uProj", CameraProjection.data, true);
+
+	PassThrough.SendUniform("uTex", 0);
+
+	PassThrough.SendUniform("LightPosition", CameraTransform.GetInverse() * vec4(4.0f, 0.0f, 0.0f, 1.0f));
+	PassThrough.SendUniform("LightAmbient", vec3(0.15f, 0.15f, 0.15f));
+	PassThrough.SendUniform("LightDiffuse", vec3(0.7f, 0.1f, 0.2f));
+	PassThrough.SendUniform("LightSpecular", vec3(0.8f, 0.1f, 0.1f));
+	PassThrough.SendUniform("LightSpecularExponent", 50.0f);
+	PassThrough.SendUniform("Attenuation_Constant", 1.0f);
+	PassThrough.SendUniform("Attenuation_Linear", 0.1f);
+	PassThrough.SendUniform("Attenuation_Quadratic", 0.01f);
 
 	GrassTexture.Bind();
 	MainBuffer.Bind();
@@ -151,74 +109,20 @@ void Game::draw()
 
 	MainBuffer.UnBind();
 	GrassTexture.UnBind();
-	StaticGeometry.UnBind();
+	
+	PassThrough.UnBind();
 
-	/// Compute High Pass ///
-	glViewport(0, 0, WINDOW_WIDTH / BLOOM_DOWNSCALE, WINDOW_HEIGHT / BLOOM_DOWNSCALE);
+	//MainBuffer.MoveToBackBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	BloomHighPass.Bind();
-	BloomHighPass.SendUniform("uTex", 0);
-	BloomHighPass.SendUniform("uThreshold", BLOOM_THRESHOLD);
-
-	WorkBuffer1.Bind();
+	//Moving data to the back buffer at the same time as our last post process
+	GreyScalePost.Bind();
+	GreyScalePost.SendUniform("uTex", 0);
 
 	glBindTexture(GL_TEXTURE_2D, MainBuffer.GetColorHandle(0));
 	DrawFullScreenQuad();
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 
-	WorkBuffer1.UnBind();
-	BloomHighPass.UnBind();
-
-	/// COMPUTE BLUR ///
-	glViewport(0, 0, WINDOW_WIDTH / BLOOM_DOWNSCALE, WINDOW_HEIGHT / BLOOM_DOWNSCALE);
-	for (int i = 0; i < BLOOM_BLUR_PASSES; i++)
-	{
-		// Horizontal
-		BlurHorizontal.Bind();
-		BlurHorizontal.SendUniform("uTex", 0);
-		BlurHorizontal.SendUniform("uPixelSize", 1.0f / WINDOW_WIDTH);
-
-		WorkBuffer2.Bind();
-
-		glBindTexture(GL_TEXTURE_2D, WorkBuffer1.GetColorHandle(0));
-		DrawFullScreenQuad();
-		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-
-		WorkBuffer2.UnBind();
-		BlurHorizontal.UnBind();
-
-		//Vertical
-		BlurVertical.Bind();
-		BlurVertical.SendUniform("uTex", 0);
-		BlurVertical.SendUniform("uPixelSize", 1.0f / WINDOW_HEIGHT);
-
-		WorkBuffer1.Bind();
-
-		glBindTexture(GL_TEXTURE_2D, WorkBuffer2.GetColorHandle(0));
-		DrawFullScreenQuad();
-		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-
-		WorkBuffer1.UnBind();
-		BlurVertical.UnBind();
-	}
-
-	/// Composite to back buffer ///
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	BloomComposite.Bind();
-	BloomComposite.SendUniform("uScene", 0);
-	BloomComposite.SendUniform("uBloom", 1);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, MainBuffer.GetColorHandle(0));
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, WorkBuffer1.GetColorHandle(0));
-		DrawFullScreenQuad();
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-
-	BloomComposite.UnBind();
+	GreyScalePost.UnBind();
 
 	glutSwapBuffers();
 }

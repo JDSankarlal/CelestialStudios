@@ -8,15 +8,15 @@
 #include "Minion.h"
 
 typedef EmGineAudioPlayer AudioPlayer;
+typedef GameEmGine GAME;
+
 using std::vector;
 
 class Game:public Scene
 {
 public:
-	Game():audio(AudioPlayer()) {}
-
 	/// - Collision Class - ///
-	bool collisions(Model *l, Model *k)
+	bool collision(Model *l, Model *k)
 	{
 		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 		Coord3D thing = l->getCenter() - k->getCenter();
@@ -34,26 +34,8 @@ public:
 		return false;
 	}
 
-	bool collisionsB(Model *l, Model *k)
-	{
-		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
-		Coord3D thing = l->getCenter() - k->getCenter();
-
-		float distanceX = abs(thing.x);
-		float distanceZ = abs(thing.z);
-
-		float capW = (l->getWidth() + k->getWidth()) / 2;
-		float capD = (l->getDepth() + k->getDepth()) / 2;
-
-		if(std::abs(distanceX) <= capW + 4)
-			if(std::abs(distanceZ) <= capD + 4)
-				return true;
-
-		return false;
-	}
-
-	/// - 3D Collision Function - ///
-	bool collisions3D(Model *l, Model *k)
+	///~ 3D Collision Function ~///
+	bool collision3D(Model *l, Model *k)
 	{
 		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 		Coord3D thing = l->getCenter() - k->getCenter();
@@ -111,21 +93,21 @@ public:
 
 		//changes fps limit
 		if(key == GLFW_KEY_KP_6)
-			context->setFPSLimit(context->getFPSLimit() + 1);
+			GAME::setFPSLimit(GAME::getFPSLimit() + 1);
 		if(key == GLFW_KEY_KP_4)
-			context->setFPSLimit(context->getFPSLimit() - 1);
+			GAME::setFPSLimit(GAME::getFPSLimit() - 1);
 
 		if(key == GLFW_KEY_F) //Toggles Fullscreen
 		{
 			static bool full;
-			context->getWindow()->setFullScreen(full = !full);
+			GAME::getWindow()->setFullScreen(full = !full);
 			printf("Full Screen: %s\n", full ? "true" : "false");
 		}
 
 		if(key == GLFW_KEY_SPACE) //changes the model that is being moved
 		{
 			static CAMERA_TYPE type = PERSPECTIVE;
-			context->setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
+			GAME::setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 		}
 
 		if(key == GLFW_KEY_TAB)
@@ -133,14 +115,14 @@ public:
 
 		if(key == GLFW_KEY_F5) //resets the camera
 		{
-			GameEmGine::m_modelShader->refresh();
-			GameEmGine::m_grayScalePost->refresh();
-			//context->setCameraAngle(0, { 1, 1, 1 });
-			//	context->setCameraPosition({0,0,0});
+			GAME::m_modelShader->refresh();
+			GAME::m_grayScalePost->refresh();
+			//GAME::setCameraAngle(0, { 1, 1, 1 });
+			//	GAME::setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
-			context->setCameraAngle(0, {1,1,1});
+			GAME::setCameraAngle(0, {1,1,1});
 
 		printf("key RELEASED code: %d\n\n", key);
 	}
@@ -158,19 +140,19 @@ public:
 	void init()
 	{
 
-		context->setCameraType(PERSPECTIVE);
-		context->setFPSLimit(60);
+		GAME::setCameraType(PERSPECTIVE);
+		//GAME::setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
 		//Players
 		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		context->addModel(mod.back());//0
-		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		context->addModel(mod.back());//1
-		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		context->addModel(mod.back());//2
-		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
-		context->addModel(mod.back());//3
+		GAME::addModel(mod.back());//0
+		mod.push_back(new Player(*mod.back()));
+		GAME::addModel(mod.back());//1
+		mod.push_back(new Player(*mod.back()));
+		GAME::addModel(mod.back());//2
+		mod.push_back(new Player(*mod.back()));
+		GAME::addModel(mod.back());//3
 
 		static Animation walk[4], idle[4];
 
@@ -194,62 +176,59 @@ public:
 
 		//Building 1s
 		mod.push_back(new Model("Models/Buildings/CashCorp/CashcorpBuildingWIP.obj"));
-		context->addModel(mod.back());//4
+		GAME::addModel(mod.back());//4
 		mod.push_back(new Model(*mod[4]));
-		context->addModel(mod.back());//5
+		GAME::addModel(mod.back());//5
 		mod.push_back(new Model(*mod[4]));
-		context->addModel(mod.back());//6
+		GAME::addModel(mod.back());//6
 
 		mod[6]->setToRender(false);
 
 		//Project Nebula Sign
 		mod.push_back(new Model("Models/Neon Signs/Project Nebula/signn.obj"));
-		context->addModel(mod.back()); //7
+		GAME::addModel(mod.back()); //7
 
 		//Boss
 		mod.push_back(new Boss("Models/BOSS/robotTEST2.obj"));
-		context->addModel(mod.back()); //8
+		GAME::addModel(mod.back()); //8
 		//mod[8]->enableBoundingBox(true);
 
 		//Floor
 		mod.push_back(new Model("Models/Floor/Floor.obj"));
-		context->addModel(mod.back()); //9
+		GAME::addModel(mod.back()); //9
 
 		//Light Posts
 		mod.push_back(new Model("Models/Lamp/lampPost.obj"));
-		context->addModel(mod.back()); //10
+		GAME::addModel(mod.back()); //10
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//11
+		GAME::addModel(mod.back());//11
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//12
+		GAME::addModel(mod.back());//12
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//13
+		GAME::addModel(mod.back());//13
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//14
+		GAME::addModel(mod.back());//14
 		mod.push_back(new Model(*mod[10]));
-		context->addModel(mod.back());//15
+		GAME::addModel(mod.back());//15
 
 		//Bench
 		mod.push_back(new Model("Models/Bench/Bench.obj"));
-		context->addModel(mod.back()); //16
+		GAME::addModel(mod.back()); //16
 		mod.push_back(new Model(*mod[16]));
-		context->addModel(mod.back());//17
+		GAME::addModel(mod.back());//17
 
 		//Planet
 		mod.push_back(new Model("Models/Planet/planet.obj"));
-		context->addModel(mod.back()); //18
+		GAME::addModel(mod.back()); //18
 		mod[18]->setToRender(false);
 
 		//Building 2s
 		mod.push_back(new Model("Models/Buildings/Tunnel/tunnelWIP.obj"));
-		context->addModel(mod.back());//19
+		GAME::addModel(mod.back());//19
 		mod.push_back(new Model(*mod[19]));
-		context->addModel(mod.back());//20
+		GAME::addModel(mod.back());//20
 		mod.push_back(new Model(*mod[19]));
-		context->addModel(mod.back());//21
-
-		//mod[19]->setToRender(false);
-		//mod[20]->setToRender(false);
+		GAME::addModel(mod.back());//21
 		mod[21]->setToRender(false);
 
 		//GraveStones
@@ -260,93 +239,97 @@ public:
 
 		//Coloured ring "IDs"
 		mod.push_back(new Model("Models/ID/Identifier.obj"));//26
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//27
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//28
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//29
+		GAME::addModel(mod.back());
 
 		//Building 3s
 		mod.push_back(new Model("Models/Buildings/Building3/House.obj"));
-		context->addModel(mod.back());//30
+		GAME::addModel(mod.back());//30
 		mod.push_back(new Model(*mod[30]));
-		context->addModel(mod.back());//31
+		GAME::addModel(mod.back());//31
 		mod.push_back(new Model(*mod[30]));
-		context->addModel(mod.back());//32
+		GAME::addModel(mod.back());//32
 
 		//Building 4s
 		mod.push_back(new Model("Models/Buildings/Building4/tallBuilding.obj"));
-		context->addModel(mod.back());//33
+		GAME::addModel(mod.back());//33
 		mod.push_back(new Model(*mod[33]));
-		context->addModel(mod.back());//34
+		GAME::addModel(mod.back());//34
 
 		//Trees
 		mod.push_back(new Model("Models/DiedTree/tree.obj"));
-		context->addModel(mod.back());//35
+		GAME::addModel(mod.back());//35
 		mod.push_back(new Model(*mod[35]));
-		context->addModel(mod.back());//36
+		GAME::addModel(mod.back());//36
 		mod.push_back(new Model(*mod[35]));
-		context->addModel(mod.back());//37
+		GAME::addModel(mod.back());//37
 		mod.push_back(new Model(*mod[35]));
-		context->addModel(mod.back());//38
+		GAME::addModel(mod.back());//38
 
 		//Building 5s
 		mod.push_back(new Model("Models/Buildings/Building5/smallShop.obj"));
-		context->addModel(mod.back());//39
+		GAME::addModel(mod.back());//39
 		mod.push_back(new Model(*mod[39]));
-		context->addModel(mod.back());//40
+		GAME::addModel(mod.back());//40
 		mod.push_back(new Model(*mod[39]));
-		context->addModel(mod.back());//41
+		GAME::addModel(mod.back());//41
 
 		mod[41]->setToRender(false);
 
 		mod.push_back(new Model("Models/Buildings/Building6/Building6.obj"));
-		context->addModel(mod.back());//42
+		GAME::addModel(mod.back());//42
 		mod.push_back(new Model(*mod[42]));
-		context->addModel(mod.back());//43
+		GAME::addModel(mod.back());//43
 
-		mod[42]->setToRender(false); 
+		mod[42]->setToRender(false);
 		mod[43]->setToRender(false);
 
 		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
-		context->addModel(mod.back());//44
+		GAME::addModel(mod.back());//44
 		mod.push_back(new Model(*mod[44]));
-		context->addModel(mod.back());//45
+		GAME::addModel(mod.back());//45
 		mod.push_back(new Model(*mod[44]));
-		context->addModel(mod.back());//46
+		GAME::addModel(mod.back());//46
 		mod.push_back(new Model(*mod[44]));
-		context->addModel(mod.back());//47
+		GAME::addModel(mod.back());//47
 
 		mod.push_back(new Model("Models/Bullet/bullet.obj"));//48
 
 		mod.push_back(new Model("Models/Trash/TrashCan.obj"));
-		context->addModel(mod.back()); //49
+		GAME::addModel(mod.back()); //49
 		mod.push_back(new Model(*mod[49]));
-		context->addModel(mod.back());//50
+		GAME::addModel(mod.back());//50
 
 		mod[49]->setToRender(false);
 		mod[50]->setToRender(false);
 
 		mod.push_back(new Model("Models/Picnic/PicnicTable.obj"));
-		context->addModel(mod.back()); //51
+		GAME::addModel(mod.back()); //51
 		mod.push_back(new Model(*mod[51]));
-		context->addModel(mod.back());//52
+		GAME::addModel(mod.back());//52
 
 		mod[51]->setToRender(false);
 		mod[52]->setToRender(false);
 
 		mod.push_back(new Model("Models/PizzaSign/PIZZA.obj"));
-		context->addModel(mod.back()); //53
+		GAME::addModel(mod.back()); //53
 
 		mod.push_back(new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj"));
-		context->addModel(mod.back()); //54
+		GAME::addModel(mod.back()); //54
 		mod.push_back(new Model(*mod[54]));
-		context->addModel(mod.back()); //55
+		GAME::addModel(mod.back()); //55
 		mod.push_back(new Model(*mod[54]));
-		context->addModel(mod.back()); //56
+		GAME::addModel(mod.back()); //56
 		mod.push_back(new Model(*mod[54]));
-		context->addModel(mod.back()); //57
+		GAME::addModel(mod.back()); //57
 
 		mod.push_back(new Model("Models/Planet/Planet2/planet.obj"));
-		context->addModel(mod.back()); //58
+		GAME::addModel(mod.back()); //58
 
 		mod[58]->setToRender(false);
 		//Pause Menu
@@ -354,7 +337,7 @@ public:
 
 		//collision floor
 		mod.push_back(new Model("Models/Floor/Floor2.obj"));//59
-		context->addModel(mod[59]);
+		GAME::addModel(mod[59]);
 
 		mod[59]->setToRender(false);
 		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
@@ -362,15 +345,15 @@ public:
 		//missile hit box
 		mod.push_back(new Model(*mod[44]));//60
 
-		context->addModel(mod.back()); //
+		GAME::addModel(mod.back()); //
 		mod[60]->setToRender(false);
 		mod[60]->getTransformer().setScale(6, 1, 1);
 		mod.push_back(new Model(*mod[60]));//61
-		context->addModel(mod.back());//
+		GAME::addModel(mod.back());//
 		mod.push_back(new Model(*mod[60]));//62
-		context->addModel(mod.back());//
+		GAME::addModel(mod.back());//
 		mod.push_back(new Model(*mod[60]));//63
-		context->addModel(mod.back());//
+		GAME::addModel(mod.back());//
 
 		mod[44]->addChild(mod[60]);
 		mod[45]->addChild(mod[61]);
@@ -379,38 +362,42 @@ public:
 
 		//player's blood bar
 		mod.push_back(new Model("Models/BloodBar/RedBar/blood.obj"));//64
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/BloodBar/BlueBar/blood.obj"));//65
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/BloodBar/GreenBar/blood.obj"));//66
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/BloodBar/YellowBar/blood.obj"));//67
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/BloodBar/RedBarLighter/blood.obj"));//68
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/BloodBar/BlueBarLighter/blood.obj"));//69
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/BloodBar/GreenBarLighter/blood.obj"));//70
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/BloodBar/YellowBarLighter/blood.obj"));//71
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 
 		//boss's blood bar
 		mod.push_back(new Model("Models/BloodBar/PinkBar/blood.obj"));//72
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/BloodBar/PinkBarLighter/blood.obj"));//73
-		context->addModel(mod.back());
+		GAME::addModel(mod.back());
 
 		//bullet's circle
 		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//74
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//75
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//76
+		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//77
+		GAME::addModel(mod.back());
 
 		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
 
 
-		//context->addModel(mod.back()); //64
+		//GAME::addModel(mod.back()); //64
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -425,12 +412,12 @@ public:
 
 		//Building Transforms
 		//Building 1s
-		mod[4]->getTransformer().setScale(1), mod[4]->getTransformer().setPosition(-15.175f, 0.0f, -2.0f), mod[4]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });;
+		mod[4]->getTransformer().setScale(1), mod[4]->getTransformer().setPosition(-15.175f, 0.0f, -2.0f), mod[4]->getTransformer().setRotation({0.0f,90.0f,0.0f});;
 		mod[5]->getTransformer().setScale(1), mod[5]->getTransformer().setPosition(6.0f, 0.0f, 29.0f), mod[5]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
 		//mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4.0f, 0.0f, 22.75f), mod[6]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
 
 		//Building 2s
-		mod[19]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-16.8f, 0.0f, 7.8f), mod[19]->getTransformer().setRotation({ 0.0f, 90.0f,0.0f });
+		mod[19]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-16.8f, 0.0f, 7.8f), mod[19]->getTransformer().setRotation({0.0f, 90.0f,0.0f});
 		mod[20]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(16.8f, 0.0f, 8.0f), mod[20]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});;
 		//mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0.0f, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
 
@@ -476,16 +463,16 @@ public:
 
 		//ID rings?
 		mod[26]->setColour({255,0,0});
-		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({0,-90,0});
+		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[26]->getTransformer().setRotation({0,-90,0});
 
 		mod[27]->setColour({0,0,255});
-		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({0,-90,0});
+		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[27]->getTransformer().setRotation({0,-90,0});
 
 		mod[28]->setColour({0,255,0});
-		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({0,-90,0});
+		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[28]->getTransformer().setRotation({0,-90,0});
 
 		mod[29]->setColour({255,255,0});
-		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({0,-90,0});
+		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[29]->getTransformer().setRotation({0,-90,0});
 
 		//Trees
 		mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({0,-0,0});
@@ -517,9 +504,9 @@ public:
 		mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({0.0f,0.0f,0.0f});
 
 		//Player Blood Bar
-		for (int i = 0; i < 4; i++)
+		for(int i = 0; i < 4; i++)
 		{
-			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{ 0.35f,1.4f,0.0f });
+			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{0.35f,1.4f,0.0f});
 			mod[i + 64]->getTransformer().setRotation(Coord3D(0, 90, 0));
 			mod[i + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 			mod[i + 68]->getTransformer().setPosition(mod[i + 64]->getTransformer().getPosition());
@@ -528,7 +515,7 @@ public:
 		}
 
 		//Boss Blood Bar
-		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{ 13.0f,18.5f,0.0f });
+		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{13.0f,18.5f,0.0f});
 		mod[72]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
 		mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
@@ -536,26 +523,22 @@ public:
 		mod[73]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
 
 		//Bullet Circle
-		mod[74]->setColour({ 255,0,0,150 });
-		mod[74]->getTransformer().setScale(0.65f), mod[74]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[74]->getTransformer().setRotation({ 0,-90,0 });
+		mod[74]->setColour({255,0,0,150});
+		mod[74]->getTransformer().setScale(0.65f), mod[74]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[74]->getTransformer().setRotation({0,-90,0});
 
-		mod[75]->setColour({ 0,0,255,150 });
-		mod[75]->getTransformer().setScale(0.65f), mod[75]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[75]->getTransformer().setRotation({ 0,-90,0 });
+		mod[75]->setColour({0,0,255,150});
+		mod[75]->getTransformer().setScale(0.65f), mod[75]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[75]->getTransformer().setRotation({0,-90,0});
 
-		mod[76]->setColour({ 0,255,0,150 });
-		mod[76]->getTransformer().setScale(0.65f), mod[76]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[76]->getTransformer().setRotation({ 0,-90,0 });
+		mod[76]->setColour({0,255,0,150});
+		mod[76]->getTransformer().setScale(0.65f), mod[76]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[76]->getTransformer().setRotation({0,-90,0});
 
-		mod[77]->setColour({ 255,255,0,150 });
-		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
+		mod[77]->setColour({255,255,0,150});
+		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
 
-		mod.push_back(new Minion("Models/Lamp/LampPost.obj"));
-		context->addModel(mod[78]);
-		//mod[64]->getTransformer().setScale(0.2);
-		mod[78]->setToRender(false);
-
-		/*mod[64]->getTransformer().setPosition(mod[0]->getTransformer().getPosition() + Coord3D{ 0.0f,1.4f,0.0f });
-		mod[64]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);*/
+		//Minions
+		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
+		GAME::addModel(mod[78]);
+		mod[78]->setToRender(false); 
 
 		/// - Set Model Colour - ///
 		//Players
@@ -634,10 +617,10 @@ public:
 
 		LightSource::setSceneAmbient({255,255,255,255});
 
-		/// - Set Camera - ///
+		///~ Set Camera ~///
 
-		context->setCameraPosition({0,18.5f,-14});
-		context->setCameraAngle(-35, {1,0,0});
+		GAME::setCameraPosition({0,18.5f,-14});
+		GAME::setCameraAngle(-35, {1,0,0});
 
 		/// not needed ///
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
@@ -673,6 +656,8 @@ public:
 		static int minionCounter = 0;
 		static float minionTimer;
 		static float minionSpeed = .05f	;
+		static int maxMinionsOnScreen = 20;
+
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
@@ -760,18 +745,29 @@ public:
 			init = true;
 		}
 
-
+		bool youDead = true;
+		static float deathCounter = 0;
 		if(init)
 			/// - If game mode (NOT CAMERA MODE) - ///
 			if(movePlayer)
 				for(int a = 0; a < 4; a++)
 				{
-					if(context->isControllerConnected(a))
+					if(GAME::isControllerConnected(a))
 					{
+						Xinput p1 = GAME::getController(a);
+						
+						//Start button quits game
+						if(p1.buttonPressed(p1.buttons.START))
+						{
+							puts("\nExiting Game\n");
+							GAME::exit();
+						}
+
 						if(!dead[a])
 						{
+							deathCounter = 0;
+							youDead = !true;
 							player = (Player*)mod[a];
-							Xinput p1 = context->getController(a);
 
 
 							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
@@ -784,10 +780,10 @@ public:
 								angle[a] = fmodf(angle[a], 360);
 							}
 
-							/// - Missile Collisions with Player - ///
+							///~ Missile Collisions with Player ~///
 							for(int b = 0; b < 4; b++)
 							{
-								bool collision = collisions3D(player, mod[60 + b]);
+								bool collision = collision3D(player, mod[60 + b]);
 								if(collision)
 								{
 									curveroni[a] = 1;
@@ -798,7 +794,7 @@ public:
 								}
 							}
 							//Player comes near Boss, gets teleported backwards
-							if(collisionsB(player, CandyMan))
+							if(collision(player, CandyMan))
 							{
 								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
 								player->setHealth(player->getHealth() - 35);
@@ -809,11 +805,11 @@ public:
 								dead[a] = true;
 								mod[22 + a]->setColour(player->getColour());
 								mod[22 + a]->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), mod[22 + a]->getTransformer().setPosition(player->getTransformer().getPosition()), mod[22 + a]->getTransformer().setRotation({0.0f,270.0f,0.0f});
-								context->addModel(mod[22 + a]);
+								GAME::addModel(mod[22 + a]);
 								mod[22 + a]->addAnimation("squash", &squash[a]);
 
 								mod[22 + a]->setAnimation("squash");
-								context->removeModel(player);
+								GAME::removeModel(player);
 							}
 							//
 							if(p1.triggers[RT] >= .95 && !gunControlLaw[a])
@@ -823,7 +819,7 @@ public:
 									gunControlLaw[a] = true; //gun Control Law makes it so the guns function "semi-automatically" instead of "fully automatic"
 
 									bullets[a].push_back(nullptr);
-									context->addModel(bullets[a].back() = new Model(*mod[48]));
+									GAME::addModel(bullets[a].back() = new Model(*mod[48]));
 									bullets[a].back()->getTransformer().reset();
 									bullets[a].back()->setColour(player->getColour());//bullet color = player color
 									Coord3D pos = mod[a]->getTransformer().getPosition();
@@ -846,13 +842,7 @@ public:
 							else if(p1.triggers[RT] < .95 && gunControlLaw[a])
 								gunControlLaw[a] = false;
 
-							/// - Button Presses on controller - ///
-							//Start button quits game
-							if(p1.buttonPressed(p1.buttons.START))
-							{
-								puts("\nExiting Game\n");
-								context->exit();
-							}
+							///~ Button Presses on controller ~///
 							if(p1.buttonPressed(p1.buttons.X))
 							{
 								player->setBulletCount(30);
@@ -863,7 +853,7 @@ public:
 								if(time - player->getTimeSinceLastMissile() >= 3)
 								{
 									pMissiles[a].push_back(nullptr);
-									context->addModel(pMissiles[a].back() = new Model(*mod[44]));
+									GAME::addModel(pMissiles[a].back() = new Model(*mod[44]));
 									pMissiles[a].back()->getTransformer().reset();
 									pMissiles[a].back()->setColour(player->getColour());
 									Coord3D pos = mod[a]->getTransformer().getPosition();
@@ -891,16 +881,15 @@ public:
 							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
 							if(minionCounter < 1)
 							{
-								//if (time - minions.back()->getTimeSinceLastSpawn() >= 2)
-								//{
-									minions.push_back(nullptr);
-									context->addModel(minions.back() = new Minion(*mod[78]));
-									minions.back()->setToRender(true);
-									minions.back()->getTransformer().reset();
-									minions.back()->setColour(200, 100, 50);
-									minions.back()->getTransformer().getPosition();
-									minions.back()->getTransformer().setPosition(10, 0, -3);
-									minions.back()->getTransformer().setScale(0.35f);
+
+								minions.push_back(nullptr);
+								GAME::addModel(minions.back() = new Minion(*mod[78]));
+								minions.back()->setToRender(true);
+								minions.back()->getTransformer().reset();
+								minions.back()->setColour(200, 100, 50);
+								minions.back()->getTransformer().getPosition();
+								minions.back()->getTransformer().setPosition(10, 1, -3);
+								minions.back()->getTransformer().setScale(0.4f, 0.6f, 0.4f);
 
 									//printf(minions.back()->getTransformer().getPosition());
 									minionCounter += 1;
@@ -958,7 +947,7 @@ public:
 
 							mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
-							if(!collisions(mod[a], mod[59]))
+							if(!collision(mod[a], mod[59]))
 								mod[a]->getTransformer().setPosition(abs(mod[a]->getTransformer().getPosition().x) > mod[59]->getWidth() / 2 ? mod[a]->getTransformer().getPosition().x < 0 ? -mod[59]->getWidth() / 2 : mod[59]->getWidth() / 2 : mod[a]->getTransformer().getPosition().x,
 									0,
 									abs(mod[a]->getTransformer().getPosition().z) > mod[59]->getDepth() / 2 ? mod[a]->getTransformer().getPosition().z < 0 ? -mod[59]->getDepth() / 2 : mod[59]->getDepth() / 2 : mod[a]->getTransformer().getPosition().z);
@@ -974,19 +963,19 @@ public:
 							}
 
 							//Update each player's Blood Bar
-							mod[a + 64]->getTransformer().setPosition(mod[a]->getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
+							mod[a + 64]->getTransformer().setPosition(mod[a]->getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
 							mod[a + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f * (player->getHealth() / 100.0f));
 							mod[a + 68]->getTransformer().setPosition(mod[a + 64]->getTransformer().getPosition());
-							if (dead[a] == true)
+							if(dead[a] == true)
 							{
-								context->removeModel(mod[a + 64]);
-								context->removeModel(mod[a + 68]);
+								GAME::removeModel(mod[a + 64]);
+								GAME::removeModel(mod[a + 68]);
 							}
 
 							//Update each player's Bullet Circle
 							mod[a + 74]->getTransformer().setScale(0.65f * (player->getBulletCount() / 30.0f));
 						}
-						/// - Bullet Collisions - ///
+						///~ Bullet Collisions ~///
 						for(unsigned b = 0; b < bullets[a].size(); b++)
 							if(bullets[a][b])
 							{
@@ -995,7 +984,7 @@ public:
 
 								if(timer[a][b] >= 1)
 								{
-									context->removeModel(bullets[a][b]);
+									GAME::removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
 									velocity[a].erase(velocity[a].begin() + b);
 									timer[a].erase(timer[a].begin() + b);
@@ -1003,9 +992,9 @@ public:
 								}
 
 								if(mod[8])
-									if(collisions(bullets[a][b], mod[8]))
+									if(collision(bullets[a][b], mod[8]))
 									{
-										context->removeModel(bullets[a][b]);
+										GAME::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
 										velocity[a].erase(velocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
@@ -1013,7 +1002,7 @@ public:
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
-											context->removeModel(CandyMan); // If health = 0 then boss dead
+											GAME::removeModel(CandyMan); // If health = 0 then boss dead
 											//	mod[8] = nullptr;
 											bossActive = false;
 											puts("Killed The BOSS\n");
@@ -1024,15 +1013,15 @@ public:
 
 								//TODO: Fix Minion Collisions
 								for(auto& minion : minions)
-									if(collisions(bullets[a][b], minion))
+									if(collision(bullets[a][b], minion))
 									{
 										minion->setHealth(minion->getHealth() - 10);
-										context->removeModel(bullets[a][b]);
+										GAME::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
 
 										if(minion->getHealth() <= 0)
 										{
-											context->removeModel(minion);
+											GAME::removeModel(minion);
 											minions.erase(std::find(minions.begin(), minions.end(), minion));
 											puts("Killed a boi\n");
 											minionCounter -= 1;
@@ -1048,7 +1037,7 @@ public:
 
 								if(timer[a][b] >= 1)
 								{
-									context->removeModel(pMissiles[a][b]);
+									GAME::removeModel(pMissiles[a][b]);
 									pMissiles[a].erase(pMissiles[a].begin() + b);
 									missileVelocity[a].erase(missileVelocity[a].begin() + b);
 									timer[a].erase(timer[a].begin() + b);
@@ -1056,9 +1045,9 @@ public:
 								}
 
 								if(mod[8])
-									if(collisions(pMissiles[a][b], mod[8]))
+									if(collision(pMissiles[a][b], mod[8]))
 									{
-										context->removeModel(pMissiles[a][b]);
+										GAME::removeModel(pMissiles[a][b]);
 										pMissiles[a].erase(pMissiles[a].begin() + b);
 										missileVelocity[a].erase(missileVelocity[a].begin() + b);
 										timer[a].erase(timer[a].begin() + b);
@@ -1066,7 +1055,7 @@ public:
 										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
 										{
-											context->removeModel(CandyMan); // If health = 0 then boss dead
+											GAME::removeModel(CandyMan); // If health = 0 then boss dead
 											//	mod[8] = nullptr;
 											bossActive = false;
 											puts("Killed The BOSS\n");
@@ -1077,10 +1066,10 @@ public:
 							}
 
 						mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f * (CandyMan->getHealth() / 1000.0f));
-						if (bossActive == false)
+						if(bossActive == false)
 						{
-							context->removeModel(mod[72]);
-							context->removeModel(mod[73]);
+							GAME::removeModel(mod[72]);
+							GAME::removeModel(mod[73]);
 							mod[44]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
 							mod[45]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
 							mod[46]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
@@ -1092,14 +1081,30 @@ public:
 			{
 				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
+			
+			GAME::m_grayScalePost->enable();
+			glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+			GAME::m_grayScalePost->disable();
+
+			deathCounter += .007f;
+			deathCounter = deathCounter <= 1 ? deathCounter : 1;
+			if(youDead)
+			{
+				//TODO: do something when the party is dead
+
+			}
+			else
+			{
+
+			}
 
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 
 		//If game not active and Camera is active (Move camera mode)
 		if(!movePlayer)
-			if(context->isControllerConnected(0))
+			if(GAME::isControllerConnected(0))
 			{
-				Xinput p1 = context->getController(0);
+				Xinput p1 = GAME::getController(0);
 
 				p1.numButtons;
 				p1.numSticks;
@@ -1120,11 +1125,11 @@ public:
 				//move camera
 				move *= 2;
 
-				context->moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
-				context->moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
-				//context->getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
-				context->moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
-				context->moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
+				GAME::moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
+				GAME::moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
+				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+				GAME::moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
+				GAME::moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;
 			}
 

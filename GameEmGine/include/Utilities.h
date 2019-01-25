@@ -346,6 +346,32 @@ struct ColourRGBA
 		this[0][3] = a;
 	}
 
+	ColourRGBA operator+(ColourRGBA rgba)
+	{
+		return ColourRGBA{
+			GLubyte(colorR + rgba[0]),
+			GLubyte(colorG + rgba[1]),
+			GLubyte(colorB + rgba[2]),
+			GLubyte(colorA + rgba[3])};
+	}
+
+	ColourRGBA operator*(float rgba)
+	{
+		return ColourRGBA{
+			GLubyte(colorR * rgba),
+			GLubyte(colorG * rgba),
+			GLubyte(colorB * rgba),
+			GLubyte(colorA * rgba)};
+	}
+
+	friend ColourRGBA operator*(float rgba, ColourRGBA colour)
+	{
+		return ColourRGBA{
+			GLubyte(colour[0] * rgba),
+			GLubyte(colour[1] * rgba),
+			GLubyte(colour[2] * rgba),
+			GLubyte(colour[3] * rgba)};
+	}
 	ColourRGBA operator*(ColourRGBA rgba)
 	{
 		return ColourRGBA{

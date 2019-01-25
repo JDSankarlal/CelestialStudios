@@ -6,25 +6,62 @@
 class Splash:public Scene
 {
 public:
+	~Splash() {
+		delete gray;
+	}
+
 	// Set intro screen
 	void init()
 	{
+		GAME::m_grayScalePost->enable();
+		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), 0.f);
+		GAME::m_grayScalePost->disable();
+
+
+		gray = new Shader;
+		grayPost = new FrameBuffer("Gray Scale", 1);
+		
+		int width = GameEmGine::getWindowWidth(), 
+			height = GameEmGine::getWindowHeight();
+
+		grayPost->initDepthTexture(width, height);
+		grayPost->initColourTexture(0, width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+
+		if(!grayPost->checkFBO())
+		{
+			puts("FBO failed Creation");
+			system("pause");
+			return;
+		}
+
 		srand(clock());
+		gray->create("Shaders/Main Buffer.vtsh", "Shaders/Grayscale.fmsh");
+		grayPost->setPostProcess(
+			[&]()->void
+			{
+				gray->enable();
+				glUniform1i(gray->getUniformLocation("uTex"), 0);
+				glBindTexture(GL_TEXTURE_2D, grayPost->getColorHandle(0));
+				GameEmGine::drawFullScreenQuad();
+				glBindTexture(GL_TEXTURE_2D, GL_NONE);
+				gray->disable();
+			});
+
 
 		mod.push_back(new Model("Models/Screen/Splash/splashScreen.obj"));
-		context->addModel(mod.back());
+		GameEmGine::addModel(mod.back());
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+		mod[0]->addFrameBuffer(grayPost);
 
 		LightSource::setSceneAmbient({0,0,0,255});
 
-		context->setCameraType(ORTHOGRAPHIC);
-		context->setCameraPosition({0,0,-100});
+		GameEmGine::setCameraType(ORTHOGRAPHIC);
+		GameEmGine::setCameraPosition({0,0,-100});
 
 		//engine stuff
-		context->setFPSLimit(60);
-		context->setBackgroundColour(0.05f, 0.0f, 0.1f);
+		GameEmGine::setFPSLimit(60);
+		GameEmGine::setBackgroundColour(0.05f, 0.0f, 0.1f);
 
-		
 
 	}
 
@@ -58,12 +95,12 @@ public:
 				splashAmbient = 255;
 
 
-				context->removeModel(mod[0]);
+				GameEmGine::removeModel(mod[0]);
 				mod.clear();
 
 
 				//IntroInite();
-				context->setScene(new Intro);
+				GameEmGine::setScene(new Intro);
 			}
 		}
 	}
@@ -81,6 +118,8 @@ private:
 	bool fadeout = false;
 	float splashT = 0;
 	GLubyte splashAmbient = 0;
+	FrameBuffer *grayPost;
+	Shader *gray;
 };
 
 

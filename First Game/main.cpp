@@ -3,12 +3,13 @@
 #include <GameEmGine.h>
 #include "Splash.h"
 
-GameEmGine game("The Real Game", 1920, 1080, 0, 0, 0, false);
 
 int main()
 {
-	game.setScene(new Splash);
+	
+GameEmGine::init("The Real Game", 1920, 1080, 0, 0, 0, false);
+GameEmGine::setScene(new Splash);
 
-	game.run();
+GameEmGine::run();
 	return 0;
 }
