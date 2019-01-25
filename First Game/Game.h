@@ -637,7 +637,7 @@ public:
 
 		LightSource::setSceneAmbient({255,255,255,255});
 
-		///~ Set Camera ~///
+		/// - Set Camera  - ///
 
 		GAME::setCameraPosition({0,18.5f,-14});
 		GAME::setCameraAngle(-35, {1,0,0});
@@ -658,26 +658,32 @@ public:
 
 	void update(double dt)
 	{
+		//Time
 		static float  time = 0;
-		time += (float)dt;
+		time += (float)dt; //Add Delta Time to Time
+
 		//static float coolDown = 0;
 		static float duration = 0;
 		static bool f = true;
-		static bool bossActive = true;
 
 		float move = .1f;
 
 		static float pointSize = 50.0f;
-		//printf("%f\n", dt);
 		static Player* player;
-		static Boss*CandyMan = (Boss*)mod[8];
-		//drawHealth(CandyMan->getHealth());
-		static vector<Minion*>minions;
+
+		// Boss Variables
+		static Boss*CandyMan = (Boss*)mod[8]; //Set model 8 as Boss called "CandyMan"
+		static bool bossActive = true; //
+
+		//Minion Variables
+		static vector<Minion*>minions;//Vector of minions
 		static int minionCounter = 0;
 		static float minionTimer;
 		static float minionSpeed = .05f	;
 		static int maxMinionsOnScreen = 20;
 
+		//Train Variables
+		static float trainTimer = 0; //Determines when train comes and goes
 
 		static vector<float> timer[4];
 		static vector<Model*> pMissiles[4];
@@ -700,6 +706,7 @@ public:
 
 		static vector<Boss*> nimimis;
 
+		/// - Math for the Catmull curves for the Boss - ///
 		for(int a = 0; a < 4; a++)
 		{
 			if(!dead[a])
@@ -722,7 +729,7 @@ public:
 					hasTarget[a] = true;
 				}
 
-				//Sets points for catmull Rom curve for missiles
+				
 				if(mod[8])
 					if(hasTarget[a])
 					{
@@ -752,7 +759,7 @@ public:
 			}
 		}
 
-		//Tombstones Animations
+		/// - Tombstone Animations - ///
 		if(!init)
 		{
 
@@ -861,6 +868,16 @@ public:
 							}
 							else if(p1.triggers[RT] < .95 && gunControlLaw[a])
 								gunControlLaw[a] = false;
+
+							//trainTimer += time;
+							if (time - trainTimer >= 3)
+							{
+								for (int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + (20.f, 0.f, 0.f));//Yeet Train Cars
+								}
+								trainTimer += time;
+							}
 
 							///~ Button Presses on controller ~///
 							if(p1.buttonPressed(p1.buttons.X))
@@ -1012,7 +1029,7 @@ public:
 								}
 
 								/// Bullet Collisions with Train
-								for (int t = 0; t < 6; t++)
+								for (int t = 0; t < 7; t++)
 								{
 									if (collision(bullets[a][b], mod[79 + t]))
 									{
@@ -1074,8 +1091,7 @@ public:
 								}
 
 								/// - Missile Collisions with Train - ///
-
-								for (int t = 0; t < 6; t++)
+								for (int t = 0; t < 7; t++)
 								{
 									if (collision(pMissiles[a][b], mod[79 + t]))
 									{
@@ -1083,8 +1099,9 @@ public:
 										pMissiles[a].erase(pMissiles[a].begin() + b);
 									}
 								}
-
+								/// - If Boss Alive - ///
 								if(mod[8])
+									/// - If Missiles collide with Boss -///
 									if(collision(pMissiles[a][b], mod[8]))
 									{
 										GAME::removeModel(pMissiles[a][b]);
@@ -1093,10 +1110,10 @@ public:
 										timer[a].erase(timer[a].begin() + b);
 										//Boss a.k.a model 8, is now called CandyMan for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
+										/// - If Boss Dies - ///
 										if(CandyMan->getHealth() <= 0)
 										{
 											GAME::removeModel(CandyMan); // If health = 0 then boss dead
-											//	mod[8] = nullptr;
 											bossActive = false;
 											puts("Killed The BOSS\n");
 										}
@@ -1140,7 +1157,7 @@ public:
 
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 
-		//If game not active and Camera is active (Move camera mode)
+		/// - If game not active and Camera is active (Move camera mode) - ///
 		if(!movePlayer)
 			if(GAME::isControllerConnected(0))
 			{
@@ -1172,8 +1189,6 @@ public:
 				GAME::moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;
 			}
-
-
 	}
 
 private:
