@@ -394,10 +394,34 @@ public:
 		mod.push_back(new Model(*mod.back()));//77
 		GAME::addModel(mod.back());
 
-		//mod.push_back(new Model("Models/MiniEnemies/Cube"));
+		//Minions
+		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
+		GAME::addModel(mod[78]);
+		mod[78]->setToRender(false);
 
-
-		//GAME::addModel(mod.back()); //64
+		//TRAIN
+		//TODO: Make collisions for train. Make train leave the map and come back. Refine train.
+		mod.push_back(new Model("Models/TrainGrayBox.obj"));//79
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//80
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//81
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//82
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//83
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//84
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//85
+		GAME::addModel(mod.back());
+		mod[79]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[79]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+		mod[80]->getTransformer().setPosition(4.5f, 0.0f, 8.0f), mod[80]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+		mod[81]->getTransformer().setPosition(9.0f, 0.0f, 8.0f), mod[81]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+		mod[82]->getTransformer().setPosition(-4.5f, 0.0f, 8.0f), mod[82]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+		mod[83]->getTransformer().setPosition(-9.0f, 0.0f, 8.0f), mod[83]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+		mod[84]->getTransformer().setPosition(-13.5f, 0.0f, 8.0f), mod[84]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+		mod[85]->getTransformer().setPosition(13.5f, 0.0f, 8.0f), mod[85]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -535,10 +559,6 @@ public:
 		mod[77]->setColour({255,255,0,150});
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
 
-		//Minions
-		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
-		GAME::addModel(mod[78]);
-		mod[78]->setToRender(false); 
 
 		/// - Set Model Colour - ///
 		//Players
