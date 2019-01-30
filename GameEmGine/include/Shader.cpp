@@ -35,6 +35,12 @@ void Shader::create(const std::string & vertFilePath, const std::string & fragFi
 		linkShaders();
 }
 
+void Shader::create(const std::string & vertFilePath, const std::string & fragFilePath, const std::string & geoFilePath)
+{
+	if(compileShaders(vertFilePath, fragFilePath,geoFilePath))
+		linkShaders();
+}
+
 void Shader::createDefault()
 {
 	//create("Shaders/error.vert", "Shaders/error.frag");
@@ -129,9 +135,32 @@ bool Shader::compileShaders(const std::string & vertFilePath, const std::string 
 	return true;
 }
 
+bool Shader::compileShaders(const std::string & vertFilePath, const std::string & fragFilePath, const std::string & geoFilePath)
+{
+	m_vtPath = vertFilePath;
+	m_fmPath = fragFilePath;
+
+	glDeleteProgram(m_programID);
+
+	m_programID = glCreateProgram();
+	m_vertID = glCreateShader(GL_VERTEX_SHADER);
+	m_fragID = glCreateShader(GL_FRAGMENT_SHADER);
+	m_geomID = glCreateShader(GL_GEOMETRY_SHADER);
+
+	if(!compileShader(VERT_SHADER, vertFilePath, m_vertID))return false;
+	if(!compileShader(FRAG_SHADER, fragFilePath, m_fragID))return false;
+	if(!compileShader(GEOM_SHADER, geoFilePath, m_geomID))return false;
+
+
+
+	return true;
+}
+
 void Shader::linkShaders()
 {
 	glAttachShader(m_programID, m_vertID);
+	if(m_geomID)
+		glAttachShader(m_programID, m_geomID);
 	glAttachShader(m_programID, m_fragID);
 
 	glLinkProgram(m_programID);
@@ -168,8 +197,14 @@ void Shader::linkShaders()
 	
 	glDetachShader(m_programID, m_vertID);
 	glDetachShader(m_programID, m_fragID);
+	if(m_geomID)
+		glDetachShader(m_programID, m_geomID);
+
 	glDeleteShader(m_vertID);
 	glDeleteShader(m_fragID);
+	if(m_geomID)
+		glDeleteShader(m_geomID);
+
 }
 
 void Shader::addAtribute(const std::string attributeName, short index)
