@@ -14,11 +14,14 @@ public:
 
 	//compiles and links shaders
 	void create(const std::string& vertFilePath, const std::string& fragFilePath);
+	void create(const std::string& vertFilePath, const std::string& fragFilePath, const std::string& geoFilePath);
 
 	void createDefault();
 
 	//compiles shaders into code
-	bool compileShaders(const std::string& vertFilePath, const std::string& fragFilePath);
+	bool compileShaders(const std::string& vertFilePath, const std::string& fragFilePath); 
+	bool compileShaders(const std::string& vertFilePath, const std::string& fragFilePath, const std::string& geoFilePath);
+
 	//links vertx and fragment shaders into a single shader
 	void linkShaders();
 	/*
@@ -39,19 +42,21 @@ private:
 	enum Shaders
 	{
 		VERT_SHADER,
-		FRAG_SHADER
+		FRAG_SHADER,
+		GEOM_SHADER
 	};
 
 	bool compileShader(Shaders shadNum, const std::string filePath, GLuint id);
 	void findAtributes();
 
-	std::string m_vtsh="",m_vtPath="",m_fmPath="";
+	std::string m_vtsh="",m_vtPath="",m_fmPath="",m_goPath="";
 	int m_attribNum = 0;
 	bool m_enabled = false;
 	GLuint
 		m_programID = 0,
 		m_vertID = 0,
-		m_fragID = 0;
+		m_fragID = 0,
+		m_geomID = 0;
 
 	static GLuint *m_programs, *m_attribs, m_num;
 
