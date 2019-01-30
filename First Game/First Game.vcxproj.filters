@@ -42,6 +42,9 @@
     <ClCompile Include="Minion.cpp">
       <Filter>Characters</Filter>
     </ClCompile>
+    <ClCompile Include="Turret.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Logs\New Log">
@@ -94,6 +97,9 @@
       <Filter>Characters</Filter>
     </ClInclude>
     <ClInclude Include="Minion.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Turret.h">
       <Filter>Characters</Filter>
     </ClInclude>
   </ItemGroup>

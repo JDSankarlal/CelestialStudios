@@ -400,7 +400,6 @@ public:
 		mod[78]->setToRender(false);
 
 		//TRAIN
-		//TODO: Make collisions for train. Make train leave the map and come back. Refine train.
 		mod.push_back(new Model("Models/TrainGrayBox.obj"));//79
 		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//80
@@ -779,6 +778,7 @@ public:
 		bool youDead = true;
 		static float deathCounter = 0;
 		if(init)
+
 			/// - If game mode (NOT CAMERA MODE) - ///
 			if(movePlayer)
 				for(int a = 0; a < 4; a++)
@@ -811,7 +811,7 @@ public:
 								angle[a] = fmodf(angle[a], 360);
 							}
 
-							///~ Missile Collisions with Player ~///
+							/// - Missile Collisions with Player - ///
 							for(int b = 0; b < 4; b++)
 							{
 								bool collision = collision3D(player, mod[60 + b]);
@@ -843,7 +843,7 @@ public:
 								GAME::removeModel(player);
 								GAME::removeModel(mod[44] + a);
 							}
-							//
+							/// - Player Shooting - ///
 							if(p1.triggers[RT] >= .95 && !gunControlLaw[a])
 							{
 								if(player->getBulletCount() > 0)
@@ -874,17 +874,38 @@ public:
 							else if(p1.triggers[RT] < .95 && gunControlLaw[a])
 								gunControlLaw[a] = false;
 
-							//trainTimer += time;
-							//if (time - trainTimer >= 3)
-							//{
-							for(int t = 0; t < 7; t++)
+							/// - Train Car Movement - ///
+							if (10 <= (time - trainTimer) && 20 > (time - trainTimer))
 							{
-								mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.08f, 0.f, 0.f});//Yeet Train Cars
+								for(int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.08f, 0.f, 0.f});//Move train cars right
+								}
 							}
-							//trainTimer += time;
-							//}
+							else if (20 <= (time - trainTimer) && 30 > (time - trainTimer))
+							{
+								for (int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.0f, 0.f, 0.f });//Stop Train cars
+								}
+							}
+							else if (30 <= (time - trainTimer) && 40 > (time - trainTimer))
+							{
+								for (int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ -0.08f, 0.f, 0.f });//Move train cars back to the right
+								}
+							}
+							else if (40 <= (time - trainTimer) && 50 > (time - trainTimer))
+							{
+								for (int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.00f, 0.f, 0.f });//Stop Train cars on map
+								}
+								trainTimer += time;
+							}
 
-							///~ Button Presses on controller ~///
+							/// - Button Presses on controller - ///
 							if(p1.buttonPressed(p1.buttons.X))
 							{
 								player->setBulletCount(30);
@@ -920,7 +941,7 @@ public:
 
 							/// - Boss Spawns Minions - ///
 
-							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
+							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions
 							if(minionCounter < 1)
 							{
 
@@ -1104,6 +1125,8 @@ public:
 										pMissiles[a].erase(pMissiles[a].begin() + b);
 									}
 								}
+								//TODO: Player collisions with Train, if train in motion and player touches front player takes damage and is pushed
+
 								/// - If Boss Alive - ///
 								if(mod[8])
 									/// - If Missiles collide with Boss -///
