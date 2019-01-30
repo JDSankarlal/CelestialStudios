@@ -5,6 +5,8 @@ class Medic :
 {
 public:
 	Medic();
+	Medic(Model & model);
+	Medic(const char * path);
 	~Medic();
 };
 
