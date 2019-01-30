@@ -166,6 +166,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Logs\New Log" />
+    <None Include="Shaders\BoundingBox.fmsh" />
+    <None Include="Shaders\BoundingBox.vtsh" />
+    <None Include="Shaders\GrayscalePost.fmsh" />
+    <None Include="Shaders\Main Buffer.fmsh" />
+    <None Include="Shaders\Main Buffer.vtsh" />
+    <None Include="Shaders\Particles\Particle.frag" />
+    <None Include="Shaders\Particles\Particle.vert" />
     <None Include="Shaders\PassThrough.frag" />
     <None Include="Shaders\PassThrough.vert" />
   </ItemGroup>

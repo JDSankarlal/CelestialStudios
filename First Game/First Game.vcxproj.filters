@@ -16,6 +16,9 @@
     <Filter Include="Scenes">
       <UniqueIdentifier>{1edef0dd-89e1-478e-8335-f3e92bc59db6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Particles">
+      <UniqueIdentifier>{45cc2fc4-02df-4d92-8b7d-74414368a93c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -55,6 +58,27 @@
     </None>
     <None Include="Shaders\PassThrough.vert">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\BoundingBox.fmsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\BoundingBox.vtsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\GrayscalePost.fmsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Main Buffer.fmsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Main Buffer.vtsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Particles\Particle.frag">
+      <Filter>Shaders\Particles</Filter>
+    </None>
+    <None Include="Shaders\Particles\Particle.vert">
+      <Filter>Shaders\Particles</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

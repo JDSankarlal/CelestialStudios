@@ -168,7 +168,6 @@ public:
 			walk[a].repeat(true);
 			idle[a].stop();
 
-
 			mod[a]->addAnimation("walk", &walk[a]);
 			mod[a]->addAnimation("idle", &idle[a]);
 			mod[a]->setAnimation("walk");
@@ -508,14 +507,6 @@ public:
 		mod[45]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 		mod[46]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 		mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
-
-		//Trash
-		//mod[49]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[49]->getTransformer().setPosition(-13.25f, 0.0f, 13.0f);
-		//mod[50]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[50]->getTransformer().setPosition(13.25f, 0.0f, 0.5f);
-
-		//Picnic table wut, cyberpunk game?
-		//mod[51]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[51]->getTransformer().setPosition(-11.0f, 0.0f, 19.0f), mod[51]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		//mod[52]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[52]->getTransformer().setPosition(-6.75f, 0.0f, 19.0f), mod[52]->getTransformer().setRotation({0.0f,90.0f,0.0f});
 
 		//Pizza Sign
 		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-10.25f, 5.4f, 22.3f);
@@ -875,11 +866,16 @@ public:
 								gunControlLaw[a] = false;
 
 							/// - Train Car Movement - ///
+							// 84 and 85 are the ends of the train
 							if (10 <= (time - trainTimer) && 20 > (time - trainTimer))
 							{
 								for(int t = 0; t < 7; t++)
 								{
 									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.08f, 0.f, 0.f});//Move train cars right
+									if (collision(mod[85], player))
+									{
+										player->setHealth(player->getHealth() - 50);
+									}
 								}
 							}
 							else if (20 <= (time - trainTimer) && 30 > (time - trainTimer))
@@ -894,6 +890,11 @@ public:
 								for (int t = 0; t < 7; t++)
 								{
 									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ -0.08f, 0.f, 0.f });//Move train cars back to the right
+									if (collision(mod[84], player))
+										//TODO: MAKE PLAYER COLLSIDE WITH ONLY FRONT SIDE OF TRAIN
+									{
+										player->setHealth(player->getHealth() - 50);
+									}
 								}
 							}
 							else if (40 <= (time - trainTimer) && 50 > (time - trainTimer))
@@ -1083,15 +1084,15 @@ public:
 										break;
 									}
 
-								//TODO: Fix Minion Collisions
-								for(auto& minion : minions)
-									if(collision(bullets[a][b], minion))
+								for (auto& minion : minions)
+								{
+									if (collision(bullets[a][b], minion))
 									{
 										minion->setHealth(minion->getHealth() - 10);
 										GAME::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
 
-										if(minion->getHealth() <= 0)
+										if (minion->getHealth() <= 0)
 										{
 											GAME::removeModel(minion);
 											minions.erase(std::find(minions.begin(), minions.end(), minion));
@@ -1100,6 +1101,13 @@ public:
 										}
 
 									}
+									//TODO: Make Minions collide with players and do damage. Make Minions move at set speed
+									//if (collision(minion, player))
+									//{
+									//	player->setHealth(player->getHealth() - 10);
+									//}
+								}
+
 							}
 						for(unsigned b = 0; b < pMissiles[a].size(); b++)
 							if(pMissiles[a][b])
@@ -1125,7 +1133,6 @@ public:
 										pMissiles[a].erase(pMissiles[a].begin() + b);
 									}
 								}
-								//TODO: Player collisions with Train, if train in motion and player touches front player takes damage and is pushed
 
 								/// - If Boss Alive - ///
 								if(mod[8])
@@ -1175,7 +1182,7 @@ public:
 		deathCounter = deathCounter <= 1 ? deathCounter : 1;
 		if(youDead)
 		{
-			//TODO: do something when the party is dead
+			//TODO: do something when the party is dead, game over screen with "Main Menu" "Quit" options
 
 		}
 		else
