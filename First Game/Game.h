@@ -415,13 +415,13 @@ public:
 		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//85
 		GAME::addModel(mod.back());
-		mod[79]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[79]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
-		mod[80]->getTransformer().setPosition(4.5f, 0.0f, 8.0f), mod[80]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
-		mod[81]->getTransformer().setPosition(9.0f, 0.0f, 8.0f), mod[81]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
-		mod[82]->getTransformer().setPosition(-4.5f, 0.0f, 8.0f), mod[82]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
-		mod[83]->getTransformer().setPosition(-9.0f, 0.0f, 8.0f), mod[83]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
-		mod[84]->getTransformer().setPosition(-13.5f, 0.0f, 8.0f), mod[84]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
-		mod[85]->getTransformer().setPosition(13.5f, 0.0f, 8.0f), mod[85]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });
+		mod[79]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[79]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		mod[80]->getTransformer().setPosition(4.5f, 0.0f, 8.0f), mod[80]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		mod[81]->getTransformer().setPosition(9.0f, 0.0f, 8.0f), mod[81]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		mod[82]->getTransformer().setPosition(-4.5f, 0.0f, 8.0f), mod[82]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		mod[83]->getTransformer().setPosition(-9.0f, 0.0f, 8.0f), mod[83]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		mod[84]->getTransformer().setPosition(-13.5f, 0.0f, 8.0f), mod[84]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		mod[85]->getTransformer().setPosition(13.5f, 0.0f, 8.0f), mod[85]->getTransformer().setRotation({0.0f,90.0f,0.0f});
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -683,7 +683,7 @@ public:
 		static vector<Minion*>minions;//Vector of minions
 		static int minionCounter = 0;
 		static float minionTimer;
-		static float minionSpeed = .05f	;
+		static float minionSpeed = .05f;
 		static int maxMinionsOnScreen = 20;
 
 		//Train Variables
@@ -733,7 +733,7 @@ public:
 					hasTarget[a] = true;
 				}
 
-				
+
 				if(mod[8])
 					if(hasTarget[a])
 					{
@@ -875,14 +875,14 @@ public:
 								gunControlLaw[a] = false;
 
 							//trainTimer += time;
-							if (time - trainTimer >= 3)
+							//if (time - trainTimer >= 3)
+							//{
+							for(int t = 0; t < 7; t++)
 							{
-								for (int t = 0; t < 7; t++)
-								{
-									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + (20.f, 0.f, 0.f));//Yeet Train Cars
-								}
-								trainTimer += time;
+								mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.08f, 0.f, 0.f});//Yeet Train Cars
 							}
+							//trainTimer += time;
+							//}
 
 							///~ Button Presses on controller ~///
 							if(p1.buttonPressed(p1.buttons.X))
@@ -933,18 +933,18 @@ public:
 								minions.back()->getTransformer().setPosition(10, 1, -3);
 								minions.back()->getTransformer().setScale(0.4f, 0.6f, 0.4f);
 
-									//printf(minions.back()->getTransformer().getPosition());
-									minionCounter += 1;
-									//minions.back()->setTimeSinceLastSpawn(time);
-									//minions.back()
-								//}
+								//printf(minions.back()->getTransformer().getPosition());
+								minionCounter += 1;
+								//minions.back()->setTimeSinceLastSpawn(time);
+								//minions.back()
+							//}
 							}
 							//for (unsigned int k = 0; k < minions.size(); k++)
 							//{
-								Coord3D norm = player->getTransformer().getPosition() - minions.back()->getTransformer().getPosition();
-								norm.normalize();
+							Coord3D norm = player->getTransformer().getPosition() - minions.back()->getTransformer().getPosition();
+							norm.normalize();
 
-								minions.back()->getTransformer().translateBy(norm*.001f);
+							minions.back()->getTransformer().translateBy(norm*.001f);
 							//}
 
 							/// - Left Trigger to Dash - ///
@@ -1019,12 +1019,12 @@ public:
 						}
 						///~ Bullet Collisions ~///
 						for(unsigned b = 0; b < bullets[a].size(); b++)
-							if (bullets[a][b])
+							if(bullets[a][b])
 							{
 								timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].x, velocity[a][b].y, velocity[a][b].z);
 
-								if (timer[a][b] >= 1)
+								if(timer[a][b] >= 1)
 								{
 									GAME::removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
@@ -1034,9 +1034,9 @@ public:
 								}
 
 								/// Bullet Collisions with Train
-								for (int t = 0; t < 7; t++)
+								for(int t = 0; t < 7; t++)
 								{
-									if (collision(bullets[a][b], mod[79 + t]))
+									if(collision(bullets[a][b], mod[79 + t]))
 									{
 										GAME::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
@@ -1096,9 +1096,9 @@ public:
 								}
 
 								/// - Missile Collisions with Train - ///
-								for (int t = 0; t < 7; t++)
+								for(int t = 0; t < 7; t++)
 								{
-									if (collision(pMissiles[a][b], mod[79 + t]))
+									if(collision(pMissiles[a][b], mod[79 + t]))
 									{
 										GAME::removeModel(pMissiles[a][b]);
 										pMissiles[a].erase(pMissiles[a].begin() + b);
