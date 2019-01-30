@@ -538,7 +538,7 @@ public:
 		//Minions
 		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
 		GAME::addModel(mod[78]);
-		mod[78]->setToRender(false); 
+		mod[78]->setToRender(false);
 
 		/// - Set Model Colour - ///
 		//Players
@@ -753,7 +753,7 @@ public:
 					if(GAME::isControllerConnected(a))
 					{
 						Xinput p1 = GAME::getController(a);
-						
+
 						//Start button quits game
 						if(p1.buttonPressed(p1.buttons.START))
 						{
@@ -808,6 +808,7 @@ public:
 
 								mod[22 + a]->setAnimation("squash");
 								GAME::removeModel(player);
+								GAME::removeModel(mod[44] + a);
 							}
 							//
 							if(p1.triggers[RT] >= .95 && !gunControlLaw[a])
@@ -1078,22 +1079,22 @@ public:
 			{
 				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
-			
-			GAME::m_grayScalePost->enable();
-			glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
-			GAME::m_grayScalePost->disable();
 
-			deathCounter += .007f;
-			deathCounter = deathCounter <= 1 ? deathCounter : 1;
-			if(youDead)
-			{
-				//TODO: do something when the party is dead
+		GAME::m_grayScalePost->enable();
+		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+		GAME::m_grayScalePost->disable();
 
-			}
-			else
-			{
+		deathCounter += .007f;
+		deathCounter = deathCounter <= 1 ? deathCounter : 1;
+		if(youDead)
+		{
+			//TODO: do something when the party is dead
 
-			}
+		}
+		else
+		{
+
+		}
 
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 

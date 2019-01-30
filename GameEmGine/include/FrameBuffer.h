@@ -22,8 +22,15 @@ public:
 	// Clears all attached textures
 	void clear();
 
+	//binds objects to frame buffer/s
 	void enable();
-	void disable();
+
+	//binds the frame buffer to the default spot
+	static void disable();
+
+
+	///~ Helper Functions ~///
+	void setViewport(int x, int y, int width, int height)const;
 
 	void moveToBackBuffer(int windowWidth, int windowHeight);
 
