@@ -23,7 +23,7 @@ void Turret::setHealth(int v)
 	health = v;
 }
 
-float Turret::getHealth()
+int Turret::getHealth()
 {
 	return health;
 }

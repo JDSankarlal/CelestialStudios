@@ -9,7 +9,7 @@ public:
 	float getLifeTime();
 
 	void setHealth(int v);
-	float getHealth();
+	int getHealth();
 
 private:
 	float lifeTime;
