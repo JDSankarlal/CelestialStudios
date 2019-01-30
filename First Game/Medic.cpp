@@ -2,7 +2,15 @@
 
 
 
-Medic::Medic()
+Medic::Medic():Player()
+{
+}
+
+Medic::Medic(Model & model) : Player(model)
+{
+}
+
+Medic::Medic(const char * path) : Player(path)
 {
 }
 

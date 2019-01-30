@@ -5,6 +5,8 @@ class Tank :
 {
 public:
 	Tank();
+	Tank(Model & model);
+	Tank(const char * path);
 	~Tank();
 };
 

@@ -5,6 +5,8 @@ class Assault :
 {
 public:
 	Assault();
+	Assault(Model & model);
+	Assault(const char * path);
 	~Assault();
 };
 
