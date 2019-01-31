@@ -116,7 +116,7 @@ public:
 		if(key == GLFW_KEY_F5) //resets the camera
 		{
 			GAME::m_modelShader->refresh();
-			GAME::m_grayScalePost->refresh();
+//			GAME::m_grayScalePost->refresh();
 			//GAME::setCameraAngle(0, { 1, 1, 1 });
 			//	GAME::setCameraPosition({0,0,0});
 		}
@@ -1144,9 +1144,9 @@ public:
 				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
 
-		GAME::m_grayScalePost->enable();
-		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
-		GAME::m_grayScalePost->disable();
+		//GAME::m_grayScalePost->enable();
+		//glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+		//GAME::m_grayScalePost->disable();
 
 		deathCounter += .007f;
 		deathCounter = deathCounter <= 1 ? deathCounter : 1;

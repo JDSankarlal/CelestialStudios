@@ -10,13 +10,15 @@ Camera *GameEmGine::m_mainCamera;
 //GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera *>GameEmGine::m_cameras;
-Shader *GameEmGine::m_cameraShader, *GameEmGine::m_modelShader, *GameEmGine::m_grayScalePost;
+Shader *GameEmGine::m_modelShader, *GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,
+*GameEmGine::m_blurVertical, *GameEmGine::m_blurrComposite;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager *GameEmGine::m_inputManager;
 WindowCreator *GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer* GameEmGine::m_mainBuffer;
+FrameBuffer* GameEmGine::m_mainFrameBuffer, *GameEmGine::m_test1, *GameEmGine::m_test2;
+std::unordered_map<std::string, FrameBuffer*> GameEmGine::m_frameBuffers;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
 float GameEmGine::m_fps;
@@ -37,7 +39,7 @@ GameEmGine::MessageCallback(GLenum source,
 	const GLchar* message,
 	const void* userParam)
 {
-	source,id,length,userParam;
+	source, id, length, userParam;
 	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
 		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
 		type, severity, message);
@@ -46,6 +48,15 @@ GameEmGine::MessageCallback(GLenum source,
 void GameEmGine::init(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	createNewWindow(name, width, height, x, y, monitor, fullScreen, visable);
+	m_mainFrameBuffer->setPostProcess([&]()->void {
+		//main frame buffer render
+		m_bloomHighPass->enable();
+		glUniform1i(m_bloomHighPass->getUniformLocation("uTex"), 0);
+		glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0));
+		drawFullScreenQuad();
+		glBindTexture(GL_TEXTURE_2D, GL_NONE);
+		m_bloomHighPass->disable();
+		});
 }
 
 //GameEmGine::~GameEmGine()
@@ -79,17 +90,36 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 	printf("created the window\n");
 
-	m_mainBuffer = new FrameBuffer("Main Buffer", 1);
-	m_mainBuffer->initDepthTexture(width, height);
-	m_mainBuffer->initColourTexture(0, width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_mainFrameBuffer = new FrameBuffer("Main Buffer", 1);
+	m_test1 = new FrameBuffer("Test1", 1);
+	m_test2 = new FrameBuffer("Test2", 1);
 
-	if(!m_mainBuffer->checkFBO())
+	m_mainFrameBuffer->initDepthTexture(width, height);
+	m_mainFrameBuffer->initColourTexture(0, width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+
+	if(!m_mainFrameBuffer->checkFBO())
 	{
 		puts("FBO failed Creation");
 		system("pause");
 		return;
 	}
 
+	m_test1->initColourTexture(0, width/4, height/4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+
+	if(!m_test1->checkFBO())
+	{
+		puts("FBO failed Creation");
+		system("pause");
+		return;
+	}
+	m_test2->initColourTexture(0, width/4, height/4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+
+	if(!m_test2->checkFBO())
+	{
+		puts("FBO failed Creation");
+		system("pause");
+		return;
+	}
 	initFullScreenQuad();
 
 	//// During init, enable debug output
@@ -189,8 +219,16 @@ void GameEmGine::shaderInit()
 	m_modelShader = new Shader;
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 
-	m_grayScalePost = new Shader;
-	m_grayScalePost->create("Shaders/Main Buffer.vtsh", "Shaders/GrayscalePost.fmsh");
+	m_bloomHighPass = new Shader;
+	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHighPass.fmsh");
+	m_bloomHighPass = new Shader;
+	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHorizontal.fmsh");
+	m_bloomHighPass = new Shader;
+	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomVertical.fmsh");
+	m_bloomHighPass = new Shader;
+	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
+
+
 }
 
 void GameEmGine::calculateFPS()
@@ -289,7 +327,8 @@ void GameEmGine::drawFullScreenQuad()
 void GameEmGine::setScene(Scene* scene)
 {
 	m_models.clear();
-
+	m_frameBuffers.clear();
+	m_frameBuffers[m_mainFrameBuffer->getTag()] = m_mainFrameBuffer;
 	m_mainScene = scene;
 	scene->init();
 	m_inputManager->keyPressedCallback(scene->keyPressed);
@@ -350,7 +389,7 @@ void GameEmGine::addModel(Model* model)
 	//m_models = (Model**) realloc(m_models, sizeof(Model*)*++m_numModels);
 	//m_models[m_numModels - 1] = model;
 	m_models.push_back(model);
-	m_models.back()->addFrameBuffer(m_mainBuffer);
+	//m_models.back()->addFrameBuffer(m_mainBuffer);
 }
 
 void GameEmGine::removeModel(Model* model)
@@ -377,7 +416,10 @@ void GameEmGine::update()
 
 	glClearDepth(1.f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	m_mainBuffer->clear();
+	m_mainFrameBuffer->clear();
+	m_test1->clear(); 
+	m_test2->clear();
+
 
 	m_mainCamera->update();
 
@@ -397,39 +439,43 @@ void GameEmGine::update()
 		m_modelShader->disable();
 	}
 
+	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 	///~ 3D-Graphics 1 ~///
-	std::unordered_map<std::string, FrameBuffer*> buffers;
+	m_frameBuffers["Main Buffer"]->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
 	{
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
-
-		buffers.insert(m_models[a]->getFrameBuffers().begin(), m_models[a]->getFrameBuffers().end());
 	}
+	m_frameBuffers["Main Buffer"]->disable();
 
-	//main frame buffer render
-	m_grayScalePost->enable();
-	glUniform1i(m_grayScalePost->getUniformLocation("uTex"), 0);
-	glBindTexture(GL_TEXTURE_2D, m_mainBuffer->getColorHandle(0));
+	//std::vector<std::pair<std::string, FrameBuffer*>>tmp(m_frameBuffers.begin(), m_frameBuffers.end());
+	////additional frame buffer renders
+	//std::sort(tmp.begin(), tmp.end(),
+	//	[](std::pair< std::string, FrameBuffer*>a, std::pair< std::string, FrameBuffer*>b)->bool
+	//	{return a.second->getLayer() > b.second->getLayer(); }
+	//);
+	//
+	//for(auto &a : tmp)
+	//	a.second->getPostProcess()();
+
+	glViewport(0, 0, getWindowWidth()/4, getWindowHeight()/4);
+
+	m_bloomHighPass->enable();
+	glUniform1d(m_bloomHighPass->getUniformLocation("uTex"), 0);
+	glUniform1f(m_bloomHighPass->getUniformLocation("uThresh"), .25f);
+	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0)); 
+
+	m_test1->enable();
 	drawFullScreenQuad();
+	m_test2->disable();
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	m_grayScalePost->disable();
-
-	//additional frame buffer renders
-	std::vector<std::pair<std::string, FrameBuffer*>>tmp(buffers.begin(), buffers.end());
-	std::sort(tmp.begin(), tmp.end(),
-		[](std::pair< std::string, FrameBuffer*>a, std::pair< std::string, FrameBuffer*>b)->bool
-		{return a.second->getLayer() > b.second->getLayer(); }
-	);
-	
-	for(auto &a : tmp)
-		if(a.first != "Main Buffer")
-			a.second->getPostProcess()();
+	m_bloomHighPass->disable();
 
 	//m_mainBuffer->moveToBackBuffer(getWindowWidth(),getWindowHeight());
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
 
-	///-will never be used but I'll keep it here anyways-///
+	///~ will never be used but I'll keep it here anyways ~///
 	////2D-Graphics 
 	//m_spriteBatch->begin();
 	//for(int a = 0; a < m_sprites.size(); a++)

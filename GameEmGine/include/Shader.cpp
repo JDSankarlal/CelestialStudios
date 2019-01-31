@@ -268,7 +268,8 @@ bool Shader::compileShader(Shaders shadType, const std::string filePath, GLuint 
 		char* errorLog = new char[maxLength];
 		glGetShaderInfoLog(id, maxLength, &maxLength, errorLog);
 
-		printf(errorLog + '\n');
+		printf("error in file: %s\n",filePath.c_str());
+		printf("%s\n\n",errorLog );
 
 		createDefault();
 		return false;

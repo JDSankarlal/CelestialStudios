@@ -1,0 +1,25 @@
+#version 420
+
+uniform sampler2D uTex;
+uniform float uThresh;
+
+in vec2 outUV;
+
+out vec3 outColour;
+
+void main()
+{
+    vec3 colour = texture(uTex,outUV).rgb;
+
+    float lum = (colour.r+colour.g+colour.b)/3.0;
+
+    if(lum > uThresh)
+    {
+        outColour = outColour;
+    }
+    else
+    {
+        outColour = vec3(0.0,0.0,0.0);
+    }
+
+}

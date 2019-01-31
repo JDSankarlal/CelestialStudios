@@ -1,0 +1,17 @@
+#version 420
+
+uniform sampler2D uScene;
+uniform sampler2D uBloom; 
+
+in vec2 outUV;
+
+out vec3 outColour;
+
+void main()
+{
+    vec3 colourA = texture(uScene,outUV).rgb;
+    vec3 colourB = texture(uBloom,outUV).rgb;
+
+    outColour = 1.0 - (1.0 - colourA) * (1.0 - colourB);
+    
+}

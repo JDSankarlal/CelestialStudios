@@ -605,11 +605,9 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 	return m_unpackedData;
 }
 
-void Mesh::render(Shader& shader, std::unordered_map<std::string, FrameBuffer*>& buffers)
+void Mesh::render(Shader& shader)
 {
 	shader.enable();
-	for(auto&frame : buffers)
-	{	
 		for(unsigned a = 0; a < m_vaoID.size(); a++)
 		{
 			bool textured = false;
@@ -634,13 +632,10 @@ void Mesh::render(Shader& shader, std::unordered_map<std::string, FrameBuffer*>&
 
 			glUniform1i(shader.getUniformLocation("textured"), textured);
 
-			frame.second->enable();
-
+			
 			glBindVertexArray(m_vaoID[a].second);
 			glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
 			glBindVertexArray(0);
-
-			frame.second->disable();
 
 			for(; c >= 0; c--)
 			{
@@ -649,7 +644,7 @@ void Mesh::render(Shader& shader, std::unordered_map<std::string, FrameBuffer*>&
 				//glActiveTexture(0);
 			}
 		}
-	}
+	
 	shader.disable();
 }
 
