@@ -866,18 +866,38 @@ public:
 								gunControlLaw[a] = false;
 
 							/// - Train Car Movement - ///
-							// 84 and 85 are the ends of the train
+							//Train Sits in middle of map
+							if (0 <= (time - trainTimer) && 10 > (time - trainTimer))
+							{
+								for (int t = 0; t < 7; t++)
+								{
+									if (collision(mod[79 + t], player))
+									{
+										if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
+										if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+									}
+								}
+
+							}
+							//Train Moves off map
 							if (10 <= (time - trainTimer) && 20 > (time - trainTimer))
 							{
 								for(int t = 0; t < 7; t++)
 								{
 									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.08f, 0.f, 0.f});//Move train cars right
-									if (collision(mod[85], player))
+									if (collision(mod[79 + t], player))
 									{
-										player->setHealth(player->getHealth() - 50);
+										player->setHealth(player->getHealth() - 10);
+										if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z )
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+										if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
 									}
 								}
 							}
+							//Train stops
 							else if (20 <= (time - trainTimer) && 30 > (time - trainTimer))
 							{
 								for (int t = 0; t < 7; t++)
@@ -885,25 +905,39 @@ public:
 									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.0f, 0.f, 0.f });//Stop Train cars
 								}
 							}
+							//Train moves back onto map
 							else if (30 <= (time - trainTimer) && 40 > (time - trainTimer))
 							{
 								for (int t = 0; t < 7; t++)
 								{
 									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ -0.08f, 0.f, 0.f });//Move train cars back to the right
-									if (collision(mod[84], player))
-										//TODO: MAKE PLAYER COLLSIDE WITH ONLY FRONT SIDE OF TRAIN
+									if (collision(mod[79 + t], player))
 									{
-										player->setHealth(player->getHealth() - 50);
+										player->setHealth(player->getHealth() - 10);
+										if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+										if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+										//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
+										//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
 									}
 								}
 							}
+							//Train stops on map
 							else if (40 <= (time - trainTimer) && 50 > (time - trainTimer))
 							{
 								for (int t = 0; t < 7; t++)
 								{
 									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.00f, 0.f, 0.f });//Stop Train cars on map
+									if (collision(mod[79 + t], player))
+									{
+										if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
+										if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+									}
 								}
-								trainTimer += time;
+								trainTimer += time; //Reset Train timer so it all starts again.
 							}
 
 							/// - Button Presses on controller - ///
