@@ -777,7 +777,12 @@ public:
 					if(GAME::isControllerConnected(a))
 					{
 						Xinput p1 = GAME::getController(a);
-
+						if (p1.buttonPressed(p1.buttons.SELECT)) 
+						{
+							for (int b = 0; b < 4; b++)
+								dead[b] = 0;
+							GAME::setScene(new Game);
+						}
 						//Start button quits game
 						if(p1.buttonPressed(p1.buttons.START))
 						{
