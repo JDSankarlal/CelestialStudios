@@ -467,10 +467,11 @@ void GameEmGine::update()
 
 	m_test1->enable();
 	drawFullScreenQuad();
-	m_test2->disable();
+	m_test1->disable();
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	m_bloomHighPass->disable();
 
+	
 	//m_mainBuffer->moveToBackBuffer(getWindowWidth(),getWindowHeight());
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
