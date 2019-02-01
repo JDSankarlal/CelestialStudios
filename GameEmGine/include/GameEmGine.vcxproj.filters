@@ -71,6 +71,9 @@
     <ClInclude Include="Animation.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Particles.h">
+      <Filter>EmGine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
