@@ -126,5 +126,8 @@
     <ClInclude Include="Turret.h">
       <Filter>Characters</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerSelect.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

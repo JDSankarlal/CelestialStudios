@@ -6,6 +6,10 @@
 #include "Player.h"
 #include "Boss.h"
 #include "Minion.h"
+#include "Assault.h"
+#include "Specialist.h"
+#include "Medic.h"
+#include "Tank.h"
 
 typedef EmGineAudioPlayer AudioPlayer;
 typedef GameEmGine GAME;
@@ -145,13 +149,13 @@ public:
 		/// - Load mod into Scene - ///
 
 		//Players
-		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
+		mod.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
 		GAME::addModel(mod.back());//0
-		mod.push_back(new Player(*mod.back()));
+		mod.push_back(new Specialist(*mod.back()));
 		GAME::addModel(mod.back());//1
-		mod.push_back(new Player(*mod.back()));
+		mod.push_back(new Medic(*mod.back()));
 		GAME::addModel(mod.back());//2
-		mod.push_back(new Player(*mod.back()));
+		mod.push_back(new Tank(*mod.back()));
 		GAME::addModel(mod.back());//3
 
 		static Animation walk[4], idle[4];
@@ -1016,15 +1020,15 @@ public:
 
 								//get deltaTime put into duraction variable
 
-								if(time - coolDown[a] >= 3)
+								if (time - coolDown[a] >= 3)
 								{
-									if(f == true)
+									if (f == true)
 									{
 										duration = time;
 										f = false;
 									}
 									move = 0.5f;
-									if(time - 0.1f >= duration)
+									if (time - 0.1f >= duration)
 									{
 										move = 0.1f;
 										//If triggers up then coolDown = time;
