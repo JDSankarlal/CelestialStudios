@@ -221,12 +221,12 @@ void GameEmGine::shaderInit()
 
 	m_bloomHighPass = new Shader;
 	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHighPass.fmsh");
-	m_bloomHighPass = new Shader;
-	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHorizontal.fmsh");
-	m_bloomHighPass = new Shader;
-	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomVertical.fmsh");
-	m_bloomHighPass = new Shader;
-	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
+	m_blurHorizontal = new Shader;
+	m_blurHorizontal->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHorizontal.fmsh");
+	m_blurVertical = new Shader;
+	m_blurVertical->create("Shaders/Main Buffer.vtsh", "Shaders/BloomVertical.fmsh");
+	m_blurrComposite = new Shader;
+	m_blurrComposite->create("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
 
 
 }
@@ -470,6 +470,31 @@ void GameEmGine::update()
 	m_test1->disable();
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	m_bloomHighPass->disable();
+
+	glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
+
+	m_blurHorizontal->enable();
+	glUniform1d(m_blurHorizontal->getUniformLocation("uTex"), 0);
+	glUniform1f(m_blurHorizontal->getUniformLocation("uPixleSize"), 1.f/ getWindowWidth());
+	glBindTexture(GL_TEXTURE_2D, m_test1->getColorHandle(0));
+	m_test2->enable();
+	drawFullScreenQuad();
+	m_test2->disable();
+
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	m_blurHorizontal->disable();
+
+	glViewport(0, 0, getWindowWidth() , getWindowHeight() );
+	m_blurVertical->enable();
+	glUniform1d(m_blurVertical->getUniformLocation("uTex"), 0);
+	glUniform1f(m_blurVertical->getUniformLocation("uPixleSize"), 1.f/ getWindowWidth());
+	glBindTexture(GL_TEXTURE_2D, m_test2->getColorHandle(0));
+
+	
+	drawFullScreenQuad();
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	m_blurVertical->disable();
+
 
 	
 	//m_mainBuffer->moveToBackBuffer(getWindowWidth(),getWindowHeight());
