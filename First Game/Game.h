@@ -984,7 +984,7 @@ public:
 							}
 
 							/// - Boss Spawns Minions - ///
-							//TODO: More Minions, Have boss spawn minions, minions collide with each other so they arent a blob. Make minions have unifrom move speed. Lerp between colours??
+							//TODO: More Minions, Have boss spawn minions, Make minions have unifrom move speed. Lerp between colours??
 							if(minionCounter < 10)
 							{
 
@@ -1007,6 +1007,10 @@ public:
 								norm.normalize();
 
 								minions[m]->getTransformer().translateBy(norm*.001f);
+								if (collision(minions[m], minions[m]))// Might have to change one of the m values??
+								{
+									// TODO:  Minions collide with each other so they arent a blob.
+								}
 							}
 
 							/// - Left Trigger to Dash - ///
