@@ -11,28 +11,31 @@ public:
 		GameEmGine::addModel(mod.back()); //Mod 0 
 		mod.push_back(new Model("Models/Screen/Menu/Start.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 1
-		mod.push_back(new Model("Models/Screen/Menu/Options.obj"));
-		GameEmGine::addModel(mod.back()); //Mod 2
-		mod.push_back(new Model("Models/Screen/Menu/Exit.obj"));
-		GameEmGine::addModel(mod.back()); //Mod 3
+		mod.push_back(new Model("Models/AssaultModel/Base/AssaultClassModel.obj")); // I wrote them like this because they will all be different models eventually I think.
+		GameEmGine::addModel(mod.back()); // mod 2
+		mod[2]->getTransformer().setRotation({90,90,90}), mod[2]->getTransformer().setScale(5);
+		mod.push_back(new Model("Models/AssaultModel/Base/AssaultClassModel.obj"));
+		GameEmGine::addModel(mod.back()); // mod 3
+		mod.push_back(new Model("Models/AssaultModel/Base/AssaultClassModel.obj"));
+		GameEmGine::addModel(mod.back()); // mod 4
+		mod.push_back(new Model("Models/AssaultModel/Base/AssaultClassModel.obj"));
+		GameEmGine::addModel(mod.back()); // mod 5
+		//TODO: Add back button and more flashy start button and "Press A to ready" buttons
+
+		//See GDD for general layout of this screen.
 
 		mod[0]->addChild(mod[1]);
-		mod[0]->addChild(mod[2]);
-		mod[0]->addChild(mod[3]);
 
-		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 		LightSource::setSceneAmbient({ 0,0,0,255 });
-
-		//float windowHeight = (float)GameEmGine::getWindowHeight();
-		//float windowWidth = (float)GameEmGine::getWindowWidth();
-		//mod[1]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//mod[2]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//mod[3]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//float tmp= mod[0]->getHeight() / 4 ;
-		for (unsigned int i = 1; i < mod.size(); i++)
+		
+		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+		mod[1]->getTransformer().setRotation({ 90,0,0 });
+		mod[1]->getTransformer().setScale(15.0f);
+		mod[1]->getTransformer().setPosition({ mod[0]->getWidth() - mod[1]->getWidth() - 200, -9.f * 1+ 15,0 });
+		for (unsigned int i = 2; i < mod.size(); i++)
 		{
-			mod[i]->getTransformer().setRotation({ 90,0,0 });
-			mod[i]->getTransformer().setScale(10.0f);
+			mod[i]->getTransformer().setRotation({ 0,0,0 });
+			mod[i]->getTransformer().setScale(15.0f);
 			mod[i]->getTransformer().setPosition({ mod[0]->getWidth() - mod[i]->getWidth() - 200, -9.f * i + 15,0 });
 
 		}
@@ -104,7 +107,7 @@ public:
 
 						break;
 					case 3:
-						GAME::exit();
+						//GAME::exit();
 						break;
 					default:
 						break;

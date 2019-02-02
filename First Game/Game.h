@@ -984,9 +984,8 @@ public:
 							}
 
 							/// - Boss Spawns Minions - ///
-
-							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions
-							if(minionCounter < 1)
+							//TODO: More Minions, Have boss spawn minions, minions collide with each other so they arent a blob. Make minions have unifrom move speed. Lerp between colours??
+							if(minionCounter < 10)
 							{
 
 								minions.push_back(nullptr);
@@ -995,22 +994,20 @@ public:
 								minions.back()->getTransformer().reset();
 								minions.back()->setColour(200, 100, 50);
 								minions.back()->getTransformer().getPosition();
-								minions.back()->getTransformer().setPosition(10, 1, -3);
+								minions.back()->getTransformer().setPosition(float(rand() %4+ 7), float(rand() % 1 + 2), -float(rand() % 3)+2); // Random spawns in bottom right of screen
 								minions.back()->getTransformer().setScale(0.4f, 0.6f, 0.4f);
 
-								//printf(minions.back()->getTransformer().getPosition());
 								minionCounter += 1;
-								//minions.back()->setTimeSinceLastSpawn(time);
-								//minions.back()
-							//}
 							}
-							//for (unsigned int k = 0; k < minions.size(); k++)
-							//{
-							Coord3D norm = player->getTransformer().getPosition() - minions.back()->getTransformer().getPosition();
-							norm.normalize();
 
-							minions.back()->getTransformer().translateBy(norm*.001f);
-							//}
+							/// - Minions Movement Towards Players - ///
+							for (unsigned int m = 0; m < minions.size(); m++)
+							{
+								Coord3D norm = player->getTransformer().getPosition() - minions[m]->getTransformer().getPosition();
+								norm.normalize();
+
+								minions[m]->getTransformer().translateBy(norm*.001f);
+							}
 
 							/// - Left Trigger to Dash - ///
 
