@@ -4,6 +4,7 @@
 
 Tank::Tank():Player()
 {
+	type = tank;
 	setHealth(250);
 }
 

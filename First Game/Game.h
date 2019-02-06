@@ -140,6 +140,31 @@ public:
 			rightM = InputManager::getMouseCursorPosition();
 	}
 
+	void playerTypes(Player::PlayerType playerType[4])
+	{
+		//Players
+		for (int a = 0; a < 4; a++)
+		{
+			switch (playerType[a])
+			{
+			case Player::PlayerType::assault:
+				mod.push_back(new Assault(*mod.back()));
+				break;
+			case Player::PlayerType::tank:
+				mod.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
+				break;
+			case Player::PlayerType::medic:
+				mod.push_back(new Medic(*mod.back()));
+				break;
+			case Player::PlayerType::specialist:
+				mod.push_back(new Specialist(*mod.back()));
+				break;
+			}
+
+			GAME::addModel(mod.back());//0		
+		}
+	}
+
 	// Set game screen
 	void init()
 	{
@@ -148,15 +173,7 @@ public:
 		//GAME::setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
-		//Players
-		mod.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
-		GAME::addModel(mod.back());//0
-		mod.push_back(new Specialist(*mod.back()));
-		GAME::addModel(mod.back());//1
-		mod.push_back(new Medic(*mod.back()));
-		GAME::addModel(mod.back());//2
-		mod.push_back(new Tank(*mod.back()));
-		GAME::addModel(mod.back());//3
+		
 
 		static Animation walk[4], idle[4];
 
@@ -425,6 +442,11 @@ public:
 		mod[84]->getTransformer().setPosition(-13.5f, 0.0f, 8.0f), mod[84]->getTransformer().setRotation({0.0f,90.0f,0.0f});
 		mod[85]->getTransformer().setPosition(13.5f, 0.0f, 8.0f), mod[85]->getTransformer().setRotation({0.0f,90.0f,0.0f});
 
+		//Medic Healing Ring
+		mod.push_back(new Model("Models/TrainGrayBox.obj"));//86
+		GAME::addModel(mod.back());
+
+		
 		/// - Set Model Transforms - ///
 		//Player Transforms
 		mod[0]->getTransformer().setScale(1.35f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
@@ -559,7 +581,7 @@ public:
 		mod[78]->setToRender(false);
 
 		/// - Set Model Colour - ///
-		//Players
+		//Players colors and children
 		mod[0]->setColour(1, 0.5, 0.5);
 		mod[1]->setColour(0.5, 0.5, 1);
 		mod[2]->setColour(0.5, 1, 0.5);
@@ -577,6 +599,7 @@ public:
 		mod[2]->addChild(mod[76]);
 		mod[3]->addChild(mod[77]);
 
+		mod[0]->addChild(mod[86]);
 		LightSource::setLightAmount(14);
 		for(int a = 0; a < 6; a++)
 		{
@@ -1127,7 +1150,7 @@ public:
 										puts("Hit The BOSS\n");
 										break;
 									}
-
+								
 								for (auto& minion : minions)
 								{
 									if (collision(bullets[a][b], minion))
@@ -1247,7 +1270,6 @@ public:
 				float angle1 = 0;
 				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
 				{
-
 					angle1 = acosf(p1.Coord2D_sticks[RS].x /
 						sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
 							+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
@@ -1269,7 +1291,7 @@ public:
 				move /= 2;
 			}
 	}
-
+	
 private:
 	std::vector<Model*> mod;
 	bool fadein = true;

@@ -4,6 +4,7 @@
 
 Specialist::Specialist():Player()
 {
+	type = specialist;
 	setHealth(75);
 }
 
