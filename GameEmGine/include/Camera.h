@@ -42,6 +42,7 @@ protected:
 	float m_scale;
 	Size3D *m_size = new Size3D;
 	Quat *m_position;
+	glm::vec3 m_forward = {0,0,1}, m_up{0,1,0}, m_right{1,0,0};
 
 	Transformer m_transform;
 	glm::mat4 m_cameraMat;

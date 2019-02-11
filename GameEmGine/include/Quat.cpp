@@ -29,22 +29,22 @@ Quat & Quat::rotation(float a_ang, float a_dirX, float a_dirY, float a_dirZ)
 
 	float
 		unit(sqrt(pow(a_dirX, 2) + pow(a_dirY, 2) + pow(a_dirZ, 2)));
-		/*rotX = cos(a_ang / 2),
-		rotY = sin(a_ang / 2)*  (a_dirX / unit),
-		rotZ = sin(a_ang / 2)*  (a_dirY / unit),
-		rotW = sin(a_ang / 2)*  (a_dirZ / unit);*/
+	/*rotX = cos(a_ang / 2),
+	rotY = sin(a_ang / 2)*  (a_dirX / unit),
+	rotZ = sin(a_ang / 2)*  (a_dirY / unit),
+	rotW = sin(a_ang / 2)*  (a_dirZ / unit);*/
 
 	Quat
 		q{cos(a_ang / 2),sin(a_ang / 2)*  (a_dirX / unit),sin(a_ang / 2)*  (a_dirY / unit),sin(a_ang / 2)*  (a_dirY / unit)},//rotation quaternion
 		qc{cos(a_ang / 2),sin(a_ang / 2)* -(a_dirX / unit),sin(a_ang / 2)* -(a_dirY / unit),sin(a_ang / 2)* -(a_dirZ / unit)},//rotation quatenion conjugate
 		p{0, x,y,z};//pure quaternion
-	static Quat rot;rot = q * p * qc;
+	static Quat rot; rot = q * p * qc;
 	return rot;
 }
 
 Quat & Quat::rotation(Quat p, Quat q, Quat qc)
 {
-	static Quat rot;rot = q * p * qc;
+	static Quat rot; rot = q * p * qc;
 	return rot;
 }
 
@@ -58,7 +58,7 @@ void Quat::rotate(float a_ang, float a_dirX, float a_dirY, float a_dirZ)
 glm::mat4 Quat::quatRotationMat(float a_ang, float a_dirX, float a_dirY, float a_dirZ)
 {
 	float
-		unit(sqrt((a_dirX * a_dirX) + (a_dirY * a_dirY) + (a_dirZ * a_dirZ)));
+		unit(sqrt(a_dirX * a_dirX + a_dirY * a_dirY + a_dirZ * a_dirZ));
 
 	//rotation quaternion
 	Quat
@@ -67,16 +67,22 @@ glm::mat4 Quat::quatRotationMat(float a_ang, float a_dirX, float a_dirY, float a
 		sin(a_ang / 2)*  (a_dirY / unit),
 		sin(a_ang / 2)*  (a_dirZ / unit)};
 
+	//pre determined matrix multiplication
 	return
 		glm::mat4(q.w, q.z, -q.y, q.x,
-				  -q.z, q.w, q.x, q.y,
-				  q.y, -q.x, q.w, q.z,
-				  -q.x, -q.y, -q.z, q.w)
+			-q.z, q.w, q.x, q.y,
+			q.y, -q.x, q.w, q.z,
+			-q.x, -q.y, -q.z, q.w)
 		*
 		glm::mat4(q.w, q.z, -q.y, -q.x,
-				  -q.z, q.w, q.x, -q.y,
-				  q.y, -q.x, q.w, -q.z,
-				  q.x, q.y, q.z, q.w);
+			-q.z, q.w, q.x, -q.y,
+			q.y, -q.x, q.w, -q.z,
+			q.x, q.y, q.z, q.w);
+}
+
+glm::mat4 Quat::quatRotationMat(float a_ang, Coord3D a_dir)
+{
+	return quatRotationMat(a_ang, a_dir.x, a_dir.y, a_dir.z);
 }
 
 void Quat::print() const

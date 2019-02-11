@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
+#include "Utilities.h"
 //#include "Matrix.h"
 
 #define degtorad(deg) (deg*M_PI/180)
@@ -26,6 +27,7 @@ struct Quat
 	void rotate(float a_ang, float a_dirX, float a_dirY, float a_dirZ);
 
 	static glm::mat4 quatRotationMat(float a_ang, float a_dirX, float a_dirY, float a_dirZ);
+	static glm::mat4 quatRotationMat(float a_ang, Coord3D a_dir);
 
 	void print() const;
 

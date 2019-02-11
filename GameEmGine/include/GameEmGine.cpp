@@ -10,7 +10,7 @@ Camera *GameEmGine::m_mainCamera;
 //GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera *>GameEmGine::m_cameras;
-Shader *GameEmGine::m_modelShader, *GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,
+Shader *GameEmGine::m_modelShader, *GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,*GameEmGine::m_mainPost,
 *GameEmGine::m_blurVertical, *GameEmGine::m_blurrComposite;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager *GameEmGine::m_inputManager;
@@ -219,15 +219,18 @@ void GameEmGine::shaderInit()
 	m_modelShader = new Shader;
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 
-	m_bloomHighPass = new Shader;
-	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHighPass.fmsh");
-	m_blurHorizontal = new Shader;
-	m_blurHorizontal->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHorizontal.fmsh");
-	m_blurVertical = new Shader;
-	m_blurVertical->create("Shaders/Main Buffer.vtsh", "Shaders/BloomVertical.fmsh");
-	m_blurrComposite = new Shader;
-	m_blurrComposite->create("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
-
+	//m_bloomHighPass = new Shader;
+	//m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHighPass.fmsh");
+	//m_blurHorizontal = new Shader;
+	//m_blurHorizontal->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHorizontal.fmsh");
+	//m_blurVertical = new Shader;
+	//m_blurVertical->create("Shaders/Main Buffer.vtsh", "Shaders/BloomVertical.fmsh");
+	//m_blurrComposite = new Shader;
+	//m_blurrComposite->create("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
+	
+	
+	m_mainPost = new Shader;
+	m_mainPost->create("Shaders/Main Buffer.vtsh", "Shaders/Main Buffer.fmsh");
 
 }
 
@@ -458,42 +461,41 @@ void GameEmGine::update()
 	//for(auto &a : tmp)
 	//	a.second->getPostProcess()();
 
-	glViewport(0, 0, getWindowWidth()/4, getWindowHeight()/4);
+	//glViewport(0, 0, getWindowWidth()/4, getWindowHeight()/4);
+	//
+	//m_bloomHighPass->enable();
+	//glUniform1d(m_bloomHighPass->getUniformLocation("uTex"), 0);
+	//glUniform1f(m_bloomHighPass->getUniformLocation("uThresh"), .25f);
+	//glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0)); 
+	//
+	//m_test1->enable();
+	//drawFullScreenQuad();
+	//m_test1->disable();
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//m_bloomHighPass->disable();
+	//
+	//glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
+	//
+	//m_blurHorizontal->enable();
+	//glUniform1d(m_blurHorizontal->getUniformLocation("uTex"), 0);
+	//glUniform1f(m_blurHorizontal->getUniformLocation("uPixleSize"), 1.f/ getWindowWidth());
+	//glBindTexture(GL_TEXTURE_2D, m_test1->getColorHandle(0));
+	//m_test2->enable();
+	//drawFullScreenQuad();
+	//m_test2->disable();
+	//
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//m_blurHorizontal->disable();
+	//
+	//glViewport(0, 0, getWindowWidth() , getWindowHeight() );
 
-	m_bloomHighPass->enable();
-	glUniform1d(m_bloomHighPass->getUniformLocation("uTex"), 0);
-	glUniform1f(m_bloomHighPass->getUniformLocation("uThresh"), .25f);
-	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0)); 
-
-	m_test1->enable();
+	m_mainPost->enable();
+	//glUniform1d(m_blurVertical->getUniformLocation("uTex"), 0);
+	//glUniform1f(m_blurVertical->getUniformLocation("uPixleSize"), 1.f/ getWindowWidth());
+	glBindTexture(GL_TEXTURE_2D, m_frameBuffers["Main Buffer"]->getColorHandle(0));
 	drawFullScreenQuad();
-	m_test1->disable();
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	m_bloomHighPass->disable();
-
-	glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
-
-	m_blurHorizontal->enable();
-	glUniform1d(m_blurHorizontal->getUniformLocation("uTex"), 0);
-	glUniform1f(m_blurHorizontal->getUniformLocation("uPixleSize"), 1.f/ getWindowWidth());
-	glBindTexture(GL_TEXTURE_2D, m_test1->getColorHandle(0));
-	m_test2->enable();
-	drawFullScreenQuad();
-	m_test2->disable();
-
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	m_blurHorizontal->disable();
-
-	glViewport(0, 0, getWindowWidth() , getWindowHeight() );
-	m_blurVertical->enable();
-	glUniform1d(m_blurVertical->getUniformLocation("uTex"), 0);
-	glUniform1f(m_blurVertical->getUniformLocation("uPixleSize"), 1.f/ getWindowWidth());
-	glBindTexture(GL_TEXTURE_2D, m_test2->getColorHandle(0));
-
-	
-	drawFullScreenQuad();
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	m_blurVertical->disable();
+	m_mainPost->disable();
 
 
 	
