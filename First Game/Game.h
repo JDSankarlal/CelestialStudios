@@ -116,9 +116,9 @@ public:
 		if(key == GLFW_KEY_F5) //resets the camera
 		{
 			GAME::m_modelShader->refresh();
-//			GAME::m_grayScalePost->refresh();
-			//GAME::setCameraAngle(0, { 1, 1, 1 });
-			//	GAME::setCameraPosition({0,0,0});
+			//			GAME::m_grayScalePost->refresh();
+						//GAME::setCameraAngle(0, { 1, 1, 1 });
+						//	GAME::setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
@@ -1036,11 +1036,12 @@ public:
 								/// Bullet Collisions with Train
 								for(int t = 0; t < 7; t++)
 								{
-									if(collision(bullets[a][b], mod[79 + t]))
-									{
-										GAME::removeModel(bullets[a][b]);
-										bullets[a].erase(bullets[a].begin() + b);
-									}
+									if(b < bullets[a].size())
+										if(collision(bullets[a][b], mod[79 + t]))
+										{
+											GAME::removeModel(bullets[a][b]);
+											bullets[a].erase(bullets[a].begin() + b);
+										}
 								}
 								if(mod[8])
 									if(collision(bullets[a][b], mod[8]))

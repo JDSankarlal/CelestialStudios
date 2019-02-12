@@ -113,7 +113,7 @@ public:
 
 	static Xinput& getController(int index);
 
-	static Shader *m_modelShader,*m_bloomHighPass,*m_blurHorizontal,*m_blurVertical,*m_blurrComposite,*m_mainPost;
+	static Shader *m_modelShader,*m_mainPost,*m_bloomHighPass,*m_blurHorizontal,*m_blurVertical,*m_blurrComposite;
 
 	static void drawFullScreenQuad();
 

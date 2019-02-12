@@ -10,7 +10,7 @@ Camera *GameEmGine::m_mainCamera;
 //GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera *>GameEmGine::m_cameras;
-Shader *GameEmGine::m_modelShader, *GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,*GameEmGine::m_mainPost,
+Shader *GameEmGine::m_modelShader,*GameEmGine::m_mainPost ,*GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,
 *GameEmGine::m_blurVertical, *GameEmGine::m_blurrComposite;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager *GameEmGine::m_inputManager;
@@ -84,7 +84,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	glfwSetFramebufferSizeCallback(m_window->getWindow(), changeViewport);
 
 	m_inputManager = new InputManager;
-	m_mainCamera = new Camera({(float)width,(float)height,500});
+	m_mainCamera = new Camera({(float)getWindowWidth(), (float)getWindowHeight(),500});
 
 	shaderInit();
 
@@ -94,8 +94,8 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_test1 = new FrameBuffer("Test1", 1);
 	m_test2 = new FrameBuffer("Test2", 1);
 
-	m_mainFrameBuffer->initDepthTexture(width, height);
-	m_mainFrameBuffer->initColourTexture(0, width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_mainFrameBuffer->initDepthTexture(getWindowWidth(), getWindowHeight());
+	m_mainFrameBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 
 	if(!m_mainFrameBuffer->checkFBO())
 	{
@@ -104,7 +104,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 		return;
 	}
 
-	m_test1->initColourTexture(0, width/4, height/4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	m_test1->initColourTexture(0, getWindowWidth()/4, getWindowHeight()/4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
 
 	if(!m_test1->checkFBO())
 	{
@@ -112,7 +112,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 		system("pause");
 		return;
 	}
-	m_test2->initColourTexture(0, width/4, height/4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	m_test2->initColourTexture(0, getWindowWidth()/4, getWindowHeight()/4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
 
 	if(!m_test2->checkFBO())
 	{
@@ -232,6 +232,8 @@ void GameEmGine::shaderInit()
 	m_mainPost = new Shader;
 	m_mainPost->create("Shaders/Main Buffer.vtsh", "Shaders/Main Buffer.fmsh");
 
+	m_mainPost = new Shader;
+	m_mainPost->create("Shaders/Main Buffer.vtsh", "Shaders/Main Buffer.fmsh");
 }
 
 void GameEmGine::calculateFPS()
@@ -398,10 +400,8 @@ void GameEmGine::addModel(Model* model)
 void GameEmGine::removeModel(Model* model)
 {
 	for(unsigned a = 0; a < m_models.size(); a++)
-		if(m_models[a] == model)
-		{
-			m_models.erase(m_models.begin() + a);
-		}
+		if(m_models[a] == model)		
+			m_models.erase(m_models.begin() + a);		
 }
 
 
@@ -442,7 +442,7 @@ void GameEmGine::update()
 		m_modelShader->disable();
 	}
 
-	glViewport(0, 0, getWindowWidth(), getWindowHeight());
+	//glViewport(0, 0, getWindowWidth(), getWindowHeight());
 	///~ 3D-Graphics 1 ~///
 	m_frameBuffers["Main Buffer"]->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
@@ -460,6 +460,9 @@ void GameEmGine::update()
 	//
 	//for(auto &a : tmp)
 	//	a.second->getPostProcess()();
+
+
+
 
 	//glViewport(0, 0, getWindowWidth()/4, getWindowHeight()/4);
 	//
@@ -488,17 +491,22 @@ void GameEmGine::update()
 	//m_blurHorizontal->disable();
 	//
 	//glViewport(0, 0, getWindowWidth() , getWindowHeight() );
-
+	
 	m_mainPost->enable();
 	//glUniform1d(m_blurVertical->getUniformLocation("uTex"), 0);
-	//glUniform1f(m_blurVertical->getUniformLocation("uPixleSize"), 1.f/ getWindowWidth());
+	//glUniform1f(m_blurVertical->getUniformLocation("uPixleSize"), 1.0f/ getWindowWidth());
 	glBindTexture(GL_TEXTURE_2D, m_frameBuffers["Main Buffer"]->getColorHandle(0));
+
+	
 	drawFullScreenQuad();
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	
 	m_mainPost->disable();
 
 
-	
+
+
+
 	//m_mainBuffer->moveToBackBuffer(getWindowWidth(),getWindowHeight());
 	////3D-Graphics 2
 	//m_modelBatch->render(*m_modelShader, *m_mainCamera);
@@ -538,6 +546,8 @@ void GameEmGine::changeViewport(GLFWwindow *, int w, int h)
 	//	m_mainBuffer->initDepthTexture(w, h);
 	//	m_mainBuffer->initColourTexture(w, h, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
 	//}
+	m_frameBuffers["Main Buffer"]->initDepthTexture(w, h);
+	m_frameBuffers["Main Buffer"]->initColourTexture(w, h, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
 
 	glViewport(0, 0, w, h);
 	//glFrustum(0, w, 0, h, 0, h);//eye view
