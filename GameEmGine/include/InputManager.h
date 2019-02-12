@@ -66,7 +66,15 @@ struct Xinput
 	const char* name;
 
 	//Values from -1 -> 1
-	Coord2D *Coord2D_sticks;
+	struct Sticks
+	{
+		Coord2D& operator[](XinputSticks type)
+		{
+			return stick[type];
+		}
+	private:
+		Coord2D stick[2];
+	}sticks;
 
 	//Values from  0 -> 1
 	float* triggers;
@@ -86,11 +94,10 @@ struct Xinput
 	//Stick update is taken care of in GameEmGine automatically 
 	void updateSticks(int index)
 	{
-		delete[] Coord2D_sticks;
-		float* sticks = (float*)glfwGetJoystickAxes(index, &numSticks);
-		this->Coord2D_sticks = new Coord2D[(numSticks - 2) / 2];
+		float* tmp = (float*)glfwGetJoystickAxes(index, &numSticks);
+		
 		for(int a = 0; a < numSticks - 2; a += 2)
-			this->Coord2D_sticks[a / 2] = {sticks[a],sticks[a + 1]};
+			sticks[XinputSticks(a / 2)] = {tmp[a],tmp[a + 1]};
 	}
 
 	const float getStickDeadZone()

@@ -28,6 +28,7 @@ struct Quat
 
 	static glm::mat4 quatRotationMat(float a_ang, float a_dirX, float a_dirY, float a_dirZ);
 	static glm::mat4 quatRotationMat(float a_ang, Coord3D a_dir);
+	static glm::mat4 quatRotationMat(float a_ang, glm::vec3 a_dir);
 
 	void print() const;
 

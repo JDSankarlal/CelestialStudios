@@ -801,13 +801,13 @@ public:
 							player = (Player*)mod[a];
 
 
-							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+							if(p1.sticks[RS].x || p1.sticks[RS].y)
 							{
 
-								angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-									sqrtf(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-										+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-								angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
+								angle[a] = acosf(p1.sticks[RS].x /
+									sqrtf(p1.sticks[RS].x*p1.sticks[RS].x
+										+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / (float)M_PI);
+								angle[a] += (p1.sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 								angle[a] = fmodf(angle[a], 360);
 							}
 
@@ -984,8 +984,8 @@ public:
 							}
 
 							mod[a]->getTransformer().setRotation({0,angle[a], 0});
-							mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move player
-							float speed = p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y;
+							mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move player
+							float speed = p1.sticks[LS].x*p1.sticks[LS].x + p1.sticks[LS].y*p1.sticks[LS].y;
 
 							mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 
@@ -1172,13 +1172,13 @@ public:
 				p1.numButtons;
 				p1.numSticks;
 				float angle1 = 0;
-				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+				if(p1.sticks[RS].x || p1.sticks[RS].y)
 				{
 
-					angle1 = acosf(p1.Coord2D_sticks[RS].x /
-						sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-							+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-					angle1 += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle1) * 2 : 0) + 90;//90 represents the start angle
+					angle1 = acosf(p1.sticks[RS].x /
+						sqrt(p1.sticks[RS].x*p1.sticks[RS].x
+							+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / (float)M_PI);
+					angle1 += (p1.sticks[RS].y < 0 ? (180 - angle1) * 2 : 0) + 90;//90 represents the start angle
 					angle1 = fmodf(angle1, 360);
 				}
 
@@ -1188,9 +1188,9 @@ public:
 				//move camera
 				move *= 2;
 
-				GAME::moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
-				GAME::moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
-				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+				GAME::moveCameraPositionBy({p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move});//move camera
+				GAME::moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
+				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1.sticks[RS].y ,ang *p1.sticks[RS].x ,0}, { p1.sticks[RS].y  ,p1.sticks[RS].x, 0 });
 				GAME::moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
 				GAME::moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;

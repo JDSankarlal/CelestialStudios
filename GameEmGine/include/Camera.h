@@ -47,7 +47,6 @@ protected:
 	Transformer m_transform;
 	glm::mat4 m_cameraMat;
 	glm::mat4 m_projMat;
-	glm::mat4 m_rotMat;
 	glm::mat4 m_viewMat;
 	glm::mat4 m_objMat;
 };

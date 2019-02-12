@@ -85,6 +85,11 @@ glm::mat4 Quat::quatRotationMat(float a_ang, Coord3D a_dir)
 	return quatRotationMat(a_ang, a_dir.x, a_dir.y, a_dir.z);
 }
 
+glm::mat4 Quat::quatRotationMat(float a_ang, glm::vec3 a_dir)
+{
+	return quatRotationMat(a_ang, a_dir.x, a_dir.y, a_dir.z);
+}
+
 void Quat::print() const
 {
 	printf("Quat: (");
