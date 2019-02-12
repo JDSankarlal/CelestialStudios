@@ -21,7 +21,7 @@ public:
 		mod[0]->addChild(mod[3]);
 
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
-		LightSource::setSceneAmbient({0,0,0,255});
+		LightSource::setSceneAmbient({0,0,0,255}); //255
 
 		//float windowHeight = (float)GameEmGine::getWindowHeight();
 		//float windowWidth = (float)GameEmGine::getWindowWidth();
