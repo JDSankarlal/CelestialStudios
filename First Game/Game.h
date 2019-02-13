@@ -140,30 +140,30 @@ public:
 			rightM = InputManager::getMouseCursorPosition();
 	}
 
-	void playerTypes(Player::PlayerType playerType[4])
-	{
-		//Players
-		for (int a = 0; a < 4; a++)
-		{
-			switch (playerType[a])
-			{
-			case Player::PlayerType::assault:
-				mod.push_back(new Assault(*mod.back()));
-				break;
-			case Player::PlayerType::tank:
-				mod.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
-				break;
-			case Player::PlayerType::medic:
-				mod.push_back(new Medic(*mod.back()));
-				break;
-			case Player::PlayerType::specialist:
-				mod.push_back(new Specialist(*mod.back()));
-				break;
-			}
-
-			GAME::addModel(mod.back());//0		
-		}
-	}
+	//void playerTypes(Player::PlayerType playerType[4])
+	//{
+	//	//Players
+	//	for (int a = 0; a < 4; a++)
+	//	{
+	//		switch (playerType[a])
+	//		{
+	//		case Player::PlayerType::assault:
+	//			mod.push_back(new Assault(*mod.back()));
+	//			break;
+	//		case Player::PlayerType::tank:
+	//			mod.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
+	//			break;
+	//		case Player::PlayerType::medic:
+	//			mod.push_back(new Medic(*mod.back()));
+	//			break;
+	//		case Player::PlayerType::specialist:
+	//			mod.push_back(new Specialist(*mod.back()));
+	//			break;
+	//		}
+	//
+	//		GAME::addModel(mod.back());//0		
+	//	}
+	//}
 
 	// Set game screen
 	void init()
@@ -172,7 +172,14 @@ public:
 		GAME::setCameraType(PERSPECTIVE);
 		//GAME::setFPSLimit(60);
 		/// - Load mod into Scene - ///
-
+		mod.push_back(new Assault("Models/AssaultModel/Idle/ACM1.obj.obj"));
+		GAME::addModel(mod.back());//4
+		mod.push_back(new Tank(*mod[0]));
+		GAME::addModel(mod.back());//5
+		mod.push_back(new Specialist(*mod[0]));
+		GAME::addModel(mod.back());//5
+		mod.push_back(new Medic(*mod[0]));
+		GAME::addModel(mod.back());//5
 		
 
 		static Animation walk[4], idle[4];
@@ -661,7 +668,7 @@ public:
 		/// - Set Camera  - ///
 
 		GAME::setCameraPosition({0,18.5f,-14});
-		GAME::setCameraAngle(-35, {1,0,0});
+		GAME::setCameraAngle(-65, {1,0,0});
 
 		/// not needed ///
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
