@@ -2,7 +2,7 @@
 #include <GL\glew.h>
 #include <string>
 #include <fstream>
-
+#include "Utilities.h"
 class Shader
 {
 public:
@@ -32,6 +32,10 @@ public:
 
 	GLint getAttribLocation(const std::string attributeName);
 	GLint getUniformLocation(const char *uniform);
+
+	void sendUniform(const char*uniform, Coord3D val);
+	void sendUniform(const char*uniform,   float val);
+	void sendUniform(const char*uniform,     int val);
 
 	//enables shader program for use
 	void enable();

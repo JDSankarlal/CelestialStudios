@@ -29,7 +29,7 @@ void Camera::setType(CAMERA_TYPE type)
 		m_projMat = glm::ortho(-m_size->width * 100, m_size->width * 100, -m_size->height * 100, m_size->height * 100, -m_size->depth, m_size->depth);
 		break;
 	case PERSPECTIVE:
-		m_projMat = glm::perspective(glm::radians(75.f), m_size->width / m_size->height, .001f, m_size->depth);
+		m_projMat = glm::perspective(glm::radians(75.f), m_size->width / m_size->height, 0.001f, m_size->depth);
 		break;
 	default:
 		m_projMat = glm::mat4(1);
@@ -44,7 +44,7 @@ bool Camera::update()
 
 		m_transform.setPosition(m_position->x, m_position->y, -m_position->z);
 		m_transform.setScale(m_scale);
-		m_objMat =  glm::inverse(m_transform.getRotationMatrix() *m_transform.getTranslationMatrix()) /** m_transform.getScaleMatrix()*/;
+		m_objMat = m_transform.getRotationMatrix() * glm::inverse(m_transform.getTranslationMatrix()) /** m_transform.getScaleMatrix()*/;
 
 		m_cameraMat = m_projMat * m_objMat * m_viewMat;
 		m_cameraUpdate = false;

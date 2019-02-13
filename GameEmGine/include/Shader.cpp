@@ -220,8 +220,26 @@ GLint Shader::getAttribLocation(const std::string attributeName)
 
 GLint Shader::getUniformLocation(const char * uniform)
 {
-	GLuint uni = glGetUniformLocation(m_programID, uniform);
+	GLint uni = glGetUniformLocation(m_programID, uniform);
 	return uni;
+}
+
+void Shader::sendUniform(const char* uniform, Coord3D val)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform3f(uni, val.x, val.y, val.z);
+}
+
+void Shader::sendUniform(const char* uniform, float val)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform1f(uni, val);
+}
+
+void Shader::sendUniform(const char* uniform, int val)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform1i(uni, val);
 }
 
 void Shader::enable()

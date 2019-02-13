@@ -138,7 +138,7 @@ private:
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
-	static FrameBuffer* m_mainFrameBuffer,*m_test1,*m_test2;
+	static FrameBuffer* m_mainFrameBuffer,*m_buffer1,*m_buffer2;
 	static std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;
