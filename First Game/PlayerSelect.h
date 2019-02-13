@@ -115,7 +115,7 @@ public:
 						lerpParam = 0;
 						//mod[lastOption]->getTransformer().setScale(10);
 						GameEmGine::removeModel(mod[6 + a]);
-						mod[6 + a]->setColour({ 255,255,255 });
+						//mod[6 + a]->setColour({ 255,255,255 });
 						*mod[6 + a] = *classes[option[a]];
 						mod[6+a]->getTransformer().setPosition(float(-30+a*20), 0, 0), mod[6 + a]->getTransformer().setRotation({ 0,270,180 }), mod[6 + a]->getTransformer().setScale(8);
 						GameEmGine::addModel(mod[6 + a]);
@@ -133,9 +133,13 @@ public:
 					switch (option[a])
 					{
 					case 1:
+						//TODO: MAke red colour work, make player classes load into game. Add screenshake and a "Ready!" tag and controller vibration when players press A. Make "READY!" fly in if possible?
+						//TODO: New bg and class art. Add functionality to deselect if B is pressed unless fadeout in effect. 
+						mod[6 + a]->setColour(255, 0, 0, 0);
 						fadeout = true;
+						
 						break;
-						mod[1]->setColour(255, 0, 0, 0);
+						
 						//players[a] = assault
 					case 2:
 						//players[a] = tank
