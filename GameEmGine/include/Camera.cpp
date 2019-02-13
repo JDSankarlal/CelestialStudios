@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(Size3D size, CAMERA_TYPE type):m_scale(1), m_projMat(1), m_objMat(1), m_cameraUpdate(true), m_position(new Quat{0,0,0,0})
+Camera::Camera(Size3D size, CAMERA_TYPE type):m_scale(1), m_projMat(1), m_objMat(1), m_cameraUpdate(true), m_position(new Coord3D{0,0,0})
 {
 	//m_position = new Coord3D{-.25,-.5,0};
 	init(size, type);
@@ -17,7 +17,7 @@ void Camera::init(Size3D size, CAMERA_TYPE type)
 	size.height /= h;
 	*m_size = size;
 
-	m_viewMat = glm::lookAt(glm::vec3{m_position->x,m_position->y,m_position->z+.1f }, glm::vec3{m_position->x,m_position->y,m_position->z}, glm::vec3{0.0f,1.0f,0.0f});
+	m_viewMat = glm::lookAt(glm::vec3{m_position->x,m_position->y,m_position->z + .1f}, glm::vec3{m_position->x,m_position->y,m_position->z}, glm::vec3{0.0f,1.0f,0.0f});
 	setType(type);
 }
 
@@ -42,11 +42,11 @@ bool Camera::update()
 	if(m_cameraUpdate)
 	{
 
-		m_transform.setPosition(m_position->x, m_position->y, -m_position->z);
+		m_transform.setPosition(*m_position);
 		m_transform.setScale(m_scale);
-		m_objMat = m_transform.getRotationMatrix() * glm::inverse(m_transform.getTranslationMatrix()) /** m_transform.getScaleMatrix()*/;
+		m_objMat =  glm::inverse( m_transform.getTranslationMatrix()  *m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
 
-		m_cameraMat = m_projMat * m_objMat * m_viewMat;
+		m_cameraMat = m_projMat  * m_viewMat* m_objMat;
 		m_cameraUpdate = false;
 
 		return true;
@@ -56,16 +56,14 @@ bool Camera::update()
 
 void Camera::setPosition(Coord3D position)
 {
-	*m_position = Quat{position.x, position.y, position.z};
-	
+	*m_position = Coord3D{position.x, position.y, position.z};
+
 	m_cameraUpdate = true;
 }
 
 void  Camera::movePositionBy(Coord3D position)
 {
-	*m_position += Quat{position.x,position.y,position.z};
-
-	m_cameraUpdate = true;
+	setPosition(*m_position + position);
 }
 
 void Camera::setScale(const float scale)
@@ -82,7 +80,8 @@ void Camera::setAngle(float angle, Coord3D direction)
 
 	//my rotation
 	//m_rotMat = Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
-	direction.x *= -1;
+	
+	direction.y *= -1;
 	m_transform.setRotation(direction*angle);
 
 	m_cameraUpdate = true;
@@ -97,15 +96,15 @@ void Camera::moveAngleBy(float angle, Coord3D direction)
 	//my rotation
 	//if(angle != 0)
 	//	m_rotMat *= Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
-	direction.x *= -1;
+	direction.y *=-1; 
 	m_transform.rotateBy(direction*angle);
 
 	m_cameraUpdate = true;
 }
 
-Quat& Camera::getPosition()
+Coord3D Camera::getPosition()
 {
-	return *m_position;
+	return -m_transform.getPosition();
 }
 
 float& Camera::getScale()

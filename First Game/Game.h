@@ -139,8 +139,12 @@ public:
 	// Set game screen
 	void init()
 	{
-
+		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
+		GAME::setCameraPosition({0,18.5f,-14});
+		GAME::setCameraAngle(-35, {1,0,0});
+
+
 		//GAME::setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
@@ -640,11 +644,6 @@ public:
 		LightSource::setAttenuationQuadratic(0.06f, 13);
 
 		LightSource::setSceneAmbient({255,255,255,255});
-
-		/// - Set Camera  - ///
-
-		GAME::setCameraPosition({0,18.5f,-14});
-		GAME::setCameraAngle(-35, {1,0,0});
 
 		/// not needed ///
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
@@ -1169,22 +1168,7 @@ public:
 			{
 				Xinput p1 = GAME::getController(0);
 
-				p1.numButtons;
-				p1.numSticks;
-				float angle1 = 0;
-				if(p1.sticks[RS].x || p1.sticks[RS].y)
-				{
-
-					angle1 = acosf(p1.sticks[RS].x /
-						sqrt(p1.sticks[RS].x*p1.sticks[RS].x
-							+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / (float)M_PI);
-					angle1 += (p1.sticks[RS].y < 0 ? (180 - angle1) * 2 : 0) + 90;//90 represents the start angle
-					angle1 = fmodf(angle1, 360);
-				}
-
-				if(Xinput::buttonPressed(p1.buttons.A))
-					printf("%d\n", p1.buttons.A);
-
+				
 				//move camera
 				move *= 2;
 

@@ -148,6 +148,11 @@ Quat Quat::operator-(Quat a_quat) const
 	return q1;
 }
 
+Quat Quat::operator-() const
+{
+	return Quat(-w,-x,-y,-z);
+}
+
 void Quat::operator-=(Quat a_quat) const
 {
 	for(int a = 0; a < 4; a++)

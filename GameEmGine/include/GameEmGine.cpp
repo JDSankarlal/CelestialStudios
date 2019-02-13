@@ -457,7 +457,7 @@ void GameEmGine::update()
 	//
 	//for(auto &a : tmp)
 	//	a.second->getPostProcess()();
-	m_mainFrameBuffer->moveToBackBuffer(getWindowWidth(), getWindowHeight());
+	//m_mainFrameBuffer->moveToBackBuffer(getWindowWidth(), getWindowHeight());
 
 
 

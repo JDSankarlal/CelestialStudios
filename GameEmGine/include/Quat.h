@@ -37,6 +37,7 @@ struct Quat
 	Quat operator+(Quat a_quat)const;
 	void operator+=(Quat a_quat)const;
 	Quat operator-(Quat a_quat)const;
+	Quat operator-() const;
 	void operator-=(Quat a_quat)const;
 private:
 	float w;
