@@ -646,8 +646,8 @@ public:
 
 		/// - Set Camera  - ///
 
-		GAME::setCameraPosition({0,18.5f,-14});
-		GAME::setCameraAngle(-65, {1,0,0});
+		GAME::setCameraPosition({0,15.5f,-17.5});
+		GAME::setCameraAngle(-25, {1,0,0});
 
 		/// not needed ///
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
