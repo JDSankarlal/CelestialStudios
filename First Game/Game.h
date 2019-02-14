@@ -193,7 +193,7 @@ public:
 		GAME::addModel(mod.back()); //7
 
 		//Boss
-		mod.push_back(new Boss("Models/BOSS/robotTEST2.obj"));
+		mod.push_back(new Boss("Models/BOSS/robotBOI.obj"));
 		GAME::addModel(mod.back()); //8
 		//mod[8]->enableBoundingBox(true);
 
