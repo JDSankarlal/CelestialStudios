@@ -1,7 +1,7 @@
 #include "Transformer.h"
 
 
-Transformer::Transformer() :m_translate(1), m_rotate(1), m_scale(1),m_scale2(1)
+Transformer::Transformer():m_translate(1), m_rotate(1), m_scale(1), m_scaleData(1)
 {}
 
 
@@ -11,83 +11,87 @@ Transformer::~Transformer()
 void Transformer::reset()
 {
 	m_translate = m_rotate = m_scale = glm::mat4(1);
+	m_posData = m_rotData = m_scaleData = {0,0,0};
 }
 
-void Transformer::setRotation(Coord3D angles, Coord3D forward)
+void Transformer::setRotation(Coord3D angles)
 {
-	forward.normalize();
-	glm::vec3 pos;
-	glm::vec3 tmp(angles.x, angles.y, angles.z);
-	glm::mat4 thing = glm::lookAt(pos = glm::vec3(m_pos.x, m_pos.y, m_pos.z), pos + glm::vec3(forward.x, forward.y, forward.z), {0,1,0});
-	tmp = thing * glm::vec4(tmp,1.f);
-	
+	//glm::vec3 tmp(angles.x, angles.y, angles.z);
+	//tmp = glm::vec4(tmp, 1.0f);
+
+	//m_forward = {cosf(glm::radians(angles.x)),cosf(glm::radians(angles.y)),sinf(glm::radians(angles.x))};
+	//m_up = {cosf(glm::radians(angles.y)),sinf(glm::radians(angles.y)),cosf(glm::radians(angles.z))};
+	//m_right = {sinf(glm::radians(angles.x)),cosf(glm::radians(angles.z)),cosf(glm::radians(angles.z))};
+
+
+
+	m_updatedRot = true;
+	m_rotate = glm::mat4(1);
+	if(m_forward.length())
+	{
+		m_rotate *= Quat::quatRotationMat(glm::radians(angles.z),m_forward);
+		m_rotData.z = angles.z;
+	}
+	if(m_up.length())
+	{
+		m_rotate *= Quat::quatRotationMat(glm::radians(angles.y), m_up);
+		m_rotData.y = angles.y;
+	}
+	if(m_right.length())
+	{
+		m_rotate *= Quat::quatRotationMat(glm::radians(angles.x), m_right);
+		m_rotData.x = angles.x;
+	}
+
+
+}
+
+void Transformer::rotateBy(Coord3D angles)
+{
 	m_updatedRot = true;
 
-	if(angles.z)
-	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.z), 0, 0, 1);
-		m_angles.z = tmp.z;
-	}
-	if(angles.y)
-	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.y), 0, 1, 0);
-		m_angles.y = tmp.y;
-	}
-	if(angles.x)
-	{
-		m_rotate = Quat::quatRotationMat(glm::radians(angles.x), 1, 0, 0);
-		m_angles.x = tmp.x;
-	}
+	//m_forward = {cosf(glm::radians(angles.x)),cosf(glm::radians(angles.y)),sinf(glm::radians(angles.x))};
+	//m_up = {sinf(glm::radians(angles.y)),sinf(glm::radians(angles.y)),cosf(glm::radians(angles.z))};
+	//m_right = {sinf(glm::radians(angles.x)),cosf(glm::radians(angles.z)),cosf(glm::radians(angles.z))};
 
-	
-}
 
-void Transformer::rotateBy(Coord3D angles, Coord3D forward)
-{
-	m_updatedRot = true;
-	
 	glm::vec3 tmp(angles.x, angles.y, angles.z);
-	forward.normalize();
-	glm::vec3 pos;
-	glm::mat4 thing = glm::lookAt(pos = glm::vec3(m_pos.x, m_pos.y, m_pos.z), pos + glm::vec3(forward.x, forward.y, forward.z), { 0,1,0 });
-	tmp = thing * glm::vec4(tmp, 1.f);
-	
-	m_angles += {tmp.x,tmp.y,tmp.z};
+	tmp = glm::vec4(tmp, 1.f);
 
-	m_rotate = Quat::quatRotationMat(glm::radians(tmp.x), 1, 0, 0);
-	m_rotate *= Quat::quatRotationMat(glm::radians(tmp.y), 0, 1, 0);
-	m_rotate *= Quat::quatRotationMat(glm::radians(tmp.z), 0, 0, 1);
+	m_rotData += {tmp.x, tmp.y, tmp.z};
+
+	setRotation(m_rotData);
+	//m_rotate = Quat::quatRotationMat(glm::radians(tmp.x), 1, 0, 0);
+	//m_rotate *= Quat::quatRotationMat(glm::radians(tmp.y), 0, 1, 0);
+	//m_rotate *= Quat::quatRotationMat(glm::radians(tmp.z), 0, 0, 1);
 }
 
-void Transformer::translateBy(float x, float y, float z, Coord3D forward)
+void Transformer::translateBy(float x, float y, float z)
 {
-	forward;
-	setPosition(m_pos + Coord3D{x,y,z});
+	setPosition(m_posData + Coord3D{x,y,z});
 }
 
-void Transformer::translateBy(Coord3D pos, Coord3D forward)
+void Transformer::translateBy(Coord3D pos)
 {
-	forward;
-	setPosition(m_pos + pos);
+	setPosition(m_posData + pos);
 }
 
-void Transformer::setPosition(float x, float y, float z, Coord3D forward)
+void Transformer::setPosition(float x, float y, float z)
 {
-	forward;
-	setPosition(Coord3D{ x,y,z });
+	setPosition(Coord3D{x,y,z});
 }
 
-void Transformer::setPosition(Coord3D pos, Coord3D forward)
+void Transformer::setPosition(Coord3D pos)
 {
-	forward;
 	m_updatedTrans = true;
 	int w, h;
 	glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
 	float aspect = (float)w / h;
-	m_pos = pos * aspect;
-	m_translate = glm::translate(glm::mat4(1), glm::vec3(m_pos.x, m_pos.y, -m_pos.z));
+	m_posData = pos * aspect;
 
-	m_pos = m_pos / aspect;
+	m_translate = glm::translate(glm::mat4(1), (m_forward * -m_posData.z) + (m_up * m_posData.y) + (m_right * m_posData.x));
+
+	m_posData = m_posData / aspect;
 }
 
 void Transformer::setScale(float scale)
@@ -110,7 +114,7 @@ void Transformer::setScale(Coord3D _Scale)
 
 void Transformer::setScale(float x, float y, float z)
 {
-	m_scale2 = Coord3D(x, y, z);
+	m_scaleData = Coord3D(x, y, z);
 	m_updatedScale = true;
 	m_scale = glm::scale(glm::mat4(1.f), glm::vec3(x, y, z));
 }
@@ -118,23 +122,23 @@ void Transformer::setScale(float x, float y, float z)
 void Transformer::scaleBy(float x, float y, float z)
 {
 	m_updatedScale = true;
-	m_scale2 += Coord3D(x, y, z);
+	m_scaleData += Coord3D(x, y, z);
 	m_scale = glm::scale(m_scale, glm::vec3(x, y, z));
 }
 
 Coord3D Transformer::getPosition()
 {
-	return m_pos;
+	return m_posData;
 }
 
 Coord3D Transformer::getRotation()
 {
-	return m_angles;
+	return m_rotData;
 }
 
 Coord3D Transformer::getScale()
 {
-	return m_scale2;
+	return m_scaleData;
 }
 
 glm::mat4 & Transformer::getRotationMatrix()

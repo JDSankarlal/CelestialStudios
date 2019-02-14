@@ -1,5 +1,6 @@
 #pragma once
 #include <GL/glew.h>
+#include <glm/common.hpp>
 #include <string>
 #include <cstdio>
 
@@ -7,6 +8,16 @@ struct Coord2D
 {
 	float x = 0, y = 0;
 
+	glm::vec2 toVec2()
+	{
+		return glm::vec2(x, y);
+	}
+	Coord2D()=default;
+	
+	Coord2D(float a_x,float a_y)
+	{
+		x = a_x, y = a_y;
+	}
 	float distance()
 	{
 		return sqrtf(x * x + y * y);
@@ -26,7 +37,7 @@ struct Coord2D
 	float& operator[](int index)
 	{
 		float *error = nullptr;
-		switch (index)
+		switch(index)
 		{
 		case 0:
 			return static_cast<float&>(x);
@@ -38,19 +49,19 @@ struct Coord2D
 
 	Coord2D operator+(Coord2D coord)
 	{
-		return { x + coord.x, y + coord.y };
+		return {x + coord.x, y + coord.y};
 	}
 	Coord2D operator-(Coord2D coord)
 	{
-		return { x - coord.x, y - coord.y };
+		return {x - coord.x, y - coord.y};
 	}
 	Coord2D operator/(Coord2D coord)
 	{
-		return { x / coord.x,y / coord.y };
+		return {x / coord.x,y / coord.y};
 	}
 	Coord2D operator/(float coord)
 	{
-		return { x / coord,y / coord };
+		return {x / coord,y / coord};
 	}
 	void operator-=(Coord2D coord)
 	{
@@ -79,10 +90,15 @@ struct Coord3D
 	Coord3D()
 	{}
 
+	glm::vec3 toVec3()
+	{
+		return glm::vec3(x, y, z);
+	}
+	
 	static float distance(Coord3D v1, Coord3D v2)
 	{
-		Coord3D v3 = v2 - v1;
-		return v3.distance();
+		v2 = v2 - v1;
+		return v2.distance();
 	}
 
 	float distance()
@@ -100,7 +116,7 @@ struct Coord3D
 		x = coord.x;
 		y = coord.y;
 	}
-	
+
 	Coord3D(float scale)
 	{
 		this->x = scale;
@@ -151,7 +167,7 @@ struct Coord3D
 	float& operator[] (int index)
 	{
 		float* error = nullptr;
-		switch (index)
+		switch(index)
 		{
 		case 0:
 			return const_cast<float&>(x);
@@ -165,32 +181,37 @@ struct Coord3D
 
 	Coord3D operator+(Coord3D coord)
 	{
-		return { x + coord.x, y + coord.y, z + coord.z };
+		return {x + coord.x, y + coord.y, z + coord.z};
 	}
 
 	Coord3D operator-(Coord3D coord)
 	{
-		return { x - coord.x, y - coord.y, z - coord.z };
+		return {x - coord.x, y - coord.y, z - coord.z};
 	}
 
 	friend Coord3D operator*(float scaler, Coord3D coord)
 	{
-		return { scaler * coord.x, scaler * coord.y, scaler * coord.z };
+		return {scaler * coord.x, scaler * coord.y, scaler * coord.z};
 	}
 
 	Coord3D operator*(Coord3D coord)
 	{
-		return { x * coord.x, y * coord.y, z * coord.z };
+		return {x * coord.x, y * coord.y, z * coord.z};
+	}
+
+	Coord3D operator*(float coord)
+	{
+		return {x * coord, y * coord, z * coord};
 	}
 
 	Coord3D operator/(Coord3D coord)
 	{
-		return { x / coord.x,y / coord.y,z / coord.z };
+		return {x / coord.x,y / coord.y,z / coord.z};
 	}
 
 	Coord3D operator/(float coord)
 	{
-		return { x / coord,y / coord,z / coord };
+		return {x / coord,y / coord,z / coord};
 	}
 
 	Coord3D& operator-() {
@@ -198,7 +219,7 @@ struct Coord3D
 		tmp = *this*-1;
 		return tmp;
 	}
-	   
+
 	void operator-=(Coord3D coord)
 	{
 		x -= coord.x;
@@ -234,7 +255,7 @@ struct Size2D
 	float& operator[](int index)
 	{
 		float *error = nullptr;
-		switch (index)
+		switch(index)
 		{
 		case 0:
 			return static_cast<float&>(width);
@@ -293,7 +314,7 @@ struct Size3D
 	float& operator[] (int index)
 	{
 		float* error = nullptr;
-		switch (index)
+		switch(index)
 		{
 		case 0:
 			return const_cast<float&>(width);
@@ -316,10 +337,10 @@ struct ColourRGBA
 {
 	GLubyte colorR, colorG, colorB, colorA;
 
-	ColourRGBA() :colorR((GLubyte)255), colorG((GLubyte)255), colorB((GLubyte)255), colorA((GLubyte)255)
+	ColourRGBA():colorR((GLubyte)255), colorG((GLubyte)255), colorB((GLubyte)255), colorA((GLubyte)255)
 	{}
 
-	ColourRGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a = (GLubyte)255) :colorR(r), colorG(g), colorB(b), colorA(a)
+	ColourRGBA(GLubyte r, GLubyte g, GLubyte b, GLubyte a = (GLubyte)255):colorR(r), colorG(g), colorB(b), colorA(a)
 	{}
 
 	void set(ColourRGBA rgba)
@@ -378,7 +399,7 @@ struct ColourRGBA
 			GLubyte(colorR * (float)rgba.colorR / 255),
 			GLubyte(colorG * (float)rgba.colorG / 255),
 			GLubyte(colorB * (float)rgba.colorB / 255),
-			GLubyte(colorA * (float)rgba.colorA / 255) };
+			GLubyte(colorA * (float)rgba.colorA / 255)};
 	}
 
 	void operator*=(ColourRGBA rgba)
@@ -389,7 +410,7 @@ struct ColourRGBA
 	GLubyte& operator[](int index)
 	{
 		GLubyte *error = nullptr;
-		switch (index)
+		switch(index)
 		{
 		case 0:
 			return static_cast<GLubyte&>(colorR);
@@ -422,7 +443,7 @@ struct UV
 
 	float& operator[](int index)
 	{
-		switch (index)
+		switch(index)
 		{
 		case 0:
 			return static_cast<float&>(uv_u);
@@ -438,7 +459,7 @@ struct UV
 
 struct VboInfo2D
 {
-	VboInfo2D(Coord2D c = { 0,0 }, Size2D s = { 0,0 })
+	VboInfo2D(Coord2D c = {0,0}, Size2D s = {0,0})
 	{
 		position = c;
 		size = s;

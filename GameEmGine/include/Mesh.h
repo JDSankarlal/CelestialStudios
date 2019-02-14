@@ -25,7 +25,7 @@ public:
 
 	void editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts1, std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts2);
 
-	void render(Shader & shader, std::unordered_map<std::string, FrameBuffer*>& buffers);
+	void render(Shader & shader);
 
 	void unload();
 

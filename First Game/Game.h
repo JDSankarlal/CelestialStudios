@@ -125,9 +125,9 @@ public:
 		if(key == GLFW_KEY_F5) //resets the camera
 		{
 			GAME::m_modelShader->refresh();
-			GAME::m_grayScalePost->refresh();
-			//GAME::setCameraAngle(0, { 1, 1, 1 });
-			//	GAME::setCameraPosition({0,0,0});
+			//			GAME::m_grayScalePost->refresh();
+						//GAME::setCameraAngle(0, { 1, 1, 1 });
+						//	GAME::setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
@@ -153,8 +153,12 @@ public:
 	// Set game screen
 	void init()
 	{
-
+		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
+		GAME::setCameraPosition({0,18.5f,-14});
+		GAME::setCameraAngle(-35, {1,0,0});
+
+
 		//GAME::setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
@@ -195,7 +199,7 @@ public:
 		GAME::addModel(mod.back()); //7
 
 		//Boss
-		mod.push_back(new Boss("Models/BOSS/robotTEST2.obj"));
+		mod.push_back(new Boss("Models/BOSS/robotBOI.obj"));
 		GAME::addModel(mod.back()); //8
 		//mod[8]->enableBoundingBox(true);
 
@@ -561,10 +565,7 @@ public:
 		mod[77]->setColour({255,255,0,150});
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
 
-		//Minions
-		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
-		GAME::addModel(mod[78]);
-		mod[78]->setToRender(false);
+		
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -585,7 +586,6 @@ public:
 		mod[2]->addChild(mod[76]);
 		mod[3]->addChild(mod[77]);
 
-		mod[0]->addChild(mod[86]);
 		LightSource::setLightAmount(14);
 		for(int a = 0; a < 6; a++)
 		{
@@ -646,8 +646,8 @@ public:
 
 		/// - Set Camera  - ///
 
-		GAME::setCameraPosition({0,18.5f,-14});
-		GAME::setCameraAngle(-65, {1,0,0});
+		GAME::setCameraPosition({0,15.5f,-17.5});
+		GAME::setCameraAngle(-25, {1,0,0});
 
 		/// not needed ///
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
@@ -817,13 +817,13 @@ public:
 							players = (Player*)mod[a];
 
 
-							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+							if(p1.sticks[RS].x || p1.sticks[RS].y)
 							{
 
-								angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-									sqrtf(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-										+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-								angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
+								angle[a] = acosf(p1.sticks[RS].x /
+									sqrtf(p1.sticks[RS].x*p1.sticks[RS].x
+										+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / (float)M_PI);
+								angle[a] += (p1.sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 								angle[a] = fmodf(angle[a], 360);
 							}
 
@@ -991,8 +991,8 @@ public:
 							}
 
 							mod[a]->getTransformer().setRotation({0,angle[a], 0});
-							mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move players
-							float speed = p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y;
+							mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move players
+							float speed = p1.sticks[LS].x*p1.sticks[LS].x + p1.sticks[LS].y*p1.sticks[LS].y;
 
 
 							if(!collision(mod[a], mod[59]))
@@ -1018,7 +1018,11 @@ public:
 							if(dead[a] == true)
 							{
 								GAME::removeModel(mod[a + 64]);
-								GAME::removeModel(mod[a + 68]);
+								GAME::removeModel(mod[a + 68]); 
+
+								GAME::removeModel(mod[a + 26]); 
+								GAME::removeModel(mod[a + 54]); 
+								GAME::removeModel(mod[a + 74]);
 							}
 
 							//Update each players's Bullet Circle
@@ -1250,12 +1254,6 @@ public:
 		//Boss health bar calculation
 		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f * (CandyMan->getHealth() / 1000.0f));
 
-		GAME::m_grayScalePost->enable();
-		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
-		GAME::m_grayScalePost->disable();
-
-		deathCounter += .007f;
-		deathCounter = deathCounter <= 1 ? deathCounter : 1;
 		if(youDead)
 		{
 			//TODO: do something when the party is dead, game over screen with "Main Menu" "Quit" options
@@ -1273,32 +1271,25 @@ public:
 			if(GAME::isControllerConnected(0))
 			{
 				Xinput p1 = GAME::getController(0);
-
-				p1.numButtons;
-				p1.numSticks;
-				float angle1 = 0;
-				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
-				{
-					angle1 = acosf(p1.Coord2D_sticks[RS].x /
-						sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-							+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-					angle1 += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle1) * 2 : 0) + 90;//90 represents the start angle
-					angle1 = fmodf(angle1, 360);
-				}
-
-				if(Xinput::buttonPressed(p1.buttons.A))
-					printf("%d\n", p1.buttons.A);
-
+				deathCounter = 0;
+				
 				//move camera
 				move *= 2;
 
-				GAME::moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
-				GAME::moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
-				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+				GAME::moveCameraPositionBy({p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move});//move camera
+				GAME::moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
+				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1.sticks[RS].y ,ang *p1.sticks[RS].x ,0}, { p1.sticks[RS].y  ,p1.sticks[RS].x, 0 });
 				GAME::moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
 				GAME::moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;
 			}
+
+		GAME::m_grayScalePost->enable();
+		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+		GAME::m_grayScalePost->disable();
+
+		deathCounter += .007f;
+		deathCounter = deathCounter <= 1 ? deathCounter : 1;
 	}
 
 private:
