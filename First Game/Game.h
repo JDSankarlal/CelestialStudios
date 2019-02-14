@@ -155,8 +155,8 @@ public:
 	{
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
-		GAME::setCameraPosition({0,18.5f,-14});
-		GAME::setCameraAngle(-35, {1,0,0});
+		GAME::setCameraPosition({0,15.5f,-5});
+		GAME::setCameraAngle(-45, {1,0,0});
 
 
 		//GAME::setFPSLimit(60);
@@ -548,6 +548,8 @@ public:
 		mod[46]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 		mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 
+		//Bullet Size
+		mod[48]->getTransformer().setScale(50.f);
 		//Pizza Sign
 		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-10.25f, 5.4f, 22.3f);
 
