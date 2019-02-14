@@ -4,6 +4,7 @@
 
 Assault::Assault():Player()
 {
+	type = assault;
 	setHealth(100);
 }
 

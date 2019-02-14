@@ -4,6 +4,7 @@
 
 Medic::Medic():Player()
 {
+	type = medic;
 	setHealth(150);
 }
 

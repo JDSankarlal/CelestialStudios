@@ -1,5 +1,7 @@
 #pragma once
 #include <Model.h>
+
+
 class Player : public Model
 {
 public:
@@ -14,6 +16,13 @@ public:
 	virtual float getTimeSinceLastMissile();
 	virtual void setTimeSinceLastMissile(float v);
 
+	enum PlayerType
+	{
+		assault,
+		tank,
+		medic,
+		specialist
+	} type;
 private:
 	int health = 100;
 	int bulletCount = 30;
