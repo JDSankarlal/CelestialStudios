@@ -50,3 +50,8 @@ void Player::setTimeSinceLastMissile(float v)
 {
 	timeSinceLastMissile = v;
 }
+
+float Player::getInitialHealth()
+{
+	return initialHealth;
+}
