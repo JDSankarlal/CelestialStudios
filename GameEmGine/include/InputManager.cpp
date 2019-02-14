@@ -157,10 +157,12 @@ void InputManager::controllerUpdate()
 
 			//Stick Dead Zone application
 			for(int b = 0; b < m_controllers[a].numSticks; b++)
-				for(int c = 0; c < 2; c++)
-					if((abs(m_controllers[a].Coord2D_sticks[b][c])) <= m_controllers[a].getStickDeadZone())
-						m_controllers[a].Coord2D_sticks[b][c] = 0;
-
+			{
+				Xinput::Sticks* tmp2 = &m_controllers[a].sticks;
+				XinputSticks val = XinputSticks(b);
+				if(sqrt(tmp2[0][val].x*tmp2[0][val].x + tmp2[0][val].y*tmp2[0][val].y) <= m_controllers[a].getStickDeadZone())
+					(*tmp2)[val] = {0,0};
+			}
 			//modify trigger values
 			m_controllers[a].triggers[0] = (m_controllers[a].triggers[0] + 1) * .5f;//triggers have values from 0 -> 1
 			m_controllers[a].triggers[1] = (m_controllers[a].triggers[1] + 1) * .5f;//triggers have values from 0 -> 1

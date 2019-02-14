@@ -32,8 +32,8 @@ public:
 
 private:
 	GLFWwindow * m_window;
-	GLFWmonitor* _monitor;
-	WindowInfo *_info=new WindowInfo;
+	GLFWmonitor* m_monitor;
+	WindowInfo *m_info=new WindowInfo;
 	bool _full;		
 
 };

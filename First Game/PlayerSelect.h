@@ -105,12 +105,12 @@ public:
 		{
 			if(GameEmGine::isControllerConnected(a))
 			{
-				if(abs(GameEmGine::getController(a).Coord2D_sticks[LS].x) >= 0.8)
+				if(abs(GameEmGine::getController(a).sticks[LS].x) >= 0.8)
 				{
 					if(!menuMoved[a])
 					{
 
-						option[a] += GameEmGine::getController(a).Coord2D_sticks[LS].x < 0 ? 1 : -1;
+						option[a] += GameEmGine::getController(a).sticks[LS].x < 0 ? 1 : -1;
 
 						option[a] = option[a] > 3 ? 0 : option[a] < 0 ? 3 : option[a];
 
@@ -127,7 +127,7 @@ public:
 					}
 				}
 
-				if(abs(GameEmGine::getController(a).Coord2D_sticks[LS].x) < .3f)
+				if(abs(GameEmGine::getController(a).sticks[LS].x) < .3f)
 					menuMoved[a] = false;
 
 				static bool fixthisnow = true;

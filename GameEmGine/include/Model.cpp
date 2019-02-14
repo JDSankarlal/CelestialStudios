@@ -60,7 +60,6 @@ void Model::render(Shader& shader, Camera& cam)
 	{
 		//render the mesh
 		m_mesh.render(shader);
-		shader.disable();
 
 		if(m_enableBB)
 			drawBoundingBox();
@@ -70,6 +69,7 @@ void Model::render(Shader& shader, Camera& cam)
 		for(auto&a : m_children)
 			a->render(shader, cam);
 	}
+		shader.disable();
 }
 
 void Model::drawBoundingBox()

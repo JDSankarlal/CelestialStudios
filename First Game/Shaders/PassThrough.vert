@@ -30,7 +30,7 @@ void main()
 
     norm =  mat3(uView) * mat3(uModel) * normal;
     
-    vec4 viewSpace = uView * uModel * vec4(vert, 1.0f); 
+    vec4 viewSpace =  uView * uModel * vec4(vert, 1.0f); 
     
     gl_Position =  uProj * viewSpace;
     
