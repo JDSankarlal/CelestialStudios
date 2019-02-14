@@ -15,6 +15,7 @@ public:
 	virtual void setBulletCount(int v);
 	virtual float getTimeSinceLastMissile();
 	virtual void setTimeSinceLastMissile(float v);
+	float getInitialHealth();
 
 	enum PlayerType
 	{
@@ -23,6 +24,8 @@ public:
 		medic,
 		specialist
 	} type;
+protected:
+	float initialHealth = 100.0f;
 private:
 	int health = 100;
 	int bulletCount = 30;
