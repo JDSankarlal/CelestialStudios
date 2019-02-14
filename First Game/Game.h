@@ -1144,9 +1144,9 @@ public:
 				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
 
-		//GAME::m_grayScalePost->enable();
-		//glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
-		//GAME::m_grayScalePost->disable();
+		GAME::m_grayScalePost->enable();
+		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+		GAME::m_grayScalePost->disable();
 
 		deathCounter += .007f;
 		deathCounter = deathCounter <= 1 ? deathCounter : 1;

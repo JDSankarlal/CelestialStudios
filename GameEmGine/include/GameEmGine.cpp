@@ -10,14 +10,14 @@ Camera* GameEmGine::m_mainCamera;
 //GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera*>GameEmGine::m_cameras;
-Shader* GameEmGine::m_modelShader, * GameEmGine::m_mainPost, * GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
+Shader* GameEmGine::m_modelShader, * GameEmGine::m_grayScalePost, * GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
 * GameEmGine::m_blurVertical, * GameEmGine::m_blurrComposite;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager* GameEmGine::m_inputManager;
 WindowCreator* GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2;
+FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2,*GameEmGine::m_greyscaleBuffer;
 std::unordered_map<std::string, FrameBuffer*> GameEmGine::m_frameBuffers;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
@@ -91,6 +91,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	printf("created the window\n");
 
 	m_mainFrameBuffer = new FrameBuffer("Main Buffer", 1);
+	m_greyscaleBuffer = new FrameBuffer("Greyscale", 1);
 	m_buffer1 = new FrameBuffer("Test1", 1);
 	m_buffer2 = new FrameBuffer("Test2", 1);
 
@@ -98,6 +99,14 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_mainFrameBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 
 	if(!m_mainFrameBuffer->checkFBO())
+	{
+		puts("FBO failed Creation");
+		system("pause");
+		return;
+	}
+
+	m_greyscaleBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	if(!m_greyscaleBuffer->checkFBO())
 	{
 		puts("FBO failed Creation");
 		system("pause");
@@ -229,8 +238,8 @@ void GameEmGine::shaderInit()
 	m_blurrComposite->create("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
 
 
-	m_mainPost = new Shader;
-	m_mainPost->create("Shaders/Main Buffer.vtsh", "Shaders/Main Buffer.fmsh");
+	m_grayScalePost = new Shader;
+	m_grayScalePost->create("Shaders/Main Buffer.vtsh", "Shaders/GrayscalePost.fmsh");
 }
 
 void GameEmGine::calculateFPS()
@@ -503,7 +512,9 @@ void GameEmGine::update()
 	FrameBuffer::disable();
 
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
-
+	
+	
+	m_greyscaleBuffer->enable();
 	m_blurrComposite->enable();
 	glActiveTexture(GL_TEXTURE0);
 	m_blurrComposite->sendUniform("uScene", 0);
@@ -514,12 +525,19 @@ void GameEmGine::update()
 	glBindTexture(GL_TEXTURE_2D, m_buffer1->getColorHandle(0));
 	drawFullScreenQuad();
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	m_blurrComposite->disable();
+	m_greyscaleBuffer->disable();
 
+	m_grayScalePost->enable();
+	m_grayScalePost->sendUniform("uTex", 0);
+	glBindTexture(GL_TEXTURE_2D, m_greyscaleBuffer->getColorHandle(0));
+	drawFullScreenQuad();
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	m_grayScalePost->disable();
 
 	///~ will never be used but I'll keep it here anyways ~///
 	////2D-Graphics 
