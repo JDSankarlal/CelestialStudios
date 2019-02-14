@@ -1018,7 +1018,11 @@ public:
 							if(dead[a] == true)
 							{
 								GAME::removeModel(mod[a + 64]);
-								GAME::removeModel(mod[a + 68]);
+								GAME::removeModel(mod[a + 68]); 
+
+								GAME::removeModel(mod[a + 26]); 
+								GAME::removeModel(mod[a + 54]); 
+								GAME::removeModel(mod[a + 74]);
 							}
 
 							//Update each players's Bullet Circle
