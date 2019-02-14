@@ -565,10 +565,7 @@ public:
 		mod[77]->setColour({255,255,0,150});
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
 
-		//Minions
-		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
-		GAME::addModel(mod[78]);
-		mod[78]->setToRender(false);
+		
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -589,7 +586,6 @@ public:
 		mod[2]->addChild(mod[76]);
 		mod[3]->addChild(mod[77]);
 
-		mod[0]->addChild(mod[86]);
 		LightSource::setLightAmount(14);
 		for(int a = 0; a < 6; a++)
 		{
