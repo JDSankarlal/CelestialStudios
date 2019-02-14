@@ -2,8 +2,20 @@
 
 
 
-Specialist::Specialist()
+Specialist::Specialist():Player()
 {
+	type = specialist;
+	setHealth(75);
+}
+
+Specialist::Specialist(Model & model) : Player(model)
+{
+	setHealth(75);
+}
+
+Specialist::Specialist(const char * path) : Player(path)
+{
+	setHealth(75);
 }
 
 

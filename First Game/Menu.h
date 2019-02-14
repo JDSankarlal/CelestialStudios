@@ -1,6 +1,7 @@
 #pragma once
 #include <GameEmGine.h>
 #include "Game.h"
+#include "PlayerSelect.h"
 class Menu:public Scene
 {
 public:
@@ -21,7 +22,7 @@ public:
 		mod[0]->addChild(mod[3]);
 
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
-		LightSource::setSceneAmbient({0,0,0,255});
+		LightSource::setSceneAmbient({0,0,0,255}); //255
 
 		//float windowHeight = (float)GameEmGine::getWindowHeight();
 		//float windowWidth = (float)GameEmGine::getWindowWidth();
@@ -113,7 +114,7 @@ public:
 			}
 
 		mod[option]->getTransformer().setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
-		mod[option]->setColour(lerp(ColourRGBA{255,255,255,255}, ColourRGBA{255,0,0,255}, lerpParam));
+		mod[option]->setColour(lerp(ColourRGBA{255,255,255}, ColourRGBA{0,255,255}, lerpParam));
 		lerpParam += .1f;
 
 		if(lerpParam >= 1)
