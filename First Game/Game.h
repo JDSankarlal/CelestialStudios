@@ -1250,12 +1250,6 @@ public:
 		//Boss health bar calculation
 		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f * (CandyMan->getHealth() / 1000.0f));
 
-		GAME::m_grayScalePost->enable();
-		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
-		GAME::m_grayScalePost->disable();
-
-		deathCounter += .007f;
-		deathCounter = deathCounter <= 1 ? deathCounter : 1;
 		if(youDead)
 		{
 			//TODO: do something when the party is dead, game over screen with "Main Menu" "Quit" options
@@ -1273,7 +1267,7 @@ public:
 			if(GAME::isControllerConnected(0))
 			{
 				Xinput p1 = GAME::getController(0);
-
+				deathCounter = 0;
 				
 				//move camera
 				move *= 2;
@@ -1285,6 +1279,13 @@ public:
 				GAME::moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;
 			}
+
+		GAME::m_grayScalePost->enable();
+		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+		GAME::m_grayScalePost->disable();
+
+		deathCounter += .007f;
+		deathCounter = deathCounter <= 1 ? deathCounter : 1;
 	}
 
 private:
