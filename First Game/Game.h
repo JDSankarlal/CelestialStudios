@@ -995,8 +995,8 @@ public:
 							}
 
 							mod[a]->getTransformer().setRotation({0,angle[a], 0});
-							mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move players
-							float speed = p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y;
+							mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move players
+							float speed = p1.sticks[LS].x*p1.sticks[LS].x + p1.sticks[LS].y*p1.sticks[LS].y;
 
 
 							if(!collision(mod[a], mod[59]))
