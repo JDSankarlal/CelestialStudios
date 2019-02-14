@@ -19,7 +19,7 @@ public:
 	Model();
 	Model(Model & model);
 	Model(const char* path);
-	~Model();
+	virtual ~Model();
 
 	void render(Shader & shader, Camera & cam);
 
