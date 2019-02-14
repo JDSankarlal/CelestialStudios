@@ -8,5 +8,8 @@ public:
 	Assault(Model & model);
 	Assault(const char * path);
 	~Assault();
+
+private:
+
 };
 

@@ -6,6 +6,10 @@
 #include "Player.h"
 #include "Boss.h"
 #include "Minion.h"
+#include "Assault.h"
+#include "Specialist.h"
+#include "Medic.h"
+#include "Tank.h"
 
 typedef EmGineAudioPlayer AudioPlayer;
 typedef GameEmGine GAME;
@@ -149,13 +153,13 @@ public:
 		/// - Load mod into Scene - ///
 
 		//Players
-		mod.push_back(new Player("Models/AssaultModel/Idle/ACM1.obj"));
+		mod.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
 		GAME::addModel(mod.back());//0
-		mod.push_back(new Player(*mod.back()));
+		mod.push_back(new Specialist(*mod.back()));
 		GAME::addModel(mod.back());//1
-		mod.push_back(new Player(*mod.back()));
+		mod.push_back(new Medic(*mod.back()));
 		GAME::addModel(mod.back());//2
-		mod.push_back(new Player(*mod.back()));
+		mod.push_back(new Tank(*mod.back()));
 		GAME::addModel(mod.back());//3
 
 		static Animation walk[4], idle[4];
@@ -171,7 +175,6 @@ public:
 			walk[a].setAnimationSpeed(.25);
 			walk[a].repeat(true);
 			idle[a].stop();
-
 
 			mod[a]->addAnimation("walk", &walk[a]);
 			mod[a]->addAnimation("idle", &idle[a]);
@@ -404,7 +407,6 @@ public:
 		mod[78]->setToRender(false);
 
 		//TRAIN
-		//TODO: Make collisions for train. Make train leave the map and come back. Refine train.
 		mod.push_back(new Model("Models/TrainGrayBox.obj"));//79
 		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//80
@@ -513,14 +515,6 @@ public:
 		mod[45]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 		mod[46]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 		mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
-
-		//Trash
-		//mod[49]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[49]->getTransformer().setPosition(-13.25f, 0.0f, 13.0f);
-		//mod[50]->getTransformer().setScale(1.0f, 1.3f, 1.0f), mod[50]->getTransformer().setPosition(13.25f, 0.0f, 0.5f);
-
-		//Picnic table wut, cyberpunk game?
-		//mod[51]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[51]->getTransformer().setPosition(-11.0f, 0.0f, 19.0f), mod[51]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		//mod[52]->getTransformer().setScale(1.0f, 1.0f, 1.5f), mod[52]->getTransformer().setPosition(-6.75f, 0.0f, 19.0f), mod[52]->getTransformer().setRotation({0.0f,90.0f,0.0f});
 
 		//Pizza Sign
 		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-10.25f, 5.4f, 22.3f);
@@ -778,6 +772,7 @@ public:
 		bool youDead = true;
 		static float deathCounter = 0;
 		if(init)
+
 			/// - If game mode (NOT CAMERA MODE) - ///
 			if(movePlayer)
 				for(int a = 0; a < 4; a++)
@@ -785,7 +780,12 @@ public:
 					if(GAME::isControllerConnected(a))
 					{
 						Xinput p1 = GAME::getController(a);
-
+						if (p1.buttonPressed(p1.buttons.SELECT)) 
+						{
+							for (int b = 0; b < 4; b++)
+								dead[b] = 0;
+							GAME::setScene(new Game);
+						}
 						//Start button quits game
 						if(p1.buttonPressed(p1.buttons.START))
 						{
@@ -810,7 +810,7 @@ public:
 								angle[a] = fmodf(angle[a], 360);
 							}
 
-							///~ Missile Collisions with Player ~///
+							/// - Missile Collisions with Player - ///
 							for(int b = 0; b < 4; b++)
 							{
 								bool collision = collision3D(player, mod[60 + b]);
@@ -842,7 +842,7 @@ public:
 								GAME::removeModel(player);
 								GAME::removeModel(mod[44] + a);
 							}
-							//
+							/// - Player Shooting - ///
 							if(p1.triggers[RT] >= .95 && !gunControlLaw[a])
 							{
 								if(player->getBulletCount() > 0)
@@ -873,17 +873,82 @@ public:
 							else if(p1.triggers[RT] < .95 && gunControlLaw[a])
 								gunControlLaw[a] = false;
 
-							//trainTimer += time;
-							//if (time - trainTimer >= 3)
-							//{
-							for(int t = 0; t < 7; t++)
+							/// - Train Car Movement - ///
+							//Train Sits in middle of map
+							if (0 <= (time - trainTimer) && 10 > (time - trainTimer))
 							{
-								mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.08f, 0.f, 0.f});//Yeet Train Cars
-							}
-							//trainTimer += time;
-							//}
+								for (int t = 0; t < 7; t++)
+								{
+									if (collision(mod[79 + t], player))
+									{
+										if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
+										if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+									}
+								}
 
-							///~ Button Presses on controller ~///
+							}
+							//Train Moves off map
+							if (10 <= (time - trainTimer) && 20 > (time - trainTimer))
+							{
+								for(int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.08f, 0.f, 0.f});//Move train cars right
+									if (collision(mod[79 + t], player))
+									{
+										player->setHealth(player->getHealth() - 10);
+										if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z )
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+										if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+									}
+								}
+							}
+							//Train stops
+							else if (20 <= (time - trainTimer) && 30 > (time - trainTimer))
+							{
+								for (int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.0f, 0.f, 0.f });//Stop Train cars
+								}
+							}
+							//Train moves back onto map
+							else if (30 <= (time - trainTimer) && 40 > (time - trainTimer))
+							{
+								for (int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ -0.08f, 0.f, 0.f });//Move train cars back to the right
+									if (collision(mod[79 + t], player))
+									{
+										player->setHealth(player->getHealth() - 10);
+										if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+										if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+										//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
+										//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+									}
+								}
+							}
+							//Train stops on map
+							else if (40 <= (time - trainTimer) && 50 > (time - trainTimer))
+							{
+								for (int t = 0; t < 7; t++)
+								{
+									mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.00f, 0.f, 0.f });//Stop Train cars on map
+									if (collision(mod[79 + t], player))
+									{
+										if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
+										if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+											player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+									}
+								}
+								trainTimer += time; //Reset Train timer so it all starts again.
+							}
+
+							/// - Button Presses on controller - ///
 							if(p1.buttonPressed(p1.buttons.X))
 							{
 								player->setBulletCount(30);
@@ -911,15 +976,15 @@ public:
 									player->setTimeSinceLastMissile(time);
 
 									timer[a].push_back(0);
-									//audio.createStream("pew.wav");
-									//audio.play();
+									audio.createAudioStream("pew.wav");
+									audio.play();
 									puts("SPECIAL ABILITY\n");
 								}
 							}
 
 							/// - Boss Spawns Minions - ///
 
-							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions, and fix dash/missiles 
+							//TODO: More Minions, random spawns (spawned by boss eventually) Minion collisions
 							if(minionCounter < 1)
 							{
 
@@ -954,15 +1019,15 @@ public:
 
 								//get deltaTime put into duraction variable
 
-								if(time - coolDown[a] >= 3)
+								if (time - coolDown[a] >= 3)
 								{
-									if(f == true)
+									if (f == true)
 									{
 										duration = time;
 										f = false;
 									}
 									move = 0.5f;
-									if(time - 0.1f >= duration)
+									if (time - 0.1f >= duration)
 									{
 										move = 0.1f;
 										//If triggers up then coolDown = time;
@@ -1062,15 +1127,15 @@ public:
 										break;
 									}
 
-								//TODO: Fix Minion Collisions
-								for(auto& minion : minions)
-									if(collision(bullets[a][b], minion))
+								for (auto& minion : minions)
+								{
+									if (collision(bullets[a][b], minion))
 									{
 										minion->setHealth(minion->getHealth() - 10);
 										GAME::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
 
-										if(minion->getHealth() <= 0)
+										if (minion->getHealth() <= 0)
 										{
 											GAME::removeModel(minion);
 											minions.erase(std::find(minions.begin(), minions.end(), minion));
@@ -1079,6 +1144,13 @@ public:
 										}
 
 									}
+									//TODO: Make Minions collide with players and do damage. Make Minions move at set speed
+									//if (collision(minion, player))
+									//{
+									//	player->setHealth(player->getHealth() - 10);
+									//}
+								}
+
 							}
 						for(unsigned b = 0; b < pMissiles[a].size(); b++)
 							if(pMissiles[a][b])
@@ -1104,6 +1176,7 @@ public:
 										pMissiles[a].erase(pMissiles[a].begin() + b);
 									}
 								}
+
 								/// - If Boss Alive - ///
 								if(mod[8])
 									/// - If Missiles collide with Boss -///
@@ -1152,7 +1225,7 @@ public:
 		deathCounter = deathCounter <= 1 ? deathCounter : 1;
 		if(youDead)
 		{
-			//TODO: do something when the party is dead
+			//TODO: do something when the party is dead, game over screen with "Main Menu" "Quit" options
 
 		}
 		else

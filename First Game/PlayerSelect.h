@@ -1,7 +1,7 @@
 #pragma once
 #include <GameEmGine.h>
-#include "PlayerSelect.h"
-class Menu:public Scene
+#include "Game.h"
+class PlayerSelect :public Scene
 {
 public:
 	// Set menu screen
@@ -21,7 +21,7 @@ public:
 		mod[0]->addChild(mod[3]);
 
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
-		LightSource::setSceneAmbient({0,0,0,255});
+		LightSource::setSceneAmbient({ 0,0,0,255 });
 
 		//float windowHeight = (float)GameEmGine::getWindowHeight();
 		//float windowWidth = (float)GameEmGine::getWindowWidth();
@@ -29,14 +29,14 @@ public:
 		//mod[2]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
 		//mod[3]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
 		//float tmp= mod[0]->getHeight() / 4 ;
-		for(unsigned int i = 1; i < mod.size(); i++)
+		for (unsigned int i = 1; i < mod.size(); i++)
 		{
-			mod[i]->getTransformer().setRotation({90,0,0});
+			mod[i]->getTransformer().setRotation({ 90,0,0 });
 			mod[i]->getTransformer().setScale(10.0f);
-			mod[i]->getTransformer().setPosition({mod[0]->getWidth() - mod[i]->getWidth() - 200, -9.f * i + 15,0});
+			mod[i]->getTransformer().setPosition({ mod[0]->getWidth() - mod[i]->getWidth() - 200, -9.f * i + 15,0 });
 
 		}
-		LightSource::setSceneAmbient({0,0,0,255});
+		LightSource::setSceneAmbient({ 0,0,0,255 });
 
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
 	}
@@ -44,58 +44,58 @@ public:
 	void keyInputPressed(int key, int modfier)
 	{
 		modfier;
-		if(key == 'B')
+		if (key == 'B')
 			fadeout = true;
 	}
 
 	// doing the update for menu screenb
 	void updateMenu()
 	{
-		static bool menuMoved[] = {false,false,false,false};
+		static bool menuMoved[] = { false,false,false,false };
 
-		if(fadein)
+		if (fadein)
 		{
 			splashT += 0.01f;
 			splashAmbient = (GLubyte)lerp(0, 255, splashT);
-			LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
-			if(splashAmbient >= 250)
+			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+			if (splashAmbient >= 250)
 			{
 				fadein = false;
 				splashT = 0;
 				splashAmbient = 255;
-				LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
+				LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
 			}
 		}
 
 		static Coord3D tmp = Coord3D(20.0f);
 
-		for(int a = 0; a < 4; a++)
-			if(GameEmGine::isControllerConnected(a))
+		for (int a = 0; a < 4; a++)
+			if (GameEmGine::isControllerConnected(a))
 			{
 				static int lastOption;
-				if(abs(GameEmGine::getController(a).sticks[LS].y) >= 0.8)
+				if (abs(GameEmGine::getController(a).Coord2D_sticks[LS].y) >= 0.8)
 				{
-					if(!menuMoved[a])
+					if (!menuMoved[a])
 					{
 						lastOption = option;
-						option += GameEmGine::getController(a).sticks[LS].y < 0 ? 1 : -1;
+						option += GameEmGine::getController(a).Coord2D_sticks[LS].y < 0 ? 1 : -1;
 
 						option = option > 3 ? 1 : option < 1 ? 3 : option;
 
 						lerpParam = 0;
 						mod[lastOption]->getTransformer().setScale(10);
-						mod[lastOption]->setColour({255,255,255});
+						mod[lastOption]->setColour({ 255,255,255 });
 						tmp = mod[option]->getTransformer().getScale();
 						menuMoved[a] = true;
 					}
 				}
 
-				if(abs(GameEmGine::getController(a).sticks[LS].y) < .3f)
+				if (abs(GameEmGine::getController(a).Coord2D_sticks[LS].y) < .3f)
 					menuMoved[a] = false;
 
-				if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
+				if (Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
 				{
-					switch(option)
+					switch (option)
 					{
 					case 1:
 						fadeout = true;
@@ -113,21 +113,21 @@ public:
 			}
 
 		mod[option]->getTransformer().setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
-		mod[option]->setColour(lerp(ColourRGBA{255,255,255}, ColourRGBA{0,255,255}, lerpParam));
+		mod[option]->setColour(lerp(ColourRGBA{ 255,255,255 }, ColourRGBA{ 0,255,255 }, lerpParam));
 		lerpParam += .1f;
 
-		if(lerpParam >= 1)
+		if (lerpParam >= 1)
 		{
 			lerpParam = 1;
 		}
 
-		if(fadeout)
+		if (fadeout)
 		{
 			splashT += 0.01f;
 			splashT = splashT > 1 ? 1 : splashT;
 			splashAmbient = (GLubyte)lerp(255, 0, splashT);
-			LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
-			if(splashAmbient <= 5)
+			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+			if (splashAmbient <= 5)
 			{
 				fadein = true;
 				fadeout = false;
@@ -135,7 +135,7 @@ public:
 				splashAmbient = 255;
 
 				//GamePlayInit();
-				GameEmGine::setScene(new PlayerSelect);
+				GameEmGine::setScene(new Game);
 			}
 		}
 	}
@@ -156,5 +156,3 @@ private:
 	float lerpParam = 1;
 	int option = 1;
 };
-
-
