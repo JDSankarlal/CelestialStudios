@@ -136,7 +136,7 @@ public:
 				splashAmbient = 255;
 
 				//GamePlayInit();
-				GameEmGine::setScene(new Game);
+				GameEmGine::setScene(new PlayerSelect);
 			}
 		}
 	}
