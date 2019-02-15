@@ -424,13 +424,6 @@ public:
 		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/Train/Head/trainhead.obj"));//85
 		GAME::addModel(mod.back());								 
-		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
-		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
-		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
-		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
-		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
-		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
-		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
 
 		//RAIL
 		mod.push_back(new Model("Models/Rail/rail.obj"));//86
@@ -448,13 +441,6 @@ public:
 		mod.push_back(new Model(*mod.back()));//92
 		GAME::addModel(mod.back());
 
-		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
 
 		////Medic Healing Ring
 		//mod.push_back(new Model("Models/TrainGrayBox.obj"));//86
@@ -589,7 +575,23 @@ public:
 		mod[77]->setColour({255,255,0,150});
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
 
-		
+		//TRAIN
+		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
+		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
+		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
+		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
+		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
+		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
+		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
+
+		//Rail
+		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
 
 		/// - Set Model Colour - ///
 		//Players colors and children
