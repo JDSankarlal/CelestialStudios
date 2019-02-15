@@ -15,14 +15,14 @@ layout(location = 4) in vec3 in_normal2;
 
 
 out vec2 texcoord;
-//out vec3 norm;
-//out vec3 pos;
+out vec3 norm;
+out vec3 pos;
 
 void main()
 {
      
     texcoord = in_uv;
-    //texcoord.y = 1 - texcoord.y;
+    texcoord.y = 1 - texcoord.y;
 
    vec3 normal = mix(in_normal1, in_normal2, uTime);
    vec3 vert = mix(in_vert1, in_vert2, uTime);
@@ -34,5 +34,5 @@ void main()
     
     gl_Position =  uProj * viewSpace;
     
-    pos = gl_Position.xyz;
+    pos = (gl_Position).xyz;
 }

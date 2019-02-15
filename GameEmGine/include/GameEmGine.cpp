@@ -17,7 +17,7 @@ InputManager* GameEmGine::m_inputManager;
 WindowCreator* GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2,*GameEmGine::m_greyscaleBuffer,*GameEmGine::m_deferredRenderBuffer;
+FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2, * GameEmGine::m_greyscaleBuffer, * GameEmGine::m_deferredRenderBuffer;
 std::unordered_map<std::string, FrameBuffer*> GameEmGine::m_frameBuffers;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
@@ -95,7 +95,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_buffer1 = new FrameBuffer("Test1", 1);
 	m_buffer2 = new FrameBuffer("Test2", 1);
 	m_deferredRenderBuffer = new FrameBuffer("Differed Render", 3);
-	
+
 
 
 
@@ -132,7 +132,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 		system("pause");
 		return;
 	}
-	
+
 	m_deferredRenderBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_deferredRenderBuffer->initColourTexture(1, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_deferredRenderBuffer->initColourTexture(2, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
@@ -143,7 +143,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 		system("pause");
 		return;
 	}
-	
+
 	initFullScreenQuad();
 
 	//// During init, enable debug output
@@ -243,7 +243,7 @@ void GameEmGine::shaderInit()
 	m_modelShader = new Shader;
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 	m_deferredRender = new Shader;
-	m_deferredRender->create("Shaders/PassThrough.vert", "Shaders/DeferredRender.fmsh");
+	m_deferredRender->create("Shaders/DeferredRender.vtsh", "Shaders/DeferredRender.fmsh");
 
 	m_bloomHighPass = new Shader;
 	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHighPass.fmsh");
@@ -443,6 +443,7 @@ void GameEmGine::update()
 	glClearDepth(1.f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	m_mainFrameBuffer->clear();
+	m_deferredRenderBuffer->clear();
 	m_buffer1->clear();
 	m_buffer2->clear();
 
@@ -481,20 +482,20 @@ void GameEmGine::update()
 
 	m_deferredRenderBuffer->disable();
 
-
-
-
 	//m_frameBuffers["Main Buffer"]->enable();
 	m_modelShader->enable();
-	glUniformMatrix4fv(m_modelShader->getUniformLocation("uModel"),1,false,&glm::mat4(1)[0][0]);
+	glUniformMatrix4fv(m_modelShader->getUniformLocation("uModel"), 1, false, &glm::mat4(1)[0][0]);
 	glUniform1i(m_modelShader->getUniformLocation("uTex"), 0);
+	glUniform1i(m_modelShader->getUniformLocation("textured"), 1);
+	glUniform4f(m_modelShader->getUniformLocation("colourMod"), 1, 1, 1, 1);
+
 	glBindTexture(GL_TEXTURE_2D, m_deferredRenderBuffer->getColorHandle(0));
 	drawFullScreenQuad();
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	m_modelShader->disable();
 	//m_frameBuffers["Main Buffer"]->disable();
 
-	
+
 	//glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
 	//
 	//m_buffer1->enable();

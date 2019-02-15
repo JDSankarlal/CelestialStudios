@@ -28,13 +28,15 @@ uniform int LightType[MAX_LIGHTS_SIZE];
 uniform vec3 LightDirection[MAX_LIGHTS_SIZE] ;
 uniform float LightAngleConstraint[MAX_LIGHTS_SIZE];
 
-uniform sampler2D uTex;
-uniform vec4 colourMod;
-uniform bool textured;
+uniform sampler2D uPos;
+uniform sampler2D uNorm;
+uniform sampler2D uAlbedo;
+//uniform vec4 colourMod;
+//uniform bool textured;
 
 in vec2 texcoord;
-in vec3 norm;
-in vec3 pos;
+//in vec3 norm;
+//in vec3 pos;
 
 layout(location = 0) out vec4 outColor;
 
@@ -52,8 +54,8 @@ void spotLight(int a)
 
 void directionalLight(int a)
 {
-    vec3 normal = normalize(norm);
-    vec3 lightVec = LightPosition[a].xyz - pos;
+    vec3 normal = normalize(texture(uNorm,texcoord).xyz);
+    vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
     float dist = length(lightVec);
     float NdotL = max(dot(normal, LightDirection[a]),0.0);
 
@@ -102,18 +104,19 @@ void main()
     //outColor = vec4(normal, 1.0f);
     //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
     
-    if(textured)
-    {       
-       vec4 textureColor = texture(uTex, texcoord);
-       outColor = textureColor;
-       outColor.rgb *= textureColor.rgb;
-       outColor *= colourMod;
-    }
-    else     
-    {
-        outColor = colourMod; 
-    }
+    //if(textured)
+    //{       
+    //   vec4 textureColor = texture(uTex, texcoord);
+    //   outColor = textureColor;
+    //   outColor.rgb *= textureColor.rgb;
+    //   outColor *= colourMod;
+    //}
+    //else     
+    //{
+    //    outColor = colourMod; 
+    //}
 
+    outColor = texture(uAlbedo,texcoord);
     outColor.rgb *= LightAmbient;
     
     //account for rasterizer interpolating
