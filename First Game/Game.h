@@ -300,13 +300,21 @@ public:
 		mod[43]->setToRender(false);
 
 		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({255,0,0});
 		GAME::addModel(mod.back());//44
-		mod.push_back(new Model(*mod[44]));
+		
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({0,0,255});
 		GAME::addModel(mod.back());//45
-		mod.push_back(new Model(*mod[44]));
+		
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({0,255,0});
 		GAME::addModel(mod.back());//46
-		mod.push_back(new Model(*mod[44]));
+		
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({255,255,0});
 		GAME::addModel(mod.back());//47
+
 
 		mod.push_back(new Model("Models/Bullet/bullet.obj"));//48
 
@@ -623,47 +631,51 @@ public:
 		}
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 6);
-		LightSource::setParent(mod[44], 6);
-		LightSource::setDiffuse({255,100,0,100}, 6);
-		LightSource::setAttenuationQuadratic(0.06f, 6);
+		LightSource::setParent(mod[0], 6);
+		LightSource::setPosition({0, -0.75f, 0}, 6);
+		LightSource::setDiffuse({255,0,0,100}, 6);
+		LightSource::setAttenuationQuadratic(1.f, 6);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 7);
-		LightSource::setParent(mod[0], 7);
+		LightSource::setParent(mod[1], 7);
 		LightSource::setPosition({0, -0.75f, 0}, 7);
-		LightSource::setDiffuse({255,0,0,100}, 7);
+		LightSource::setDiffuse({0,0,255,100}, 7);
 		LightSource::setAttenuationQuadratic(1.f, 7);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 8);
-		LightSource::setParent(mod[1], 8);
+		LightSource::setParent(mod[2], 8);
 		LightSource::setPosition({0, -0.75f, 0}, 8);
-		LightSource::setDiffuse({0,0,255,100}, 8);
+		LightSource::setDiffuse({0,255,0,100}, 8);
 		LightSource::setAttenuationQuadratic(1.f, 8);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 9);
-		LightSource::setParent(mod[2], 9);
+		LightSource::setParent(mod[3], 9);
 		LightSource::setPosition({0, -0.75f, 0}, 9);
-		LightSource::setDiffuse({0,255,0,100}, 9);
+		LightSource::setDiffuse({255,255,0,100}, 9);
 		LightSource::setAttenuationQuadratic(1.f, 9);
 
+		
+		
+		
+		
 		LightSource::setLightType(LIGHT_TYPE::POINT, 10);
-		LightSource::setParent(mod[3], 10);
-		LightSource::setPosition({0, -0.75f, 0}, 10);
-		LightSource::setDiffuse({255,255,0,100}, 10);
-		LightSource::setAttenuationQuadratic(1.f, 10);
+		LightSource::setParent(mod[44], 10);
+		LightSource::setDiffuse({255,0,0}, 10);
+		LightSource::setAttenuationQuadratic(0.06f, 10);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 11);
 		LightSource::setParent(mod[45], 11);
-		LightSource::setDiffuse({255,100,0,100}, 11);
+		LightSource::setDiffuse({0,0,255}, 11);
 		LightSource::setAttenuationQuadratic(0.06f, 11);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 12);
 		LightSource::setParent(mod[46], 12);
-		LightSource::setDiffuse({255,100,0,100}, 12);
+		LightSource::setDiffuse({0,255,0}, 12);
 		LightSource::setAttenuationQuadratic(0.06f, 12);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 13);
 		LightSource::setParent(mod[47], 13);
-		LightSource::setDiffuse({255,100,0,100}, 13);
+		LightSource::setDiffuse({255,255,0}, 13);
 		LightSource::setAttenuationQuadratic(0.06f, 13);
 
 		LightSource::setSceneAmbient({255,255,255,255});
@@ -1294,6 +1306,7 @@ public:
 		if(!movePlayer)
 			if(GAME::isControllerConnected(0))
 			{
+				GAME::getMainCamera()->getTransformer().enableFPSMode(true);
 				Xinput p1 = GAME::getController(0);
 				deathCounter = 0;
 				

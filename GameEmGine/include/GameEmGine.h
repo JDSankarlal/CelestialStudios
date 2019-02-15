@@ -58,7 +58,7 @@ public:
 	*/
 	static int getWindowHeight();
 
-	Camera * getMainCamera();
+	static Camera * getMainCamera();
 
 	static void setCameraType(CAMERA_TYPE type);
 
