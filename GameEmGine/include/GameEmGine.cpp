@@ -11,13 +11,13 @@ Camera* GameEmGine::m_mainCamera;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera*>GameEmGine::m_cameras;
 Shader* GameEmGine::m_modelShader, * GameEmGine::m_grayScalePost, * GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
-* GameEmGine::m_blurVertical, * GameEmGine::m_blurrComposite;
+* GameEmGine::m_blurVertical, * GameEmGine::m_blurrComposite, * GameEmGine::m_deferredRender;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager* GameEmGine::m_inputManager;
 WindowCreator* GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2,*GameEmGine::m_greyscaleBuffer;
+FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2,*GameEmGine::m_greyscaleBuffer,*GameEmGine::m_deferredRenderBuffer;
 std::unordered_map<std::string, FrameBuffer*> GameEmGine::m_frameBuffers;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
@@ -94,6 +94,10 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_greyscaleBuffer = new FrameBuffer("Greyscale", 1);
 	m_buffer1 = new FrameBuffer("Test1", 1);
 	m_buffer2 = new FrameBuffer("Test2", 1);
+	m_deferredRenderBuffer = new FrameBuffer("Differed Render", 3);
+	
+
+
 
 	m_mainFrameBuffer->initDepthTexture(getWindowWidth(), getWindowHeight());
 	m_mainFrameBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
@@ -120,14 +124,26 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 		system("pause");
 		return;
 	}
-	m_buffer2->initColourTexture(0, getWindowWidth() / 4, getWindowHeight() / 4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
 
+	m_buffer2->initColourTexture(0, getWindowWidth() / 4, getWindowHeight() / 4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	if(!m_buffer2->checkFBO())
 	{
 		puts("FBO failed Creation");
 		system("pause");
 		return;
 	}
+	
+	m_deferredRenderBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_deferredRenderBuffer->initColourTexture(1, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_deferredRenderBuffer->initColourTexture(2, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_deferredRenderBuffer->initDepthTexture(getWindowWidth(), getWindowHeight());
+	if(!m_deferredRenderBuffer->checkFBO())
+	{
+		puts("FBO failed Creation");
+		system("pause");
+		return;
+	}
+	
 	initFullScreenQuad();
 
 	//// During init, enable debug output
@@ -226,7 +242,8 @@ void GameEmGine::shaderInit()
 	//m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
 	m_modelShader = new Shader;
 	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
-
+	m_deferredRender = new Shader;
+	m_deferredRender->create("Shaders/PassThrough.vert", "Shaders/DeferredRender.fmsh");
 
 	m_bloomHighPass = new Shader;
 	m_bloomHighPass->create("Shaders/Main Buffer.vtsh", "Shaders/BloomHighPass.fmsh");
@@ -442,102 +459,110 @@ void GameEmGine::update()
 
 	if(m_mainCamera->getTransformer().isUpdated())
 	{
+		m_deferredRender->enable();
+		glUniformMatrix4fv(m_deferredRender->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix() * m_mainCamera->getViewMatrix())[0][0]));
+		glUniformMatrix4fv(m_deferredRender->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
+		m_deferredRender->disable();
+
 		m_modelShader->enable();
-		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix() * m_mainCamera->getViewMatrix())[0][0]));
-		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
+		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((glm::mat4(1))[0][0]));
+		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(glm::mat4(1)[0][0]));
 		m_modelShader->disable();
 	}
 
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
+
 	///~ 3D-Graphics 1 ~///
-	m_frameBuffers["Main Buffer"]->enable();
-	for(unsigned a = 0; a < m_models.size(); a++)
-	{
-		m_models[a]->render(*m_modelShader, *m_mainCamera);
-	}
-	m_frameBuffers["Main Buffer"]->disable();
 
-	//std::vector<std::pair<std::string, FrameBuffer*>>tmp(m_frameBuffers.begin(), m_frameBuffers.end());
-	////additional frame buffer renders
-	//std::sort(tmp.begin(), tmp.end(),
-	//	[](std::pair< std::string, FrameBuffer*>a, std::pair< std::string, FrameBuffer*>b)->bool
-	//	{return a.second->getLayer() > b.second->getLayer(); }
-	//);
+	m_deferredRenderBuffer->enable();
+
+	m_mainCamera->addModels(&m_models);
+	m_mainCamera->render(m_deferredRender);
+
+	m_deferredRenderBuffer->disable();
+
+
+
+
+	//m_frameBuffers["Main Buffer"]->enable();
+	m_modelShader->enable();
+	glUniformMatrix4fv(m_modelShader->getUniformLocation("uModel"),1,false,&glm::mat4(1)[0][0]);
+	glUniform1i(m_modelShader->getUniformLocation("uTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, m_deferredRenderBuffer->getColorHandle(0));
+	drawFullScreenQuad();
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	m_modelShader->disable();
+	//m_frameBuffers["Main Buffer"]->disable();
+
+	
+	//glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
 	//
-	//for(auto &a : tmp)
-	//	a.second->getPostProcess()();
-	//m_mainFrameBuffer->moveToBackBuffer(getWindowWidth(), getWindowHeight());
-
-
-
-	glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
-
-	m_buffer1->enable();
-	m_bloomHighPass->enable();
-	glUniform1i(m_bloomHighPass->getUniformLocation("uTex"), 0);
-	glUniform1f(m_bloomHighPass->getUniformLocation("uThresh"), 0.25f);
-	glBindTexture(GL_TEXTURE_2D, m_frameBuffers["Main Buffer"]->getColorHandle(0));
-	drawFullScreenQuad();
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	m_bloomHighPass->disable();
-	m_buffer1->disable();
-
-	glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
-	for(int a = 0; a < 4; a++)
-	{
-		m_buffer2->enable();
-		m_blurHorizontal->enable();
-		m_blurHorizontal->sendUniform("uTex", 0);
-		m_blurHorizontal->sendUniform("uPixleSize", 1.0f / getWindowHeight());
-		glBindTexture(GL_TEXTURE_2D, m_buffer1->getColorHandle(0));
-		drawFullScreenQuad();
-
-		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-		m_blurHorizontal->disable();
-
-
-
-		m_buffer1->enable();
-		m_blurVertical->enable();
-		m_blurHorizontal->sendUniform("uTex", 0);
-		m_blurHorizontal->sendUniform("uPixleSize", 1.0f / getWindowWidth());
-		glBindTexture(GL_TEXTURE_2D, m_buffer2->getColorHandle(0));
-		drawFullScreenQuad();
-
-		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-		m_blurVertical->disable();
-
-
-	}
-	FrameBuffer::disable();
-
-	glViewport(0, 0, getWindowWidth(), getWindowHeight());
-	
-	
-	m_greyscaleBuffer->enable();
-	m_blurrComposite->enable();
-	glActiveTexture(GL_TEXTURE0);
-	m_blurrComposite->sendUniform("uScene", 0);
-	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0));
-
-	glActiveTexture(GL_TEXTURE1);
-	m_blurrComposite->sendUniform("uBloom", 1);
-	glBindTexture(GL_TEXTURE_2D, m_buffer1->getColorHandle(0));
-	drawFullScreenQuad();
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	m_blurrComposite->disable();
-	m_greyscaleBuffer->disable();
-
-	m_grayScalePost->enable();
-	m_grayScalePost->sendUniform("uTex", 0);
-	glBindTexture(GL_TEXTURE_2D, m_greyscaleBuffer->getColorHandle(0));
-	drawFullScreenQuad();
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	m_grayScalePost->disable();
+	//m_buffer1->enable();
+	//m_bloomHighPass->enable();
+	//glUniform1i(m_bloomHighPass->getUniformLocation("uTex"), 0);
+	//glUniform1f(m_bloomHighPass->getUniformLocation("uThresh"), 0.25f);
+	//glBindTexture(GL_TEXTURE_2D, m_frameBuffers["Main Buffer"]->getColorHandle(2));
+	//drawFullScreenQuad();
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//m_bloomHighPass->disable();
+	//m_buffer1->disable();
+	//
+	//glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
+	//for(int a = 0; a < 4; a++)
+	//{
+	//	m_buffer2->enable();
+	//	m_blurHorizontal->enable();
+	//	m_blurHorizontal->sendUniform("uTex", 0);
+	//	m_blurHorizontal->sendUniform("uPixleSize", 1.0f / getWindowHeight());
+	//	glBindTexture(GL_TEXTURE_2D, m_buffer1->getColorHandle(0));
+	//	drawFullScreenQuad();
+	//
+	//	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//	m_blurHorizontal->disable();
+	//
+	//
+	//
+	//	m_buffer1->enable();
+	//	m_blurVertical->enable();
+	//	m_blurHorizontal->sendUniform("uTex", 0);
+	//	m_blurHorizontal->sendUniform("uPixleSize", 1.0f / getWindowWidth());
+	//	glBindTexture(GL_TEXTURE_2D, m_buffer2->getColorHandle(0));
+	//	drawFullScreenQuad();
+	//
+	//	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//	m_blurVertical->disable();
+	//
+	//
+	//}
+	//FrameBuffer::disable();
+	//
+	//glViewport(0, 0, getWindowWidth(), getWindowHeight());
+	//
+	//
+	//m_greyscaleBuffer->enable();
+	//m_blurrComposite->enable();
+	//glActiveTexture(GL_TEXTURE0);
+	//m_blurrComposite->sendUniform("uScene", 0);
+	//glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0));
+	//
+	//glActiveTexture(GL_TEXTURE1);
+	//m_blurrComposite->sendUniform("uBloom", 1);
+	//glBindTexture(GL_TEXTURE_2D, m_buffer1->getColorHandle(0));
+	//drawFullScreenQuad();
+	//
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//m_blurrComposite->disable();
+	//m_greyscaleBuffer->disable();
+	//
+	//m_grayScalePost->enable();
+	//m_grayScalePost->sendUniform("uTex", 0);
+	//glBindTexture(GL_TEXTURE_2D, m_greyscaleBuffer->getColorHandle(0));
+	//drawFullScreenQuad();
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//m_grayScalePost->disable();
 
 	///~ will never be used but I'll keep it here anyways ~///
 	////2D-Graphics 

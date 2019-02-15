@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "Model.h"
 #include "Transformer.h"
 #include "Utilities.h"
 #include "Quat.h"
@@ -12,6 +13,7 @@ enum CAMERA_TYPE
 	ORTHOGRAPHIC,
 	PERSPECTIVE
 };
+
 class Camera
 {
 public:
@@ -29,6 +31,8 @@ public:
 
 	void moveAngleBy(float angle, Coord3D direction);
 
+	void setViewMatrix(glm::mat4 view);
+
 	Coord3D getPosition();
 	float& getScale();
 	glm::mat4 getProjectionMatrix();
@@ -37,6 +41,10 @@ public:
 
 	glm::mat4 getObjectMatrix();
 	Transformer& getTransformer();
+	
+	void addModel(Model* model);
+	void addModels(std::vector<Model*> *models);
+	void render(Shader* shader);
 protected:
 	bool m_cameraUpdate;
 	float m_scale;
@@ -48,5 +56,7 @@ protected:
 	glm::mat4 m_projMat;
 	glm::mat4 m_viewMat;
 	glm::mat4 m_objMat;
+
+	std::vector<Model*>* m_models;
 };
 

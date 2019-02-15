@@ -108,9 +108,11 @@ void main()
        outColor = textureColor;
        outColor.rgb *= textureColor.rgb;
        outColor *= colourMod;
-    }else     
-     outColor = colourMod; 
-    
+    }
+    else     
+    {
+        outColor = colourMod; 
+    }
 
     outColor.rgb *= LightAmbient;
     
