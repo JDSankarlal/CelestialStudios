@@ -485,12 +485,23 @@ void GameEmGine::update()
 	//m_frameBuffers["Main Buffer"]->enable();
 	m_modelShader->enable();
 	glUniformMatrix4fv(m_modelShader->getUniformLocation("uModel"), 1, false, &glm::mat4(1)[0][0]);
-	glUniform1i(m_modelShader->getUniformLocation("uTex"), 0);
-	glUniform1i(m_modelShader->getUniformLocation("textured"), 1);
-	glUniform4f(m_modelShader->getUniformLocation("colourMod"), 1, 1, 1, 1);
+	//glUniform1i(m_modelShader->getUniformLocation("textured"), 1);
+	//glUniform4f(m_modelShader->getUniformLocation("colourMod"), 1, 1, 1, 1);
 
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(m_modelShader->getUniformLocation("uPos"), 0);
 	glBindTexture(GL_TEXTURE_2D, m_deferredRenderBuffer->getColorHandle(0));
+
+	glActiveTexture(GL_TEXTURE1);
+	glUniform1i(m_modelShader->getUniformLocation("uNorm"), 1);
+	glBindTexture(GL_TEXTURE_2D, m_deferredRenderBuffer->getColorHandle(1));
+
+	glActiveTexture(GL_TEXTURE2);
+	glUniform1i(m_modelShader->getUniformLocation("uAlbedo"), 2);
+	glBindTexture(GL_TEXTURE_2D, m_deferredRenderBuffer->getColorHandle(2));
+
 	drawFullScreenQuad();
+	
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	m_modelShader->disable();
 	//m_frameBuffers["Main Buffer"]->disable();

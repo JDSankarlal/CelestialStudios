@@ -79,8 +79,8 @@ void directionalLight(int a)
 
 void pointLight(int a)
 {
-    vec3 normal = normalize(norm);
-    vec3 lightVec = LightPosition[a].xyz - pos;
+    vec3 normal = normalize(texture(uNorm,texcoord).xyz);
+    vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
     float dist = length(lightVec);
    
    
@@ -92,7 +92,7 @@ void pointLight(int a)
     outColor.rgb += LightDiffuse[a] * attenuation ;
     
     //Blinn-Phong half vector
-    float NdotHV =  max(dot(normal, normalize(lightVec + normalize(-pos))), 0.0); 
+    float NdotHV =  max(dot(normal, normalize(lightVec + normalize(-texture(uPos,texcoord).xyz))), 0.0); 
     
     //Calculate specular contribution
     outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
@@ -116,11 +116,12 @@ void main()
     //    outColor = colourMod; 
     //}
 
-    outColor = texture(uAlbedo,texcoord);
+    vec4 textureColor = texture(uAlbedo,texcoord);
+    outColor = textureColor;
     outColor.rgb *= LightAmbient;
     
     //account for rasterizer interpolating
-    vec3 normal = normalize(norm);
+    vec3 normal = normalize(texture(uNorm,texcoord).xyz);
     
     for(int a = 0; a < LightAmount; a++)
     { 
