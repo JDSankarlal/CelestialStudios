@@ -461,7 +461,8 @@ void GameEmGine::update()
 	if(m_mainCamera->getTransformer().isUpdated())
 	{
 		m_deferredRender->enable();
-		glUniformMatrix4fv(m_deferredRender->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix() * m_mainCamera->getViewMatrix())[0][0]));
+		glUniformMatrix4fv(m_deferredRender->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getViewMatrix())[0][0]));
+		glUniformMatrix4fv(m_deferredRender->getUniformLocation("uObject"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix())[0][0]));
 		glUniformMatrix4fv(m_deferredRender->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
 		m_deferredRender->disable();
 
@@ -471,10 +472,10 @@ void GameEmGine::update()
 		m_modelShader->disable();
 	}
 
-	glViewport(0, 0, getWindowWidth(), getWindowHeight());
+	
 
 	///~ 3D-Graphics 1 ~///
-
+	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 	m_deferredRenderBuffer->enable();
 
 	m_mainCamera->addModels(&m_models);
@@ -589,6 +590,7 @@ void GameEmGine::update()
 	//m_spriteBatch->end();
 	//m_spriteBatch->render(*m_cameraShader,*m_mainCamera);
 
+	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 	if(m_gameLoop != nullptr)
 		m_gameLoop(glfwGetTime());
 

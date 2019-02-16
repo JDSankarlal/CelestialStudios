@@ -44,7 +44,7 @@ bool Camera::update()
 
 		m_transform.setPosition(*m_position);
 		m_transform.setScale(m_scale);
-		m_objMat =  glm::inverse( m_transform.getTranslationMatrix()  *m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
+		m_objMat =  glm::inverse( m_transform.getTranslationMatrix() * m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
 
 		m_cameraMat = m_projMat  *  m_objMat * m_viewMat;
 		m_cameraUpdate = false;

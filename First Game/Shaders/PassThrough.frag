@@ -74,6 +74,7 @@ void directionalLight(int a)
         
         //Calculate specular contribution
         outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
+      //  outColor = vec4(LightDiffuse[a]* NdotL * attenuation,1.0) ;
     }
 }
 
@@ -92,10 +93,12 @@ void pointLight(int a)
     outColor.rgb += LightDiffuse[a] * attenuation ;
     
     //Blinn-Phong half vector
-    float NdotHV =  max(dot(normal, normalize(lightVec + normalize(-texture(uPos,texcoord).xyz))), 0.0); 
+    float NdotHV =  max(dot(normal, normalize(lightVec + texture(uPos,texcoord).xyz)), 0.0); 
     
     //Calculate specular contribution
     outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
+
+    //outColor = vec4(LightDiffuse[a] * attenuation,1.0) ;
 }
 
 void main()

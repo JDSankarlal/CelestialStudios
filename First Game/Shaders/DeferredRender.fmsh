@@ -14,14 +14,14 @@ layout(location = 2) out vec4 fragAlbedo;
 
 void main()
 {
-    fragPos = vec4(pos,1);
-    fragNorm = vec4(normalize(norm),1);
+    fragPos = vec4(pos,1.0);
+    fragNorm = vec4(norm, 1.0);
 
     if(textured)
     {       
        vec4 textureColor = texture(uTex, texcoord);
        fragAlbedo = textureColor;
-       fragAlbedo.rgb *= textureColor.rgb;
+       fragAlbedo.rgb *= textureColor.rgb;//the scene looks ugly without this
        fragAlbedo *= colourMod;
     }
     else     

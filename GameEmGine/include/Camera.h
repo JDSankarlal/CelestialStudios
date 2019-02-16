@@ -50,7 +50,7 @@ protected:
 	float m_scale;
 	Size3D *m_size = new Size3D;
 	Coord3D *m_position;
-	
+	CAMERA_TYPE m_type = PERSPECTIVE;
 	Transformer m_transform;
 	glm::mat4 m_cameraMat;
 	glm::mat4 m_projMat;
