@@ -19,8 +19,6 @@ using std::vector;
 class Game:public Scene
 {
 public:
-
-
 	/// - Collision Class - ///
 
 	bool collision(Model *l, Model *k)
@@ -673,14 +671,14 @@ public:
 		GAME::setCameraPosition({0,15.5f,-17.5});
 		GAME::setCameraAngle(-25, {1,0,0});
 
-		/// not needed ///
-		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
-		keyReleased = [=](int a, int b) {keyInputReleased(a, b); };
-		mouseReleased = [=](int a, int b) {mouseButtonReleased(a, b); };
+		/// key/mouse input ///
+		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
+		keyReleased = [&](int a, int b) {keyInputReleased(a, b); };
+		mouseReleased = [&](int a, int b) {mouseButtonReleased(a, b); };
 
 		AudioPlayer::init();
 
-		audio.createAudioStream("Game Jam(Full).wav");
+		audio.createAudioStream("Audio/potential mix (with beat).mp3");
 
 		audio.play(true);
 	}
@@ -906,7 +904,7 @@ public:
 									velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
 
 									timer[a].push_back(0);
-									audio.createAudioStream("pew.wav");
+									audio.createAudioStream("Audio/pew.wav");
 									audio.play();
 									players->setBulletCount(players->getBulletCount() - 1);
 								}
