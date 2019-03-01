@@ -23,7 +23,7 @@ public:
 
 	/// - Collision Class - ///
 
-	bool collision(Model *l, Model *k)
+	bool collision(Model* l, Model* k)
 	{
 		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 		Coord3D thing = l->getCenter() - k->getCenter();
@@ -44,7 +44,7 @@ public:
 
 	///~ 3D Collision Function ~///
 
-	bool collision3D(Model *l, Model *k)
+	bool collision3D(Model * l, Model * k)
 	{
 		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 		Coord3D thing = l->getCenter() - k->getCenter();
@@ -125,9 +125,9 @@ public:
 		if(key == GLFW_KEY_F5) //resets the camera
 		{
 			GAME::m_modelShader->refresh();
-			GAME::m_grayScalePost->refresh();
-			//GAME::setCameraAngle(0, { 1, 1, 1 });
-			//	GAME::setCameraPosition({0,0,0});
+			//			GAME::m_grayScalePost->refresh();
+						//GAME::setCameraAngle(0, { 1, 1, 1 });
+						//	GAME::setCameraPosition({0,0,0});
 		}
 
 		if(key == 'R')
@@ -145,7 +145,7 @@ public:
 			rightM = InputManager::getMouseCursorPosition();
 	}
 
-	void playerTypes(vector<Player*>& playerType)
+	void playerTypes(vector<Player*> & playerType)
 	{
 		mod.insert(mod.begin(), playerType.begin(), playerType.end());
 	}
@@ -153,12 +153,16 @@ public:
 	// Set game screen
 	void init()
 	{
-
+		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
+		GAME::setCameraPosition({0,15.5f,-5});
+		GAME::setCameraAngle(-45, {1,0,0});
+
+
 		//GAME::setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
-		for(auto &a : mod)
+		for(auto& a : mod)
 			GAME::addModel(a);
 
 		static Animation walk[4], idle[4];
@@ -195,7 +199,7 @@ public:
 		GAME::addModel(mod.back()); //7
 
 		//Boss
-		mod.push_back(new Boss("Models/BOSS/robotTEST2.obj"));
+		mod.push_back(new Boss("Models/BOSS/robotBOI.obj"));
 		GAME::addModel(mod.back()); //8
 		//mod[8]->enableBoundingBox(true);
 
@@ -406,9 +410,9 @@ public:
 		mod[78]->setToRender(false);
 
 		//TRAIN
-		mod.push_back(new Model("Models/TrainGrayBox.obj"));//79
+		mod.push_back(new Model("Models/Train/Head/trainhead.obj"));//79
 		GAME::addModel(mod.back());
-		mod.push_back(new Model(*mod.back()));//80
+		mod.push_back(new Model("Models/Train/Body/trainbodyblend.obj"));//80
 		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//81
 		GAME::addModel(mod.back());
@@ -418,15 +422,39 @@ public:
 		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//84
 		GAME::addModel(mod.back());
-		mod.push_back(new Model(*mod.back()));//85
+		mod.push_back(new Model("Models/Train/Head/trainhead.obj"));//85
 		GAME::addModel(mod.back());
-		mod[79]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[79]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		mod[80]->getTransformer().setPosition(4.5f, 0.0f, 8.0f), mod[80]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		mod[81]->getTransformer().setPosition(9.0f, 0.0f, 8.0f), mod[81]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		mod[82]->getTransformer().setPosition(-4.5f, 0.0f, 8.0f), mod[82]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		mod[83]->getTransformer().setPosition(-9.0f, 0.0f, 8.0f), mod[83]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		mod[84]->getTransformer().setPosition(-13.5f, 0.0f, 8.0f), mod[84]->getTransformer().setRotation({0.0f,90.0f,0.0f});
-		mod[85]->getTransformer().setPosition(13.5f, 0.0f, 8.0f), mod[85]->getTransformer().setRotation({0.0f,90.0f,0.0f});
+		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
+		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
+		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
+		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
+		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
+		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
+		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
+
+		//RAIL
+		mod.push_back(new Model("Models/Rail/rail.obj"));//86
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//87
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//88
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//89
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//90
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//91
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//92
+		GAME::addModel(mod.back());
+
+		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
 
 		////Medic Healing Ring
 		//mod.push_back(new Model("Models/TrainGrayBox.obj"));//86
@@ -520,6 +548,8 @@ public:
 		mod[46]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 		mod[47]->getTransformer().setPosition(0.0f, 2.0f, 17.0f);
 
+		//Bullet Size
+		mod[48]->getTransformer().setScale(50.f);
 		//Pizza Sign
 		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-10.25f, 5.4f, 22.3f);
 
@@ -561,10 +591,7 @@ public:
 		mod[77]->setColour({255,255,0,150});
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
 
-		//Minions
-		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
-		GAME::addModel(mod[78]);
-		mod[78]->setToRender(false);
+
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -585,7 +612,6 @@ public:
 		mod[2]->addChild(mod[76]);
 		mod[3]->addChild(mod[77]);
 
-		mod[0]->addChild(mod[86]);
 		LightSource::setLightAmount(14);
 		for(int a = 0; a < 6; a++)
 		{
@@ -646,8 +672,8 @@ public:
 
 		/// - Set Camera  - ///
 
-		GAME::setCameraPosition({0,18.5f,-14});
-		GAME::setCameraAngle(-65, {1,0,0});
+		GAME::setCameraPosition({0,15.5f,-17.5});
+		GAME::setCameraAngle(-25, {1,0,0});
 
 		/// not needed ///
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
@@ -666,6 +692,7 @@ public:
 
 	void update(double dt)
 	{
+		mod[48]->getTransformer().setScale(1);
 		//Time
 		static float  time = 0;
 		time += (float)dt; //Add Delta Time to Time
@@ -680,7 +707,7 @@ public:
 		static Player* players;
 
 		// Boss Variables
-		static Boss*CandyMan;
+		static Boss* CandyMan;
 		CandyMan = (Boss*)mod[8]; //Set model 8 as Boss called "CandyMan"
 		static bool bossActive = true; //
 
@@ -817,13 +844,13 @@ public:
 							players = (Player*)mod[a];
 
 
-							if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
+							if(p1.sticks[RS].x || p1.sticks[RS].y)
 							{
 
-								angle[a] = acosf(p1.Coord2D_sticks[RS].x /
-									sqrtf(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-										+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-								angle[a] += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
+								angle[a] = acosf(p1.sticks[RS].x /
+									sqrtf(p1.sticks[RS].x * p1.sticks[RS].x
+										+ p1.sticks[RS].y * p1.sticks[RS].y)) * (180 / (float)M_PI);
+								angle[a] += (p1.sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 								angle[a] = fmodf(angle[a], 360);
 							}
 
@@ -864,19 +891,20 @@ public:
 							{
 								if(players->getBulletCount() > 0)
 								{
-									gunControlLaw[a] = true; //gun Control Law makes it so the guns function "semi-automatically" instead of "fully automatic"
+									gunControlLaw[a] = true; //gun Control Law makes it so the guns function "manualy" instead of "fully automatic"
 
-									bullets[a].push_back(nullptr);
-									GAME::addModel(bullets[a].back() = new Model(*mod[48]));
-									bullets[a].back()->getTransformer().reset();
+									bullets[a].push_back(new Model(*mod[48]));
+									GAME::addModel(bullets[a].back());
+									//bullets[a].back()->getTransformer().reset();
+									//bullets[a].back()->getTransformer().setScale(5000);
 									bullets[a].back()->setColour(players->getColour());//bullet color = players color
 									Coord3D pos = mod[a]->getTransformer().getPosition();
 									bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-									bullets[a].back()->getTransformer().setScale(0.13f);
+									bullets[a].back()->getTransformer().setScale(.25f);
 									bullets[a].back()->getTransformer().setRotation({90 , angle[a] ,0});
 
-									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
+									float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
 
 									velocity[a].push_back(Coord3D());
 									velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
@@ -887,7 +915,7 @@ public:
 									players->setBulletCount(players->getBulletCount() - 1);
 								}
 							}
-							else if(p1.triggers[RT] < .95 && gunControlLaw[a])
+							else if(p1.triggers[RT] < .95&& gunControlLaw[a])
 								gunControlLaw[a] = false;
 
 							/// - Button Presses on controller - ///
@@ -910,8 +938,8 @@ public:
 
 									pMissiles[a].back()->getTransformer().setRotation({0 , angle[a] ,0});
 
-									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
+									float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
 
 									missileVelocity[a].push_back(Coord3D());
 									missileVelocity[a].back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
@@ -947,7 +975,7 @@ public:
 								Coord3D norm = players->getTransformer().getPosition() - minions[m]->getTransformer().getPosition();
 								norm.normalize();
 
-								minions[m]->getTransformer().translateBy(norm*.001f);
+								minions[m]->getTransformer().translateBy(norm * .001f);
 								if(collision(minions[m], minions[m]))// Might have to change one of the m values??
 								{
 									// TODO:  Minions collide with each other so they arent a blob.
@@ -991,8 +1019,8 @@ public:
 							}
 
 							mod[a]->getTransformer().setRotation({0,angle[a], 0});
-							mod[a]->getTransformer().translateBy(p1.Coord2D_sticks[LS].x * move, 0, p1.Coord2D_sticks[LS].y * move); //move players
-							float speed = p1.Coord2D_sticks[LS].x*p1.Coord2D_sticks[LS].x + p1.Coord2D_sticks[LS].y*p1.Coord2D_sticks[LS].y;
+							mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move players
+							float speed = p1.sticks[LS].x * p1.sticks[LS].x + p1.sticks[LS].y * p1.sticks[LS].y;
 
 
 							if(!collision(mod[a], mod[59]))
@@ -1013,12 +1041,16 @@ public:
 
 							//Update each players's Blood Bar
 							mod[a + 64]->getTransformer().setPosition(mod[a]->getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
-							mod[a + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f * (players->getHealth() / 100.0f));
+							mod[a + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f * (players->getHealth() / players->getInitialHealth()));
 							mod[a + 68]->getTransformer().setPosition(mod[a + 64]->getTransformer().getPosition());
 							if(dead[a] == true)
 							{
 								GAME::removeModel(mod[a + 64]);
 								GAME::removeModel(mod[a + 68]);
+
+								GAME::removeModel(mod[a + 26]);
+								GAME::removeModel(mod[a + 54]);
+								GAME::removeModel(mod[a + 74]);
 							}
 
 							//Update each players's Bullet Circle
@@ -1096,7 +1128,9 @@ public:
 								}
 
 								if(bulletHit)
-									bullets[a].erase(bullets[a].begin() + b);
+									bullets[a].erase(bullets[a].begin() + b),
+									timer[a].erase(timer[a].begin() + b),
+									velocity[a].erase(velocity[a].begin() + b);
 
 							}
 
@@ -1168,94 +1202,88 @@ public:
 
 
 		/// - Train Car Movement - ///
-		//for(int a = 0; a < 4; a++)
-		//{
-		//	players = (Player*)mod[a];
-		//
-		//	//Train Sits in middle of map
-		//	if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
-		//	{
-		//		for(int t = 0; t < 7; t++)
-		//		{
-		//			if(collision(mod[79 + t], players))
-		//			{
-		//				if(players->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-		//					players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
-		//				if(players->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-		//					players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
-		//			}
-		//		}
-		//
-		//	}
-		//	//Train Moves off map
-		//	if(10 <= (time - trainTimer) && 20 > (time - trainTimer))
-		//	{
-		//		for(int t = 0; t < 7; t++)
-		//		{
-		//			mod[79 + t]->getTransformer().translateBy(Coord3D{0.08f, 0.f, 0.f});//Move train cars right
-		//			if(collision(mod[79 + t], players))
-		//			{
-		//				players->setHealth(players->getHealth() - 10);
-		//				if(players->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-		//					players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-		//				if(players->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-		//					players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
-		//			}
-		//		}
-		//	}
-		//	//Train stops
-		//	else if(20 <= (time - trainTimer) && 30 > (time - trainTimer))
-		//	{
-		//		for(int t = 0; t < 7; t++)
-		//		{
-		//			mod[79 + t]->getTransformer().translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
-		//		}
-		//	}
-		//	//Train moves back onto map
-		//	else if(30 <= (time - trainTimer) && 40 > (time - trainTimer))
-		//	{
-		//		for(int t = 0; t < 7; t++)
-		//		{
-		//			mod[79 + t]->getTransformer().translateBy(Coord3D{-0.08f, 0.f, 0.f});//Move train cars back to the right
-		//			if(collision(mod[79 + t], players))
-		//			{
-		//				players->setHealth(players->getHealth() - 10);
-		//				if(players->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-		//					players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-		//				if(players->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-		//					players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
-		//				//if (players->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
-		//				//	players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
-		//			}
-		//		}
-		//	}
-		//	//Train stops on map
-		//	else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
-		//	{
-		//		for(int t = 0; t < 7; t++)
-		//		{
-		//			mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
-		//			if(collision(mod[79 + t], players))
-		//			{
-		//				if(players->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-		//					players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
-		//				if(players->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-		//					players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
-		//			}
-		//		}
-		//		trainTimer += time; //Reset Train timer so it all starts again.
-		//	}
-		//}
+		for(int a = 0; a < 4; a++)
+		{
+			players = (Player*)mod[a];
+
+			//Train Sits in middle of map
+			if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
+			{
+				for(int t = 0; t < 7; t++)
+				{
+					if(collision(mod[79 + t], players))
+					{
+						if(players->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
+						if(players->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+					}
+				}
+
+			}
+			//Train Moves off map
+			if(10 <= (time - trainTimer) && 20 > (time - trainTimer))
+			{
+				for(int t = 0; t < 7; t++)
+				{
+					mod[79 + t]->getTransformer().translateBy(Coord3D{0.05f, 0.f, 0.f});//Move train cars right
+					if(collision(mod[79 + t], players))
+					{
+						players->setHealth(players->getHealth() - 10);
+						if(players->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+						if(players->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+					}
+				}
+			}
+			//Train stops
+			else if(20 <= (time - trainTimer) && 30 > (time - trainTimer))
+			{
+				for(int t = 0; t < 7; t++)
+				{
+					mod[79 + t]->getTransformer().translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
+				}
+			}
+			//Train moves back onto map
+			else if(30 <= (time - trainTimer) && 40 > (time - trainTimer))
+			{
+				for(int t = 0; t < 7; t++)
+				{
+					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
+					if(collision(mod[79 + t], players))
+					{
+						players->setHealth(players->getHealth() - 10);
+						if(players->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+						if(players->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+						//if (players->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
+						//	players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+					}
+				}
+			}
+			//Train stops on map
+			else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
+			{
+				for(int t = 0; t < 7; t++)
+				{
+					mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
+					if(collision(mod[79 + t], players))
+					{
+						if(players->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
+						if(players->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+					}
+				}
+				trainTimer += time; //Reset Train timer so it all starts again.
+			}
+		}
 
 		//Boss health bar calculation
-		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f * (CandyMan->getHealth() / 1000.0f));
+		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f* (CandyMan->getHealth() / 1000.0f));
 
-		GAME::m_grayScalePost->enable();
-		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
-		GAME::m_grayScalePost->disable();
-
-		deathCounter += .007f;
-		deathCounter = deathCounter <= 1 ? deathCounter : 1;
 		if(youDead)
 		{
 			//TODO: do something when the party is dead, game over screen with "Main Menu" "Quit" options
@@ -1273,32 +1301,25 @@ public:
 			if(GAME::isControllerConnected(0))
 			{
 				Xinput p1 = GAME::getController(0);
-
-				p1.numButtons;
-				p1.numSticks;
-				float angle1 = 0;
-				if(p1.Coord2D_sticks[RS].x || p1.Coord2D_sticks[RS].y)
-				{
-					angle1 = acosf(p1.Coord2D_sticks[RS].x /
-						sqrt(p1.Coord2D_sticks[RS].x*p1.Coord2D_sticks[RS].x
-							+ p1.Coord2D_sticks[RS].y*p1.Coord2D_sticks[RS].y)) * (180 / (float)M_PI);
-					angle1 += (p1.Coord2D_sticks[RS].y < 0 ? (180 - angle1) * 2 : 0) + 90;//90 represents the start angle
-					angle1 = fmodf(angle1, 360);
-				}
-
-				if(Xinput::buttonPressed(p1.buttons.A))
-					printf("%d\n", p1.buttons.A);
+				deathCounter = 0;
 
 				//move camera
 				move *= 2;
 
-				GAME::moveCameraPositionBy({p1.Coord2D_sticks[LS].x * move , 0 * move, p1.Coord2D_sticks[LS].y * move});//move camera
-				GAME::moveCameraAngleBy(ang * (abs(p1.Coord2D_sticks[RS].x) + abs(p1.Coord2D_sticks[RS].y)), {p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0});//rotate camera
-				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1.Coord2D_sticks[RS].y ,ang *p1.Coord2D_sticks[RS].x ,0}, { p1.Coord2D_sticks[RS].y  ,p1.Coord2D_sticks[RS].x, 0 });
+				GAME::moveCameraPositionBy({p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move});//move camera
+				GAME::moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
+				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1.sticks[RS].y ,ang *p1.sticks[RS].x ,0}, { p1.sticks[RS].y  ,p1.sticks[RS].x, 0 });
 				GAME::moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
 				GAME::moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
 				move /= 2;
 			}
+
+		GAME::m_grayScalePost->enable();
+		glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+		GAME::m_grayScalePost->disable();
+
+		deathCounter += .007f;
+		deathCounter = deathCounter <= 1 ? deathCounter : 1;
 	}
 
 private:
