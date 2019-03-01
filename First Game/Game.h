@@ -463,6 +463,15 @@ public:
 		mod[93]->setToRender(false);
 		mod[93]->getTransformer().setScale(2,1,2);
 
+		mod.push_back(new Model("Models/TrainGrayBox.obj"));//94
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//95
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//96
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//97
+		GAME::addModel(mod.back());
+
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -594,7 +603,10 @@ public:
 		mod[77]->setColour({ 255,255,0,150 });
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
 
-
+		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({0,90,0});
+		mod[95]->getTransformer().setPosition(-4, 0, -8), mod[95]->getTransformer().setRotation({ 0,90,0 });
+		mod[96]->getTransformer().setPosition(4, 0, -8), mod[96]->getTransformer().setRotation({ 0,90,0 });
+		mod[97]->getTransformer().setPosition(12, 0, -8), mod[97]->getTransformer().setRotation({ 0,90,0 });
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -996,14 +1008,14 @@ public:
 								{
 									if (time - ((Tank*)players)->getTimeSinceLastShield() >= 3)
 									{
-										
+										puts("Special Ability TANK");
 									}
 								}
 								if (players->type == specialist)
 								{
 									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 3)
 									{
-									
+										puts("Special Ability SPECIALIST");
 									}
 								}
 
