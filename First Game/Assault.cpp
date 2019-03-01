@@ -17,6 +17,7 @@ Assault::Assault(Model & model) : Player(model)
 
 Assault::Assault(const char * path) : Player(path)
 {
+	type = assault;
 	initialHealth = 100.0f;
 	setHealth(100);
 }
@@ -24,4 +25,14 @@ Assault::Assault(const char * path) : Player(path)
 
 Assault::~Assault()
 {
+}
+
+float Assault::getTimeSinceLastMissile()
+{
+	return timeSinceLastMissile;
+}
+
+void Assault::setTimeSinceLastMissile(float v)
+{
+	timeSinceLastMissile = v;
 }

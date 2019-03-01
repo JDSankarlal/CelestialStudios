@@ -11,12 +11,14 @@ Tank::Tank():Player()
 
 Tank::Tank(Model & model) : Player(model)
 {
+	type = tank;
 	initialHealth = 250.0f;
 	setHealth(250);
 }
 
 Tank::Tank(const char * path) : Player(path)
 {
+	type = tank;
 	initialHealth = 250.0f;
 	setHealth(250);
 }
@@ -24,4 +26,14 @@ Tank::Tank(const char * path) : Player(path)
 
 Tank::~Tank()
 {
+}
+
+float Tank::getTimeSinceLastShield()
+{
+	return timeSinceLastShield;
+}
+
+void Tank::setTimeSinceLastShield(float v)
+{
+	timeSinceLastShield = v;
 }

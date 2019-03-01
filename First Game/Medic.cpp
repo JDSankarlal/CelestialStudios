@@ -11,12 +11,14 @@ Medic::Medic():Player()
 
 Medic::Medic(Model & model) : Player(model)
 {
+	type = medic;
 	initialHealth = 150.0f;
 	setHealth(150);
 }
 
 Medic::Medic(const char * path) : Player(path)
 {
+	type = medic;
 	initialHealth = 150.0f;
 	setHealth(150);
 }
@@ -24,4 +26,14 @@ Medic::Medic(const char * path) : Player(path)
 
 Medic::~Medic()
 {
+}
+
+float Medic::getTimeSinceLastHeal()
+{
+	return timeSinceLastHeal;
+}
+
+void Medic::setTimeSinceLastHeal(float v)
+{
+	timeSinceLastHeal = v;
 }

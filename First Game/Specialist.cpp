@@ -11,12 +11,14 @@ Specialist::Specialist():Player()
 
 Specialist::Specialist(Model & model) : Player(model)
 {
+	type = specialist;
 	initialHealth = 75.0f;
 	setHealth(75);
 }
 
 Specialist::Specialist(const char * path) : Player(path)
 {
+	type = specialist;
 	initialHealth = 75.0f;
 	setHealth(75);
 }
@@ -24,4 +26,14 @@ Specialist::Specialist(const char * path) : Player(path)
 
 Specialist::~Specialist()
 {
+}
+
+float Specialist::getTimeSinceLastTurret()
+{
+	return timeSinceLastTurret;
+}
+
+void Specialist::setTimeSinceLastTurret(float v)
+{
+	timeSinceLastTurret = v;
 }
