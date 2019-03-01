@@ -505,7 +505,7 @@ public:
 		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.5f, 5.34f, 22.5f);
 
 		//Boss Trarrnsforms
-		mod[8]->getTransformer().setScale(1.3f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 19.0f), mod[8]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f });
+		mod[8]->getTransformer().setScale(1.3f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f });
 
 		//Floor Transforms
 		mod[9]->getTransformer().setScale(2.25f, 1.0f, 5.0f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
@@ -931,9 +931,15 @@ public:
 								players->setBulletCount(30);
 								puts("RELOADING!!!\n");
 							}
-							//Makes medics Circle disappear
+							///- Medic Secial Ability Active - ///
 							if (healingCircle == true)
 							{
+								//Healing
+								if (collision3D(players, mod[93]))
+								{
+									players->setHealth(200);
+								}
+								//Makes medics Circle disappear
 								if ((time - circleTime) >= 2.5f)
 								{
 									mod[93]->setToRender(false);
@@ -942,7 +948,8 @@ public:
 								}
 							}
 							if (p1.buttonPressed(p1.buttons.Y))
-							{
+							{	
+								/// - Assault Special Ability - ///
 								if (players->type == assault)
 								{
 									if (time - ((Assault*)players)->getTimeSinceLastMissile() >= 3)
@@ -970,13 +977,14 @@ public:
 										puts("Special Ability ASSAULT\n");
 									}
 								}
+								///- Medic Special Ability Inactive - ///
 								if (players->type == medic)
 								{
 									if (healingCircle == false)
 									{
 										if (time - ((Medic*)players)->getTimeSinceLastHeal() >= 5)
 										{
-											mod[93]->getTransformer().setPosition(players->getTransformer().getPosition());
+											mod[93]->getTransformer().setPosition(players->getTransformer().getPosition() + (Coord3D({ 0.0f, 0.1f, 0.0f })));
 											mod[93]->setToRender(true);
 											circleTime = time;
 											puts("Special Ability MEDIC");
@@ -986,17 +994,17 @@ public:
 								}
 								if (players->type == tank)
 								{
-									//if (time - players->getTimeSinceLastMissile() >= 3)
-									//{
-									//
-									//}
+									if (time - ((Tank*)players)->getTimeSinceLastShield() >= 3)
+									{
+										
+									}
 								}
 								if (players->type == specialist)
 								{
-									//if (time - players->getTimeSinceLastMissile() >= 3)
-									//{
-									//
-									//}
+									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 3)
+									{
+									
+									}
 								}
 
 							}
