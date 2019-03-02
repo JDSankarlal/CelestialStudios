@@ -153,6 +153,10 @@ public:
 	// Set game screen
 	void init()
 	{
+		GAME::m_deferredRender->enable();
+		GAME::m_deferredRender->sendUniform("darker", true);
+		GAME::m_deferredRender->disable();
+
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
 		GAME::setCameraPosition({0,18.5f,-14});
@@ -1080,24 +1084,22 @@ public:
 									timer[a].erase(timer[a].begin() + b);
 									break;
 								}
-
 								bool bulletHit = false;
+
 								/// Bullet Collisions with Train
 								for(int t = 0; t < 7; t++)
 								{
 									if(collision(bullets[a][b], mod[79 + t]))
 									{
-										GAME::removeModel(bullets[a][b]);
+										
 										bulletHit = true;
 									}
 								}
 								if(mod[8])
 									if(collision(bullets[a][b], mod[8]))
 									{
-										GAME::removeModel(bullets[a][b]);
-										bullets[a].erase(bullets[a].begin() + b);
-										velocity[a].erase(velocity[a].begin() + b);
-										timer[a].erase(timer[a].begin() + b);
+										
+										bulletHit = true;
 										//Boss a.k.a model 8, is now called "CandyMan" for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
@@ -1116,7 +1118,7 @@ public:
 									if(collision(bullets[a][b], minion))
 									{
 										minion->setHealth(minion->getHealth() - 10);
-										GAME::removeModel(bullets[a][b]);
+										
 										bulletHit = true;
 										if(minion->getHealth() <= 0)
 										{
@@ -1135,8 +1137,14 @@ public:
 									//}
 								}
 
-								if(bulletHit)
+								if (bulletHit)
+								{
+									GAME::removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
+									velocity[a].erase(velocity[a].begin() + b);
+									timer[a].erase(timer[a].begin() + b);
+									b--;
+								}
 
 							}
 

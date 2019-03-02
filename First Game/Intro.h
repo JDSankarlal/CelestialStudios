@@ -7,6 +7,9 @@ public:
 	// Set splash screen and start update
 	void init()
 	{
+		GAME::m_deferredRender->enable();
+		GAME::m_deferredRender->sendUniform("darker", false);
+		GAME::m_deferredRender->disable();
 		mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
 		mod[0]->getTransformer().setScale(1.0f, 1.5f, 1.0f);
 		GameEmGine::addModel(mod.back());

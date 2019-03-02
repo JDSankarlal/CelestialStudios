@@ -473,11 +473,11 @@ void GameEmGine::update()
 	}
 
 	
+	
 
 	///~ 3D-Graphics 1 ~///
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 	m_deferredRenderBuffer->enable();
-
 	m_mainCamera->addModels(&m_models);
 	m_mainCamera->render(m_deferredRender);
 
