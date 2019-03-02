@@ -114,6 +114,7 @@
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableSpecificWarnings>4201</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>GameEmGine.lib;%(AdditionalDependencies)</AdditionalDependencies>

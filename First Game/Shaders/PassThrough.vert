@@ -28,11 +28,11 @@ void main()
    vec3 vert = mix(in_vert1, in_vert2, uTime);
 
 
-    norm =  mat3(uView) * mat3(uModel) * normal;
+    norm =   mat3(uModel) * normal;
     
     vec4 viewSpace =  uView * uModel * vec4(vert, 1.0f); 
     
     gl_Position =  uProj * viewSpace;
     
-    pos = (gl_Position).xyz;
+    pos = (uModel * vec4(vert, 1.0f)).xyz;
 }

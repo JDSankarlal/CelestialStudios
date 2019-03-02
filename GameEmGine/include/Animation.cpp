@@ -29,7 +29,7 @@ void Animation::addDir(const char * dir)
 	for(auto&a : filePath)
 	{
 		std::wstring tmpPath = a.path();
-		int check = tmpPath.find(L".obj");
+		int check = (int)tmpPath.find(L".obj");
 		if(check < 0)continue;
 
 		Mesh tmp;
@@ -64,7 +64,7 @@ void Animation::update(Shader* shader, Mesh* mesh)
 				} else
 				{
 					m_frame = int(time / m_speed);
-					m_frame = m_frame >= m_unpackedData.size() - 1 ? (m_unpackedData.size() - 2) % m_unpackedData.size() : m_frame;
+					m_frame = m_frame >= m_unpackedData.size() - 1 ? unsigned((m_unpackedData.size() - 2) % m_unpackedData.size() ): m_frame;
 
 					if(m_frame < m_unpackedData.size() - 2)
 						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[(m_frame + 1) % m_unpackedData.size()]);

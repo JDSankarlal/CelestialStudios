@@ -678,7 +678,7 @@ public:
 
 		AudioPlayer::init();
 
-		audio.createAudioStream("Audio/potential mix (with beat).mp3");
+		audio.createAudioStream("Audio/Game Jam(Full).wav");
 
 		audio.play(true);
 	}

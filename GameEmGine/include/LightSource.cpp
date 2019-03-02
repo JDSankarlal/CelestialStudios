@@ -94,6 +94,7 @@ void LightSource::update()
 		Coord3D lp = m_lights[a].transform->getPosition();
 		glm::vec4 pos(lp.x, lp.y, lp.z, 1.0f);
 		glm::vec4 dir{ m_lights[a].direction.x,m_lights[a].direction.y ,m_lights[a].direction.z ,1.0f};
+		
 		if(m_lights[a].parent)
 		{
 			Transformer *trans = &m_lights[a].parent->getTransformer();
@@ -103,8 +104,11 @@ void LightSource::update()
 			pos = m_lights[a].parent->getTransformer().getTransformation() * m_lights[a].transform->getTransformation()*forward * glm::vec4(pos2, 1.f);
 			// dir = forward * dir;
 			//m_lights[a].direction = {tmp.x,tmp.y,tmp.z};
-		} else
+		}
+		else
+		{
 			pos = m_lights[a].transform->getTransformation() * pos;
+		}
 
 		sprintf_s(buff, "LightType[%d]", a);
 		glUniform1i(m_shader->getUniformLocation(buff), (int)m_lights[a].type);

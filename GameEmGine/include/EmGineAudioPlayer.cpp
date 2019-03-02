@@ -72,7 +72,7 @@ void EmGineAudioPlayer::play(bool loop, bool newInst, uint index, uint from, uin
 	if(newInst && m_channels[0][index])
 		m_sounds->push_back(m_sounds[0][index]),
 		m_channels->push_back(nullptr),
-		index = m_channels->size() - 1;
+		index = (uint)m_channels->size() - 1;
 
 
 	if(!m_channels[0][index] || (m_channels[0][index] ? isStoped(index) : false))
@@ -189,7 +189,7 @@ bool EmGineAudioPlayer::isPaused(uint index)
 
 uint EmGineAudioPlayer::size()
 {
-	return m_channels->size();
+	return (uint)m_channels->size();
 }
 
 void EmGineAudioPlayer::setVolume(float vol, uint index)
