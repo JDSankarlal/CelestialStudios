@@ -1141,7 +1141,6 @@ public:
 							//Update each players's Blood Bar
 							mod[a + 64]->getTransformer().setPosition(mod[a]->getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 							mod[a + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f * ((float)players->getHealth() / (float)players->getInitialHealth()));
-							std::cout << players->getHealth() << " " << players->getInitialHealth() << std::endl;
 							mod[a + 68]->getTransformer().setPosition(mod[a + 64]->getTransformer().getPosition());
 							if (dead[a] == true)
 							{
