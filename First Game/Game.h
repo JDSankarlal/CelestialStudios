@@ -476,6 +476,7 @@ public:
 		//Turret
 		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//98
 		GAME::addModel(mod.back());
+		mod[98]->setToRender(false);
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -718,8 +719,8 @@ public:
 
 		//Player Ability Variables
 		//Assault
-		static vector<Model*> pMissiles[4];
-		static vector<Coord3D> missileVelocity[4];
+		static vector<Model*> pMissiles[1];
+		static vector<Coord3D> missileVelocity[1];
 
 		//Medic
 		static float circleTime;
@@ -728,6 +729,11 @@ public:
 		//Tank
 		static float shieldTime;
 		static bool tankShield = false;
+
+		//Specialist
+		static vector<Model*> pTurrets[1];
+		static bool turretActive = false;
+		static float turretTime;
 
 		//static float coolDown = 0;
 		static float duration = 0;
@@ -983,6 +989,14 @@ public:
 									tankShield = false;
 								}
 							}
+							/// - Turret Active - ///
+							if (turretActive == true)
+							{
+								if ((time - turretTime) >= 5)
+								{
+
+								}
+							}
 
 							if (p1.buttonPressed(p1.buttons.Y))
 							{	
@@ -1029,23 +1043,38 @@ public:
 										}
 									}
 								}
-								/// - Tank Special Ability Inacive - ///
+								/// - Tank Special Ability Inactive - ///
 								if (players->type == tank)
 								{
-									if (time - ((Tank*)players)->getTimeSinceLastShield() >= 5)
+									if (tankShield == false)
 									{
-										players->setHealth(players->getHealth() + 200);
-										shieldTime = time;
-										puts("Special Ability TANK");
-										tankShield = true;
+										if (time - ((Tank*)players)->getTimeSinceLastShield() >= 5)
+										{
+											players->setHealth(players->getHealth() + 250);
+											shieldTime = time;
+											puts("Special Ability TANK");
+											tankShield = true;
+										}
 									}
 								}
-								/// - Specialist Special Ability Inacive - ///
+								/// - Specialist Special Ability Inactive - ///
 								if (players->type == specialist)
 								{
-									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 3)
+								
+									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 8)
 									{
+										pTurrets[a].push_back(nullptr);
+										GAME::addModel(pTurrets[a].back() = new Model(*mod[98]));
+										pTurrets[a].back()->getTransformer().reset();
+										pTurrets[a].back()->setColour(players->getColour());
+										Coord3D pos = mod[a]->getTransformer().getPosition();
+										pTurrets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+										pTurrets[a].back()->getTransformer().setScale(0.4f);
+										pTurrets[a].back()->setToRender(true);
 										puts("Special Ability SPECIALIST");
+
+										((Specialist*)players)->setTimeSinceLastTurret(time);
+										turretActive = true;
 									}
 								}
 
