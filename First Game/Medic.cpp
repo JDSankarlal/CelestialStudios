@@ -5,23 +5,35 @@
 Medic::Medic():Player()
 {
 	type = medic;
-	initialHealth = 150.0f;
+	initialHealth = 150;
 	setHealth(150);
 }
 
 Medic::Medic(Model & model) : Player(model)
 {
-	initialHealth = 150.0f;
+	type = medic;
+	initialHealth = 150;
 	setHealth(150);
 }
 
 Medic::Medic(const char * path) : Player(path)
 {
-	initialHealth = 150.0f;
+	type = medic;
+	initialHealth = 150;
 	setHealth(150);
 }
 
 
 Medic::~Medic()
 {
+}
+
+float Medic::getTimeSinceLastHeal()
+{
+	return timeSinceLastHeal;
+}
+
+void Medic::setTimeSinceLastHeal(float v)
+{
+	timeSinceLastHeal = v;
 }
