@@ -46,8 +46,7 @@ void Player::setBulletCount(int v)
 }
 
 
-
-float Player::getInitialHealth()
+int Player::getInitialHealth()
 {
 	return initialHealth;
 }

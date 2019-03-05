@@ -5,20 +5,20 @@
 Assault::Assault():Player()
 {
 	type = assault;
-	initialHealth = 100.0f;
+	initialHealth = 100;
 	setHealth(100);
 }
 
 Assault::Assault(Model & model) : Player(model)
 {
-	initialHealth = 100.0f;
+	initialHealth = 100;
 	setHealth(100);
 }
 
 Assault::Assault(const char * path) : Player(path)
 {
 	type = assault;
-	initialHealth = 100.0f;
+	initialHealth = 100;
 	setHealth(100);
 }
 

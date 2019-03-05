@@ -463,6 +463,7 @@ public:
 		mod[93]->setToRender(false);
 		mod[93]->getTransformer().setScale(2,1,2);
 
+		//Escape pods
 		mod.push_back(new Model("Models/TrainGrayBox.obj"));//94
 		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//95
@@ -472,6 +473,9 @@ public:
 		mod.push_back(new Model(*mod.back()));//97
 		GAME::addModel(mod.back());
 
+		//Turret
+		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//98
+		GAME::addModel(mod.back());
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -713,8 +717,17 @@ public:
 		time += (float)dt; //Add Delta Time to Time
 
 		//Player Ability Variables
+		//Assault
+		static vector<Model*> pMissiles[4];
+		static vector<Coord3D> missileVelocity[4];
+
+		//Medic
 		static float circleTime;
 		static bool healingCircle = false;
+
+		//Tank
+		static float shieldTime;
+		static bool tankShield = false;
 
 		//static float coolDown = 0;
 		static float duration = 0;
@@ -741,8 +754,7 @@ public:
 		static float trainTimer = 0; //Determines when train comes and goes
 
 		static vector<float> timer[4];
-		static vector<Model*> pMissiles[4];
-		static vector<Coord3D> missileVelocity[4];
+		
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
 		static bool gunControlLaw[4], dashControl[4];//stops the creation of bullets when trigger is healed down
@@ -949,7 +961,7 @@ public:
 								//Healing
 								if (collision3D(players, mod[93]))
 								{
-									players->setHealth(200);
+									players->setHealth(players->getHealth() + 10);
 								}
 								//Makes medics Circle disappear
 								if ((time - circleTime) >= 2.5f)
@@ -959,6 +971,19 @@ public:
 									healingCircle = false;
 								}
 							}
+							/// - Tank Special Ability Active - ///
+							if (tankShield == true)
+							{
+								if ((time - shieldTime) >= 2.5f)
+								{
+									if (((Tank*)players)->getHealth() > ((Tank*)players)->getInitialHealth())
+									{
+										((Tank*)players)->setHealth(((Tank*)players)->getInitialHealth());
+									}
+									tankShield = false;
+								}
+							}
+
 							if (p1.buttonPressed(p1.buttons.Y))
 							{	
 								/// - Assault Special Ability - ///
@@ -1004,13 +1029,18 @@ public:
 										}
 									}
 								}
+								/// - Tank Special Ability Inacive - ///
 								if (players->type == tank)
 								{
-									if (time - ((Tank*)players)->getTimeSinceLastShield() >= 3)
+									if (time - ((Tank*)players)->getTimeSinceLastShield() >= 5)
 									{
+										players->setHealth(players->getHealth() + 200);
+										shieldTime = time;
 										puts("Special Ability TANK");
+										tankShield = true;
 									}
 								}
+								/// - Specialist Special Ability Inacive - ///
 								if (players->type == specialist)
 								{
 									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 3)

@@ -5,21 +5,21 @@
 Tank::Tank():Player()
 {
 	type = tank;
-	initialHealth = 250.0f;
+	initialHealth = 250;
 	setHealth(250);
 }
 
 Tank::Tank(Model & model) : Player(model)
 {
 	type = tank;
-	initialHealth = 250.0f;
+	initialHealth = 250;
 	setHealth(250);
 }
 
 Tank::Tank(const char * path) : Player(path)
 {
 	type = tank;
-	initialHealth = 250.0f;
+	initialHealth = 250;
 	setHealth(250);
 }
 

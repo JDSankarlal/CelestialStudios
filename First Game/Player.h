@@ -22,11 +22,11 @@ public:
 	virtual int getBulletCount();
 	virtual void setBulletCount(int v);
 	
-	float getInitialHealth();
+	int getInitialHealth();
 
 	PlayerType type;
 protected:
-	float initialHealth = 100.0f;
+	int initialHealth = 100;
 private:
 	int health = 100;
 	int bulletCount = 30;
