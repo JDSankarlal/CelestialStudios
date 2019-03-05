@@ -1,6 +1,6 @@
 #include "FrameBuffer.h"
 
-FrameBuffer::FrameBuffer(std::string tag,unsigned numColorAttachments)
+FrameBuffer::FrameBuffer(std::string tag, unsigned numColorAttachments)
 {
 	m_tag = tag;
 	glGenFramebuffers(1, &m_fboID);
@@ -14,7 +14,6 @@ FrameBuffer::FrameBuffer(std::string tag,unsigned numColorAttachments)
 	{
 		m_buffs[i] = GL_COLOR_ATTACHMENT0 + i;
 	}
-
 }
 
 FrameBuffer::~FrameBuffer()
@@ -132,6 +131,11 @@ void FrameBuffer::disable()
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
+void FrameBuffer::setViewport(int x, int y, int width, int height) const
+{
+	glViewport(x, y, width, height);
+}
+
 void FrameBuffer::moveToBackBuffer(int windowWidth, int windowHeight)
 {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
@@ -153,7 +157,7 @@ GLuint FrameBuffer::getColorHandle(unsigned index) const
 
 void FrameBuffer::setPostProcess(std::function<void()>post, unsigned layer)
 {
-	m_postProcess =post;
+	m_postProcess = post;
 	m_layer = layer;
 }
 

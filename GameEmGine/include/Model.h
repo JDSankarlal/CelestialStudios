@@ -19,7 +19,7 @@ public:
 	Model();
 	Model(Model & model);
 	Model(const char* path);
-	~Model();
+	virtual ~Model();
 
 	void render(Shader & shader, Camera & cam);
 
@@ -43,11 +43,11 @@ public:
 
 	void addAnimation(std::string tag, Animation *animation);
 
-	void addFrameBuffer(FrameBuffer* buffer);
-
-	void removeFrameBuffer(std::string tag);
-
-	std::unordered_map<std::string, FrameBuffer*>& getFrameBuffers();
+//	void addFrameBuffer(FrameBuffer* buffer);
+//
+//	void removeFrameBuffer(std::string tag);
+//
+//	std::unordered_map<std::string, FrameBuffer*>& getFrameBuffers();
 
 	float getWidth();
 	float getHeight();
@@ -86,7 +86,7 @@ private:
 	glm::mat4 m_transBB;
 	bool m_enableBB = false;
 
-	std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
+	//std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
 	std::vector<Model*> m_children;
 	Model* m_parent;
 	//std::vector <Texture2D> loadedTextures;

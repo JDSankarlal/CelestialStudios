@@ -3,7 +3,7 @@
 Mesh::Mesh()
 {}
 
-Mesh::Mesh(Mesh &mesh):
+Mesh::Mesh(Mesh& mesh):
 	m_vaoID(mesh.m_vaoID),
 	m_vboID(mesh.m_vboID),
 	m_numVerts(mesh.m_numVerts),
@@ -27,7 +27,7 @@ Mesh::~Mesh()
 }
 
 //converts directory paths
-void cDir(char *dir)
+void cDir(char* dir)
 {
 	char* tmp;
 	if(strlen(dir) > 0)
@@ -146,14 +146,14 @@ void Mesh::loadMaterials(const char* path)
 			{
 				float a[3];
 				sscanf_s(str, "Ka %f %f %f", &a[0], &a[1], &a[2]);
-				for(auto &b : m_textures.back().second)
+				for(auto& b : m_textures.back().second)
 					b.colour.colorA = (GLubyte)(255 * a[0] * a[1] * a[2]);
 			}
 			else if(strstr(str, "Kd"))
 			{
 				float r, g, b;
 				sscanf_s(str, "Kd %f %f %f", &r, &g, &b);
-				for(auto &a : m_textures.back().second)
+				for(auto& a : m_textures.back().second)
 					if(a.type == TEXTURE_TYPE::DIFFUSE)
 						a.colour.set((GLubyte)r * 255, (GLubyte)g * 255, (GLubyte)b * 255);
 			}
@@ -185,7 +185,7 @@ bool Mesh::loadMesh(std::string path)
 
 	unload();
 
-	FILE* f;
+	FILE * f;
 
 	fopen_s(&f, path.c_str(), "r");
 
@@ -205,7 +205,7 @@ bool Mesh::loadMesh(std::string path)
 
 	std::vector < std::pair<std::string, std::vector<Vertex3D>>> faces;
 
-	char *MeshCheck = nullptr;
+	char* MeshCheck = nullptr;
 	bool initFace = true;
 	while(MeshCheck = fgets(inputBuff, CHAR_BUFF_SIZE, f),
 		//this part takes out the '\n' from the string
@@ -387,7 +387,7 @@ bool Mesh::loadMesh(std::string path)
 	verts.clear();
 	uvs.clear();
 	faces.clear();
-	for(auto &a : m_unpackedData)
+	for(auto& a : m_unpackedData)
 		a.second.clear();
 	m_unpackedData.clear();
 
@@ -401,7 +401,7 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 
 	unload();
 
-	FILE* f;
+	FILE * f;
 
 	fopen_s(&f, path.c_str(), "r");
 
@@ -421,7 +421,7 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 
 	std::vector < std::pair<std::string, std::vector<Vertex3D>>> faces;
 
-	char *MeshCheck = nullptr;
+	char* MeshCheck = nullptr;
 	bool initFace = true;
 	while(MeshCheck = fgets(inputBuff, CHAR_BUFF_SIZE, f),
 		//this part takes out the '\n' from the string
@@ -605,51 +605,46 @@ std::vector< std::pair<std::string, std::vector<Vertex3D>>> Mesh::loadAni(std::s
 	return m_unpackedData;
 }
 
-void Mesh::render(Shader& shader, std::unordered_map<std::string, FrameBuffer*>& buffers)
+void Mesh::render(Shader & shader)
 {
 	shader.enable();
-	for(auto&frame : buffers)
-	{	
-		for(unsigned a = 0; a < m_vaoID.size(); a++)
+	for(unsigned a = 0; a < m_vaoID.size(); a++)
+	{
+		bool textured = false;
+		int c = 0;
+
+		for(unsigned b = 0; b < m_textures.size(); b++)
 		{
-			bool textured = false;
-			int c = 0;
-
-			for(unsigned b = 0; b < m_textures.size(); b++)
-			{
-				if(m_textures[b].first == m_vaoID[a].first)
-				{
-					glActiveTexture(GL_TEXTURE0 + c);
-
-					for(auto &d : m_textures[b].second)
-						if(d.type == TEXTURE_TYPE::DIFFUSE)
-						{
-							textured = true;
-							glUniform1i(shader.getUniformLocation("uTex"), c);
-							glBindTexture(GL_TEXTURE_2D, d.id);
-						}
-					c++;
-				}
-			}
-
-			glUniform1i(shader.getUniformLocation("textured"), textured);
-
-			frame.second->enable();
-
-			glBindVertexArray(m_vaoID[a].second);
-			glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
-			glBindVertexArray(0);
-
-			frame.second->disable();
-
-			for(; c >= 0; c--)
+			if(m_textures[b].first == m_vaoID[a].first)
 			{
 				glActiveTexture(GL_TEXTURE0 + c);
-				glBindTexture(GL_TEXTURE_2D, 0);
-				//glActiveTexture(0);
+
+				for(auto& d : m_textures[b].second)
+					if(d.type == TEXTURE_TYPE::DIFFUSE)
+					{
+						textured = true;
+						glUniform1i(shader.getUniformLocation("uTex"), c);
+						glBindTexture(GL_TEXTURE_2D, d.id);
+					}
+				c++;
 			}
 		}
+
+		glUniform1i(shader.getUniformLocation("textured"), textured);
+
+
+		glBindVertexArray(m_vaoID[a].second);
+		glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
+		glBindVertexArray(0);
+
+		for(; c >= 0; c--)
+		{
+			glActiveTexture(GL_TEXTURE0 + c);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			//glActiveTexture(0);
+		}
 	}
+
 	shader.disable();
 }
 
@@ -704,17 +699,17 @@ void Mesh::init()
 
 		//normal 2   attributes
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
-	
+
 	}
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 void Mesh::editVerts(std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts1, std::vector< std::pair<std::string, std::vector<Vertex3D>>> verts2)
 {
 	for(unsigned a = 0; a < verts1.size(); a++)
 	{
-		
+
 		glBindVertexArray(m_vaoID[a].second);
 
 		glEnableVertexAttribArray(0);

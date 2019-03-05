@@ -10,9 +10,12 @@ public:
 
 	int getHealth();
 	void setHealth(int v);
+	float getTimeSinceLastSpawn();
+	void setTimeSinceLastSpawn(float v);
 
 private:
 	int health = 30;
 	float moveSpeed;
+	float timeSinceLastSpawn;
 };
 

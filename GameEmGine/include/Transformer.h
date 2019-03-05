@@ -17,15 +17,15 @@ public:
 
 	/*SET ROTATION*/
 
-	void setRotation(Coord3D direction, Coord3D forward = { 1,0,0 });
-	void rotateBy(Coord3D direction, Coord3D forward = { 1,0,0 });
+	void setRotation(Coord3D direction);
+	void rotateBy(Coord3D direction);
 
 	/*SET POSITION*/
 
-	void setPosition(float x, float y, float z, Coord3D forward = { 1,0,0 });
-	void setPosition(Coord3D pos, Coord3D forward = { 1,0,0 });
-	void translateBy(float x, float y, float z, Coord3D forward = { 1,0,0 });
-	void translateBy(Coord3D pos, Coord3D forward = { 1,0,0 });
+	void setPosition(float x, float y, float z);
+	void setPosition(Coord3D pos);
+	void translateBy(float x, float y, float z);
+	void translateBy(Coord3D pos);
 
 
 	/*SET SCALE*/
@@ -49,12 +49,15 @@ public:
 
 	void resetUpdated();
 
+	void enableDirCam(bool enable);
+
 	bool isUpdated();
 	bool isScaleUpdated();
 	bool isRotationUpdated();
 	bool isTranslatinUpdated();
 private:
-	Coord3D m_pos, m_angles, m_scale2;
+	Coord3D m_posData, m_rotData, m_scaleData;
+	glm::vec3 m_forward = {0,0,1}, m_up{0,1,0}, m_right{1,0,0};
 	glm::mat4
 		m_translate,
 		m_rotate,

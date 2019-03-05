@@ -1,21 +1,34 @@
-
+#pragma once
 #include <Model.h>
+
+enum PlayerType
+{
+	assault,
+	tank,
+	medic,
+	specialist
+};
+
 class Player : public Model
 {
 public:
 	Player();
 	Player(Model & model);
+	Player(Player & model);
 	Player(const char * path);
-	~Player();
-	int getHealth();
-	void setHealth(int v);
-	int getBulletCount();
-	void setBulletCount(int v);
-	float getTimeSinceLastMissile();
-	void setTimeSinceLastMissile(float v);
+	virtual ~Player();
+	virtual int getHealth();
+	virtual void setHealth(int v);
+	virtual int getBulletCount();
+	virtual void setBulletCount(int v);
+	
+	int getInitialHealth();
 
+	PlayerType type;
+protected:
+	int initialHealth = 100;
 private:
 	int health = 100;
 	int bulletCount = 30;
-	float timeSinceLastMissile;
+	
 };

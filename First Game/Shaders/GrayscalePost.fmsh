@@ -1,7 +1,7 @@
 #version 420
 
 uniform sampler2D uTex;
-uniform float uTime;
+uniform float uTime=0;
 
 in vec2 outUV;
 

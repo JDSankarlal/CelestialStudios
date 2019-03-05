@@ -1,6 +1,7 @@
 #pragma once
 #include <GameEmGine.h>
 #include "Game.h"
+#include "PlayerSelect.h"
 class Menu:public Scene
 {
 public:
@@ -73,12 +74,12 @@ public:
 			if(GameEmGine::isControllerConnected(a))
 			{
 				static int lastOption;
-				if(abs(GameEmGine::getController(a).Coord2D_sticks[LS].y) >= 0.8)
+				if(abs(GameEmGine::getController(a).sticks[LS].y) >= 0.8)
 				{
 					if(!menuMoved[a])
 					{
 						lastOption = option;
-						option += GameEmGine::getController(a).Coord2D_sticks[LS].y < 0 ? 1 : -1;
+						option += GameEmGine::getController(a).sticks[LS].y < 0 ? 1 : -1;
 
 						option = option > 3 ? 1 : option < 1 ? 3 : option;
 
@@ -90,7 +91,7 @@ public:
 					}
 				}
 
-				if(abs(GameEmGine::getController(a).Coord2D_sticks[LS].y) < .3f)
+				if(abs(GameEmGine::getController(a).sticks[LS].y) < .3f)
 					menuMoved[a] = false;
 
 				if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
@@ -113,7 +114,7 @@ public:
 			}
 
 		mod[option]->getTransformer().setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
-		mod[option]->setColour(lerp(ColourRGBA{255,255,255,255}, ColourRGBA{255,0,0,255}, lerpParam));
+		mod[option]->setColour(lerp(ColourRGBA{255,255,255}, ColourRGBA{0,255,255}, lerpParam));
 		lerpParam += .1f;
 
 		if(lerpParam >= 1)
@@ -135,7 +136,7 @@ public:
 				splashAmbient = 255;
 
 				//GamePlayInit();
-				GameEmGine::setScene(new Game);
+				GameEmGine::setScene(new PlayerSelect);
 			}
 		}
 	}
