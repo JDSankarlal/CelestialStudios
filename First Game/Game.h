@@ -965,9 +965,13 @@ public:
 							if (healingCircle == true)
 							{
 								//Healing
+								static int healAmount = 5;
 								if (collision3D(players, mod[93]))
 								{
-									players->setHealth(players->getHealth() + 10);
+									if (players->getHealth() + healAmount < players->getInitialHealth())
+									{
+										players->setHealth(players->getHealth() + healAmount);
+									}
 								}
 								//Makes medics Circle disappear
 								if ((time - circleTime) >= 2.5f)
