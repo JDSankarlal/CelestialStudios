@@ -461,7 +461,7 @@ public:
 		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//93
 		GAME::addModel(mod.back());
 		mod[93]->setToRender(false);
-		mod[93]->getTransformer().setScale(2,1,2);
+		mod[93]->getTransformer().setScale(2, 1, 2);
 
 		//Escape pods
 		mod.push_back(new Model("Models/TrainGrayBox.obj"));//94
@@ -608,7 +608,7 @@ public:
 		mod[77]->setColour({ 255,255,0,150 });
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({0,90,0});
+		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({ 0,90,0 });
 		mod[95]->getTransformer().setPosition(-4, 0, -8), mod[95]->getTransformer().setRotation({ 0,90,0 });
 		mod[96]->getTransformer().setPosition(4, 0, -8), mod[96]->getTransformer().setRotation({ 0,90,0 });
 		mod[97]->getTransformer().setPosition(12, 0, -8), mod[97]->getTransformer().setRotation({ 0,90,0 });
@@ -760,7 +760,7 @@ public:
 		static float trainTimer = 0; //Determines when train comes and goes
 
 		static vector<float> timer[4];
-		
+
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
 		static bool gunControlLaw[4], dashControl[4];//stops the creation of bullets when trigger is healed down
@@ -992,46 +992,48 @@ public:
 							/// - Turret Active - ///
 							if (turretActive == true)
 							{
-								/// - Cases for deleting turret - ///
-								//If turret time runs out
-								if ((time - turretTime) >= 5)
-								{
-									GAME::removeModel(pTurrets[a].back());
-									pTurrets[a].erase(pTurrets[a].begin() + a);
-								}
-								//If turret touched by minion
 								for (auto& turret : pTurrets[a])
 								{
+									/// - Cases for deleting turret - ///
+									//If turret time runs out
+									if ((time - turretTime) >= 5)
+									{
+										GAME::removeModel(turret);
+										//pTurrets[a].erase(pTurrets[a].begin() + a);
+									}
+									//If turret touched by minion
 									if (collision(minions[a], turret))
 									{
 										GAME::removeModel(turret);
 										//pTurrets[a].erase();
 									}
-								}
-								// If turret hit by missile from boss
-								for (int m = 0; m < 4; m++)
-								{
-									if (collision(mod[60 + m], pTurrets[a].back()))
+									// If turret hit by missile from boss
+									for (int m = 0; m < 4; m++)
 									{
-										GAME::removeModel(pTurrets[a].back());
-										pTurrets[a].erase(pTurrets[a].begin() + a);
-										curveroni[a] = 1;
-										mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+										if (collision(mod[60 + m], turret))
+										{
+											GAME::removeModel(turret);
+											//pTurrets[a].erase(pTurrets[a].begin() + a);
+											curveroni[a] = 1;
+											mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+										}
+									}
+									//If turret gets hit by train
+									for (int t = 0; t < 7; t++)
+									{
+										if (collision(mod[79] + t, turret))
+										{
+											GAME::removeModel(turret);
+											//pTurrets[a].erase(pTurrets[a].begin() + a);
+										}
 									}
 								}
-								//If turret gets hit by train
-								for (int t = 0; t < 7; t++)
-								{
-									if (collision(mod[79] + t, pTurrets[a].back()))
-									{
-										GAME::removeModel(pTurrets[a].back());
-										pTurrets[a].erase(pTurrets[a].begin() + a);
-									}
-								}
+								
+								
 							}
 
 							if (p1.buttonPressed(p1.buttons.Y))
-							{	
+							{
 								/// - Assault Special Ability - ///
 								if (players->type == assault)
 								{
@@ -1092,7 +1094,7 @@ public:
 								/// - Specialist Special Ability Inactive - ///
 								if (players->type == specialist)
 								{
-								
+
 									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 8)
 									{
 										pTurrets[a].push_back(nullptr);
@@ -1106,6 +1108,7 @@ public:
 										puts("Special Ability SPECIALIST");
 
 										((Specialist*)players)->setTimeSinceLastTurret(time);
+										turretTime = time;
 										turretActive = true;
 									}
 								}
