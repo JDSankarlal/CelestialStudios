@@ -461,7 +461,7 @@ public:
 		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//93
 		GAME::addModel(mod.back());
 		mod[93]->setToRender(false);
-		mod[93]->getTransformer().setScale(2,1,2);
+		mod[93]->getTransformer().setScale(2, 1, 2);
 
 		//Escape pods
 		mod.push_back(new Model("Models/TrainGrayBox.obj"));//94
@@ -476,6 +476,7 @@ public:
 		//Turret
 		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//98
 		GAME::addModel(mod.back());
+		mod[98]->setToRender(false);
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -607,7 +608,7 @@ public:
 		mod[77]->setColour({ 255,255,0,150 });
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({0,90,0});
+		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({ 0,90,0 });
 		mod[95]->getTransformer().setPosition(-4, 0, -8), mod[95]->getTransformer().setRotation({ 0,90,0 });
 		mod[96]->getTransformer().setPosition(4, 0, -8), mod[96]->getTransformer().setRotation({ 0,90,0 });
 		mod[97]->getTransformer().setPosition(12, 0, -8), mod[97]->getTransformer().setRotation({ 0,90,0 });
@@ -718,8 +719,8 @@ public:
 
 		//Player Ability Variables
 		//Assault
-		static vector<Model*> pMissiles[4];
-		static vector<Coord3D> missileVelocity[4];
+		static vector<Model*> pMissiles[1];
+		static vector<Coord3D> missileVelocity[1];
 
 		//Medic
 		static float circleTime;
@@ -728,6 +729,11 @@ public:
 		//Tank
 		static float shieldTime;
 		static bool tankShield = false;
+
+		//Specialist
+		static vector<Model*> pTurrets[1];
+		static bool turretActive = false;
+		static float turretTime;
 
 		//static float coolDown = 0;
 		static float duration = 0;
@@ -754,7 +760,7 @@ public:
 		static float trainTimer = 0; //Determines when train comes and goes
 
 		static vector<float> timer[4];
-		
+
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
 		static bool gunControlLaw[4], dashControl[4];//stops the creation of bullets when trigger is healed down
@@ -959,9 +965,13 @@ public:
 							if (healingCircle == true)
 							{
 								//Healing
+								static int healAmount = 5;
 								if (collision3D(players, mod[93]))
 								{
-									players->setHealth(players->getHealth() + 10);
+									if (players->getHealth() + healAmount < players->getInitialHealth())
+									{
+										players->setHealth(players->getHealth() + healAmount);
+									}
 								}
 								//Makes medics Circle disappear
 								if ((time - circleTime) >= 2.5f)
@@ -983,9 +993,51 @@ public:
 									tankShield = false;
 								}
 							}
+							/// - Turret Active - ///
+							if (turretActive == true)
+							{
+								for (auto& turret : pTurrets[a])
+								{
+									/// - Cases for deleting turret - ///
+									//If turret time runs out
+									if ((time - turretTime) >= 5)
+									{
+										GAME::removeModel(turret);
+										//pTurrets[a].erase(pTurrets[a].begin() + a);
+									}
+									//If turret touched by minion
+									if (collision(minions[a], turret))
+									{
+										GAME::removeModel(turret);
+										//pTurrets[a].erase();
+									}
+									// If turret hit by missile from boss
+									for (int m = 0; m < 4; m++)
+									{
+										if (collision(mod[60 + m], turret))
+										{
+											GAME::removeModel(turret);
+											//pTurrets[a].erase(pTurrets[a].begin() + a);
+											curveroni[a] = 1;
+											mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+										}
+									}
+									//If turret gets hit by train
+									for (int t = 0; t < 7; t++)
+									{
+										if (collision(mod[79] + t, turret))
+										{
+											GAME::removeModel(turret);
+											//pTurrets[a].erase(pTurrets[a].begin() + a);
+										}
+									}
+								}
+								
+								
+							}
 
 							if (p1.buttonPressed(p1.buttons.Y))
-							{	
+							{
 								/// - Assault Special Ability - ///
 								if (players->type == assault)
 								{
@@ -1029,23 +1081,39 @@ public:
 										}
 									}
 								}
-								/// - Tank Special Ability Inacive - ///
+								/// - Tank Special Ability Inactive - ///
 								if (players->type == tank)
 								{
-									if (time - ((Tank*)players)->getTimeSinceLastShield() >= 5)
+									if (tankShield == false)
 									{
-										players->setHealth(players->getHealth() + 200);
-										shieldTime = time;
-										puts("Special Ability TANK");
-										tankShield = true;
+										if (time - ((Tank*)players)->getTimeSinceLastShield() >= 5)
+										{
+											players->setHealth(players->getHealth() + 250);
+											shieldTime = time;
+											puts("Special Ability TANK");
+											tankShield = true;
+										}
 									}
 								}
-								/// - Specialist Special Ability Inacive - ///
+								/// - Specialist Special Ability Inactive - ///
 								if (players->type == specialist)
 								{
-									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 3)
+
+									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 8)
 									{
+										pTurrets[a].push_back(nullptr);
+										GAME::addModel(pTurrets[a].back() = new Model(*mod[98]));
+										pTurrets[a].back()->getTransformer().reset();
+										pTurrets[a].back()->setColour(players->getColour());
+										Coord3D pos = mod[a]->getTransformer().getPosition();
+										pTurrets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+										pTurrets[a].back()->getTransformer().setScale(0.4f);
+										pTurrets[a].back()->setToRender(true);
 										puts("Special Ability SPECIALIST");
+
+										((Specialist*)players)->setTimeSinceLastTurret(time);
+										turretTime = time;
+										turretActive = true;
 									}
 								}
 
@@ -1082,7 +1150,6 @@ public:
 							}
 
 							/// - Left Trigger to Dash - ///
-
 							if (p1.triggers[LT] >= .95)
 							{
 								static float coolDown[4];
@@ -1156,7 +1223,7 @@ public:
 							mod[a + 74]->getTransformer().setScale(0.65f * (players->getBulletCount() / 30.0f));
 						}
 
-						///~ Bullet Collisions ~///
+						///- Bullet Collisions -///
 						for (unsigned b = 0; b < bullets[a].size(); b++)
 							if (bullets[a][b])
 							{
@@ -1173,7 +1240,8 @@ public:
 								}
 
 								bool bulletHit = false;
-								/// Bullet Collisions with Train
+
+								/// - Bullet Collisions with Train - ///
 								for (int t = 0; t < 7; t++)
 								{
 									if (collision(bullets[a][b], mod[79 + t]))
