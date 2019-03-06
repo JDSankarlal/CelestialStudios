@@ -992,9 +992,41 @@ public:
 							/// - Turret Active - ///
 							if (turretActive == true)
 							{
+								/// - Cases for deleting turret - ///
+								//If turret time runs out
 								if ((time - turretTime) >= 5)
 								{
-
+									GAME::removeModel(pTurrets[a].back());
+									pTurrets[a].erase(pTurrets[a].begin() + a);
+								}
+								//If turret touched by minion
+								for (auto& turret : pTurrets[a])
+								{
+									if (collision(minions[a], turret))
+									{
+										GAME::removeModel(turret);
+										//pTurrets[a].erase();
+									}
+								}
+								// If turret hit by missile from boss
+								for (int m = 0; m < 4; m++)
+								{
+									if (collision(mod[60 + m], pTurrets[a].back()))
+									{
+										GAME::removeModel(pTurrets[a].back());
+										pTurrets[a].erase(pTurrets[a].begin() + a);
+										curveroni[a] = 1;
+										mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+									}
+								}
+								//If turret gets hit by train
+								for (int t = 0; t < 7; t++)
+								{
+									if (collision(mod[79] + t, pTurrets[a].back()))
+									{
+										GAME::removeModel(pTurrets[a].back());
+										pTurrets[a].erase(pTurrets[a].begin() + a);
+									}
 								}
 							}
 
@@ -1111,7 +1143,6 @@ public:
 							}
 
 							/// - Left Trigger to Dash - ///
-
 							if (p1.triggers[LT] >= .95)
 							{
 								static float coolDown[4];
@@ -1185,7 +1216,7 @@ public:
 							mod[a + 74]->getTransformer().setScale(0.65f * (players->getBulletCount() / 30.0f));
 						}
 
-						///~ Bullet Collisions ~///
+						///- Bullet Collisions -///
 						for (unsigned b = 0; b < bullets[a].size(); b++)
 							if (bullets[a][b])
 							{
@@ -1202,7 +1233,8 @@ public:
 								}
 
 								bool bulletHit = false;
-								/// Bullet Collisions with Train
+
+								/// - Bullet Collisions with Train - ///
 								for (int t = 0; t < 7; t++)
 								{
 									if (collision(bullets[a][b], mod[79 + t]))
