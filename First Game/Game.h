@@ -763,6 +763,9 @@ public:
 		static vector<Model*> pTurrets[1];
 		static bool turretActive = false;
 		static float turretTime;
+		//Turret
+		static Coord3D turretPos;
+		static Coord3D minionPos;
 
 		//static float coolDown = 0;
 		static float duration = 0;
@@ -1027,6 +1030,15 @@ public:
 							{
 								for (auto& turret : pTurrets[a])
 								{
+									/// - Turret targeting and shooting logic - ///
+									//Get turret position
+									turretPos = turret->getTransformer().getPosition().x + turret->getTransformer().getPosition().y;
+									for (int m = 0; m < minions.size(); m++)
+									{
+										//get minion positions
+										minionPos = minions[m]->getTransformer().getPosition().x + minions[m]->getTransformer().getPosition().y;
+										
+									}
 									/// - Cases for deleting turret - ///
 									//If turret time runs out
 									if ((time - turretTime) >= 5)
