@@ -21,7 +21,7 @@ class Game:public Scene
 public:
 	/// - Collision Class - ///
 
-	bool collision(Model *l, Model *k)
+	bool collision(Model* l, Model* k)
 	{
 		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 		Coord3D thing = l->getCenter() - k->getCenter();
@@ -42,7 +42,7 @@ public:
 
 	///~ 3D Collision Function ~///
 
-	bool collision3D(Model *l, Model *k)
+	bool collision3D(Model * l, Model * k)
 	{
 		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
 		Coord3D thing = l->getCenter() - k->getCenter();
@@ -143,7 +143,7 @@ public:
 			rightM = InputManager::getMouseCursorPosition();
 	}
 
-	void playerTypes(vector<Player*>& playerType)
+	void playerTypes(vector<Player*> & playerType)
 	{
 		mod.insert(mod.begin(), playerType.begin(), playerType.end());
 	}
@@ -160,7 +160,7 @@ public:
 		//GAME::setFPSLimit(60);
 		/// - Load mod into Scene - ///
 
-		for(auto &a : mod)
+		for(auto& a : mod)
 			GAME::addModel(a);
 
 		static Animation walk[4], idle[4];
@@ -350,7 +350,7 @@ public:
 		mod[59]->setToRender(false);
 		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
 
-		//missile hit box
+		//model hit box
 		mod.push_back(new Model(*mod[44]));//60
 
 		GAME::addModel(mod.back()); //
@@ -421,7 +421,7 @@ public:
 		mod.push_back(new Model(*mod.back()));//84
 		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/Train/Head/trainhead.obj"));//85
-		GAME::addModel(mod.back());								 
+		GAME::addModel(mod.back());
 		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
 		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
 		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
@@ -587,7 +587,7 @@ public:
 		mod[77]->setColour({255,255,0,150});
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
 
-		
+
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -702,7 +702,7 @@ public:
 		static Player* players;
 
 		// Boss Variables
-		static Boss*CandyMan;
+		static Boss* CandyMan;
 		CandyMan = (Boss*)mod[8]; //Set model 8 as Boss called "CandyMan"
 		static bool bossActive = true; //
 
@@ -722,8 +722,8 @@ public:
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
 		static bool gunControlLaw[4], dashControl[4];//stops the creation of bullets when trigger is healed down
-		static float  curveroni[4] = {0 ,0,0,0};
-		static bool hasTarget[4] = {0 ,0,0,0};
+
+		CandyMan->update();
 
 		static bool dead[4];
 
@@ -740,57 +740,7 @@ public:
 
 		/// - Math for the Catmull curves for the Boss - ///
 
-		for(int a = 0; a < 4; a++)
-		{
-			if(!dead[a])
-			{
-				curveroni[a] += .01f;
-				if(curveroni[a] >= 1)
-				{
-					hasTarget[a] = false;
-				}
-				curveroni[a] = fmodf(curveroni[a], 1);
 
-				static Coord3D bossTarget[4];
-
-				//gets a   target for missile (players 1,2,3 or 4) randomly
-				if(!hasTarget[a])
-				{
-
-					bossTarget[a] = mod[a]->getTransformer().getPosition();
-
-					hasTarget[a] = true;
-				}
-
-
-				if(mod[8])
-					if(hasTarget[a])
-					{
-						Coord3D
-							p1[4],
-							p2[4],
-							c1[4],
-							c2[4];
-						Coord3D cat[4];
-						Coord3D  pointPosition[4];
-						p1[a] = mod[8]->getTransformer().getPosition() + Coord3D(0.0f, 8.0f, 2.0f),//start point
-							p2[a] = bossTarget[a],//end point 
-							c1[a] = p1[a] - Coord3D{0,100,100},//control point
-							c2[a] = p2[a] - Coord3D{0,150,100};//control point
-
-						cat[a] = catmull
-						(
-							c1[a],
-							p1[a],
-							p2[a],
-							c2[a],
-							curveroni[a]
-						);
-						pointPosition[a] = cat[a];
-						mod[44 + a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
-					}
-			}
-		}
 
 
 		/// - Tombstone Animations - ///
@@ -843,8 +793,8 @@ public:
 							{
 
 								angle[a] = acosf(p1.sticks[RS].x /
-									sqrtf(p1.sticks[RS].x*p1.sticks[RS].x
-										+ p1.sticks[RS].y*p1.sticks[RS].y)) * (180 / (float)M_PI);
+									sqrtf(p1.sticks[RS].x * p1.sticks[RS].x
+										+ p1.sticks[RS].y * p1.sticks[RS].y)) * (180 / (float)M_PI);
 								angle[a] += (p1.sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 								angle[a] = fmodf(angle[a], 360);
 							}
@@ -897,8 +847,8 @@ public:
 									bullets[a].back()->getTransformer().setScale(0.13f);
 									bullets[a].back()->getTransformer().setRotation({90 , angle[a] ,0});
 
-									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
+									float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
 
 									velocity[a].push_back(Coord3D());
 									velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
@@ -932,8 +882,8 @@ public:
 
 									pMissiles[a].back()->getTransformer().setRotation({0 , angle[a] ,0});
 
-									float cosVal = cos((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
-									float sinVal = sin((float)(fmodf(angle[a] - 90, 360)*(M_PI / 180)));
+									float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
+									float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
 
 									missileVelocity[a].push_back(Coord3D());
 									missileVelocity[a].back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
@@ -969,7 +919,7 @@ public:
 								Coord3D norm = players->getTransformer().getPosition() - minions[m]->getTransformer().getPosition();
 								norm.normalize();
 
-								minions[m]->getTransformer().translateBy(norm*.001f);
+								minions[m]->getTransformer().translateBy(norm * .001f);
 								if(collision(minions[m], minions[m]))// Might have to change one of the m values??
 								{
 									// TODO:  Minions collide with each other so they arent a blob.
@@ -1014,7 +964,7 @@ public:
 
 							mod[a]->getTransformer().setRotation({0,angle[a], 0});
 							mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move players
-							float speed = p1.sticks[LS].x*p1.sticks[LS].x + p1.sticks[LS].y*p1.sticks[LS].y;
+							float speed = p1.sticks[LS].x * p1.sticks[LS].x + p1.sticks[LS].y * p1.sticks[LS].y;
 
 
 							if(!collision(mod[a], mod[59]))
@@ -1040,10 +990,10 @@ public:
 							if(dead[a] == true)
 							{
 								GAME::removeModel(mod[a + 64]);
-								GAME::removeModel(mod[a + 68]); 
+								GAME::removeModel(mod[a + 68]);
 
-								GAME::removeModel(mod[a + 26]); 
-								GAME::removeModel(mod[a + 54]); 
+								GAME::removeModel(mod[a + 26]);
+								GAME::removeModel(mod[a + 54]);
 								GAME::removeModel(mod[a + 74]);
 							}
 
@@ -1197,7 +1147,7 @@ public:
 		for(int a = 0; a < 4; a++)
 		{
 			players = (Player*)mod[a];
-		
+
 			//Train Sits in middle of map
 			if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
 			{
@@ -1211,7 +1161,7 @@ public:
 							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
 					}
 				}
-		
+
 			}
 			//Train Moves off map
 			if(10 <= (time - trainTimer) && 20 > (time - trainTimer))
@@ -1294,7 +1244,7 @@ public:
 			{
 				Xinput p1 = GAME::getController(0);
 				deathCounter = 0;
-				
+
 				//move camera
 				move *= 2;
 

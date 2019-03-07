@@ -72,8 +72,29 @@ public:
 	void keyInputPressed(int key, int modfier)
 	{
 		modfier;
-		if(key == 'B')
+		if(key == 'B' && !fadeout)
+		{
+			for(int i = 0; i < 4; i++)
+				switch(option[i])
+				{
+				case 0:
+
+					players.push_back(new Assault("Models/AssaultModel/Idle/ACM1.obj"));
+					break;
+				case 1:
+					players.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
+					break;
+				case 2:
+					players.push_back(new Medic("Models/AssaultModel/Idle/ACM1.obj"));
+					break;
+				case 3:
+					players.push_back(new Specialist("Models/AssaultModel/Idle/ACM1.obj"));
+					break;
+				default:
+					break;
+				}
 			fadeout = true;
+		}
 	}
 
 	// doing the update for menu screenb

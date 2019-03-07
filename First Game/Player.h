@@ -24,6 +24,7 @@ public:
 		medic,
 		specialist
 	} type;
+	bool dead;
 protected:
 	float initialHealth = 100.0f;
 private:

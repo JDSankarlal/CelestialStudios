@@ -27,7 +27,7 @@ Scene* GameEmGine::m_mainScene;
 
 //uniform vec4 LightPosition;
 //1uniform vec3 LightAmbient;
-
+#define SCREEN_RATIO 2
 #pragma endregion
 
 void GLAPIENTRY
@@ -113,14 +113,14 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 		return;
 	}
 
-	m_buffer1->initColourTexture(0, getWindowWidth() / 4, getWindowHeight() / 4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	m_buffer1->initColourTexture(0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	if(!m_buffer1->checkFBO())
 	{
 		puts("FBO failed Creation");
 		system("pause");
 		return;
 	}
-	m_buffer2->initColourTexture(0, getWindowWidth() / 4, getWindowHeight() / 4, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	m_buffer2->initColourTexture(0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO, GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE);
 
 	if(!m_buffer2->checkFBO())
 	{
@@ -470,7 +470,7 @@ void GameEmGine::update()
 
 
 
-	glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
+	glViewport(0, 0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO);
 
 	m_buffer1->enable();
 	m_bloomHighPass->enable();
@@ -482,7 +482,7 @@ void GameEmGine::update()
 	m_bloomHighPass->disable();
 	m_buffer1->disable();
 
-	glViewport(0, 0, getWindowWidth() / 4, getWindowHeight() / 4);
+	glViewport(0, 0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO);
 	for(int a = 0; a < 4; a++)
 	{
 		m_buffer2->enable();
@@ -506,9 +506,8 @@ void GameEmGine::update()
 
 		glBindTexture(GL_TEXTURE_2D, GL_NONE);
 		m_blurVertical->disable();
-
-
 	}
+
 	FrameBuffer::disable();
 
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
@@ -574,10 +573,10 @@ void GameEmGine::changeViewport(GLFWwindow*, int w, int h)
 	//	m_mainBuffer->initDepthTexture(w, h);
 	//	m_mainBuffer->initColourTexture(w, h, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
 	//}
+	glViewport(0, 0, w, h);
 	m_frameBuffers["Main Buffer"]->initDepthTexture(w, h);
 	m_frameBuffers["Main Buffer"]->initColourTexture(w, h, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE, 0);
 
-	glViewport(0, 0, w, h);
 	//glFrustum(0, w, 0, h, 0, h);//eye view
 	//glOrtho(0, 1, 0, 1, 0, 1);//box view
 }
