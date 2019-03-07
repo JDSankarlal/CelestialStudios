@@ -8,9 +8,9 @@ public:
 	// Set menu screen
 	void init()
 	{
-		mod.push_back(new Model("Models/Screen/PlayerSelect/PlayerSelect.obj"));
+		mod.push_back(new Model("Models/Scene/PlayerSelect/PlayerSelect.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
-		mod.push_back(new Model("Models/Screen/Menu/Start.obj"));
+		mod.push_back(new Model("Models/Scene/Menu/Start.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 1
 		mod[1]->setToRender(false);
 

@@ -8,13 +8,13 @@ public:
 	// Set menu screen
 	void init()
 	{
-		mod.push_back(new Model("Models/Screen/Menu/menu.obj"));
+		mod.push_back(new Model("Models/Scene/Menu/menu.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
-		mod.push_back(new Model("Models/Screen/Menu/Start.obj"));
+		mod.push_back(new Model("Models/Scene/Menu/Start.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 1
-		mod.push_back(new Model("Models/Screen/Menu/Options.obj"));
+		mod.push_back(new Model("Models/Scene/Menu/Options.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 2
-		mod.push_back(new Model("Models/Screen/Menu/Exit.obj"));
+		mod.push_back(new Model("Models/Scene/Menu/Exit.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 3
 
 		mod[0]->addChild(mod[1]);

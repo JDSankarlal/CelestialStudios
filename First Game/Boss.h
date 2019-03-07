@@ -11,11 +11,12 @@ public:
 	Boss(const char* path);
 	~Boss();
 
-	void setPlayers(Player players[4]);
+	void setPlayers(Player* players[4]);
 
 	bool randAttacks();
 	int getHealth();
 	void setHealth(int v);
+	Model * getMissial(int index);
 	void update();
 
 	static Model* missles[4];
@@ -24,6 +25,6 @@ private:
 	int health = 1000;
 	int attackDamage;
 	float attackCooldown;
-	Player* targets;
+	Player** targets;
 };
 

@@ -1,27 +1,37 @@
 #include "Boss.h"
 
+typedef GameEmGine GAME;
 
+Model* Boss::missles[4];
 
 Boss::Boss(): Model()
 {
+	missles[0]=(new Model("Models/Missile/BossMissile.obj"));
+	GAME::addModel(missles[0]);
+	missles[1]=(new Model(*missles[0]));
+	GAME::addModel(missles[1]);
+	missles[2]=(new Model(*missles[0]));
+	GAME::addModel(missles[2]);
+	missles[3]=(new Model(*missles[0]));
+	GAME::addModel(missles[3]);
 }
 
 Boss::Boss(Model& model) : Model(model)
 
 {
-
+	Boss();
 }
 
 Boss::Boss(const char* path):Model(path)
 {
-
+	Boss();
 }
 
 Boss::~Boss()
 {
 }
 
-void Boss::setPlayers(Player players[4])
+void Boss::setPlayers(Player* players[4])
 {
 	targets = players;
 }
@@ -45,6 +55,11 @@ void Boss::setHealth(int v)
 	health = v;
 }
 
+Model* Boss::getMissial(int index)
+{
+	return missles[index];
+}
+
 void Boss::update()
 {
 
@@ -55,7 +70,8 @@ void Boss::update()
 
 	for(int a = 0; a < 4; a++)
 	{
-		if(!targets->dead)
+		pointPosition[a] = getTransformer().getPosition();
+		if(!targets[a]->dead)
 		{
 			curveroni[a] += .01f;
 			if(curveroni[a] >= 1)
@@ -98,8 +114,8 @@ void Boss::update()
 				);
 
 				pointPosition[a] = cat[a];
-				missles[a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
 			}
+				missles[a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
 		}
 	}
 }

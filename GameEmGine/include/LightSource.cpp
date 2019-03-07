@@ -106,6 +106,7 @@ void LightSource::update()
 			//m_lights[a].direction = {tmp.x,tmp.y,tmp.z};
 		}
 		else
+		{
 			pos = m_lights[a].transform->getTransformation() * pos;
 		}
 

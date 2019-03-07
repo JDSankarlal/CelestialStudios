@@ -7,7 +7,7 @@ public:
 	// Set splash screen and start update
 	void init()
 	{
-		mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
+		mod.push_back(new Model("Models/Scene/Intro/Background/introBackGround.obj"));
 		mod[0]->getTransformer().setScale(1.0f, 1.5f, 1.0f);
 		GameEmGine::addModel(mod.back());
 		LightSource::setSceneAmbient({0,0,0,255});
