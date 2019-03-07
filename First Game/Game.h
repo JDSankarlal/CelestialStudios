@@ -1032,13 +1032,13 @@ public:
 									if ((time - turretTime) >= 5)
 									{
 										GAME::removeModel(turret);
-										//pTurrets[a].erase(pTurrets[a].begin() + a);
+										pTurrets[a].erase(std::find(pTurrets->begin(),pTurrets->end(),turret));
 									}
 									//If turret touched by minion
 									if (collision(minions[a], turret))
 									{
 										GAME::removeModel(turret);
-										//pTurrets[a].erase();
+										pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
 									}
 									// If turret hit by missile from boss
 									for (int m = 0; m < 4; m++)
@@ -1046,7 +1046,7 @@ public:
 										if (collision(mod[60 + m], turret))
 										{
 											GAME::removeModel(turret);
-											//pTurrets[a].erase(pTurrets[a].begin() + a);
+											pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
 											curveroni[a] = 1;
 											mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
 										}
@@ -1057,7 +1057,7 @@ public:
 										if (collision(mod[79] + t, turret))
 										{
 											GAME::removeModel(turret);
-											//pTurrets[a].erase(pTurrets[a].begin() + a);
+											pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
 										}
 									}
 								}
