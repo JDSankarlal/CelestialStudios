@@ -8,5 +8,11 @@ public:
 	Medic(Model & model);
 	Medic(const char * path);
 	~Medic();
+
+	virtual float getTimeSinceLastHeal();
+	virtual void setTimeSinceLastHeal(float v);
+
+private:
+	float timeSinceLastHeal;
 };
 

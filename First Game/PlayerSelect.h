@@ -8,51 +8,50 @@ public:
 	// Set menu screen
 	void init()
 	{
-		mod.push_back(new Model("Models/Screen/Menu/menu.obj"));
+		mod.push_back(new Model("Models/Screen/PlayerSelect/PlayerSelect.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
 		mod.push_back(new Model("Models/Screen/Menu/Start.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 1
-		mod.push_back(new Model("Models/ClassPH/Assault/assaultPH.obj")); // I wrote them like this because they will all be different models eventually I think.
-		GameEmGine::addModel(mod.back()); // mod 2
+		mod[1]->setToRender(false);
 
+
+
+		mod.push_back(new Model("Models/ClassPH/Assault/assaultPH.obj")); // I wrote them like this because they will all be different models eventually I think.
+	//	GameEmGine::addModel(mod.back()); // mod 2
 		mod[2]->getTransformer().setRotation({0,270,180}), mod[2]->getTransformer().setScale(10);
-		mod[2]->setToRender(false);
+		//	mod[2]->setToRender(false);
 
 		mod.push_back(new Model("Models/ClassPH/Tank/tankPH.obj"));
-		GameEmGine::addModel(mod.back()); // mod 3
-
+		//	GameEmGine::addModel(mod.back()); // mod 3
 		mod[3]->getTransformer().setRotation({0,270,180}), mod[3]->getTransformer().setScale(10);
-		mod[3]->setToRender(false);
+		//	mod[3]->setToRender(false);
 
 		mod.push_back(new Model("Models/ClassPH/Medic/medicPH.obj"));
-		GameEmGine::addModel(mod.back()); // mod 4
-
+		//	GameEmGine::addModel(mod.back()); // mod 4
 		mod[4]->getTransformer().setRotation({0,270,180}), mod[4]->getTransformer().setScale(10);
-		mod[4]->setToRender(false);
+		//	mod[4]->setToRender(false);
 
 		mod.push_back(new Model("Models/ClassPH/Specialist/specPH.obj"));
-		GameEmGine::addModel(mod.back()); // mod 5
-
+		//	GameEmGine::addModel(mod.back()); // mod 5
 		mod[5]->getTransformer().setRotation({0,270,180}), mod[5]->getTransformer().setScale(10);
-		mod[5]->setToRender(false);
-		//TODO: Add back button and more flashy start button and "Press A to ready" buttons
+		//	mod[5]->setToRender(false);
 
-		mod.push_back(new Model(*mod[3]));
-		GAME::addModel(mod.back()); //6
-		mod[6]->getTransformer().setPosition(-30, 0, 0), mod[6]->getTransformer().setRotation({0,270,180}), mod[6]->getTransformer().setScale(8);
-		mod[6]->setToRender(true);
-		mod.push_back(new Model(*mod[3]));
-		GAME::addModel(mod.back()); //7
-		mod[7]->getTransformer().setPosition(-10, 0, 0), mod[7]->getTransformer().setRotation({0,270,180}), mod[7]->getTransformer().setScale(8);
-		mod[7]->setToRender(true);
-		mod.push_back(new Model(*mod[3]));
-		GAME::addModel(mod.back()); //8
-		mod[8]->getTransformer().setPosition(10, 0, 0), mod[8]->getTransformer().setRotation({0,270,180}), mod[8]->getTransformer().setScale(8);
-		mod[8]->setToRender(true);
-		mod.push_back(new Model(*mod[3]));
-		GAME::addModel(mod.back()); //9
-		mod[9]->getTransformer().setPosition(30, 0, 0), mod[9]->getTransformer().setRotation({0,270,180}), mod[9]->getTransformer().setScale(8);
-		mod[9]->setToRender(true);
+
+			//TODO: Add back button and more flashy start button and "Press A to ready" buttons
+		float extra=0;
+		for(int a = 0; a < 4; a++)
+		{
+			if(a == 2)
+				extra = .7f;
+			else if(a == 3)
+				extra = 2;
+			mod.push_back(new Model(*classes[0]));
+			mod[6 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5 + extra), -25, 0), mod[6 + a]->getTransformer().setRotation({0,270,0}), mod[6 + a]->getTransformer().setScale(1, 15, 7);
+			mod[6 + a]->setToRender(true);
+		GAME::addModel(mod.back()); //6, 7, 8, 9
+		}
+
+
 
 		//See GDD for general layout of this screen.
 
@@ -80,9 +79,7 @@ public:
 	// doing the update for menu screenb
 	void updateMenu()
 	{
-		static Model *classes[4]
-		{new Assault("Models/ClassPH/Assault/assaultPH.obj"),new Tank("Models/ClassPH/Tank/tankPH.obj"),
-			new  Medic("Models/ClassPH/Medic/medicPH.obj"),new Specialist("Models/ClassPH/Specialist/specPH.obj")};
+
 		static bool menuMoved[] = {false,false,false,false};
 
 		if(fadein)
@@ -100,7 +97,7 @@ public:
 		}
 
 		static Coord3D tmp = Coord3D(20.0f);
-
+		float extra = 0;
 		for(int a = 0; a < 4; a++)
 		{
 			if(GameEmGine::isControllerConnected(a))
@@ -115,23 +112,27 @@ public:
 						option[a] = option[a] > 3 ? 0 : option[a] < 0 ? 3 : option[a];
 
 						lerpParam = 0;
-						//mod[lastOption]->getTransformer().setScale(10);
+						if(a == 2)
+							extra = .7f;
+						else if(a == 3)
+							extra = 2;
 						GameEmGine::removeModel(mod[6 + a]);
 						mod[6 + a]->setColour({255,255,255});
 						*mod[6 + a] = *classes[option[a]];
-						mod[6 + a]->getTransformer().setPosition(float(-30 + a * 20), 0, 0), mod[6 + a]->getTransformer().setRotation({0,270,180}), mod[6 + a]->getTransformer().setScale(8);
+						mod[6 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5), -25, 0), mod[6 + a]->getTransformer().setRotation({0,270,0}), mod[6 + a]->getTransformer().setScale(1, 15, 7);
 						GameEmGine::addModel(mod[6 + a]);
 
 						//tmp = mod[option]->getTransformer().getScale();
 						menuMoved[a] = true;
 					}
 				}
+				else
 
-				if(abs(GameEmGine::getController(a).sticks[LS].x) < .3f)
-					menuMoved[a] = false;
+					if(abs(GameEmGine::getController(a).sticks[LS].x) < .3f)
+						menuMoved[a] = false;
 
 				static bool fixthisnow = true;
-				if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A)&& fixthisnow)
+				if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A) && fixthisnow)
 				{
 					fixthisnow = false;
 					for(int i = 0; i < 4; i++)
@@ -197,6 +198,9 @@ public:
 	}
 
 private:
+	Model *classes[4]
+	{new Assault("Models/ClassPH/Assault/assaultPH.obj"),new Tank("Models/ClassPH/Tank/tankPH.obj"),
+		new  Medic("Models/ClassPH/Medic/medicPH.obj"),new Specialist("Models/ClassPH/Specialist/specPH.obj")};
 	std::vector<Player*>players;
 	std::vector<Model*> mod;
 	bool fadein = true;
