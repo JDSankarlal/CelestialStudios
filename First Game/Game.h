@@ -178,11 +178,12 @@ public:
 
 			walk[a].setAnimationSpeed(.25);
 			walk[a].repeat(true);
-			idle[a].stop();
+			mod[a]->getAnimation("walk")->pause();
+			/*idle[a].stop();
 
 			mod[a]->addAnimation("walk", &walk[a]);
 			mod[a]->addAnimation("idle", &idle[a]);
-			mod[a]->setAnimation("walk");
+			mod[a]->setAnimation("walk");*/
 		}
 
 		//Building 1s
@@ -480,10 +481,10 @@ public:
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
-		mod[0]->getTransformer().setScale(1.35f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
-		mod[1]->getTransformer().setScale(1.35f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
-		mod[2]->getTransformer().setScale(1.35f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
-		mod[3]->getTransformer().setScale(1.35f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
+		mod[0]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
+		mod[1]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
+		mod[2]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
+		mod[3]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
 		mod[0]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[1]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
@@ -541,17 +542,17 @@ public:
 		//mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
 
 		//ID rings?
-		mod[26]->setColour({ 255,0,0 });
-		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
+		mod[26]->setColour({ 255,110,110 });
+		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[27]->setColour({ 0,0,255 });
-		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[27]->getTransformer().setRotation({ 0,-90,0 });
+		mod[27]->setColour({ 110,110,255 });
+		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[28]->setColour({ 0,255,0 });
-		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[28]->getTransformer().setRotation({ 0,-90,0 });
+		mod[28]->setColour({ 110,255,110 });
+		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[29]->setColour({ 255,255,0 });
-		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
+		mod[29]->setColour({ 255,255,110 });
+		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
 
 		//Trees
 		mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({ 0,-0,0 });
@@ -579,7 +580,7 @@ public:
 		//Player Blood Bar
 		for (int i = 0; i < 4; i++)
 		{
-			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{ 0.35f,1.4f,0.0f });
+			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 			mod[i + 64]->getTransformer().setRotation(Coord3D(0, 90, 0));
 			mod[i + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 			mod[i + 68]->getTransformer().setPosition(mod[i + 64]->getTransformer().getPosition());
@@ -1359,7 +1360,7 @@ public:
 							mod[47]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
 						}
 					}
-					mod[a]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+					//mod[a]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 				}
 			}
 			else
