@@ -444,7 +444,7 @@ bool Mesh::loadMesh(std::string path)
 		fopen_s(&bin, ((path.substr(0, path.find('/') + 1) + "BIN") + path.substr(path.find_last_of('/'), path.find_first_of('.') - path.find_last_of('/') + 1) + "bin").c_str(), "rb");
 		fread(&meshes, sizeof(int), 1, bin);
 		loadMaterials(path.c_str());
-
+		bool initFace = true;
 		for(unsigned a = 0; a < meshes; a++)
 		{
 			int chars = 0;
@@ -465,6 +465,20 @@ bool Mesh::loadMesh(std::string path)
 					Vertex3D tmp;
 					fread(&tmp.coord, sizeof(float), 3, bin);
 
+					if(initFace)
+					{
+						front = back = left = right = top = bottom = tmp.coord;
+						initFace = false;
+					}
+					else
+					{
+						front = tmp.coord.z > front.z ? tmp.coord : front;
+						back = tmp.coord.z < back.z ? tmp.coord : back;
+						left = tmp.coord.x < left.x ? tmp.coord : left;
+						right = tmp.coord.x > right.x ? tmp.coord : right;
+						top = tmp.coord.y > top.y ? tmp.coord : top;
+						bottom = tmp.coord.y < bottom.y ? tmp.coord : bottom;
+					}
 					if(uvSize)
 						fread(&tmp.uv, sizeof(float), 2, bin);
 
