@@ -178,11 +178,12 @@ public:
 
 			walk[a].setAnimationSpeed(.25);
 			walk[a].repeat(true);
-			idle[a].stop();
+			mod[a]->getAnimation("walk")->pause();
+			/*idle[a].stop();
 
 			mod[a]->addAnimation("walk", &walk[a]);
 			mod[a]->addAnimation("idle", &idle[a]);
-			mod[a]->setAnimation("walk");
+			mod[a]->setAnimation("walk");*/
 		}
 
 		//Building 1s
@@ -425,13 +426,6 @@ public:
 		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/Train/Head/trainhead.obj"));//85
 		GAME::addModel(mod.back());
-		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
-		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
-		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
-		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
-		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
-		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
-		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
 
 		//RAIL
 		mod.push_back(new Model("Models/Rail/rail.obj"));//86
@@ -449,19 +443,11 @@ public:
 		mod.push_back(new Model(*mod.back()));//92
 		GAME::addModel(mod.back());
 
-		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
-
 		//Medic Healing Ring
 		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//93
 		GAME::addModel(mod.back());
 		mod[93]->setToRender(false);
-		mod[93]->getTransformer().setScale(2,1,2);
+		mod[93]->getTransformer().setScale(2, 1, 2);
 
 		//Escape pods
 		mod.push_back(new Model("Models/TrainGrayBox.obj"));//94
@@ -476,13 +462,30 @@ public:
 		//Turret
 		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//98
 		GAME::addModel(mod.back());
+		mod[98]->setToRender(false);
+
+		//RailLight
+		mod.push_back(new Model("Models/Rail/railLight.obj"));//99
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//100
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//101
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//102
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//103
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//104
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//105
+		GAME::addModel(mod.back());
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
-		mod[0]->getTransformer().setScale(1.35f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
-		mod[1]->getTransformer().setScale(1.35f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
-		mod[2]->getTransformer().setScale(1.35f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
-		mod[3]->getTransformer().setScale(1.35f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
+		mod[0]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
+		mod[1]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
+		mod[2]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
+		mod[3]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
 		mod[0]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[1]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
@@ -540,17 +543,17 @@ public:
 		//mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
 
 		//ID rings?
-		mod[26]->setColour({ 255,0,0 });
-		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
+		mod[26]->setColour({ 255,110,110 });
+		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[27]->setColour({ 0,0,255 });
-		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[27]->getTransformer().setRotation({ 0,-90,0 });
+		mod[27]->setColour({ 110,110,255 });
+		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[28]->setColour({ 0,255,0 });
-		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[28]->getTransformer().setRotation({ 0,-90,0 });
+		mod[28]->setColour({ 110,255,110 });
+		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[29]->setColour({ 255,255,0 });
-		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
+		mod[29]->setColour({ 255,255,110 });
+		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
 
 		//Trees
 		mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({ 0,-0,0 });
@@ -578,7 +581,7 @@ public:
 		//Player Blood Bar
 		for (int i = 0; i < 4; i++)
 		{
-			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{ 0.35f,1.4f,0.0f });
+			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 			mod[i + 64]->getTransformer().setRotation(Coord3D(0, 90, 0));
 			mod[i + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 			mod[i + 68]->getTransformer().setPosition(mod[i + 64]->getTransformer().getPosition());
@@ -607,10 +610,37 @@ public:
 		mod[77]->setColour({ 255,255,0,150 });
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({0,90,0});
+		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({ 0,90,0 });
 		mod[95]->getTransformer().setPosition(-4, 0, -8), mod[95]->getTransformer().setRotation({ 0,90,0 });
 		mod[96]->getTransformer().setPosition(4, 0, -8), mod[96]->getTransformer().setRotation({ 0,90,0 });
 		mod[97]->getTransformer().setPosition(12, 0, -8), mod[97]->getTransformer().setRotation({ 0,90,0 });
+
+		//Train
+		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
+		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
+		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
+		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
+		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
+		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
+		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
+
+		//Rail
+		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
+
+		//RialLight
+		mod[99]->getTransformer().setScale(0.7f), mod[99]->getTransformer().setPosition(-18.0f, 0.03f, 8.0f), mod[99]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[100]->getTransformer().setScale(0.7f), mod[100]->getTransformer().setPosition(-12.0f, 0.03f, 8.0f), mod[100]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[101]->getTransformer().setScale(0.7f), mod[101]->getTransformer().setPosition(-6.0f, 0.03f, 8.0f), mod[101]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[102]->getTransformer().setScale(0.7f), mod[102]->getTransformer().setPosition(0.0f, 0.03f, 8.0f), mod[102]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[103]->getTransformer().setScale(0.7f), mod[103]->getTransformer().setPosition(6.0f, 0.03f, 8.0f), mod[103]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[104]->getTransformer().setScale(0.7f), mod[104]->getTransformer().setPosition(12.0f, 0.03f, 8.0f), mod[104]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[105]->getTransformer().setScale(0.7f), mod[105]->getTransformer().setPosition(18.0f, 0.03f, 8.0f), mod[105]->getTransformer().setRotation(Coord3D(0, 90, 0));
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -718,8 +748,8 @@ public:
 
 		//Player Ability Variables
 		//Assault
-		static vector<Model*> pMissiles[4];
-		static vector<Coord3D> missileVelocity[4];
+		static vector<Model*> pMissiles[1];
+		static vector<Coord3D> missileVelocity[1];
 
 		//Medic
 		static float circleTime;
@@ -728,6 +758,11 @@ public:
 		//Tank
 		static float shieldTime;
 		static bool tankShield = false;
+
+		//Specialist
+		static vector<Model*> pTurrets[1];
+		static bool turretActive = false;
+		static float turretTime;
 
 		//static float coolDown = 0;
 		static float duration = 0;
@@ -754,7 +789,7 @@ public:
 		static float trainTimer = 0; //Determines when train comes and goes
 
 		static vector<float> timer[4];
-		
+
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
 		static bool gunControlLaw[4], dashControl[4];//stops the creation of bullets when trigger is healed down
@@ -959,9 +994,13 @@ public:
 							if (healingCircle == true)
 							{
 								//Healing
+								static int healAmount = 5;
 								if (collision3D(players, mod[93]))
 								{
-									players->setHealth(players->getHealth() + 10);
+									if (players->getHealth() + healAmount < players->getInitialHealth())
+									{
+										players->setHealth(players->getHealth() + healAmount);
+									}
 								}
 								//Makes medics Circle disappear
 								if ((time - circleTime) >= 2.5f)
@@ -983,9 +1022,51 @@ public:
 									tankShield = false;
 								}
 							}
+							/// - Turret Active - ///
+							if (turretActive == true)
+							{
+								for (auto& turret : pTurrets[a])
+								{
+									/// - Cases for deleting turret - ///
+									//If turret time runs out
+									if ((time - turretTime) >= 5)
+									{
+										GAME::removeModel(turret);
+										pTurrets[a].erase(std::find(pTurrets->begin(),pTurrets->end(),turret));
+									}
+									//If turret touched by minion
+									if (collision(minions[a], turret))
+									{
+										GAME::removeModel(turret);
+										pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
+									}
+									// If turret hit by missile from boss
+									for (int m = 0; m < 4; m++)
+									{
+										if (collision(mod[60 + m], turret))
+										{
+											GAME::removeModel(turret);
+											pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
+											curveroni[a] = 1;
+											mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+										}
+									}
+									//If turret gets hit by train
+									for (int t = 0; t < 7; t++)
+									{
+										if (collision(mod[79] + t, turret))
+										{
+											GAME::removeModel(turret);
+											pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
+										}
+									}
+								}
+								
+								
+							}
 
 							if (p1.buttonPressed(p1.buttons.Y))
-							{	
+							{
 								/// - Assault Special Ability - ///
 								if (players->type == assault)
 								{
@@ -1029,23 +1110,39 @@ public:
 										}
 									}
 								}
-								/// - Tank Special Ability Inacive - ///
+								/// - Tank Special Ability Inactive - ///
 								if (players->type == tank)
 								{
-									if (time - ((Tank*)players)->getTimeSinceLastShield() >= 5)
+									if (tankShield == false)
 									{
-										players->setHealth(players->getHealth() + 200);
-										shieldTime = time;
-										puts("Special Ability TANK");
-										tankShield = true;
+										if (time - ((Tank*)players)->getTimeSinceLastShield() >= 5)
+										{
+											players->setHealth(players->getHealth() + 250);
+											shieldTime = time;
+											puts("Special Ability TANK");
+											tankShield = true;
+										}
 									}
 								}
-								/// - Specialist Special Ability Inacive - ///
+								/// - Specialist Special Ability Inactive - ///
 								if (players->type == specialist)
 								{
-									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 3)
+
+									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 8)
 									{
+										pTurrets[a].push_back(nullptr);
+										GAME::addModel(pTurrets[a].back() = new Model(*mod[98]));
+										pTurrets[a].back()->getTransformer().reset();
+										pTurrets[a].back()->setColour(players->getColour());
+										Coord3D pos = mod[a]->getTransformer().getPosition();
+										pTurrets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+										pTurrets[a].back()->getTransformer().setScale(0.4f);
+										pTurrets[a].back()->setToRender(true);
 										puts("Special Ability SPECIALIST");
+
+										((Specialist*)players)->setTimeSinceLastTurret(time);
+										turretTime = time;
+										turretActive = true;
 									}
 								}
 
@@ -1082,7 +1179,6 @@ public:
 							}
 
 							/// - Left Trigger to Dash - ///
-
 							if (p1.triggers[LT] >= .95)
 							{
 								static float coolDown[4];
@@ -1156,7 +1252,7 @@ public:
 							mod[a + 74]->getTransformer().setScale(0.65f * (players->getBulletCount() / 30.0f));
 						}
 
-						///~ Bullet Collisions ~///
+						///- Bullet Collisions -///
 						for (unsigned b = 0; b < bullets[a].size(); b++)
 							if (bullets[a][b])
 							{
@@ -1173,7 +1269,8 @@ public:
 								}
 
 								bool bulletHit = false;
-								/// Bullet Collisions with Train
+
+								/// - Bullet Collisions with Train - ///
 								for (int t = 0; t < 7; t++)
 								{
 									if (collision(bullets[a][b], mod[79 + t]))
@@ -1291,14 +1388,13 @@ public:
 							mod[47]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
 						}
 					}
-					mod[a]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+					//mod[a]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 				}
 			}
 			else
 			{
 				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
-
 
 		/// - Train Car Movement - ///
 		for (int a = 0; a < 4; a++)
@@ -1377,6 +1473,22 @@ public:
 					}
 				}
 				trainTimer += time; //Reset Train timer so it all starts again.
+			}
+		}
+
+		//Check if Train close to map
+		if ((mod[79]->getTransformer().getPosition().x - mod[99]->getTransformer().getPosition().x) > 60.0f)
+		{
+			for (int i = 99; i <= 105; i++)
+			{
+				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
+			}
+		}
+		else
+		{
+			for (int i = 99; i <= 105; i++)
+			{
+				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
 			}
 		}
 
