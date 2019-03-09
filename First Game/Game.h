@@ -460,7 +460,7 @@ public:
 		GAME::addModel(mod.back());
 
 		//Turret
-		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//98
+		mod.push_back(new Model("Models/Turret/turret.obj"));//98
 		GAME::addModel(mod.back());
 		mod[98]->setToRender(false);
 
@@ -1133,10 +1133,11 @@ public:
 										pTurrets[a].push_back(nullptr);
 										GAME::addModel(pTurrets[a].back() = new Model(*mod[98]));
 										pTurrets[a].back()->getTransformer().reset();
-										pTurrets[a].back()->setColour(players->getColour());
+										//pTurrets[a].back()->setColour(players->getColour());
 										Coord3D pos = mod[a]->getTransformer().getPosition();
 										pTurrets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-										pTurrets[a].back()->getTransformer().setScale(0.4f);
+										pTurrets[a].back()->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f });
+										//pTurrets[a].back()->getTransformer().setScale(0.4f);
 										pTurrets[a].back()->setToRender(true);
 										puts("Special Ability SPECIALIST");
 
