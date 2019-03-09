@@ -464,6 +464,8 @@ public:
 		GAME::addModel(mod.back());
 		mod[98]->setToRender(false);
 
+		
+
 		//RailLight
 		mod.push_back(new Model("Models/Rail/railLight.obj"));//99
 		GAME::addModel(mod.back());
@@ -480,6 +482,11 @@ public:
 		mod.push_back(new Model(*mod.back()));//105
 		GAME::addModel(mod.back());
 
+		//Background
+		mod.push_back(new Model("Models/BackgroundSky/sky.obj"));//106
+		GAME::addModel(mod.back());
+		mod[106]->getTransformer().setScale(8.0f, 8.0f, 5.0f), mod[106]->getTransformer().setPosition(1.0f, 0.0f, 40.0f), mod[106]->getTransformer().setRotation({ 90.0f,0.0f,0.0f });
+
 		/// - Set Model Transforms - ///
 		//Player Transforms
 		mod[0]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
@@ -490,6 +497,8 @@ public:
 		mod[1]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[3]->getTransformer().setRotation(Coord3D(0, 180, 0));
+
+
 
 		//Building Transforms
 		//Building 1s
