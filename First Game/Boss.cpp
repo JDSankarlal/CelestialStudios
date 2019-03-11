@@ -6,17 +6,19 @@ Model* Boss::missles[4];
 
 Boss::Boss(): Model()
 {
-	missles[0]=(new Model("Models/Missile/BossMissile.obj"));
+	missles[0] = (new Model("Models/Missile/BossMissile.obj"));
 	GAME::addModel(missles[0]);
-	missles[1]=(new Model(*missles[0]));
+	missles[1] = (new Model(*missles[0]));
 	GAME::addModel(missles[1]);
-	missles[2]=(new Model(*missles[0]));
+	missles[2] = (new Model(*missles[0]));
 	GAME::addModel(missles[2]);
-	missles[3]=(new Model(*missles[0]));
+	missles[3] = (new Model(*missles[0]));
 	GAME::addModel(missles[3]);
+
+
 }
 
-Boss::Boss(Model& model) : Model(model)
+Boss::Boss(Model& model): Model(model)
 
 {
 	Boss();
@@ -63,8 +65,9 @@ Model* Boss::getMissial(int index)
 void Boss::update()
 {
 
-	static float  curveroni[4] = {0,0,0,0};
-	static bool hasTarget[4] = {0,0,0,0};
+	static clock_t  lastDelay[4];
+	static float  curveroni[4], delay[4];
+	static bool hasTarget[4];
 	static Coord3D cat[4];
 	static Coord3D  pointPosition[4];
 
@@ -73,32 +76,41 @@ void Boss::update()
 		pointPosition[a] = getTransformer().getPosition();
 		if(!targets[a]->dead)
 		{
-			curveroni[a] += .01f;
+			float ans;
+
+			if(ans = (clock() - lastDelay[a]) / (float)CLOCKS_PER_SEC >= delay[a])
+				lastDelay[a] = clock(),
+				hasTarget[a] = false;
+
+
 			if(curveroni[a] >= 1)
 			{
-				hasTarget[a] = false;
+				curveroni[a] = 0;
 			}
-			curveroni[a] = fmodf(curveroni[a], 1);
+
+			//curveroni[a] = fmodf(curveroni[a], 1);
 
 			static Coord3D bossTarget[4];
 
-			//gets a   target for model (players 1,2,3 or 4) randomly
+			//gets a target for model (players 1,2,3 or 4) randomly
 			if(!hasTarget[a])
 			{
 
-				bossTarget[a] = getTransformer().getPosition();
-
+				bossTarget[a] = targets[a]->getTransformer().getPosition();
+				delay[a] = fmodf((float)rand(), 2.5);
 				hasTarget[a] = true;
 			}
 
 
 			if(hasTarget[a])
 			{
+				curveroni[a] += .01f;
 				Coord3D
 					p1[4],
 					p2[4],
 					c1[4],
 					c2[4];
+
 				p1[a] = getTransformer().getPosition() + Coord3D(0.0f, 8.0f, 2.0f),//start point
 					p2[a] = bossTarget[a],//end point 
 					c1[a] = p1[a] - Coord3D{0, 100, 100},//control point
@@ -115,7 +127,7 @@ void Boss::update()
 
 				pointPosition[a] = cat[a];
 			}
-				missles[a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
+			missles[a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
 		}
 	}
 }

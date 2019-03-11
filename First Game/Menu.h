@@ -74,12 +74,12 @@ public:
 			if(GameEmGine::isControllerConnected(a))
 			{
 				static int lastOption;
-				if(abs(GameEmGine::getController(a).sticks[LS].y) >= 0.8)
+				if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y) >= 0.8)
 				{
 					if(!menuMoved[a])
 					{
 						lastOption = option;
-						option += GameEmGine::getController(a).sticks[LS].y < 0 ? 1 : -1;
+						option += ((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y < 0 ? 1 : -1;
 
 						option = option > 3 ? 1 : option < 1 ? 3 : option;
 
@@ -91,10 +91,10 @@ public:
 					}
 				}
 
-				if(abs(GameEmGine::getController(a).sticks[LS].y) < .3f)
+				if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y) < .3f)
 					menuMoved[a] = false;
 
-				if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
+				if(GameEmGine::getController(a)->isButtonPressed(CONTROLLER_A))
 				{
 					switch(option)
 					{

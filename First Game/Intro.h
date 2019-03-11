@@ -49,7 +49,7 @@ public:
 			LightSource::setDirection({0.0f,0.0f,.0f}, 0);
 		}
 		for(int a = 0; a < 4; a++)
-			if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
+			if(GAME::getController(a)->isButtonPressed(CONTROLLER_A))
 			{
 				fadeout = true;
 			}

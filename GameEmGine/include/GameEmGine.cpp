@@ -1,4 +1,3 @@
-
 #include "GameEmGine.h"
 #include "EmGineAudioPlayer.h"
 
@@ -157,6 +156,7 @@ void GameEmGine::run()
 	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
 	{
 		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
+		
 		InputManager::controllerUpdate();
 		update();
 
@@ -167,6 +167,7 @@ void GameEmGine::run()
 			sprintf_s(str, "fps: %.2f", m_fps);
 			glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
 		}
+
 		glfwSwapBuffers(m_window->getWindow());
 		//glFlush();
 		fpsLimiter();
@@ -210,9 +211,9 @@ bool GameEmGine::isControllerConnected(int index)
 	return m_inputManager->isControllerConnected(index);
 }
 
-Xinput& GameEmGine::getController(int index)
+XinputDevice* GameEmGine::getController(int index)
 {
-	return m_inputManager->getController(index);
+	return &m_inputManager->getController(index);
 }
 
 WindowCreator* GameEmGine::getWindow()

@@ -71,8 +71,8 @@ public:
 
 	void keyInputPressed(int key, int modfier)
 	{
-		modfier;
-		if(key == 'B' && !fadeout)
+		modfier,key;
+		if( !fadeout)
 		{
 			for(int i = 0; i < 4; i++)
 				switch(option[i])
@@ -123,12 +123,12 @@ public:
 		{
 			if(GameEmGine::isControllerConnected(a))
 			{
-				if(abs(GameEmGine::getController(a).sticks[LS].x) >= 0.8)
+				if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x) >= 0.8)
 				{
 					if(!menuMoved[a])
 					{
 
-						option[a] += GameEmGine::getController(a).sticks[LS].x < 0 ? 1 : -1;
+						option[a] += ((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x < 0 ? 1 : -1;
 
 						option[a] = option[a] > 3 ? 0 : option[a] < 0 ? 3 : option[a];
 
@@ -149,11 +149,11 @@ public:
 				}
 				else
 
-					if(abs(GameEmGine::getController(a).sticks[LS].x) < .3f)
+					if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x) < .3f)
 						menuMoved[a] = false;
 
 				static bool fixthisnow = true;
-				if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A) && fixthisnow)
+				if(((XinputController*)GameEmGine::getController(a))->isButtonPressed(CONTROLLER_A) && fixthisnow)
 				{
 					fixthisnow = false;
 					for(int i = 0; i < 4; i++)

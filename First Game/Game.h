@@ -616,46 +616,46 @@ public:
 		}
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 6);
-		LightSource::setParent(mod[44], 6);
-		LightSource::setDiffuse({255,100,0,100}, 6);
-		LightSource::setAttenuationQuadratic(0.06f, 6);
+		LightSource::setParent(mod[0], 6);
+		LightSource::setPosition({0, -0.75f, 0}, 6);
+		LightSource::setDiffuse({255,0,0,100}, 6);
+		LightSource::setAttenuationQuadratic(1.f, 6);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 7);
-		LightSource::setParent(mod[0], 7);
+		LightSource::setParent(mod[1], 7);
 		LightSource::setPosition({0, -0.75f, 0}, 7);
-		LightSource::setDiffuse({255,0,0,100}, 7);
+		LightSource::setDiffuse({0,0,255,100}, 7);
 		LightSource::setAttenuationQuadratic(1.f, 7);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 8);
-		LightSource::setParent(mod[1], 8);
+		LightSource::setParent(mod[2], 8);
 		LightSource::setPosition({0, -0.75f, 0}, 8);
-		LightSource::setDiffuse({0,0,255,100}, 8);
+		LightSource::setDiffuse({0,255,0,100}, 8);
 		LightSource::setAttenuationQuadratic(1.f, 8);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 9);
-		LightSource::setParent(mod[2], 9);
+		LightSource::setParent(mod[3], 9);
 		LightSource::setPosition({0, -0.75f, 0}, 9);
-		LightSource::setDiffuse({0,255,0,100}, 9);
+		LightSource::setDiffuse({255,255,0,100}, 9);
 		LightSource::setAttenuationQuadratic(1.f, 9);
-
+		
 		LightSource::setLightType(LIGHT_TYPE::POINT, 10);
-		LightSource::setParent(mod[3], 10);
-		LightSource::setPosition({0, -0.75f, 0}, 10);
-		LightSource::setDiffuse({255,255,0,100}, 10);
-		LightSource::setAttenuationQuadratic(1.f, 10);
+		LightSource::setParent(((Boss*)mod[8])->getMissial(0), 10);
+		LightSource::setDiffuse({255,100,0,100}, 10);
+		LightSource::setAttenuationQuadratic(0.06f, 10);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 11);
-		LightSource::setParent(mod[45], 11);
+		LightSource::setParent(((Boss*)mod[8])->getMissial(1), 11);
 		LightSource::setDiffuse({255,100,0,100}, 11);
 		LightSource::setAttenuationQuadratic(0.06f, 11);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 12);
-		LightSource::setParent(mod[46], 12);
+		LightSource::setParent(((Boss*)mod[8])->getMissial(2), 12);
 		LightSource::setDiffuse({255,100,0,100}, 12);
 		LightSource::setAttenuationQuadratic(0.06f, 12);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 13);
-		LightSource::setParent(mod[47], 13);
+		LightSource::setParent(((Boss*)mod[8])->getMissial(3), 13);
 		LightSource::setDiffuse({255,100,0,100}, 13);
 		LightSource::setAttenuationQuadratic(0.06f, 13);
 
@@ -678,11 +678,16 @@ public:
 		audio.play(true);
 	}
 
-
 	/// - The Update Loop - ///
-
 	void update(double dt)
 	{
+
+		LightSource::setParent(((Boss*)mod[8])->getMissial(0), 10);
+		LightSource::setParent(((Boss*)mod[8])->getMissial(1), 11);
+		LightSource::setParent(((Boss*)mod[8])->getMissial(2), 12);
+		LightSource::setParent(((Boss*)mod[8])->getMissial(3), 13);
+
+
 		//Time
 		static float  time = 0;
 		time += (float)dt; //Add Delta Time to Time
@@ -765,15 +770,15 @@ public:
 					player = (Player*)mod[a];
 					if(GAME::isControllerConnected(a))
 					{
-						Xinput p1 = GAME::getController(a);
-						if(p1.buttonPressed(p1.buttons.SELECT))
+						XinputController* p1 = (XinputController*)GAME::getController(a);
+						if(p1->isButtonPressed(CONTROLLER_SELECT))
 						{
 							for(int b = 0; b < 4; b++)
 								player->dead = false;
 							GAME::setScene(new Game);
 						}
 						//Start button quits game
-						if(p1.buttonPressed(p1.buttons.START))
+						if(p1->isButtonPressed(CONTROLLER_START))
 						{
 							puts("\nExiting Game\n");
 							GAME::exit();
@@ -784,14 +789,14 @@ public:
 							deathCounter = 0;
 							youDead = !true;
 
-
-							if(p1.sticks[RS].x || p1.sticks[RS].y)
+							
+							if(p1->getSticks()[LS].x || p1->getSticks()[RS].y)
 							{
 
-								angle[a] = acosf(p1.sticks[RS].x /
-									sqrtf(p1.sticks[RS].x * p1.sticks[RS].x
-										+ p1.sticks[RS].y * p1.sticks[RS].y)) * (180 / (float)M_PI);
-								angle[a] += (p1.sticks[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
+								angle[a] = acosf(p1->getSticks()[RS].x /
+									sqrtf(p1->getSticks()[RS].x * p1->getSticks()[RS].x
+										+ p1->getSticks()[RS].y * p1->getSticks()[RS].y)) * (180 / (float)M_PI);
+								angle[a] += (p1->getSticks()[RS].y < 0 ? (180 - angle[a]) * 2 : 0) + 90;//90 represents the start angle
 								angle[a] = fmodf(angle[a], 360);
 							}
 
@@ -808,12 +813,14 @@ public:
 
 								}
 							}
+						
 							//Player comes near Boss, gets teleported backwards
 							if(collision(player, CandyMan))
 							{
 								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
 								player->setHealth(player->getHealth() - 35);
 							}
+					
 							//If player dies
 							if(player->getHealth() <= 0)
 							{
@@ -827,8 +834,9 @@ public:
 								GAME::removeModel(player);
 								GAME::removeModel(mod[44] + a);
 							}
+
 							/// - Player Shooting - ///
-							if(p1.triggers[RT] >= .95 && !gunControlLaw[a])
+							if(p1->getTriggers().RT >= .95 && !gunControlLaw[a])
 							{
 								if(player->getBulletCount() > 0)
 								{
@@ -855,16 +863,16 @@ public:
 									player->setBulletCount(player->getBulletCount() - 1);
 								}
 							}
-							else if(p1.triggers[RT] < .95 && gunControlLaw[a])
+							else if(p1->getTriggers().RT < .95 && gunControlLaw[a])
 								gunControlLaw[a] = false;
 
 							/// - Button Presses on controller - ///
-							if(p1.buttonPressed(p1.buttons.X))
+							if(p1->isButtonPressed(CONTROLLER_X))
 							{
 								player->setBulletCount(30);
 								puts("RELOADING!!!\n");
 							}
-							if(p1.buttonPressed(p1.buttons.Y))
+							if(p1->isButtonPressed(CONTROLLER_Y))
 							{
 								if(time - player->getTimeSinceLastMissile() >= 3)
 								{
@@ -923,8 +931,7 @@ public:
 							}
 
 							/// - Left Trigger to Dash - ///
-
-							if(p1.triggers[LT] >= .95)
+							if(p1->getTriggers().LT >= .95)
 							{
 								static float coolDown[4];
 
@@ -941,7 +948,7 @@ public:
 									if(time - 0.1f >= duration)
 									{
 										move = 0.1f;
-										//If triggers up then coolDown = time;
+										//If getTriggers() up then coolDown = time;
 										coolDown[a] = time;
 										f = true;
 									}
@@ -959,8 +966,8 @@ public:
 							}
 
 							mod[a]->getTransformer().setRotation({0,angle[a], 0});
-							mod[a]->getTransformer().translateBy(p1.sticks[LS].x * move, 0, p1.sticks[LS].y * move); //move player
-							float speed = p1.sticks[LS].x * p1.sticks[LS].x + p1.sticks[LS].y * p1.sticks[LS].y;
+							mod[a]->getTransformer().translateBy(p1->getSticks()[LS].x * move, 0, p1->getSticks()[LS].y * move); //move player
+							float speed = p1->getSticks()[LS].x * p1->getSticks()[LS].x + p1->getSticks()[LS].y * p1->getSticks()[LS].y;
 
 
 							if(!collision(mod[a], mod[59]))
@@ -1238,17 +1245,17 @@ public:
 		if(!movePlayer)
 			if(GAME::isControllerConnected(0))
 			{
-				Xinput p1 = GAME::getController(0);
+				XinputController* p1 = (XinputController*)GAME::getController(0);
 				deathCounter = 0;
 
 				//move camera
 				move *= 2;
 
-				GAME::moveCameraPositionBy({p1.sticks[LS].x * move , 0 * move, p1.sticks[LS].y * move});//move camera
-				GAME::moveCameraAngleBy(ang * (abs(p1.sticks[RS].x) + abs(p1.sticks[RS].y)), {p1.sticks[RS].y  ,p1.sticks[RS].x, 0});//rotate camera
-				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1.sticks[RS].y ,ang *p1.sticks[RS].x ,0}, { p1.sticks[RS].y  ,p1.sticks[RS].x, 0 });
-				GAME::moveCameraPositionBy({0 ,p1.triggers[LT] * -move,0});//move out
-				GAME::moveCameraPositionBy({0 ,p1.triggers[RT] * move,0});//move out
+				GAME::moveCameraPositionBy({p1->getSticks()[LS].x * move , 0 * move, p1->getSticks()[LS].y * move});//move camera
+				GAME::moveCameraAngleBy(ang * (abs(p1->getSticks()[RS].x) + abs(p1->getSticks()[RS].y)), {p1->getSticks()[RS].y  ,p1->getSticks()[RS].x, 0});//rotate camera
+				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1->getSticks()[RS].y ,ang *p1->getSticks()[RS].x ,0}, { p1->getSticks()[RS].y  ,p1->getSticks()[RS].x, 0 });
+				GAME::moveCameraPositionBy({0 ,p1->getTriggers().LT * -move,0});//move out
+				GAME::moveCameraPositionBy({0 ,p1->getTriggers().RT * move,0});//move out
 				move /= 2;
 			}
 
