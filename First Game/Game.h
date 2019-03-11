@@ -460,9 +460,11 @@ public:
 		GAME::addModel(mod.back());
 
 		//Turret
-		mod.push_back(new Model("Models/BulletCircle/BulletCircle.obj"));//98
+		mod.push_back(new Model("Models/Turret/turret.obj"));//98
 		GAME::addModel(mod.back());
 		mod[98]->setToRender(false);
+
+
 
 		//RailLight
 		mod.push_back(new Model("Models/Rail/railLight.obj"));//99
@@ -480,6 +482,11 @@ public:
 		mod.push_back(new Model(*mod.back()));//105
 		GAME::addModel(mod.back());
 
+		//Background
+		mod.push_back(new Model("Models/BackgroundSky/sky.obj"));//106
+		GAME::addModel(mod.back());
+		mod[106]->getTransformer().setScale(8.0f, 8.0f, 5.0f), mod[106]->getTransformer().setPosition(1.0f, 0.0f, 40.0f), mod[106]->getTransformer().setRotation({ 90.0f,0.0f,0.0f });
+
 		/// - Set Model Transforms - ///
 		//Player Transforms
 		mod[0]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
@@ -490,6 +497,8 @@ public:
 		mod[1]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[3]->getTransformer().setRotation(Coord3D(0, 180, 0));
+
+
 
 		//Building Transforms
 		//Building 1s
@@ -743,7 +752,7 @@ public:
 	{
 		mod[48]->getTransformer().setScale(1);
 		//Time
-		static float  time = 0;
+		static float  time = 8;
 		time += (float)dt; //Add Delta Time to Time
 
 		//Player Ability Variables
@@ -760,7 +769,7 @@ public:
 		static bool tankShield = false;
 
 		//Specialist
-		static vector<Model*> pTurrets[1];
+		static vector<Model*> pTurrets;
 		static bool turretActive = false;
 		static float turretTime;
 		//Turret
@@ -1028,39 +1037,44 @@ public:
 							/// - Turret Active - ///
 							if (turretActive == true)
 							{
-								for (auto& turret : pTurrets[a])
+								for (auto& turret : pTurrets)
 								{
 									/// - Turret targeting and shooting logic - ///
 									//Get turret position
 									turretPos = turret->getTransformer().getPosition().x + turret->getTransformer().getPosition().y;
-									for (int m = 0; m < minions.size(); m++)
-									{
-										//get minion positions
-										minionPos = minions[m]->getTransformer().getPosition().x + minions[m]->getTransformer().getPosition().y;
-										
-									}
+									//for (int m = 0; m < minions.size(); m++)
+									//{
+									//	//get minion positions
+									//	minionPos = minions[m]->getTransformer().getPosition().x + minions[m]->getTransformer().getPosition().y;
+									//	
+									//}
 									/// - Cases for deleting turret - ///
 									//If turret time runs out
 									if ((time - turretTime) >= 5)
 									{
 										GAME::removeModel(turret);
-										pTurrets[a].erase(std::find(pTurrets->begin(),pTurrets->end(),turret));
+										pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+										continue;
 									}
 									//If turret touched by minion
 									if (collision(minions[a], turret))
 									{
 										GAME::removeModel(turret);
-										pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
+										pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+										continue;
 									}
 									// If turret hit by missile from boss
 									for (int m = 0; m < 4; m++)
 									{
 										if (collision(mod[60 + m], turret))
 										{
-											GAME::removeModel(turret);
-											pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
-											curveroni[a] = 1;
-											mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+											if (pTurrets.size())
+											{
+												GAME::removeModel(turret);
+												pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+												curveroni[a] = 1;
+												mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+											}
 										}
 									}
 									//If turret gets hit by train
@@ -1068,13 +1082,16 @@ public:
 									{
 										if (collision(mod[79] + t, turret))
 										{
-											GAME::removeModel(turret);
-											pTurrets[a].erase(std::find(pTurrets->begin(), pTurrets->end(), turret));
+											if (pTurrets.size())
+											{
+												GAME::removeModel(turret);
+												pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+											}
 										}
 									}
 								}
-								
-								
+
+
 							}
 
 							if (p1.buttonPressed(p1.buttons.Y))
@@ -1142,14 +1159,15 @@ public:
 
 									if (time - ((Specialist*)players)->getTimeSinceLastTurret() >= 8)
 									{
-										pTurrets[a].push_back(nullptr);
-										GAME::addModel(pTurrets[a].back() = new Model(*mod[98]));
-										pTurrets[a].back()->getTransformer().reset();
-										pTurrets[a].back()->setColour(players->getColour());
+										pTurrets.push_back(nullptr);
+										GAME::addModel(pTurrets.back() = new Model(*mod[98]));
+										pTurrets.back()->getTransformer().reset();
+										//pTurrets.back()->setColour(players->getColour());
 										Coord3D pos = mod[a]->getTransformer().getPosition();
-										pTurrets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-										pTurrets[a].back()->getTransformer().setScale(0.4f);
-										pTurrets[a].back()->setToRender(true);
+										pTurrets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+										pTurrets.back()->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f });
+										//pTurrets.back()->getTransformer().setScale(0.4f);
+										pTurrets.back()->setToRender(true);
 										puts("Special Ability SPECIALIST");
 
 										((Specialist*)players)->setTimeSinceLastTurret(time);
