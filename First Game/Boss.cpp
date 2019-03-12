@@ -20,6 +20,7 @@ Boss::Boss(): Model()
 	lazer = new Model("Models/lazer/lazer.obj");
 	lazer->setColour(1, 0, 0);
 	GAME::addModel(lazer);
+	lazer->setToRender(false);
 }
 
 Boss::Boss(Model& model): Model(model)
@@ -135,7 +136,7 @@ void Boss::update()
 	}
 
 
-	shootLazer(0);
+	//shootLazer(0);
 
 }
 
