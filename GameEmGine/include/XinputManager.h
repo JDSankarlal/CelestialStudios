@@ -154,7 +154,7 @@ struct XinputDevice
 		return false;
 	}
 
-	CONTROLLER_TYPE type;
+	CONTROLLER_TYPE type=CONTROLLER_TYPE::XINPUT_UNKNOWN;
 	int index;
 
 protected:
@@ -165,7 +165,7 @@ protected:
 
 struct XinputGuitar:public XinputDevice
 {
-	XinputGuitar():XinputDevice() {}
+	XinputGuitar():XinputDevice() { type = XINPUT_GUITAR; }
 	//XinputGuitar(XinputDevice div) :XinputDevice(div) {};
 	~XinputGuitar() {}
 
@@ -196,7 +196,7 @@ private:
 
 struct XinputDrum:public XinputDevice
 {
-	XinputDrum():XinputDevice() {};
+	XinputDrum():XinputDevice() { type = XINPUT_DRUM; };
 	//	XinputDrum(XinputDevice div) :XinputDevice(div) {};
 	~XinputDrum() {};
 
@@ -205,7 +205,7 @@ private:
 
 struct XinputController:public XinputDevice
 {
-	XinputController():XinputDevice() {};
+	XinputController():XinputDevice() { type = XINPUT_CONTROLLER; };
 	~XinputController() {};
 
 	Stick* getSticks()

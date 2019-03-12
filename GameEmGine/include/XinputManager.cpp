@@ -29,6 +29,7 @@ void XinputManager::update()
 					controllers[index] = controller;
 					delete drum;
 					delete guitar;
+					controller->type = XINPUT_CONTROLLER;
 					break;
 				case XINPUT_GUITAR:
 					*guitar = *(XinputGuitar*)controllers[index];
@@ -36,6 +37,7 @@ void XinputManager::update()
 					controllers[index] = guitar;
 					delete controller;
 					delete drum;
+					controller->type = XINPUT_GUITAR;
 					break;
 				case XINPUT_DRUM:
 					*drum = *(XinputDrum*)controllers[index];
@@ -43,6 +45,7 @@ void XinputManager::update()
 					controllers[index] = drum;
 					delete controller;
 					delete guitar;
+					controller->type = XINPUT_DRUM;
 					break;
 				}
 			}

@@ -161,6 +161,7 @@ void Boss::shootLazer(int playerIndex)
 	angle[0] = acosf((start.x*end.x+start.y*end.y )/
 		(sqrtf(start.x*start.x
 			+ start.y * start.y)* sqrtf(end.x* end.x + end.y * end.y))) * (180 / (float)M_PI);
+
 	angle[1] = acosf((start.x * end.x + start.z * end.z) /
 		(sqrtf(start.x * start.x
 			+ start.z * start.z) * sqrtf(end.x * end.x + end.z * end.z))) * (180 / (float)M_PI);
@@ -169,8 +170,14 @@ void Boss::shootLazer(int playerIndex)
 		(sqrtf(start.y * start.y
 			+ start.z * start.z) * sqrtf(end.y * end.y + end.z * end.z))) * (180 / (float)M_PI);
 
+	angle[0] += (end.y - start.y < 0 ? (180 - angle[0]) * 2 : 0) ;//90 represents the start angle
+	angle[1] += ( end.z - start.z < 0 ? (180 - angle[1]) * 2 : 0);//90 represents the start angle
+	angle[2] += (
+		end.x - start.x < 0 ? (180 - angle[2]) * 2 : 0);//90 represents the start angle
+
+
 	lazer->getTransformer().setPosition(start);
 	lazer->getTransformer().setScale( .5f,lerp(0.0f, distance, counter), .5f);
-	lazer->getTransformer().setRotation({angle[0],angle[2],angle[1]});
+	lazer->getTransformer().setRotation({angle[0],angle[1],angle[2]});
 
 }
