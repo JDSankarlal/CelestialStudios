@@ -78,14 +78,14 @@ void Boss::update()
 		{
 			float ans;
 
-			if(ans = (clock() - lastDelay[a]) / (float)CLOCKS_PER_SEC >= delay[a])
-				lastDelay[a] = clock(),
-				hasTarget[a] = false;
-
+			if((ans = (clock() - lastDelay[a]) / (float)CLOCKS_PER_SEC) >= delay[a])
+				curveroni[a] += .01f;
 
 			if(curveroni[a] >= 1)
 			{
 				curveroni[a] = 0;
+				lastDelay[a] = clock(),
+				hasTarget[a] = false;
 			}
 
 			//curveroni[a] = fmodf(curveroni[a], 1);
@@ -95,16 +95,15 @@ void Boss::update()
 			//gets a target for model (players 1,2,3 or 4) randomly
 			if(!hasTarget[a])
 			{
-
 				bossTarget[a] = targets[a]->getTransformer().getPosition();
-				delay[a] = fmodf((float)rand(), 2.5);
+				delay[a] = (rand()%2 +1 )+ (float(rand()%100)/100);
 				hasTarget[a] = true;
 			}
 
 
-			if(hasTarget[a])
+			if(hasTarget[a] )
 			{
-				curveroni[a] += .01f;
+				
 				Coord3D
 					p1[4],
 					p2[4],

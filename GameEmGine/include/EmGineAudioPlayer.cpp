@@ -1,6 +1,5 @@
 #include "EmGineAudioPlayer.h"
 #include <string>
-#include <Windows.h>
 
 #pragma region Static Variables
 uint EmGineAudioPlayer::stopIndex = 0;
@@ -42,7 +41,7 @@ void EmGineAudioPlayer::createAudio(const char * file)
 
 	if(m_system->createSound(file, FMOD_CREATECOMPRESSEDSAMPLE | FMOD_ACCURATETIME, nullptr, &newSound))
 	{
-		OutputDebugStringA("failed to create Audio\n");
+		puts("failed to create Audio\n");
 		return;
 	}
 	m_sounds->push_back(newSound);
@@ -57,7 +56,7 @@ void EmGineAudioPlayer::createAudioStream(const char * file)
 	Audio* newSound;
 	if(m_system->createStream(file, FMOD_ACCURATETIME, nullptr, &newSound))
 	{
-		OutputDebugStringA("failed to create Audio Stream\n");
+		puts("failed to create Audio Stream\n");
 		return;
 	}
 	m_sounds->push_back(newSound);
@@ -119,7 +118,7 @@ void EmGineAudioPlayer::playAll(bool loop, uint from, uint to, FMOD_TIMEUNIT uni
 		}
 		else
 			m_channels[0][index]->setMode(FMOD_LOOP_OFF);
-	OutputDebugStringA("\n\n");
+	puts("\n\n");
 
 	for(auto &a : m_channels[0])
 		a->setPaused(false);

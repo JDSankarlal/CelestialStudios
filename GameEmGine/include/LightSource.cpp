@@ -111,7 +111,7 @@ void LightSource::update()
 		}
 
 
-		pos = m_cam->getProjectionMatrix() * pos;
+		pos = m_cam->getCameraMatrix() * pos;
 
 		sprintf_s(buff, "LightType[%d]", a);
 		glUniform1i(m_shader->getUniformLocation(buff), (int)m_lights[a].type);
