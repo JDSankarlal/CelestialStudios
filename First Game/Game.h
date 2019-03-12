@@ -979,7 +979,7 @@ public:
 							/// - Missile Collisions with Player - ///
 
 							static clock_t deathShakeTimer = 0;
-							static float deathShakeDir = .4f;
+							static float deathShakeDir = 1.5f;
 							for(int b = 0; b < 4; b++)
 							{
 								bool collision = collision3D(player, mod[60 + b]);
@@ -1040,7 +1040,7 @@ public:
 							}
 
 							/// - Player Shooting - ///
-							static float shotBuzzDir = .1f;
+							static float shotBuzzDir = .9f;
 							static clock_t shotBuzzTimer;
 							if(p1->getTriggers().RT >= .95 && !gunControlLaw[a])
 							{
