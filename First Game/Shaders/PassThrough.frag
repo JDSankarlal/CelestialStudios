@@ -104,12 +104,13 @@ void main()
     
     if(textured)
     {       
-       vec4 textureColor = texture(uTex, texcoord);
-       outColor = textureColor;
-       outColor.rgb *= textureColor.rgb;
-       outColor *= colourMod;
-    }else     
-     outColor = colourMod; 
+        vec4 textureColor = texture(uTex, texcoord);
+        outColor = textureColor;
+        outColor.rgb *= textureColor.rgb*1.2;
+        outColor *= colourMod;
+    }
+    else     
+        outColor = colourMod; 
     
 
     outColor.rgb *= LightAmbient;

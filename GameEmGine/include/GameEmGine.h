@@ -1,4 +1,5 @@
 #pragma once
+#include "InputManager.h"//needs to be up her
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 #include <ctime>
@@ -14,7 +15,6 @@
 #include "Camera.h"
 #include "Model.h"
 #include "ExtraMath.h"
-#include "InputManager.h"
 #include "FrameBuffer.h"
 #include "LightSource.h"
 
@@ -111,7 +111,7 @@ public:
 
 	static bool isControllerConnected(int index);
 
-	static Xinput& getController(int index);
+	static XinputDevice* getController(int index);
 
 	static Shader *m_modelShader,*m_grayScalePost,*m_bloomHighPass,*m_blurHorizontal,*m_blurVertical,*m_blurrComposite;
 

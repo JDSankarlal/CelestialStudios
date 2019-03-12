@@ -11,7 +11,11 @@ Player::Player(Model& model) : Model(model)
 {
 
 }
+Player::Player(Player& model) : Model(model)
 
+{
+	type = model.type;
+}
 Player::Player(const char * path) :Model(path)
 {
 
@@ -41,17 +45,17 @@ void Player::setBulletCount(int v)
 	bulletCount = v;
 }
 
-float Player::getTimeSinceLastMissile()
-{
-	return timeSinceLastMissile;
-}
+float Player::getTimeSinceLastMissile() 
+{ 
+	return timeSinceLastMissile; 
+} 
+ 
+void Player::setTimeSinceLastMissile(float v) 
+{ 
+	timeSinceLastMissile = v; 
+} 
 
-void Player::setTimeSinceLastMissile(float v)
-{
-	timeSinceLastMissile = v;
-}
-
-float Player::getInitialHealth()
+int Player::getInitialHealth()
 {
 	return initialHealth;
 }
