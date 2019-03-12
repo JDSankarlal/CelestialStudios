@@ -11,12 +11,13 @@
 #include "Medic.h"
 #include "Tank.h"
 
+
 typedef EmGineAudioPlayer AudioPlayer;
 typedef GameEmGine GAME;
 
 using std::vector;
 
-class Game:public Scene
+class Game :public Scene
 {
 public:
 	/// - Collision Class - ///
@@ -32,8 +33,8 @@ public:
 		float capW = (l->getWidth() + k->getWidth()) / 2;
 		float capD = (l->getDepth() + k->getDepth()) / 2;
 
-		if(std::abs(distanceX) <= capW)
-			if(std::abs(distanceZ) <= capD)
+		if (std::abs(distanceX) <= capW)
+			if (std::abs(distanceZ) <= capD)
 				return true;
 
 		return false;
@@ -55,9 +56,9 @@ public:
 		float capH = (l->getHeight() + k->getHeight()) / 2;
 		float capD = (l->getDepth() + k->getDepth()) / 2;
 
-		if(std::abs(distanceX) <= abs(capW))
-			if(std::abs(distanceZ) <= abs(capD))
-				if(std::abs(distanceY) <= abs(capH))
+		if (std::abs(distanceX) <= abs(capW))
+			if (std::abs(distanceZ) <= abs(capD))
+				if (std::abs(distanceY) <= abs(capH))
 					return true;
 
 		return false;
@@ -99,28 +100,28 @@ public:
 		rotDown = (key == GLFW_KEY_DOWN ? false : rotDown);
 
 		//changes fps limit
-		if(key == GLFW_KEY_KP_6)
+		if (key == GLFW_KEY_KP_6)
 			GAME::setFPSLimit(GAME::getFPSLimit() + 1);
-		if(key == GLFW_KEY_KP_4)
+		if (key == GLFW_KEY_KP_4)
 			GAME::setFPSLimit(GAME::getFPSLimit() - 1);
 
-		if(key == GLFW_KEY_F) //Toggles Fullscreen
+		if (key == GLFW_KEY_F) //Toggles Fullscreen
 		{
 			static bool full;
 			GAME::getWindow()->setFullScreen(full = !full);
 			printf("Full Screen: %s\n", full ? "true" : "false");
 		}
 
-		if(key == GLFW_KEY_SPACE) //changes the model that is being moved
+		if (key == GLFW_KEY_SPACE) //changes the model that is being moved
 		{
 			static CAMERA_TYPE type = PERSPECTIVE;
 			GAME::setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
 		}
 
-		if(key == GLFW_KEY_TAB)
+		if (key == GLFW_KEY_TAB)
 			movePlayer = !movePlayer;
 
-		if(key == GLFW_KEY_F5) //resets the camera
+		if (key == GLFW_KEY_F5) //resets the camera
 		{
 			GAME::m_modelShader->refresh();
 			//			GAME::m_grayScalePost->refresh();
@@ -128,8 +129,8 @@ public:
 						//	GAME::setCameraPosition({0,0,0});
 		}
 
-		if(key == 'R')
-			GAME::setCameraAngle(0, {1,1,1});
+		if (key == 'R')
+			GAME::setCameraAngle(0, { 1,1,1 });
 
 		printf("key RELEASED code: %d\n\n", key);
 	}
@@ -137,9 +138,9 @@ public:
 	void mouseButtonReleased(int button, int _mod)
 	{
 		_mod;
-		if(button == LEFT_BUTTON)
+		if (button == LEFT_BUTTON)
 			leftM = InputManager::getMouseCursorPosition();
-		if(button == RIGHT_BUTTON)
+		if (button == RIGHT_BUTTON)
 			rightM = InputManager::getMouseCursorPosition();
 	}
 
@@ -151,14 +152,14 @@ public:
 	// Set game screen
 	void init()
 	{
-		mod.resize(93);//sets the initial size of the vector (if u add any more models, increase this number)
+		mod.resize(107);//sets the initial size of the vector (if u add any more models, increase this number)
 
 
 
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
-		GAME::setCameraPosition({0,18.5f,-14});
-		GAME::setCameraAngle(-35, {1,0,0});
+		GAME::setCameraPosition({ 0,15.5f,-5 });
+		GAME::setCameraAngle(-45, { 1,0,0 });
 
 
 		//GAME::setFPSLimit(60);
@@ -172,7 +173,7 @@ public:
 
 		static Animation walk[4], idle[4];
 
-		for(int a = 0; a < 4; a++)
+		for (int a = 0; a < 4; a++)
 		{
 			walk[a].addDir("Models/AssaultModel/Walk/");
 			idle[a].addDir("Models/AssaultModel/Idle/");
@@ -182,11 +183,12 @@ public:
 
 			walk[a].setAnimationSpeed(.25);
 			walk[a].repeat(true);
-			idle[a].stop();
+			mod[a]->getAnimation("walk")->pause();
+			/*idle[a].stop();
 
 			mod[a]->addAnimation("walk", &walk[a]);
 			mod[a]->addAnimation("idle", &idle[a]);
-			mod[a]->setAnimation("walk");
+			mod[a]->setAnimation("walk");*/
 		}
 
 		//Building 1s
@@ -445,6 +447,11 @@ public:
 		mod[92] = (new Model(*mod[91]));//92
 		GAME::addModel(mod[92]);
 
+		//Medic Healing Ring
+		mod[93] = (new Model("Models/BulletCircle/BulletCircle.obj"));//93
+		GAME::addModel(mod[93]);
+		mod[93]->setToRender(false);
+		mod[93]->getTransformer().setScale(2, 1, 2);
 
 
 		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
@@ -455,43 +462,78 @@ public:
 		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
 
-		////Medic Healing Ring
-		//mod[] = (new Model("Models/TrainGrayBox.obj"));//86
-		//GAME::addModel(mod[]);
+		//Escape pods
+		mod[94]=(new Model("Models/TrainGrayBox.obj"));//94
+		GAME::addModel(mod[94]);
+		mod[95]=(new Model(*mod[94]));//95
+		GAME::addModel(mod[95]);
+		mod[96]=(new Model(*mod[94]));//96
+		GAME::addModel(mod[96]);
+		mod[97]=(new Model(*mod[94]));//97
+		GAME::addModel(mod[97]);
 
+		//Turret
+		mod[98] = (new Model("Models/Turret/turret.obj"));//98
+		GAME::addModel(mod[98]);
+		mod[98]->setToRender(false);
+
+
+
+		//RailLight
+		mod[99] = (new Model("Models/Rail/railLight.obj"));//99
+		GAME::addModel(mod[99]);
+		mod[100]=(new Model(*mod[99]));//100
+		GAME::addModel(mod[100]);
+		mod[101]=(new Model(*mod[100]));//101
+		GAME::addModel(mod[101]);
+		mod[102]=(new Model(*mod[101]));//102
+		GAME::addModel(mod[102]);
+		mod[103]=(new Model(*mod[102]));//103
+		GAME::addModel(mod[103]);
+		mod[104]=(new Model(*mod[103]));//104
+		GAME::addModel(mod[104]);
+		mod[105]=(new Model(*mod[104]));//105
+		GAME::addModel(mod[105]);
+
+		//Background
+		mod[106]=(new Model("Models/BackgroundSky/sky.obj"));//106
+		GAME::addModel(mod[106]);
+		mod[106]->getTransformer().setScale(8.0f, 8.0f, 5.0f), mod[106]->getTransformer().setPosition(1.0f, 0.0f, 40.0f), mod[106]->getTransformer().setRotation({ 90.0f,0.0f,0.0f });
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
-		mod[0]->getTransformer().setScale(1.35f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
-		mod[1]->getTransformer().setScale(1.35f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
-		mod[2]->getTransformer().setScale(1.35f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
-		mod[3]->getTransformer().setScale(1.35f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
+		mod[0]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
+		mod[1]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
+		mod[2]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
+		mod[3]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
 		mod[0]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[1]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[3]->getTransformer().setRotation(Coord3D(0, 180, 0));
 
+
+
 		//Building Transforms
 		//Building 1s
-		mod[4]->getTransformer().setScale(1), mod[4]->getTransformer().setPosition(-15.175f, 0.0f, -2.0f), mod[4]->getTransformer().setRotation({0.0f,90.0f,0.0f});;
-		mod[5]->getTransformer().setScale(1), mod[5]->getTransformer().setPosition(6.0f, 0.0f, 29.0f), mod[5]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
+		mod[4]->getTransformer().setScale(1), mod[4]->getTransformer().setPosition(-15.175f, 0.0f, -2.0f), mod[4]->getTransformer().setRotation({ 0.0f,90.0f,0.0f });;
+		mod[5]->getTransformer().setScale(1), mod[5]->getTransformer().setPosition(6.0f, 0.0f, 29.0f), mod[5]->getTransformer().setRotation({ 0.0f,-90.0f,0.0f });
 		//mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4.0f, 0.0f, 22.75f), mod[6]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
 
 		//Building 2s
-		mod[19]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-16.8f, 0.0f, 7.8f), mod[19]->getTransformer().setRotation({0.0f, 90.0f,0.0f});
-		mod[20]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(16.8f, 0.0f, 8.0f), mod[20]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});;
+		mod[19]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-16.8f, 0.0f, 7.8f), mod[19]->getTransformer().setRotation({ 0.0f, 90.0f,0.0f });
+		mod[20]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(16.8f, 0.0f, 8.0f), mod[20]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });;
 		//mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0.0f, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
 
 		//Buildings 3s
 		mod[30]->getTransformer().setPosition(10.5f, 0.0f, 23.6f);
-		mod[31]->getTransformer().setPosition(19.5f, 0.0f, 3.75f), mod[31]->getTransformer().setRotation({0,180,0});
-		mod[32]->getTransformer().setPosition(-9.3f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({0,-90,0});
+		mod[31]->getTransformer().setPosition(19.5f, 0.0f, 3.75f), mod[31]->getTransformer().setRotation({ 0,180,0 });
+		mod[32]->getTransformer().setPosition(-9.3f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({ 0,-90,0 });
 		//Building 4s
-		mod[33]->getTransformer().setPosition(17.35f, 0.0f, 20.9f), mod[33]->getTransformer().setRotation({0,-90,0});
-		mod[34]->getTransformer().setPosition(-14.25f, 0.0f, 24.30f), mod[34]->getTransformer().setRotation({0,180,0});
+		mod[33]->getTransformer().setPosition(17.35f, 0.0f, 20.9f), mod[33]->getTransformer().setRotation({ 0,-90,0 });
+		mod[34]->getTransformer().setPosition(-14.25f, 0.0f, 24.30f), mod[34]->getTransformer().setRotation({ 0,180,0 });
 		//Building 5s
-		mod[39]->getTransformer().setScale(1.0f, 1.0f, 1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 16.5f), mod[39]->getTransformer().setRotation({0,180,0});
-		mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f), mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({0,90,0});
+		mod[39]->getTransformer().setScale(1.0f, 1.0f, 1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 16.5f), mod[39]->getTransformer().setRotation({ 0,180,0 });
+		mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f), mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({ 0,90,0 });
 		//mod[41]->getTransformer().setScale(1.0f, 1.3f, 1.6f), mod[41]->getTransformer().setPosition(1.0f, 0.0f, 25.5f), mod[41]->getTransformer().setRotation({0,-90,0});
 		//Building 6s
 		//mod[42]->getTransformer().setScale(1.0f, 1.5f, 1.8f), mod[42]->getTransformer().setPosition(-14.2f, 0.0f, 22.9f), mod[42]->getTransformer().setRotation({0,-90,0});
@@ -501,7 +543,7 @@ public:
 		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.5f, 5.34f, 22.5f);
 
 		//Boss Trarrnsforms
-		mod[8]->getTransformer().setScale(1.3f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 19.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
+		mod[8]->getTransformer().setScale(1.3f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f });
 
 		//Floor Transforms
 		mod[9]->getTransformer().setScale(2.25f, 1.0f, 5.0f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
@@ -510,50 +552,50 @@ public:
 		mod[10]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[10]->getTransformer().setPosition(13.0f, 0.0f, -1.0f);
 		mod[11]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[11]->getTransformer().setPosition(13.0f, 0.0f, 7.0f);
 		mod[12]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[12]->getTransformer().setPosition(13.0f, 0.0f, 15.0f);
-		mod[13]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[13]->getTransformer().setPosition(-13.0f, 0.0f, -1.0f), mod[13]->getTransformer().setRotation({0.0f,180.0f,0.0f});
-		mod[14]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[14]->getTransformer().setPosition(-13.0f, 0.0f, 7.0f), mod[14]->getTransformer().setRotation({0.0f,180.0f,0.0f});
-		mod[15]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[15]->getTransformer().setPosition(-13.0f, 0.0f, 15.0f), mod[15]->getTransformer().setRotation({0.0f,180.0f,0.0f});
+		mod[13]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[13]->getTransformer().setPosition(-13.0f, 0.0f, -1.0f), mod[13]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+		mod[14]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[14]->getTransformer().setPosition(-13.0f, 0.0f, 7.0f), mod[14]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
+		mod[15]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[15]->getTransformer().setPosition(-13.0f, 0.0f, 15.0f), mod[15]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 		//Bench Transforms
 		mod[16]->getTransformer().setPosition(-13.0f, 0.0f, 3.0f);
-		mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({0.0f,180.0f,0.0f});
+		mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({ 0.0f,180.0f,0.0f });
 
 		//Planet Transforms
 		mod[18]->getTransformer().setPosition(9.0f, 17.0f, 36.0f);
 		//mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
 
 		//ID rings?
-		mod[26]->setColour({255,0,0});
-		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[26]->getTransformer().setRotation({0,-90,0});
+		mod[26]->setColour({ 255,110,110 });
+		mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[27]->setColour({0,0,255});
-		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[27]->getTransformer().setRotation({0,-90,0});
+		mod[27]->setColour({ 110,110,255 });
+		mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[28]->setColour({0,255,0});
-		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[28]->getTransformer().setRotation({0,-90,0});
+		mod[28]->setColour({ 110,255,110 });
+		mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[29]->setColour({255,255,0});
-		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.1f, 0.0f), mod[29]->getTransformer().setRotation({0,-90,0});
+		mod[29]->setColour({ 255,255,110 });
+		mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({ 0,-90,0 });
 
 		//Trees
-		mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({0,-0,0});
-		mod[36]->getTransformer().setScale(0.3f), mod[36]->getTransformer().setPosition(-13.0f, 0.0f, -3.0f), mod[36]->getTransformer().setRotation({0,-0,0});
-		mod[37]->getTransformer().setScale(0.3f), mod[37]->getTransformer().setPosition(13.0f, 0.0f, 11.0f), mod[37]->getTransformer().setRotation({0,-0,0});
-		mod[38]->getTransformer().setScale(0.3f), mod[38]->getTransformer().setPosition(-13.0f, 0.0f, 11.0f), mod[38]->getTransformer().setRotation({0,-0,0});
+		mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({ 0,-0,0 });
+		mod[36]->getTransformer().setScale(0.3f), mod[36]->getTransformer().setPosition(-13.0f, 0.0f, -3.0f), mod[36]->getTransformer().setRotation({ 0,-0,0 });
+		mod[37]->getTransformer().setScale(0.3f), mod[37]->getTransformer().setPosition(13.0f, 0.0f, 11.0f), mod[37]->getTransformer().setRotation({ 0,-0,0 });
+		mod[38]->getTransformer().setScale(0.3f), mod[38]->getTransformer().setPosition(-13.0f, 0.0f, 11.0f), mod[38]->getTransformer().setRotation({ 0,-0,0 });
 
 		//Pizza Sign
 		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-10.25f, 5.4f, 22.3f);
 
 		//Assault Weapons
-		mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[54]->getTransformer().setRotation({0.0f,0.0f,0.0f});
-		mod[55]->getTransformer().setScale(0.075f), mod[55]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[55]->getTransformer().setRotation({0.0f,0.0f,0.0f});
-		mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({0.0f,0.0f,0.0f});
-		mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({0.0f,0.0f,0.0f});
+		mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[54]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+		mod[55]->getTransformer().setScale(0.075f), mod[55]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[55]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+		mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
+		mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
 
 		//Player Blood Bar
-		for(int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{0.35f,1.4f,0.0f});
+			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 			mod[i + 64]->getTransformer().setRotation(Coord3D(0, 90, 0));
 			mod[i + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 			mod[i + 68]->getTransformer().setPosition(mod[i + 64]->getTransformer().getPosition());
@@ -562,7 +604,7 @@ public:
 		}
 
 		//Boss Blood Bar
-		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{13.0f,18.5f,0.0f});
+		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{ 13.0f,18.5f,0.0f });
 		mod[72]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
 		mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
@@ -570,19 +612,50 @@ public:
 		mod[73]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
 
 		//Bullet Circle
-		mod[74]->setColour({255,0,0,150});
-		mod[74]->getTransformer().setScale(0.65f), mod[74]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[74]->getTransformer().setRotation({0,-90,0});
+		mod[74]->setColour({ 255,0,0,150 });
+		mod[74]->getTransformer().setScale(0.65f), mod[74]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[74]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[75]->setColour({0,0,255,150});
-		mod[75]->getTransformer().setScale(0.65f), mod[75]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[75]->getTransformer().setRotation({0,-90,0});
+		mod[75]->setColour({ 0,0,255,150 });
+		mod[75]->getTransformer().setScale(0.65f), mod[75]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[75]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[76]->setColour({0,255,0,150});
-		mod[76]->getTransformer().setScale(0.65f), mod[76]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[76]->getTransformer().setRotation({0,-90,0});
+		mod[76]->setColour({ 0,255,0,150 });
+		mod[76]->getTransformer().setScale(0.65f), mod[76]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[76]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[77]->setColour({255,255,0,150});
-		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
+		mod[77]->setColour({ 255,255,0,150 });
+		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
+
+		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({ 0,90,0 });
+		mod[95]->getTransformer().setPosition(-4, 0, -8), mod[95]->getTransformer().setRotation({ 0,90,0 });
+		mod[96]->getTransformer().setPosition(4, 0, -8), mod[96]->getTransformer().setRotation({ 0,90,0 });
+		mod[97]->getTransformer().setPosition(12, 0, -8), mod[97]->getTransformer().setRotation({ 0,90,0 });
 
 
+		//Train
+		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
+		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
+		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
+		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
+		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
+		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
+		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
+
+		//Rail
+		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
+
+		//RialLight
+		mod[99]->getTransformer().setScale(0.7f), mod[99]->getTransformer().setPosition(-18.0f, 0.03f, 8.0f), mod[99]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[100]->getTransformer().setScale(0.7f), mod[100]->getTransformer().setPosition(-12.0f, 0.03f, 8.0f), mod[100]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[101]->getTransformer().setScale(0.7f), mod[101]->getTransformer().setPosition(-6.0f, 0.03f, 8.0f), mod[101]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[102]->getTransformer().setScale(0.7f), mod[102]->getTransformer().setPosition(0.0f, 0.03f, 8.0f), mod[102]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[103]->getTransformer().setScale(0.7f), mod[103]->getTransformer().setPosition(6.0f, 0.03f, 8.0f), mod[103]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[104]->getTransformer().setScale(0.7f), mod[104]->getTransformer().setPosition(12.0f, 0.03f, 8.0f), mod[104]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[105]->getTransformer().setScale(0.7f), mod[105]->getTransformer().setPosition(18.0f, 0.03f, 8.0f), mod[105]->getTransformer().setRotation(Coord3D(0, 90, 0));
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -604,13 +677,13 @@ public:
 		mod[3]->addChild(mod[77]);
 
 		LightSource::setLightAmount(14);
-		for(int a = 0; a < 6; a++)
+		for (int a = 0; a < 6; a++)
 		{
 			//mod[10 + a]->boundingBoxUpdate();
 			LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 			LightSource::setParent(mod[10 + a], a);
-			LightSource::setPosition({-5.0f,4.5,0.0f}, a);
-			LightSource::setDirection({0.0f,-1.0f,0.0f}, a);
+			LightSource::setPosition({ -5.0f,4.5,0.0f }, a);
+			LightSource::setDirection({ 0.0f,-1.0f,0.0f }, a);
 			//LightSource::setDiffuse({ 255,100,0,100 }, 6);
 			//LightSource::setAttenuationQuadratic(0.06f, 6);
 		}
@@ -659,12 +732,12 @@ public:
 		LightSource::setDiffuse({255,100,0,100}, 13);
 		LightSource::setAttenuationQuadratic(0.06f, 13);
 
-		LightSource::setSceneAmbient({255,255,255,255});
+		LightSource::setSceneAmbient({ 255,255,255,255 });
 
 		/// - Set Camera  - ///
 
-		GAME::setCameraPosition({0,15.5f,-17.5});
-		GAME::setCameraAngle(-25, {1,0,0});
+		GAME::setCameraPosition({ 0,15.5f,-17.5 });
+		GAME::setCameraAngle(-25, { 1,0,0 });
 
 		/// key/mouse input ///
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
@@ -689,8 +762,29 @@ public:
 
 
 		//Time
-		static float  time = 0;
+		static float  time = 8;
 		time += (float)dt; //Add Delta Time to Time
+
+		//Player Ability Variables
+		//Assault
+		static vector<Model*> pMissiles[1];
+		static vector<Coord3D> missileVelocity[1];
+
+		//Medic
+		static float circleTime;
+		static bool healingCircle = false;
+
+		//Tank
+		static float shieldTime;
+		static bool tankShield = false;
+
+		//Specialist
+		static vector<Model*> pTurrets;
+		static bool turretActive = false;
+		static float turretTime;
+		//Turret
+		static Coord3D turretPos;
+		static Coord3D minionPos;
 
 		//static float coolDown = 0;
 		static float duration = 0;
@@ -717,8 +811,7 @@ public:
 		static float trainTimer = 0; //Determines when train comes and goes
 
 		static vector<float> timer[4];
-		static vector<Model*> pMissiles[4];
-		static vector<Coord3D> missileVelocity[4];
+
 		static vector<Model*> bullets[4];
 		static vector<Coord3D> velocity[4];
 		static bool gunControlLaw[4], dashControl[4];//stops the creation of bullets when trigger is healed down
@@ -734,7 +827,7 @@ public:
 
 		static bool init = false;
 
-		static float angle[4] = {180,180,180,180};
+		static float angle[4] = { 180,180,180,180 };
 
 		static vector<Boss*> nimimis;
 
@@ -746,10 +839,10 @@ public:
 
 		/// - Tombstone Animations - ///
 
-		if(!init)
+		if (!init)
 		{
 
-			for(int a = 0; a < 4; a++)
+			for (int a = 0; a < 4; a++)
 			{
 				squash[a].addDir("Models/RIP/Rip Ani/");
 				squash[a].setAnimationSpeed(.2f);
@@ -760,12 +853,12 @@ public:
 
 		bool youDead = true;
 		static float deathCounter = 0;
-		if(init)
+		if (init)
 
 			/// - If game mode (NOT CAMERA MODE) - ///
-			if(movePlayer)
+			if (movePlayer)
 			{
-				for(int a = 0; a < 4; a++)
+				for (int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
 					if(GAME::isControllerConnected(a))
@@ -801,7 +894,7 @@ public:
 							}
 
 							/// - Missile Collisions with Player - ///
-							for(int b = 0; b < 4; b++)
+							for (int b = 0; b < 4; b++)
 							{
 								bool collision = collision3D(player, mod[60 + b]);
 								if(collision)
@@ -832,7 +925,7 @@ public:
 
 								mod[22 + a]->setAnimation("squash");
 								GAME::removeModel(player);
-								GAME::removeModel(mod[44] + a);
+								//GAME::removeModel(mod[44] + a);
 							}
 
 							/// - Player Shooting - ///
@@ -848,8 +941,8 @@ public:
 									bullets[a].back()->setColour(player->getColour());//bullet color = player color
 									Coord3D pos = mod[a]->getTransformer().getPosition();
 									bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-									bullets[a].back()->getTransformer().setScale(0.13f);
-									bullets[a].back()->getTransformer().setRotation({90 , angle[a] ,0});
+									bullets[a].back()->getTransformer().setScale(.25f);
+									bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
 									float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
 									float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
@@ -873,36 +966,186 @@ public:
 								puts("RELOADING!!!\n");
 							}
 							if(p1->isButtonPressed(CONTROLLER_Y))
+							
+							///- Medic Secial Ability Active - ///
+							if (healingCircle == true)
 							{
 								if(time - player->getTimeSinceLastMissile() >= 3)
+								//Healing
+								if (collision3D(player, mod[93]))
 								{
-									pMissiles[a].push_back(nullptr);
-									GAME::addModel(pMissiles[a].back() = new Model(*mod[44]));
-									pMissiles[a].back()->getTransformer().reset();
-									pMissiles[a].back()->setColour(player->getColour());
-									Coord3D pos = mod[a]->getTransformer().getPosition();
-									pMissiles[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-									pMissiles[a].back()->getTransformer().setScale(0.4f);
-
-									pMissiles[a].back()->getTransformer().setRotation({0 , angle[a] ,0});
-
-									float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
-									float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
-
-									missileVelocity[a].push_back(Coord3D());
-									missileVelocity[a].back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
-									player->setTimeSinceLastMissile(time);
-
-									timer[a].push_back(0);
-									audio.createAudioStream("pew.wav");
-									audio.play();
-									puts("SPECIAL ABILITY\n");
+								static int healAmount = 5;
+									if (player->getHealth() + healAmount < player->getInitialHealth())
+									{
+										player->setHealth(player->getHealth() + healAmount);
+									}
 								}
+								//Makes medics Circle disappear
+								if ((time - circleTime) >= 2.5f)
+								{
+									mod[93]->setToRender(false);
+									((Medic*)player)->setTimeSinceLastHeal(time);
+									healingCircle = false;
+								}
+							}
+							/// - Tank Special Ability Active - ///
+							if (tankShield == true)
+							{
+								if ((time - shieldTime) >= 2.5f)
+								{
+									if (((Tank*)player)->getHealth() > ((Tank*)player)->getInitialHealth())
+									{
+										((Tank*)player)->setHealth(((Tank*)player)->getInitialHealth());
+									}
+									tankShield = false;
+								}
+							}
+							/// - Turret Active - ///
+							if (turretActive == true)
+							{
+								for (auto& turret : pTurrets)
+								{
+									/// - Turret targeting and shooting logic - ///
+									//Get turret position
+									turretPos = turret->getTransformer().getPosition().x + turret->getTransformer().getPosition().y;
+									//for (int m = 0; m < minions.size(); m++)
+									//{
+									//	//get minion positions
+									//	minionPos = minions[m]->getTransformer().getPosition().x + minions[m]->getTransformer().getPosition().y;
+									//	
+									//}
+									/// - Cases for deleting turret - ///
+									//If turret time runs out
+									if ((time - turretTime) >= 5)
+									{
+										GAME::removeModel(turret);
+										pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+										continue;
+									}
+									//If turret touched by minion
+									if (collision(minions[a], turret))
+									{
+										GAME::removeModel(turret);
+										pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+										continue;
+									}
+									// If turret hit by missile from boss
+									for (int m = 0; m < 4; m++)
+									{
+										if (collision(mod[60 + m], turret))
+										{
+											if (pTurrets.size())
+											{
+												GAME::removeModel(turret);
+												pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+												//mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+											}
+										}
+									}
+									//If turret gets hit by train
+									for (int t = 0; t < 7; t++)
+									{
+										if (collision(mod[79] + t, turret))
+										{
+											if (pTurrets.size())
+											{
+												GAME::removeModel(turret);
+												pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+											}
+										}
+									}
+								}
+
+
+							}
+
+							if (p1->isButtonPressed(CONTROLLER_Y))
+							{
+								/// - Assault Special Ability - ///
+								if (player->type == assault)
+								{
+									if (time - ((Assault*)player)->getTimeSinceLastMissile() >= 3)
+									{
+										pMissiles[a].push_back(nullptr);
+										GAME::addModel(pMissiles[a].back() = new Model(*mod[44]));
+										pMissiles[a].back()->getTransformer().reset();
+										pMissiles[a].back()->setColour(player->getColour());
+										Coord3D pos = mod[a]->getTransformer().getPosition();
+										pMissiles[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+										pMissiles[a].back()->getTransformer().setScale(0.4f);
+
+										pMissiles[a].back()->getTransformer().setRotation({ 0 , angle[a] ,0 });
+
+										float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
+										float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
+
+										missileVelocity[a].push_back(Coord3D());
+										missileVelocity[a].back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
+										((Assault*)player)->setTimeSinceLastMissile(time);
+
+										timer[a].push_back(0);
+										audio.createAudioStream("pew.wav");
+										audio.play();
+										puts("Special Ability ASSAULT\n");
+									}
+								}
+								///- Medic Special Ability Inactive - ///
+								if (player->type == medic)
+								{
+									if (healingCircle == false)
+									{
+										if (time - ((Medic*)player)->getTimeSinceLastHeal() >= 5)
+										{
+											mod[93]->getTransformer().setPosition(player->getTransformer().getPosition() + (Coord3D({ 0.0f, 0.1f, 0.0f })));
+											mod[93]->setToRender(true);
+											circleTime = time;
+											puts("Special Ability MEDIC");
+											healingCircle = true;
+										}
+									}
+								}
+								/// - Tank Special Ability Inactive - ///
+								if (player->type == tank)
+								{
+									if (tankShield == false)
+									{
+										if (time - ((Tank*)player)->getTimeSinceLastShield() >= 5)
+										{
+											player->setHealth(player->getHealth() + 250);
+											shieldTime = time;
+											puts("Special Ability TANK");
+											tankShield = true;
+										}
+									}
+								}
+								/// - Specialist Special Ability Inactive - ///
+								if (player->type == specialist)
+								{
+
+									if (time - ((Specialist*)player)->getTimeSinceLastTurret() >= 8)
+									{
+										pTurrets.push_back(nullptr);
+										GAME::addModel(pTurrets.back() = new Model(*mod[98]));
+										pTurrets.back()->getTransformer().reset();
+										//pTurrets.back()->setColour(player->getColour());
+										Coord3D pos = mod[a]->getTransformer().getPosition();
+										pTurrets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+										pTurrets.back()->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f });
+										//pTurrets.back()->getTransformer().setScale(0.4f);
+										pTurrets.back()->setToRender(true);
+										puts("Special Ability SPECIALIST");
+
+										((Specialist*)player)->setTimeSinceLastTurret(time);
+										turretTime = time;
+										turretActive = true;
+									}
+								}
+
 							}
 
 							/// - Boss Spawns Minions - ///
 							//TODO: More Minions, Have boss spawn minions, Make minions have unifrom move speed. Lerp between colours??
-							if(minionCounter < 10)
+							if (minionCounter < 10)
 							{
 
 								minions.push_back(nullptr);
@@ -918,7 +1161,7 @@ public:
 							}
 
 							/// - Minions Movement Towards Players - ///
-							for(unsigned int m = 0; m < minions.size(); m++)
+							for (unsigned int m = 0; m < minions.size(); m++)
 							{
 								Coord3D norm = player->getTransformer().getPosition() - minions[m]->getTransformer().getPosition();
 								norm.normalize();
@@ -937,15 +1180,15 @@ public:
 
 								//get deltaTime put into duraction variable
 
-								if(time - coolDown[a] >= 3)
+								if (time - coolDown[a] >= 3)
 								{
-									if(f == true)
+									if (f == true)
 									{
 										duration = time;
 										f = false;
 									}
 									move = 0.5f;
-									if(time - 0.1f >= duration)
+									if (time - 0.1f >= duration)
 									{
 										move = 0.1f;
 										//If getTriggers() up then coolDown = time;
@@ -959,7 +1202,7 @@ public:
 							else//Do the same with the LT button, have it so will only work every X seconds.
 							{
 								move -= .001f;
-								if(move <= .1f)
+								if (move <= .1f)
 									move = .1f;
 								//f = false;
 								dashControl[a] = false;
@@ -970,14 +1213,14 @@ public:
 							float speed = p1->getSticks()[LS].x * p1->getSticks()[LS].x + p1->getSticks()[LS].y * p1->getSticks()[LS].y;
 
 
-							if(!collision(mod[a], mod[59]))
+							if (!collision(mod[a], mod[59]))
 								mod[a]->getTransformer().setPosition(
 									abs(mod[a]->getTransformer().getPosition().x) > mod[59]->getWidth() / 2 ? mod[a]->getTransformer().getPosition().x < 0 ? -mod[59]->getWidth() / 2 : mod[59]->getWidth() / 2 : mod[a]->getTransformer().getPosition().x,
 									0,
 									abs(mod[a]->getTransformer().getPosition().z) > mod[59]->getDepth() / 2 ? mod[a]->getTransformer().getPosition().z < 0 ? -mod[59]->getDepth() / 2 : mod[59]->getDepth() / 2 : mod[a]->getTransformer().getPosition().z);
 
 							//Player Animations
-							if(!speed)
+							if (!speed)
 								mod[a]->getAnimation("walk")->pause();
 							else
 							{
@@ -987,8 +1230,8 @@ public:
 							}
 
 							//Update each player's Blood Bar
-							mod[a + 64]->getTransformer().setPosition(mod[a]->getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
-							mod[a + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f * (player->getHealth() / player->getInitialHealth()));
+							mod[a + 64]->getTransformer().setPosition(mod[a]->getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
+							mod[a + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f * ((float)player->getHealth() / (float)player->getInitialHealth()));
 							mod[a + 68]->getTransformer().setPosition(mod[a + 64]->getTransformer().getPosition());
 							if(player->dead)
 							{
@@ -1004,14 +1247,14 @@ public:
 							mod[a + 74]->getTransformer().setScale(0.65f * (player->getBulletCount() / 30.0f));
 						}
 
-						///~ Bullet Collisions ~///
-						for(unsigned b = 0; b < bullets[a].size(); b++)
-							if(bullets[a][b])
+						///- Bullet Collisions -///
+						for (unsigned b = 0; b < bullets[a].size(); b++)
+							if (bullets[a][b])
 							{
 								timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
 								bullets[a][b]->getTransformer().translateBy(velocity[a][b].x, velocity[a][b].y, velocity[a][b].z);
 
-								if(timer[a][b] >= 1)
+								if (timer[a][b] >= 1)
 								{
 									GAME::removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
@@ -1021,17 +1264,18 @@ public:
 								}
 
 								bool bulletHit = false;
-								/// Bullet Collisions with Train
-								for(int t = 0; t < 7; t++)
+
+								/// - Bullet Collisions with Train - ///
+								for (int t = 0; t < 7; t++)
 								{
-									if(collision(bullets[a][b], mod[79 + t]))
+									if (collision(bullets[a][b], mod[79 + t]))
 									{
 										GAME::removeModel(bullets[a][b]);
 										bulletHit = true;
 									}
 								}
-								if(mod[8])
-									if(collision(bullets[a][b], mod[8]))
+								if (mod[8])
+									if (collision(bullets[a][b], mod[8]))
 									{
 										GAME::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
@@ -1039,7 +1283,7 @@ public:
 										timer[a].erase(timer[a].begin() + b);
 										//Boss a.k.a model 8, is now called "CandyMan" for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
-										if(CandyMan->getHealth() <= 0)
+										if (CandyMan->getHealth() <= 0)
 										{
 											GAME::removeModel(CandyMan); // If health = 0 then boss dead
 											//	mod[8] = nullptr;
@@ -1050,14 +1294,14 @@ public:
 										break;
 									}
 
-								for(auto& minion : minions)
+								for (auto& minion : minions)
 								{
-									if(collision(bullets[a][b], minion))
+									if (collision(bullets[a][b], minion))
 									{
 										minion->setHealth(minion->getHealth() - 10);
 										GAME::removeModel(bullets[a][b]);
 										bulletHit = true;
-										if(minion->getHealth() <= 0)
+										if (minion->getHealth() <= 0)
 										{
 											GAME::removeModel(minion);
 											minions.erase(std::find(minions.begin(), minions.end(), minion));
@@ -1074,18 +1318,20 @@ public:
 									//}
 								}
 
-								if(bulletHit)
-									bullets[a].erase(bullets[a].begin() + b);
+								if (bulletHit)
+									bullets[a].erase(bullets[a].begin() + b),
+									timer[a].erase(timer[a].begin() + b),
+									velocity[a].erase(velocity[a].begin() + b);
 
 							}
 
-						for(unsigned b = 0; b < pMissiles[a].size(); b++)
-							if(pMissiles[a][b])
+						for (unsigned b = 0; b < pMissiles[a].size(); b++)
+							if (pMissiles[a][b])
 							{
 								timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
 								pMissiles[a][b]->getTransformer().translateBy(missileVelocity[a][b].x, missileVelocity[a][b].y, missileVelocity[a][b].z);
 
-								if(timer[a][b] >= 1)
+								if (timer[a][b] >= 1)
 								{
 									GAME::removeModel(pMissiles[a][b]);
 									pMissiles[a].erase(pMissiles[a].begin() + b);
@@ -1095,9 +1341,9 @@ public:
 								}
 
 								/// - Missile Collisions with Train - ///
-								for(int t = 0; t < 7; t++)
+								for (int t = 0; t < 7; t++)
 								{
-									if(collision(pMissiles[a][b], mod[79 + t]))
+									if (collision(pMissiles[a][b], mod[79 + t]))
 									{
 										GAME::removeModel(pMissiles[a][b]);
 										pMissiles[a].erase(pMissiles[a].begin() + b);
@@ -1105,9 +1351,9 @@ public:
 								}
 
 								/// - If Boss Alive - ///
-								if(mod[8])
+								if (mod[8])
 									/// - If Missiles collide with Boss -///
-									if(collision(pMissiles[a][b], mod[8]))
+									if (collision(pMissiles[a][b], mod[8]))
 									{
 										GAME::removeModel(pMissiles[a][b]);
 										pMissiles[a].erase(pMissiles[a].begin() + b);
@@ -1116,7 +1362,7 @@ public:
 										//Boss a.k.a model 8, is now called CandyMan for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
 										/// - If Boss Dies - ///
-										if(CandyMan->getHealth() <= 0)
+										if (CandyMan->getHealth() <= 0)
 										{
 											GAME::removeModel(CandyMan); // If health = 0 then boss dead
 											bossActive = false;
@@ -1127,17 +1373,17 @@ public:
 									}
 							}
 
-						if(bossActive == false)
+						if (bossActive == false)
 						{
 							GAME::removeModel(mod[72]);
 							GAME::removeModel(mod[73]);
-							mod[44]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
-							mod[45]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
-							mod[46]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
-							mod[47]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
+							//mod[44]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
+							//mod[45]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
+							//mod[46]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
+							//mod[47]->getTransformer().setPosition(1000.0f, 1000.0f, 1000.0f);
 						}
 					}
-					mod[a]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+					//mod[a]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 				}
 			}
 			else
@@ -1145,31 +1391,30 @@ public:
 				//	mod[a]->getAnimation("squash")->update(mod[a]->getShader(),mod[a]->getMesh());
 			}
 
-
 		/// - Train Car Movement - ///
-		for(int a = 0; a < 4; a++)
+		for (int a = 0; a < 4; a++)
 		{
 			player = (Player*)mod[a];
 
 			//Train Sits in middle of map
-			if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
+			if (0 <= (time - trainTimer) && 10 > (time - trainTimer))
 			{
-				for(int t = 0; t < 7; t++)
+				for (int t = 0; t < 7; t++)
 				{
-					if(collision(mod[79 + t], player))
+					if (collision(mod[79 + t], player))
 					{
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+						if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
 					}
 				}
 
 			}
 			//Train Moves off map
-			if(10 <= (time - trainTimer) && 20 > (time - trainTimer))
+			if (10 <= (time - trainTimer) && 20 > (time - trainTimer))
 			{
-				for(int t = 0; t < 7; t++)
+				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{0.05f, 0.f, 0.f});//Move train cars right
 					if(collision(mod[79 + t], player))
@@ -1183,25 +1428,25 @@ public:
 				}
 			}
 			//Train stops
-			else if(20 <= (time - trainTimer) && 30 > (time - trainTimer))
+			else if (20 <= (time - trainTimer) && 30 > (time - trainTimer))
 			{
-				for(int t = 0; t < 7; t++)
+				for (int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
+					mod[79 + t]->getTransformer().translateBy(Coord3D{ 0.0f, 0.f, 0.f });//Stop Train cars
 				}
 			}
 			//Train moves back onto map
-			else if(30 <= (time - trainTimer) && 40 > (time - trainTimer))
+			else if (30 <= (time - trainTimer) && 40 > (time - trainTimer))
 			{
-				for(int t = 0; t < 7; t++)
+				for (int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
-					if(collision(mod[79 + t], player))
+					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
+					if (collision(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+						if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
 						//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
 						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
@@ -1209,16 +1454,16 @@ public:
 				}
 			}
 			//Train stops on map
-			else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
+			else if (40 <= (time - trainTimer) && 50 > (time - trainTimer))
 			{
-				for(int t = 0; t < 7; t++)
+				for (int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
-					if(collision(mod[79 + t], player))
+					mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.00f, 0.f, 0.f });//Stop Train cars on map
+					if (collision(mod[79 + t], player))
 					{
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+						if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
 					}
 				}
@@ -1226,10 +1471,26 @@ public:
 			}
 		}
 
-		//Boss health bar calculation
-		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f * (CandyMan->getHealth() / 1000.0f));
+		//Check if Train close to map
+		if ((mod[79]->getTransformer().getPosition().x - mod[99]->getTransformer().getPosition().x) > 60.0f)
+		{
+			for (int i = 99; i <= 105; i++)
+			{
+				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
+			}
+		}
+		else
+		{
+			for (int i = 99; i <= 105; i++)
+			{
+				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
+			}
+		}
 
-		if(youDead)
+		//Boss health bar calculation
+		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f* (CandyMan->getHealth() / 1000.0f));
+
+		if (youDead)
 		{
 			//TODO: do something when the party is dead, game over screen with "Main Menu" "Quit" options
 
@@ -1242,8 +1503,8 @@ public:
 		lastTime = (float)clock() / CLOCKS_PER_SEC;
 
 		/// - If game not active and Camera is active (Move camera mode) - ///
-		if(!movePlayer)
-			if(GAME::isControllerConnected(0))
+		if (!movePlayer)
+			if (GAME::isControllerConnected(0))
 			{
 				XinputController* p1 = (XinputController*)GAME::getController(0);
 				deathCounter = 0;
