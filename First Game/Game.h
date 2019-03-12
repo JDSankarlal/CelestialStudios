@@ -491,7 +491,7 @@ public:
 		mod.push_back(new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//107
 		GAME::addModel(mod.back());
 
-		mod[107]->getTransformer().setScale(1.5f, 1.5f, 1.0f), mod[107]->getTransformer().setPosition(0.0f, 0.0f, 30.0f);
+		mod[107]->getTransformer().setScale(1.5f, 1.5f, 1.0f), mod[107]->getTransformer().setPosition(2.5f, 0.0f, 30.0f);
 
 		mod.push_back(new Model("Models/Buildings/Building1/building1.obj"));//108
 		GAME::addModel(mod.back());
@@ -507,7 +507,7 @@ public:
 		GAME::addModel(mod.back());
 
 		mod[110]->getTransformer().setScale(2.0f, 3.5f, 2.5f), mod[110]->getTransformer().setPosition(-22.0f, 0.0f, 15.0f), mod[110]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f });
-		mod[111]->getTransformer().setScale(2.0f, 3.5f, 3.5f), mod[111]->getTransformer().setPosition(6.0f, 0.0f, 37.0f), mod[111]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
+		mod[111]->getTransformer().setScale(1.0f, 3.5f, 2.5f), mod[111]->getTransformer().setPosition(5.0f, 0.0f, 37.0f), mod[111]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
 
 		mod.push_back(new Model("Models/Buildings/Building8/Pharmacure_Model.obj"));//112
 		GAME::addModel(mod.back());
@@ -527,21 +527,31 @@ public:
 		mod.push_back(new Model(*mod.back()));//116
 		GAME::addModel(mod.back());
 
-		mod[115]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[115]->getTransformer().setPosition(-25.0f, 0.0f, 35.0f), mod[115]->getTransformer().setRotation({ 0.0f, 45.0f, 0.0f });
-		mod[116]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[116]->getTransformer().setPosition(14.0f, 0.0f, 35.0f), mod[116]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f });
+		mod[115]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[115]->getTransformer().setPosition(-22.0f, 0.0f, 35.0f), mod[115]->getTransformer().setRotation({ 0.0f, 45.0f, 0.0f });
+		mod[116]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[116]->getTransformer().setPosition(13.5f, 0.0f, 35.0f), mod[116]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f });
 
 		mod.push_back(new Model("Models/Buildings/Building10/cyber2.obj"));//117
 		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//118
 		GAME::addModel(mod.back());
 
-		mod[117]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[117]->getTransformer().setPosition(25.0f, 0.0f, 25.0f), mod[117]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f });
+		mod[117]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[117]->getTransformer().setPosition(21.0f, 0.0f, 27.0f), mod[117]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f });
 		mod[118]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[118]->getTransformer().setPosition(-0.5f, 2.0f, 36.0f), mod[118]->getTransformer().setRotation({ 0.0f, 90.0f, 0.0f });
 
 		mod.push_back(new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//119
 		GAME::addModel(mod.back());
 		mod[119]->getTransformer().setScale(1.0f, 3.0f, 1.0f), mod[119]->getTransformer().setPosition(17.f, 0.0f, 30.0f), mod[119]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
 
+		mod.push_back(new Model("Models/Buildings/Building11/cyber3.obj"));//120
+		GAME::addModel(mod.back());
+		mod.push_back(new Model(*mod.back()));//121
+		GAME::addModel(mod.back());
+		mod[120]->getTransformer().setScale(2.0f, 3.0f, 3.0f), mod[120]->getTransformer().setPosition(-17.f, -5.0f, 24.0f), mod[120]->getTransformer().setRotation({ 0.0f, 0.0f, 0.0f });
+		mod[121]->getTransformer().setScale(2.0f, 2.0f, 2.0f), mod[121]->getTransformer().setPosition(-4.2f, -5.0f, 29.7f), mod[121]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
+
+		mod.push_back(new Model("Models/Buildings/Building5/smallShop.obj"));//122
+		GAME::addModel(mod.back());
+		mod[122]->getTransformer().setScale(1.2f, 1.2f, 1.2f), mod[122]->getTransformer().setPosition(-8.0f, 0.0f, 27.0f), mod[122]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
 
 
 		/// - Set Model Transforms - ///
@@ -571,10 +581,10 @@ public:
 		//Buildings 3s
 		mod[30]->getTransformer().setPosition(10.5f, 0.0f, 23.6f);
 		mod[31]->getTransformer().setPosition(19.5f, 0.0f, 3.75f), mod[31]->getTransformer().setRotation({ 0,180,0 });
-		mod[32]->getTransformer().setPosition(-9.3f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({ 0,-90,0 });
+		mod[32]->getTransformer().setPosition(-12.0f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({ 0,-90,0 });
 		//Building 4s //Lillian's building, moved back
-		mod[33]->getTransformer().setPosition(19.0f, 0.0f, 36.0f), mod[33]->getTransformer().setRotation({ 0,-90,0 }); //right
-		mod[34]->getTransformer().setPosition(-14.25f, 0.0f, 36.0f), mod[34]->getTransformer().setRotation({ 0,180,0 }); //left
+		mod[33]->getTransformer().setPosition(27.0f, 0.0f, 26.0f), mod[33]->getTransformer().setRotation({ 0,45,0 }); //right
+		mod[34]->getTransformer().setPosition(-14.0f, 0.0f, 36.0f), mod[34]->getTransformer().setScale(1.5f, 1.5f, 1.5f), mod[34]->getTransformer().setRotation({ 0,180,0 }); //left
 		//Building 5s
 		mod[39]->getTransformer().setScale(1.0f, 1.0f, 1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 16.5f), mod[39]->getTransformer().setRotation({ 0,180,0 });
 		mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f), mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({ 0,90,0 });
@@ -636,7 +646,7 @@ public:
 		//Bullet Size
 		mod[48]->getTransformer().setScale(50.f);
 		//Pizza Sign
-		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-10.25f, 5.4f, 22.3f);
+		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-13.0f, 5.4f, 22.3f);
 
 		//Assault Weapons
 		mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[54]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
