@@ -178,16 +178,11 @@ public:
 			idle[a].addDir("Models/AssaultModel/Idle/");
 			mod[a]->addAnimation("walk", &walk[a]);
 			mod[a]->addAnimation("idle", &idle[a]);
-			mod[a]->setAnimation("walk");
-
-			walk[a].setAnimationSpeed(.25);
+			mod[a]->setAnimation("idle");
 			walk[a].repeat(true);
-			mod[a]->getAnimation("walk")->pause();
-			/*idle[a].stop();
-
-			mod[a]->addAnimation("walk", &walk[a]);
-			mod[a]->addAnimation("idle", &idle[a]);
-			mod[a]->setAnimation("walk");*/
+			idle[a].repeat(true);
+			idle[a].setAnimationSpeed(.25);
+			idle[a].play();
 		}
 
 		//Building 1s
@@ -207,17 +202,15 @@ public:
 		//Boss
 		mod[8] = (new Boss("Models/BOSS/missleShoot/BMS1.obj"));
 		GAME::addModel(mod[8]); //8
-		//mod[8]->enableBoundingBox(true);
 
 		//Boss Animation
 		static Animation missleShoot, laserPoint, slam;
 		missleShoot.addDir("Models/BOSS/missleShoot/");
-		/*laserPoint.addDir("Models/BOSS/laserPoint/");
-		slam.addDir("Models/BOSS/slam/");*/
+		laserPoint.addDir("Models/BOSS/laserPoint/");
+		slam.addDir("Models/BOSS/slam/");
 		mod[8]->addAnimation("missleShoot", &missleShoot);
-		/*mod[8]->addAnimation("missleShoot", &missleShoot);
-		mod[8]->addAnimation("missleShoot", &missleShoot);
-		mod[8]->addAnimation("missleShoot", &missleShoot);*/
+		mod[8]->addAnimation("laserPoint", &laserPoint);
+		mod[8]->addAnimation("slam", &slam);
 		mod[8]->setAnimation("missleShoot");
 		missleShoot.setAnimationSpeed(0.3f);
 		missleShoot.repeat(true);
@@ -512,6 +505,9 @@ public:
 		mod[106]=(new Model("Models/BackgroundSky/sky.obj"));//106
 		GAME::addModel(mod[106]);
 		mod[106]->getTransformer().setScale(8.0f, 8.0f, 5.0f), mod[106]->getTransformer().setPosition(1.0f, 0.0f, 40.0f), mod[106]->getTransformer().setRotation({ 90.0f,0.0f,0.0f });
+
+		mod[107] = (new Model("Models/Class/Assault/Idle/AI1.obj"));//107
+		GAME::addModel(mod[107]);
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -929,12 +925,34 @@ public:
 
 								}
 							}
-						
+							static bool slam = false;
 							//Player comes near Boss, gets teleported backwards
 							if(collision(player, CandyMan))
 							{
-								player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
-								player->setHealth(player->getHealth() - 35);
+								CandyMan->getAnimation("missleShoot")->pause();
+								CandyMan->setAnimation("slam");
+								CandyMan->getAnimation("slam")->setAnimationSpeed(0.2f);
+								CandyMan->getAnimation("slam")->repeat(true);
+								CandyMan->getAnimation("slam")->play();
+								slam = true;
+								//player->getTransformer().setPosition(player->getTransformer().getPosition().x, player->getTransformer().getPosition().y, player->getTransformer().getPosition().z - 15);
+								//player->setHealth(player->getHealth() - 35);
+							}
+							if (slam == true)
+							{
+								if (CandyMan->getAnimation("slam")->getFrameNumber() == 5 && collision(player, CandyMan))
+								{
+									player->setHealth(player->getHealth() - 35);
+								}
+								std::cout << CandyMan->getAnimation("slam")->getFrameNumber() << std::endl;
+								if (CandyMan->getAnimation("slam")->getFrameNumber() == 7 || player->getHealth() <= 0)
+								{
+									std::cout << "aaaaa" << std::endl;
+									slam = false;
+									CandyMan->getAnimation("slam")->stop();
+									CandyMan->setAnimation("missleShoot");
+									CandyMan->getAnimation("missleShoot")->play();
+								}
 							}
 					
 							//If player dies

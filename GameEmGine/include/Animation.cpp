@@ -94,8 +94,19 @@ void Animation::update(Shader* shader, Mesh* mesh)
 	shader->disable();
 }
 
+int Animation::getFrameNumber()
+{
+	return m_frame;
+}
+
+bool Animation::checkEnd()
+{
+	return m_frame == m_frames.size();
+}
+
 void Animation::stop()
 {
+	m_frame = 0;
 	m_stop = true;
 }
 
