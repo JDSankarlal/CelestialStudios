@@ -2,7 +2,7 @@
 
 typedef GameEmGine GAME;
 
-Model* Boss::missles[4];
+Model* Boss::missles[4],*Boss::lazer;
 
 Boss::Boss(): Model()
 {
@@ -15,7 +15,7 @@ Boss::Boss(): Model()
 	missles[3] = (new Model(*missles[0]));
 	GAME::addModel(missles[3]);
 
-	lazer = new Model("Models/lazer/lazer.obj");
+	//lazer = new Model("Models/lazer/lazer.obj");
 	GAME::addModel(lazer);
 }
 
@@ -132,7 +132,7 @@ void Boss::update()
 	}
 
 
-
+//	shootLazer(0);
 
 }
 
@@ -144,7 +144,7 @@ void Boss::shootLazer(int playerIndex)
 		, end = player->getTransformer().getPosition();
 
 	float distance = (end - start).distance();
-	static float counter,amount=.01;
+	static float counter,amount=.01f;
 
 	counter += amount;
 
