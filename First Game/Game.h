@@ -405,6 +405,8 @@ public:
 		GAME::addModel(mod.back());
 		mod.push_back(new Model(*mod.back()));//77
 		GAME::addModel(mod.back());
+		
+		
 
 		//Minions
 		mod.push_back(new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
@@ -750,6 +752,8 @@ public:
 
 	void update(double dt)
 	{
+		
+
 		mod[48]->getTransformer().setScale(1);
 		//Time
 		static float  time = 8;
@@ -920,6 +924,7 @@ public:
 							deathCounter = 0;
 							youDead = !true;
 							players = (Player*)mod[a];
+							
 
 
 							if (p1.sticks[RS].x || p1.sticks[RS].y)
@@ -967,8 +972,10 @@ public:
 							/// - Player Shooting - ///
 							if (p1.triggers[RT] >= .95 && !gunControlLaw[a])
 							{
+								
 								if (players->getBulletCount() > 0)
 								{
+								
 									gunControlLaw[a] = true; //gun Control Law makes it so the guns function "manualy" instead of "fully automatic"
 
 									bullets[a].push_back(new Model(*mod[48]));
@@ -986,15 +993,26 @@ public:
 
 									velocity[a].push_back(Coord3D());
 									velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
-
 									timer[a].push_back(0);
 									audio.createAudioStream("pew.wav");
 									audio.play();
+									mod[a + 74]->setColour(1,1,1);
 									players->setBulletCount(players->getBulletCount() - 1);
 								}
 							}
 							else if (p1.triggers[RT] < .95&& gunControlLaw[a])
+							{
+								if (a == 0)
+									mod[74]->setColour({ 255,0,0,150 });
+								if (a == 1)
+									mod[75]->setColour({ 0,0,255,150 });
+								if (a == 2)
+									mod[76]->setColour({ 0,255,0,150 });
+								if (a == 3)
+									mod[77]->setColour({ 255,255,0,150 });
+
 								gunControlLaw[a] = false;
+							}
 
 							/// - Button Presses on controller - ///
 							if (p1.buttonPressed(p1.buttons.X))
