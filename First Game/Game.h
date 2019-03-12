@@ -1069,54 +1069,54 @@ public:
 								for (auto& turret : pTurrets)
 								{
 								
-									/// - Turret targeting and shooting logic - ///
-									//Get turret position
-									//Coord3D ;
-									turretPos = turret->getTransformer().getPosition().x + turret->getTransformer().getPosition().y;
-									float lowestDistance = (turretPos - minions[0]->getTransformer().getPosition()).distance();
-									
-									for (unsigned int m = 0; m < minions.size(); m++)
-									{
-										//get minion positions
-										
-										if((turretPos - minions[m]->getTransformer().getPosition()).distance() < lowestDistance)
-										{
-											lowestDistance = (turretPos - minions[m]->getTransformer().getPosition()).distance();
-											minionPos =  minions[m]->getTransformer().getPosition();
-
-										}
-									
-									}
-									pow1 = pow((double)X, 2); //type casting from int to double
-									pow2 = pow((double)Y, 2);
-
-									sq = abs(sqrt((double)pow1 + (double)pow2));
-
-									angleInRadian = atan2((double)Y, (double)X); //angle in radian
-
-									angleInDegree = angleInRadian * 180 / 3.14159; //angle in degree
-
-									bullets[a].push_back(new Model(*mod[48]));
-									GAME::addModel(bullets[a].back());
-
-									Coord3D pos = turret->getTransformer().getPosition();
-									bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-									bullets[a].back()->getTransformer().setScale(.25f);
-									
-									//Insert code for finding angle between turret and minion
-
-
-									float cosVal = cos((float)(fmodf((float)angleInDegree - 90, 360) * (M_PI / 180)));
-									float sinVal = sin((float)(fmodf((float)angleInDegree - 90, 360) * (M_PI / 180)));
-
-									velocity[a].push_back(Coord3D());
-									velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
-
-									//timer[a].push_back(0);
-									audio.createAudioStream("pew.wav");
-									audio.play();
-
-
+									///// - Turret targeting and shooting logic - ///
+									////Get turret position
+									////Coord3D ;
+									//turretPos = turret->getTransformer().getPosition().x + turret->getTransformer().getPosition().y;
+									//float lowestDistance = (turretPos - minions[0]->getTransformer().getPosition()).distance();
+									//
+									//for (unsigned int m = 0; m < minions.size(); m++)
+									//{
+									//	//get minion positions
+									//	
+									//	if((turretPos - minions[m]->getTransformer().getPosition()).distance() < lowestDistance)
+									//	{
+									//		lowestDistance = (turretPos - minions[m]->getTransformer().getPosition()).distance();
+									//		minionPos =  minions[m]->getTransformer().getPosition();
+									//
+									//	}
+									//
+									//}
+									//pow1 = pow((double)X, 2); //type casting from int to double
+									//pow2 = pow((double)Y, 2);
+									//
+									//sq = abs(sqrt((double)pow1 + (double)pow2));
+									//
+									//angleInRadian = atan2((double)Y, (double)X); //angle in radian
+									//
+									//angleInDegree = angleInRadian * 180 / 3.14159; //angle in degree
+									//
+									//bullets[a].push_back(new Model(*mod[48]));
+									//GAME::addModel(bullets[a].back());
+									//
+									//Coord3D pos = turret->getTransformer().getPosition();
+									//bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+									//bullets[a].back()->getTransformer().setScale(.25f);
+									//
+									////Insert code for finding angle between turret and minion
+									//
+									//
+									//float cosVal = cos((float)(fmodf((float)angleInDegree - 90, 360) * (M_PI / 180)));
+									//float sinVal = sin((float)(fmodf((float)angleInDegree - 90, 360) * (M_PI / 180)));
+									//
+									//velocity[a].push_back(Coord3D());
+									//velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
+									//
+									////timer[a].push_back(0);
+									//audio.createAudioStream("pew.wav");
+									//audio.play();
+									//
+									//
 									/// - Cases for deleting turret - ///
 									//If turret time runs out
 									if ((time - turretTime) >= 5)
