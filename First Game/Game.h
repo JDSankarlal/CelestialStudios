@@ -838,9 +838,7 @@ public:
 		static float  time = 8;
 		time += (float)dt; //Add Delta Time to Time
 
-		//Player Ability Variables
-		static float reloadTimer = false;
-		static bool reloading = false;
+		
 		//Assault
 		static vector<Model*> pMissiles[4];
 		static vector<Coord3D> missileVelocity[4];
@@ -1036,7 +1034,7 @@ public:
 							/// - Player Shooting - ///
 							if(p1->getTriggers().RT >= .95 && !gunControlLaw[a])
 							{
-								if (reloading == false)
+								if (player->reloading == false)
 								{
 									if (player->getBulletCount() > 0)
 									{
@@ -1059,31 +1057,42 @@ public:
 										timer[a].push_back(0);
 										audio.createAudioStream("pew.wav");
 										audio.play();
+										mod[a + 74]->setColour(1, 1, 1);
 										player->setBulletCount(player->getBulletCount() - 1);
 									}
 								}
 							}
-							else if(p1->getTriggers().RT < .95 && gunControlLaw[a])
+							else if (p1->getTriggers().RT < .95 && gunControlLaw[a])
+							{
+								if (a == 0)
+									mod[74]->setColour({ 255,0,0,150 });
+								if (a == 1)
+									mod[75]->setColour({ 0,0,255,150 });
+								if (a == 2)
+									mod[76]->setColour({ 0,255,0,150 });
+								if (a == 3)
+									mod[77]->setColour({ 255,255,0,150 });
 								gunControlLaw[a] = false;
+							}
 
 							/// - Button Presses on controller - ///
 							if((p1->isButtonPressed(CONTROLLER_X)) || (player->getBulletCount() <= 0))
 							{
 								
-								if (reloading == false)
+								if (player->reloading == false)
 								{
-									reloadTimer = time;
+									player->reloadTimer = time;
 								}
-								reloading = true;
+								player->reloading = true;
 								
 							}
-							if (reloading == true)
+							if (player->reloading == true)
 							{
 								//put a bar here that lerps up to full or make circle become full
-								if ((time - reloadTimer) >= 2)
+								if ((time - player->reloadTimer) >= 2)
 								{
 									player->setBulletCount(30);
-									reloading = false;
+									player->reloading = false;
 									puts("RELOADING!!!\n");
 								}
 								else

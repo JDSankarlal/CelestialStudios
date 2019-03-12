@@ -26,6 +26,10 @@ public:
 	
 	int getInitialHealth();
 
+	//Player Ability Variables
+	 float reloadTimer = false;
+	 bool reloading = false;
+
 	PlayerType type;
 	bool dead;
 protected:
