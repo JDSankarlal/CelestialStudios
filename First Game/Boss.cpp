@@ -15,7 +15,8 @@ Boss::Boss(): Model()
 	missles[3] = (new Model(*missles[0]));
 	GAME::addModel(missles[3]);
 
-
+	lazer = new Model("Models/lazer/lazer.obj");
+	GAME::addModel(lazer);
 }
 
 Boss::Boss(Model& model): Model(model)
@@ -85,7 +86,7 @@ void Boss::update()
 			{
 				curveroni[a] = 0;
 				lastDelay[a] = clock(),
-				hasTarget[a] = false;
+					hasTarget[a] = false;
 			}
 
 			//curveroni[a] = fmodf(curveroni[a], 1);
@@ -96,14 +97,14 @@ void Boss::update()
 			if(!hasTarget[a])
 			{
 				bossTarget[a] = targets[a]->getTransformer().getPosition();
-				delay[a] = (rand()%2 +1 )+ (float(rand()%100)/100);
+				delay[a] = (rand() % 2 + 1) + (float(rand() % 100) / 100);
 				hasTarget[a] = true;
 			}
 
 
-			if(hasTarget[a] )
+			if(hasTarget[a])
 			{
-				
+
 				Coord3D
 					p1[4],
 					p2[4],
@@ -129,4 +130,29 @@ void Boss::update()
 			missles[a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
 		}
 	}
+
+
+
+
+}
+
+void Boss::shootLazer(int playerIndex)
+{
+
+	Player* player = targets[playerIndex];
+	Coord3D start = getTransformer().getPosition() + Coord3D(0.0f, 8.0f, 2.0f)
+		, end = player->getTransformer().getPosition();
+
+	float distance = (end - start).distance();
+	static float counter,amount=.01;
+
+	counter += amount;
+
+	if(counter > 1)
+		amount *= -1;
+
+	lazer->getTransformer().setPosition(start);
+	lazer->getTransformer().setScale( 1,lerp(0.0f, distance, counter),1);
+	lazer->getTransformer().setRotation({-90,0,0});
+
 }

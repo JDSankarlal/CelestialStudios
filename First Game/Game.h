@@ -783,8 +783,8 @@ public:
 		static float reloadTimer = false;
 		static bool reloading = true;
 		//Assault
-		static vector<Model*> pMissiles[1];
-		static vector<Coord3D> missileVelocity[1];
+		static vector<Model*> pMissiles[4];
+		static vector<Coord3D> missileVelocity[4];
 
 		//Medic
 		static float circleTime;
@@ -957,13 +957,13 @@ public:
 							{
 								if (reloading == false)
 								{
-									if (players->getBulletCount() > 0)
+									if (player->getBulletCount() > 0)
 									{
 										gunControlLaw[a] = true; //gun Control Law makes it so the guns function "manualy" instead of "fully automatic"
 
 										bullets[a].push_back(new Model(*mod[48]));
 										GAME::addModel(bullets[a].back());
-										bullets[a].back()->setColour(players->getColour());//bullet color = players color
+										bullets[a].back()->setColour(player->getColour());//bullet color = players color
 										Coord3D pos = mod[a]->getTransformer().getPosition();
 										bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
 										bullets[a].back()->getTransformer().setScale(.25f);
@@ -978,7 +978,7 @@ public:
 										timer[a].push_back(0);
 										audio.createAudioStream("pew.wav");
 										audio.play();
-										players->setBulletCount(players->getBulletCount() - 1);
+										player->setBulletCount(player->getBulletCount() - 1);
 									}
 								}
 							}
@@ -998,7 +998,7 @@ public:
 								//put a bar here that lerps up to full or make circle become full
 								if ((time - reloadTimer) >= 2)
 								{
-									players->setBulletCount(30);
+									player->setBulletCount(30);
 									reloading = false;
 									puts("RELOADING!!!\n");
 								}
@@ -1431,14 +1431,13 @@ public:
 							{
 								timer[a][b] += (float)clock() / CLOCKS_PER_SEC - lastTime;
 								pMissiles[a][b]->getTransformer().translateBy(missileVelocity[a][b].x, missileVelocity[a][b].y, missileVelocity[a][b].z);
+								bool deleteMissile=false;
 
 								if (timer[a][b] >= 1)
 								{
-									GAME::removeModel(pMissiles[a][b]);
-									pMissiles[a].erase(pMissiles[a].begin() + b);
-									missileVelocity[a].erase(missileVelocity[a].begin() + b);
-									timer[a].erase(timer[a].begin() + b);
-									break;
+									deleteMissile = true;
+									
+									
 								}
 
 								/// - Missile Collisions with Train - ///
@@ -1446,8 +1445,7 @@ public:
 								{
 									if (collision(pMissiles[a][b], mod[79 + t]))
 									{
-										GAME::removeModel(pMissiles[a][b]);
-										pMissiles[a].erase(pMissiles[a].begin() + b);
+										deleteMissile = true;
 									}
 								}
 
@@ -1456,10 +1454,7 @@ public:
 									/// - If Missiles collide with Boss -///
 									if (collision(pMissiles[a][b], mod[8]))
 									{
-										GAME::removeModel(pMissiles[a][b]);
-										pMissiles[a].erase(pMissiles[a].begin() + b);
-										missileVelocity[a].erase(missileVelocity[a].begin() + b);
-										timer[a].erase(timer[a].begin() + b);
+										deleteMissile = true;
 										//Boss a.k.a model 8, is now called CandyMan for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 50);// When hit takes damage
 										/// - If Boss Dies - ///
@@ -1472,6 +1467,14 @@ public:
 										puts("Hit The BOSS\n");
 										break;
 									}
+
+								if(deleteMissile)
+								{
+									GAME::removeModel(pMissiles[a][b]);
+									pMissiles[a].erase(pMissiles[a].begin() + b);
+									missileVelocity[a].erase(missileVelocity[a].begin() + b);
+									timer[a].erase(timer[a].begin() + b);
+								}
 							}
 
 						if (bossActive == false)
