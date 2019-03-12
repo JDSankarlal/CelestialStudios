@@ -21,14 +21,17 @@ public:
 	virtual void setHealth(int v);
 	virtual int getBulletCount();
 	virtual void setBulletCount(int v);
+	virtual float getTimeSinceLastMissile(); 
+	virtual void setTimeSinceLastMissile(float v); 
 	
 	int getInitialHealth();
 
 	PlayerType type;
+	bool dead;
 protected:
 	int initialHealth = 100;
 private:
 	int health = 100;
 	int bulletCount = 30;
-	
+	float timeSinceLastMissile;
 };

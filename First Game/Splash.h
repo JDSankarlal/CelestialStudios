@@ -48,7 +48,7 @@ public:
 			});
 
 
-		mod.push_back(new Model("Models/Screen/Splash/splashScreen.obj"));
+		mod.push_back(new Model("Models/Scene/Splash/splashScreen.obj"));
 		GameEmGine::addModel(mod.back());
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 		//mod[0]->addFrameBuffer(grayPost);

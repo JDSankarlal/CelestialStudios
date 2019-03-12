@@ -74,6 +74,9 @@
     <ClInclude Include="Particles.h">
       <Filter>EmGine</Filter>
     </ClInclude>
+    <ClInclude Include="XinputManager.h">
+      <Filter>EmGine\Resource Management</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
@@ -135,6 +138,9 @@
     </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="XinputManager.cpp">
+      <Filter>EmGine\Resource Management</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
