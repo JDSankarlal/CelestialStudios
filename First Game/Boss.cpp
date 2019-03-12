@@ -158,7 +158,7 @@ void Boss::update()
 	}
 
 
-	shootLazer(0);
+	//shootLazer(0);
 
 }
 

@@ -102,8 +102,8 @@ struct XinputDevice
 	{
 		XINPUT_VIBRATION vibration;
 		memset(&vibration, 0, sizeof(XINPUT_VIBRATION));
-		vibration.wLeftMotorSpeed = WORD(65535 * L); // use any value between 0-65535 here
-		vibration.wRightMotorSpeed = WORD(65535 * R); // use any value between 0-65535 here
+		vibration.wLeftMotorSpeed = WORD(65535.f * L); // use any value between 0-65535 here
+		vibration.wRightMotorSpeed = WORD(65535.f * R); // use any value between 0-65535 here
 		XInputSetState(index, &vibration);
 	}
 

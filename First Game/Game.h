@@ -246,7 +246,7 @@ public:
 		mod[18]->setToRender(false);
 
 		//Building 2s
-		mod[19] = (new Model("Models/Buildings/Tunnel/tunnelWIP.obj"));
+		mod[19] = (new Model("Models/Buildings/Tunnel/Tunnel_Model.obj"));
 		GAME::addModel(mod[19]);//19
 		mod[20] = (new Model(*mod[19]));
 		GAME::addModel(mod[20]);//20
@@ -838,9 +838,7 @@ public:
 		static float  time = 8;
 		time += (float)dt; //Add Delta Time to Time
 
-		//Player Ability Variables
-		static float reloadTimer = false;
-		static bool reloading = false;
+		
 		//Assault
 		static vector<Model*> pMissiles[4];
 		static vector<Coord3D> missileVelocity[4];
@@ -947,19 +945,19 @@ public:
 					{
 						XinputController* p1 = (XinputController*)GAME::getController(a);
 						p1->setStickDeadZone(.2f);
-						if(p1->isButtonPressed(CONTROLLER_SELECT))
-						{
-							for(int b = 0; b < 4; b++)
-								player->dead = false;
-							GAME::setScene(new Game);
-						}
+						//if(p1->isButtonPressed(CONTROLLER_SELECT))
+						//{
+						//	for(int b = 0; b < 4; b++)
+						//		player->dead = false;
+						//	GAME::setScene(new Game);
+						//}
 						//Start button quits game
-						if(p1->isButtonPressed(CONTROLLER_START))
-						{
-							puts("\nExiting Game\n");
-							GAME::exit();
-						}
-
+						//if(p1->isButtonPressed(CONTROLLER_START))
+						//{
+						//	puts("\nExiting Game\n");
+						//	GAME::exit();
+						//}
+						//
 						if(!player->dead)
 						{
 							deathCounter = 0;
@@ -978,8 +976,7 @@ public:
 
 							/// - Missile Collisions with Player - ///
 
-							static clock_t deathShakeTimer = 0;
-							static float deathShakeDir = 1.5f;
+					
 							for(int b = 0; b < 4; b++)
 							{
 								bool collision = collision3D(player, mod[60 + b]);
@@ -990,9 +987,10 @@ public:
 									player->setHealth(player->getHealth() - 35);
 									//Coord3D test = ;
 									p1->setVibration(.8f, .8f);
+									player->deathShakeTimer = clock();
 								}
 							}
-							if(clock() - deathShakeTimer > deathShakeDir)
+							if((clock() - player->deathShakeTimer )* .001f > player->deathShakeDir)
 								p1->resetVibration();
 
 							static bool slam = false;
@@ -1040,11 +1038,10 @@ public:
 							}
 
 							/// - Player Shooting - ///
-							static float shotBuzzDir = .9f;
-							static clock_t shotBuzzTimer;
+							
 							if(p1->getTriggers().RT >= .95 && !gunControlLaw[a])
 							{
-								if(reloading == false)
+								if (player->reloading == false)
 								{
 									if(player->getBulletCount() > 0)
 									{
@@ -1067,34 +1064,47 @@ public:
 										timer[a].push_back(0);
 										audio.createAudioStream("pew.wav");
 										audio.play();
+										mod[a + 74]->setColour(1, 1, 1);
 										player->setBulletCount(player->getBulletCount() - 1);
-										shotBuzzTimer = clock();
+										player->shotBuzzTimer = clock();
 										p1->setVibration(.4f, .4f);
 									}
 								}
 							}
-
-							if((clock() - shotBuzzTimer) * .001f > shotBuzzDir)
+							if((clock() - player->shotBuzzTimer) * .001f > player->shotBuzzDir)
 								p1->resetVibration();
 
-							else if(p1->getTriggers().RT < .95f && gunControlLaw[a])
-								gunControlLaw[a] = false;
-
-							/// - Button Presses on controller - ///
-							if(p1->isButtonPressed(CONTROLLER_X))
+							else if (p1->getTriggers().RT < .95 && gunControlLaw[a])
 							{
-								reloading = true;
-								reloadTimer = time;
-
+								if (a == 0)
+									mod[74]->setColour({ 255,0,0,150 });
+								if (a == 1)
+									mod[75]->setColour({ 0,0,255,150 });
+								if (a == 2)
+									mod[76]->setColour({ 0,255,0,150 });
+								if (a == 3)
+									mod[77]->setColour({ 255,255,0,150 });
+								gunControlLaw[a] = false;
 							}
 
-							if(reloading == true)
+							/// - Button Presses on controller - ///
+							if((p1->isButtonPressed(CONTROLLER_X)) || (player->getBulletCount() <= 0))
+							{
+								
+								if (player->reloading == false)
+								{
+									player->reloadTimer = time;
+								}
+								player->reloading = true;
+								
+							}
+							if (player->reloading == true)
 							{
 								//put a bar here that lerps up to full or make circle become full
-								if((time - reloadTimer) >= 2)
+								if ((time - player->reloadTimer) >= 2)
 								{
 									player->setBulletCount(30);
-									reloading = false;
+									player->reloading = false;
 									puts("RELOADING!!!\n");
 								}
 								else
@@ -1105,6 +1115,7 @@ public:
 								}
 							}
 
+							//if (p1->isButtonPressed(CONTROLLER_Y))
 							///- Medic Secial Ability Active - ///
 							if(healingCircle == true)
 							{
@@ -1372,24 +1383,24 @@ public:
 							/// - Left Trigger to Dash - ///
 							if(p1->getTriggers().LT >= .95)
 							{
-								static float coolDown[4];
+								//static float coolDown[4];
 
 								//get deltaTime put into duraction variable
 
-								if(time - coolDown[a] >= 3)
+								if (time - player->cooldown >= 3)
 								{
-									if(f == true)
+									if (player->f == true)
 									{
 										duration = time;
-										f = false;
+										player->f = false;
 									}
 									move = 0.5f;
 									if(time - 0.1f >= duration)
 									{
 										move = 0.1f;
 										//If getTriggers() up then coolDown = time;
-										coolDown[a] = time;
-										f = true;
+										player->cooldown = time;
+										player->f = true;
 									}
 								}
 
