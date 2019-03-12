@@ -29,6 +29,8 @@ public:
 	//Player Ability Variables
 	 float reloadTimer = false;
 	 bool reloading = false;
+	 float cooldown = false;
+	 bool f = false;
 
 	PlayerType type;
 	bool dead;

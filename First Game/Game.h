@@ -945,19 +945,19 @@ public:
 					{
 						XinputController* p1 = (XinputController*)GAME::getController(a);
 						p1->setStickDeadZone(.2f);
-						if(p1->isButtonPressed(CONTROLLER_SELECT))
-						{
-							for(int b = 0; b < 4; b++)
-								player->dead = false;
-							GAME::setScene(new Game);
-						}
+						//if(p1->isButtonPressed(CONTROLLER_SELECT))
+						//{
+						//	for(int b = 0; b < 4; b++)
+						//		player->dead = false;
+						//	GAME::setScene(new Game);
+						//}
 						//Start button quits game
-						if(p1->isButtonPressed(CONTROLLER_START))
-						{
-							puts("\nExiting Game\n");
-							GAME::exit();
-						}
-
+						//if(p1->isButtonPressed(CONTROLLER_START))
+						//{
+						//	puts("\nExiting Game\n");
+						//	GAME::exit();
+						//}
+						//
 						if(!player->dead)
 						{
 							deathCounter = 0;
@@ -1371,24 +1371,24 @@ public:
 							/// - Left Trigger to Dash - ///
 							if(p1->getTriggers().LT >= .95)
 							{
-								static float coolDown[4];
+								//static float coolDown[4];
 
 								//get deltaTime put into duraction variable
 
-								if (time - coolDown[a] >= 3)
+								if (time - player->cooldown >= 3)
 								{
-									if (f == true)
+									if (player->f == true)
 									{
 										duration = time;
-										f = false;
+										player->f = false;
 									}
 									move = 0.5f;
 									if (time - 0.1f >= duration)
 									{
 										move = 0.1f;
 										//If getTriggers() up then coolDown = time;
-										coolDown[a] = time;
-										f = true;
+										player->cooldown = time;
+										player->f = true;
 									}
 								}
 
