@@ -1,8 +1,10 @@
+#define _USE_MATH_DEFINES
 #include "Boss.h"
 
 typedef GameEmGine GAME;
 
-Model* Boss::missles[4],*Boss::lazer;
+Model* Boss::missles[4];
+Model *Boss::lazer;
 
 Boss::Boss(): Model()
 {
@@ -15,7 +17,8 @@ Boss::Boss(): Model()
 	missles[3] = (new Model(*missles[0]));
 	GAME::addModel(missles[3]);
 
-	//lazer = new Model("Models/lazer/lazer.obj");
+	lazer = new Model("Models/lazer/lazer.obj");
+	lazer->setColour(1, 0, 0);
 	GAME::addModel(lazer);
 }
 
@@ -132,27 +135,42 @@ void Boss::update()
 	}
 
 
-//	shootLazer(0);
+	shootLazer(0);
 
 }
 
 void Boss::shootLazer(int playerIndex)
 {
 
-	Player* player = targets[playerIndex];
-	Coord3D start = getTransformer().getPosition() + Coord3D(0.0f, 8.0f, 2.0f)
-		, end = player->getTransformer().getPosition();
+	 
+	Coord3D start = getTransformer().getPosition() + Coord3D(0.0f, 8.0f, 0.0f)
+		, end = targets[playerIndex]->getTransformer().getPosition();
 
 	float distance = (end - start).distance();
 	static float counter,amount=.01f;
 
 	counter += amount;
 
-	if(counter > 1)
+	if(counter > 1 || counter < 0)
+	{
+		counter =float( counter > 0 ? 1 : 0);
+
 		amount *= -1;
+	}
+	float angle[3];
+	angle[0] = acosf((start.x*end.x+start.y*end.y )/
+		(sqrtf(start.x*start.x
+			+ start.y * start.y)* sqrtf(end.x* end.x + end.y * end.y))) * (180 / (float)M_PI);
+	angle[1] = acosf((start.x * end.x + start.z * end.z) /
+		(sqrtf(start.x * start.x
+			+ start.z * start.z) * sqrtf(end.x * end.x + end.z * end.z))) * (180 / (float)M_PI);
+
+	angle[2] = acosf((start.y * end.y + start.z * end.z) /
+		(sqrtf(start.y * start.y
+			+ start.z * start.z) * sqrtf(end.y * end.y + end.z * end.z))) * (180 / (float)M_PI);
 
 	lazer->getTransformer().setPosition(start);
-	lazer->getTransformer().setScale( 1,lerp(0.0f, distance, counter),1);
-	lazer->getTransformer().setRotation({-90,0,0});
+	lazer->getTransformer().setScale( .5f,lerp(0.0f, distance, counter), .5f);
+	lazer->getTransformer().setRotation({angle[0],angle[2],angle[1]});
 
 }

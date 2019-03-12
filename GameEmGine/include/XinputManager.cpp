@@ -15,7 +15,6 @@ void XinputManager::update()
 		controllers[index]->index = index;
 		if(controllerConnected(index))
 		{
-			controllers[index]->update();
 			if(controllers[index]->type != getControllerType(index))
 			{
 				XinputController* controller = new XinputController;
@@ -28,19 +27,26 @@ void XinputManager::update()
 					*controller = *(XinputController*)controllers[index];
 					delete controllers[index];
 					controllers[index] = controller;
+					delete drum;
+					delete guitar;
 					break;
 				case XINPUT_GUITAR:
 					*guitar = *(XinputGuitar*)controllers[index];
 					delete controllers[index];
 					controllers[index] = guitar;
+					delete controller;
+					delete drum;
 					break;
 				case XINPUT_DRUM:
 					*drum = *(XinputDrum*)controllers[index];
 					delete controllers[index];
 					controllers[index] = drum;
+					delete controller;
+					delete guitar;
 					break;
 				}
 			}
+			controllers[index]->update();
 		}
 	}
 }
