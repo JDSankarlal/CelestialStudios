@@ -780,6 +780,8 @@ public:
 		time += (float)dt; //Add Delta Time to Time
 
 		//Player Ability Variables
+		static float reloadTimer = false;
+		static bool reloading = true;
 		//Assault
 		static vector<Model*> pMissiles[1];
 		static vector<Coord3D> missileVelocity[1];
@@ -799,6 +801,13 @@ public:
 		//Turret
 		static Coord3D turretPos;
 		static Coord3D minionPos;
+
+		//Testing
+		static double pow1;
+		static double pow2;
+		static double sq;
+		static double angleInRadian;
+		static double angleInDegree;
 
 		//static float coolDown = 0;
 		static float duration = 0;
@@ -946,29 +955,31 @@ public:
 							/// - Player Shooting - ///
 							if(p1->getTriggers().RT >= .95 && !gunControlLaw[a])
 							{
-								if(player->getBulletCount() > 0)
+								if (reloading == false)
 								{
-									gunControlLaw[a] = true; //gun Control Law makes it so the guns function "manualy" instead of "fully automatic"
+									if (players->getBulletCount() > 0)
+									{
+										gunControlLaw[a] = true; //gun Control Law makes it so the guns function "manualy" instead of "fully automatic"
 
-									bullets[a].push_back(nullptr);
-									GAME::addModel(bullets[a].back() = new Model(*mod[48]));
-									bullets[a].back()->getTransformer().reset();
-									bullets[a].back()->setColour(player->getColour());//bullet color = player color
-									Coord3D pos = mod[a]->getTransformer().getPosition();
-									bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-									bullets[a].back()->getTransformer().setScale(.25f);
-									bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
+										bullets[a].push_back(new Model(*mod[48]));
+										GAME::addModel(bullets[a].back());
+										bullets[a].back()->setColour(players->getColour());//bullet color = players color
+										Coord3D pos = mod[a]->getTransformer().getPosition();
+										bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+										bullets[a].back()->getTransformer().setScale(.25f);
+										bullets[a].back()->getTransformer().setRotation({ 90 , angle[a] ,0 });
 
-									float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
-									float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
+										float cosVal = cos((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
+										float sinVal = sin((float)(fmodf(angle[a] - 90, 360) * (M_PI / 180)));
 
-									velocity[a].push_back(Coord3D());
-									velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
+										velocity[a].push_back(Coord3D());
+										velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
 
-									timer[a].push_back(0);
-									audio.createAudioStream("Audio/pew.wav");
-									audio.play();
-									player->setBulletCount(player->getBulletCount() - 1);
+										timer[a].push_back(0);
+										audio.createAudioStream("pew.wav");
+										audio.play();
+										players->setBulletCount(players->getBulletCount() - 1);
+									}
 								}
 							}
 							else if(p1->getTriggers().RT < .95 && gunControlLaw[a])
@@ -977,10 +988,30 @@ public:
 							/// - Button Presses on controller - ///
 							if(p1->isButtonPressed(CONTROLLER_X))
 							{
-								player->setBulletCount(30);
-								puts("RELOADING!!!\n");
+								reloading = true;
+								reloadTimer = time;
+								
 							}
 							if (p1->isButtonPressed(CONTROLLER_Y))
+							if (reloading == true)
+							{
+								//put a bar here that lerps up to full or make circle become full
+								if ((time - reloadTimer) >= 2)
+								{
+									players->setBulletCount(30);
+									reloading = false;
+									puts("RELOADING!!!\n");
+								}
+								else
+								{
+									//Put haptic feedback here
+									puts("Can't Reload yet!\n");
+									
+								}
+							}
+
+							///- Medic Secial Ability Active - ///
+							if (healingCircle == true)
 							{
 								///- Medic Secial Ability Active - ///
 								if (healingCircle == true)
@@ -1015,10 +1046,65 @@ public:
 										tankShield = false;
 									}
 								}
-								/// - Turret Active - ///
-								if (turretActive == true)
+							}
+							/// - Turret Active - ///
+							if (turretActive == true)
+							{
+
+								for (auto& turret : pTurrets)
 								{
-									for (auto& turret : pTurrets)
+								
+									///// - Turret targeting and shooting logic - ///
+									////Get turret position
+									////Coord3D ;
+									//turretPos = turret->getTransformer().getPosition().x + turret->getTransformer().getPosition().y;
+									//float lowestDistance = (turretPos - minions[0]->getTransformer().getPosition()).distance();
+									//
+									//for (unsigned int m = 0; m < minions.size(); m++)
+									//{
+									//	//get minion positions
+									//	
+									//	if((turretPos - minions[m]->getTransformer().getPosition()).distance() < lowestDistance)
+									//	{
+									//		lowestDistance = (turretPos - minions[m]->getTransformer().getPosition()).distance();
+									//		minionPos =  minions[m]->getTransformer().getPosition();
+									//
+									//	}
+									//
+									//}
+									//pow1 = pow((double)X, 2); //type casting from int to double
+									//pow2 = pow((double)Y, 2);
+									//
+									//sq = abs(sqrt((double)pow1 + (double)pow2));
+									//
+									//angleInRadian = atan2((double)Y, (double)X); //angle in radian
+									//
+									//angleInDegree = angleInRadian * 180 / 3.14159; //angle in degree
+									//
+									//bullets[a].push_back(new Model(*mod[48]));
+									//GAME::addModel(bullets[a].back());
+									//
+									//Coord3D pos = turret->getTransformer().getPosition();
+									//bullets[a].back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+									//bullets[a].back()->getTransformer().setScale(.25f);
+									//
+									////Insert code for finding angle between turret and minion
+									//
+									//
+									//float cosVal = cos((float)(fmodf((float)angleInDegree - 90, 360) * (M_PI / 180)));
+									//float sinVal = sin((float)(fmodf((float)angleInDegree - 90, 360) * (M_PI / 180)));
+									//
+									//velocity[a].push_back(Coord3D());
+									//velocity[a].back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
+									//
+									////timer[a].push_back(0);
+									//audio.createAudioStream("pew.wav");
+									//audio.play();
+									//
+									//
+									/// - Cases for deleting turret - ///
+									//If turret time runs out
+									if ((time - turretTime) >= 5)
 									{
 										/// - Turret targeting and shooting logic - ///
 										//Get turret position
