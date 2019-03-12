@@ -840,7 +840,7 @@ public:
 
 		//Player Ability Variables
 		static float reloadTimer = false;
-		static bool reloading = true;
+		static bool reloading = false;
 		//Assault
 		static vector<Model*> pMissiles[4];
 		static vector<Coord3D> missileVelocity[4];
@@ -1067,13 +1067,16 @@ public:
 								gunControlLaw[a] = false;
 
 							/// - Button Presses on controller - ///
-							if(p1->isButtonPressed(CONTROLLER_X))
+							if((p1->isButtonPressed(CONTROLLER_X)) || (player->getBulletCount() <= 0))
 							{
+								
+								if (reloading == false)
+								{
+									reloadTimer = time;
+								}
 								reloading = true;
-								reloadTimer = time;
 								
 							}
-							if (p1->isButtonPressed(CONTROLLER_Y))
 							if (reloading == true)
 							{
 								//put a bar here that lerps up to full or make circle become full
@@ -1091,6 +1094,7 @@ public:
 								}
 							}
 
+							//if (p1->isButtonPressed(CONTROLLER_Y))
 							///- Medic Secial Ability Active - ///
 							if (healingCircle == true)
 							{
