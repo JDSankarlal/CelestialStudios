@@ -45,6 +45,15 @@ void Player::setBulletCount(int v)
 	bulletCount = v;
 }
 
+float Player::getTimeSinceLastMissile() 
+{ 
+	return timeSinceLastMissile; 
+} 
+ 
+void Player::setTimeSinceLastMissile(float v) 
+{ 
+	timeSinceLastMissile = v; 
+} 
 
 int Player::getInitialHealth()
 {
