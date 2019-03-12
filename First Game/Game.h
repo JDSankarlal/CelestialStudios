@@ -206,7 +206,7 @@ public:
 		GAME::addModel(mod[7]); //7
 
 		//Boss
-		mod[8] = (new Boss("Models/BOSS/robotBOI.obj"));
+		mod[8] = (new Boss("Models/BOSS/missleShoot/BMS1.obj"));
 		GAME::addModel(mod[8]); //8
 		//mod[8]->enableBoundingBox(true);
 
@@ -320,7 +320,7 @@ public:
 		mod[42]->setToRender(false);
 		mod[43]->setToRender(false);
 
-		
+		mod[44] = new Model("Models/missile/candyMissile.obj");
 
 		mod[48] = (new Model("Models/Bullet/bullet.obj"));//48
 
@@ -878,6 +878,7 @@ public:
 					if(GAME::isControllerConnected(a))
 					{
 						XinputController* p1 = (XinputController*)GAME::getController(a);
+						p1->setStickDeadZone(.2f);
 						if(p1->isButtonPressed(CONTROLLER_SELECT))
 						{
 							for(int b = 0; b < 4; b++)
@@ -897,7 +898,7 @@ public:
 							youDead = !true;
 
 							
-							if(p1->getSticks()[LS].x || p1->getSticks()[RS].y)
+							if(p1->getSticks()[RS].x || p1->getSticks()[RS].y)
 							{
 
 								angle[a] = acosf(p1->getSticks()[RS].x /
@@ -979,100 +980,100 @@ public:
 								player->setBulletCount(30);
 								puts("RELOADING!!!\n");
 							}
-							if(p1->isButtonPressed(CONTROLLER_Y))
-							
-							///- Medic Secial Ability Active - ///
-							if (healingCircle == true)
+							if (p1->isButtonPressed(CONTROLLER_Y))
 							{
-								if(time - player->getTimeSinceLastMissile() >= 3)
-								//Healing
-								if (collision3D(player, mod[93]))
+								///- Medic Secial Ability Active - ///
+								if (healingCircle == true)
 								{
-								static int healAmount = 5;
-									if (player->getHealth() + healAmount < player->getInitialHealth())
-									{
-										player->setHealth(player->getHealth() + healAmount);
-									}
-								}
-								//Makes medics Circle disappear
-								if ((time - circleTime) >= 2.5f)
-								{
-									mod[93]->setToRender(false);
-									((Medic*)player)->setTimeSinceLastHeal(time);
-									healingCircle = false;
-								}
-							}
-							/// - Tank Special Ability Active - ///
-							if (tankShield == true)
-							{
-								if ((time - shieldTime) >= 2.5f)
-								{
-									if (((Tank*)player)->getHealth() > ((Tank*)player)->getInitialHealth())
-									{
-										((Tank*)player)->setHealth(((Tank*)player)->getInitialHealth());
-									}
-									tankShield = false;
-								}
-							}
-							/// - Turret Active - ///
-							if (turretActive == true)
-							{
-								for (auto& turret : pTurrets)
-								{
-									/// - Turret targeting and shooting logic - ///
-									//Get turret position
-									turretPos = turret->getTransformer().getPosition().x + turret->getTransformer().getPosition().y;
-									//for (int m = 0; m < minions.size(); m++)
-									//{
-									//	//get minion positions
-									//	minionPos = minions[m]->getTransformer().getPosition().x + minions[m]->getTransformer().getPosition().y;
-									//	
-									//}
-									/// - Cases for deleting turret - ///
-									//If turret time runs out
-									if ((time - turretTime) >= 5)
-									{
-										GAME::removeModel(turret);
-										pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
-										continue;
-									}
-									//If turret touched by minion
-									if (collision(minions[a], turret))
-									{
-										GAME::removeModel(turret);
-										pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
-										continue;
-									}
-									// If turret hit by missile from boss
-									for (int m = 0; m < 4; m++)
-									{
-										if (collision(mod[60 + m], turret))
+									if (time - player->getTimeSinceLastMissile() >= 3)
+										//Healing
+										if (collision3D(player, mod[93]))
 										{
-											if (pTurrets.size())
+											static int healAmount = 5;
+											if (player->getHealth() + healAmount < player->getInitialHealth())
 											{
-												GAME::removeModel(turret);
-												pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
-												//mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+												player->setHealth(player->getHealth() + healAmount);
+											}
+										}
+									//Makes medics Circle disappear
+									if ((time - circleTime) >= 2.5f)
+									{
+										mod[93]->setToRender(false);
+										((Medic*)player)->setTimeSinceLastHeal(time);
+										healingCircle = false;
+									}
+								}
+								/// - Tank Special Ability Active - ///
+								if (tankShield == true)
+								{
+									if ((time - shieldTime) >= 2.5f)
+									{
+										if (((Tank*)player)->getHealth() > ((Tank*)player)->getInitialHealth())
+										{
+											((Tank*)player)->setHealth(((Tank*)player)->getInitialHealth());
+										}
+										tankShield = false;
+									}
+								}
+								/// - Turret Active - ///
+								if (turretActive == true)
+								{
+									for (auto& turret : pTurrets)
+									{
+										/// - Turret targeting and shooting logic - ///
+										//Get turret position
+										turretPos = turret->getTransformer().getPosition().x + turret->getTransformer().getPosition().y;
+										//for (int m = 0; m < minions.size(); m++)
+										//{
+										//	//get minion positions
+										//	minionPos = minions[m]->getTransformer().getPosition().x + minions[m]->getTransformer().getPosition().y;
+										//	
+										//}
+										/// - Cases for deleting turret - ///
+										//If turret time runs out
+										if ((time - turretTime) >= 5)
+										{
+											GAME::removeModel(turret);
+											pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+											continue;
+										}
+										//If turret touched by minion
+										if (collision(minions[a], turret))
+										{
+											GAME::removeModel(turret);
+											pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+											continue;
+										}
+										// If turret hit by missile from boss
+										for (int m = 0; m < 4; m++)
+										{
+											if (collision(mod[60 + m], turret))
+											{
+												if (pTurrets.size())
+												{
+													GAME::removeModel(turret);
+													pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+													//mod[44 + m]->getTransformer().setPosition(mod[8]->getCenter());
+												}
+											}
+										}
+										//If turret gets hit by train
+										for (int t = 0; t < 7; t++)
+										{
+											if (collision(mod[79] + t, turret))
+											{
+												if (pTurrets.size())
+												{
+													GAME::removeModel(turret);
+													pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
+												}
 											}
 										}
 									}
-									//If turret gets hit by train
-									for (int t = 0; t < 7; t++)
-									{
-										if (collision(mod[79] + t, turret))
-										{
-											if (pTurrets.size())
-											{
-												GAME::removeModel(turret);
-												pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), turret));
-											}
-										}
-									}
+
+
 								}
-
-
 							}
-
 							if (p1->isButtonPressed(CONTROLLER_Y))
 							{
 								/// - Assault Special Ability - ///
