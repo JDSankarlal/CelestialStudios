@@ -210,6 +210,20 @@ public:
 		GAME::addModel(mod[8]); //8
 		//mod[8]->enableBoundingBox(true);
 
+		//Boss Animation
+		static Animation missleShoot, laserPoint, slam;
+		missleShoot.addDir("Models/BOSS/missleShoot/");
+		/*laserPoint.addDir("Models/BOSS/laserPoint/");
+		slam.addDir("Models/BOSS/slam/");*/
+		mod[8]->addAnimation("missleShoot", &missleShoot);
+		/*mod[8]->addAnimation("missleShoot", &missleShoot);
+		mod[8]->addAnimation("missleShoot", &missleShoot);
+		mod[8]->addAnimation("missleShoot", &missleShoot);*/
+		mod[8]->setAnimation("missleShoot");
+		missleShoot.setAnimationSpeed(0.3f);
+		missleShoot.repeat(true);
+		mod[8]->getAnimation("missleShoot")->play();
+
 		//Floor
 		mod[9] = (new Model("Models/Floor/Floor.obj"));
 		GAME::addModel(mod[9]); //9
