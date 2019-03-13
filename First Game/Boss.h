@@ -24,7 +24,7 @@ public:
 private:
 
 	void shootLazer(int playerIndex);
-	int health = 10000;
+	int health = 1000;
 	int attackDamage;
 	float attackCooldown;
 	Player** targets;
