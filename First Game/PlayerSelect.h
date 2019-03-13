@@ -6,6 +6,8 @@ class PlayerSelect:public Scene
 {
 public:
 	// Set menu screen
+	//const float time = 0;
+	//time = (float)dt;
 	void init()
 	{
 		mod.push_back(new Model("Models/Scene/PlayerSelect/PlayerSelect.obj"));
@@ -38,7 +40,7 @@ public:
 
 
 			//TODO: Add back button and more flashy start button and "Press A to ready" buttons
-		float extra=0;
+		float extra = 0;
 		for(int a = 0; a < 4; a++)
 		{
 			if(a == 2)
@@ -48,7 +50,7 @@ public:
 			mod.push_back(new Model(*classes[0]));
 			mod[6 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5 + extra), -25, 0), mod[6 + a]->getTransformer().setRotation({0,270,0}), mod[6 + a]->getTransformer().setScale(1, 15, 7);
 			mod[6 + a]->setToRender(true);
-		GAME::addModel(mod.back()); //6, 7, 8, 9
+			GAME::addModel(mod.back()); //6, 7, 8, 9
 		}
 
 
@@ -71,38 +73,30 @@ public:
 
 	void keyInputPressed(int key, int modfier)
 	{
-		modfier,key;
-		if( !fadeout)
+		modfier;
+		if(key == 'B')
 		{
-			for(int i = 0; i < 4; i++)
-				switch(option[i])
-				{
-				case 0:
-
-					players.push_back(new Assault("Models/AssaultModel/Idle/ACM1.obj"));
-					break;
-				case 1:
-					players.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
-					break;
-				case 2:
-					players.push_back(new Medic("Models/AssaultModel/Idle/ACM1.obj"));
-					break;
-				case 3:
-					players.push_back(new Specialist("Models/AssaultModel/Idle/ACM1.obj"));
-					break;
-				default:
-					break;
-				}
 			fadeout = true;
 		}
 	}
 
 	// doing the update for menu screenb
-	void updateMenu()
+	void updateMenu(double dt)
 	{
+		static float time = 0;
+		time += (float)dt;
+
+		static float flipTime;
+
+		static bool assaultSelected;
+		static bool medicSelected;
+		static bool specialistSelected;
+		static bool tankSelected;
+
+		static bool isConnected[4] = {false,false,false,false};
 
 		static bool menuMoved[] = {false,false,false,false};
-
+		players.resize(4);
 		if(fadein)
 		{
 			splashT += 0.01f;
@@ -119,65 +113,164 @@ public:
 
 		static Coord3D tmp = Coord3D(20.0f);
 		float extra = 0;
+		static std::vector<Player*>playerSelections
+		{
+			new Assault("Models/AssaultModel/Idle/ACM1.obj"),new Tank("Models/AssaultModel/Idle/ACM1.obj"),
+			new  Medic("Models/AssaultModel/Idle/ACM1.obj"), new Specialist("Models/AssaultModel/Idle/ACM1.obj")
+		};
+
 		for(int a = 0; a < 4; a++)
 		{
 			if(GameEmGine::isControllerConnected(a))
 			{
 				if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x) >= 0.8)
 				{
-					if(!menuMoved[a])
+					if((time - flipTime) >= 0.2f)
 					{
+						if(menuMoved[a] == false)
+						{
+							flipTime = time;
+							option[a] += ((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x < 0 ? 1 : -1;
+							option[a] = option[a] > 3 ? 0 : option[a] < 0 ? 3 : option[a];
 
-						option[a] += ((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x < 0 ? 1 : -1;
+							lerpParam = 0;
+							if(a == 2)
+								extra = .7f;
+							else if(a == 3)
+								extra = 2;
+							GameEmGine::removeModel(mod[6 + a]);
+							mod[6 + a]->setColour({255,255,255});
+							*mod[6 + a] = *classes[option[a]];
+							mod[6 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5), -25, 0), mod[6 + a]->getTransformer().setRotation({0,270,0}), mod[6 + a]->getTransformer().setScale(1, 15, 7);
+							GameEmGine::addModel(mod[6 + a]);
 
-						option[a] = option[a] > 3 ? 0 : option[a] < 0 ? 3 : option[a];
-
-						lerpParam = 0;
-						if(a == 2)
-							extra = .7f;
-						else if(a == 3)
-							extra = 2;
-						GameEmGine::removeModel(mod[6 + a]);
-						mod[6 + a]->setColour({255,255,255});
-						*mod[6 + a] = *classes[option[a]];
-						mod[6 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5), -25, 0), mod[6 + a]->getTransformer().setRotation({0,270,0}), mod[6 + a]->getTransformer().setScale(1, 15, 7);
-						GameEmGine::addModel(mod[6 + a]);
-
-						//tmp = mod[option]->getTransformer().getScale();
-						menuMoved[a] = true;
+							//tmp = mod[option]->getTransformer().getScale();
+						}
 					}
 				}
-				else
 
-					if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x) < .3f)
-						menuMoved[a] = false;
-
-				static bool fixthisnow = true;
-				if(((XinputController*)GameEmGine::getController(a))->isButtonPressed(CONTROLLER_A) && fixthisnow)
+				//else
+				if(((XinputController*)GameEmGine::getController(a))->isButtonPressed(CONTROLLER_A))
 				{
-					fixthisnow = false;
-					for(int i = 0; i < 4; i++)
-						switch(option[i])
+					//fixthisnow = false;
+					switch(option[a])
+					{
+					case 0:
+						if(assaultSelected == false)
 						{
-						case 0:
-
-							players.push_back(new Assault("Models/AssaultModel/Idle/ACM1.obj"));
-							break;
-						case 1:
-							players.push_back(new Tank("Models/AssaultModel/Idle/ACM1.obj"));
-							break;
-						case 2:
-							players.push_back(new Medic("Models/AssaultModel/Idle/ACM1.obj"));
-							break;
-						case 3:
-							players.push_back(new Specialist("Models/AssaultModel/Idle/ACM1.obj"));
-							break;
-						default:
-							break;
+							assaultSelected = true;
+							players[a] = playerSelections[0];
+							mod[6 + a]->setColour(1, 0, 0);
+							menuMoved[a] = true;
+							isConnected[a] = true;
 						}
-					fadeout = true;
-					break;
+						break;
+					case 1:
+						if(tankSelected == false)
+						{
+							tankSelected = true;
+							players[a] = playerSelections[1];
+							mod[6 + a]->setColour(1, 0, 0);
+							menuMoved[a] = true;
+							isConnected[a] = true;
+						}
+						break;
+					case 2:
+						if(medicSelected == false)
+						{
+							medicSelected = true;
+							players[a] = playerSelections[2];
+							mod[6 + a]->setColour(1, 0, 0);
+							menuMoved[a] = true;
+							isConnected[a] = true;
+						}
+						break;
+					case 3:
+						if(specialistSelected == false)
+						{
+							specialistSelected = true;
+							players[a] = playerSelections[3];
+							mod[6 + a]->setColour(1, 0, 0);
+							menuMoved[a] = true;
+							isConnected[a] = true;
+						}
+						break;
+					default:
+						break;
+					}
 				}
+				if(((XinputController*)GameEmGine::getController(a))->isButtonPressed(CONTROLLER_B))
+				{
+					//fixthisnow = true;
+					switch(option[a])
+					{
+					case 0:
+						if(assaultSelected == true)
+						{
+							assaultSelected = false;
+							isConnected[a] = false;
+							mod[6 + a]->setColour(1, 1, 1);
+							menuMoved[a] = false;
+						}
+						break;
+					case 1:
+						if(tankSelected == true)
+						{
+							tankSelected = false;
+							isConnected[a] = false;
+							mod[6 + a]->setColour(1, 1, 1);
+							menuMoved[a] = false;
+						}
+						break;
+					case 2:
+						if(medicSelected == true)
+						{
+							medicSelected = false;
+							isConnected[a] = false;
+							mod[6 + a]->setColour(1, 1, 1);
+							menuMoved[a] = false;
+						}
+						break;
+					case 3:
+						if(specialistSelected == true)
+						{
+							specialistSelected = false;
+							isConnected[a] = false;
+							mod[6 + a]->setColour(1, 1, 1);
+							menuMoved[a] = false;
+						}
+						break;
+					default:
+						break;
+
+					}
+
+				}
+			}
+			else
+			{
+				isConnected[a] = true;
+
+				int count = 0;
+				players[a] = playerSelections[count];
+
+
+
+				for(int b = 0; b < 4; b++)
+					if(b != a)
+						if(players[b])
+						{
+							if(players[a]->type == players[b]->type)
+								players[a] = playerSelections[++count];
+						}
+			}
+			bool next = true;
+			for(int j = 0; j < 4; j++)
+				if(isConnected[j] != true)
+					next = false;
+			if(next == true)
+			{
+				fadeout = true;
 			}
 		}
 		//TODO: Set this to change a picture instead of this
@@ -215,11 +308,11 @@ public:
 	void update(double dt)
 	{
 		dt;
-		updateMenu();
+		updateMenu(dt);
 	}
 
 private:
-	Model *classes[4]
+	Model* classes[4]
 	{new Assault("Models/ClassPH/Assault/assaultPH.obj"),new Tank("Models/ClassPH/Tank/tankPH.obj"),
 		new  Medic("Models/ClassPH/Medic/medicPH.obj"),new Specialist("Models/ClassPH/Specialist/specPH.obj")};
 	std::vector<Player*>players;

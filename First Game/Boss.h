@@ -20,9 +20,11 @@ public:
 	void update();
 
 	static Model* missles[4];
-	
+	static Model* lazer;
 private:
-	int health = 1000;
+
+	void shootLazer(int playerIndex);
+	int health = 10000;
 	int attackDamage;
 	float attackCooldown;
 	Player** targets;
