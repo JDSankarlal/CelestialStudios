@@ -763,14 +763,14 @@ void Mesh::render(Shader & shader)
 	shader.disable();
 }
 
-GLuint Mesh::getNumFaces(int index) const
+GLuint Mesh::getNumFaces(int m_index) const
 {
-	return m_numFaces[index];
+	return m_numFaces[m_index];
 }
 
-GLuint Mesh::getNumVerticies(int index) const
+GLuint Mesh::getNumVerticies(int m_index) const
 {
-	return m_numVerts[index];
+	return m_numVerts[m_index];
 }
 
 void Mesh::init()

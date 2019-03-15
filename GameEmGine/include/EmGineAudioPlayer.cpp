@@ -65,28 +65,28 @@ void EmGineAudioPlayer::createAudioStream(const char * file)
 	//m_controle->back()->channel->setCallback(cleanUpCallback);
 }
 
-void EmGineAudioPlayer::play(bool loop, bool newInst, uint index, uint from, uint to, FMOD_TIMEUNIT unit)
+void EmGineAudioPlayer::play(bool loop, bool newInst, uint m_index, uint from, uint to, FMOD_TIMEUNIT unit)
 {
-	if(newInst && m_controle[0][index])
-		m_controle->push_back(m_controle[0][index]),
+	if(newInst && m_controle[0][m_index])
+		m_controle->push_back(m_controle[0][m_index]),
 		m_controle->push_back(nullptr),
-		index = (uint)m_controle->size() - 1;
+		m_index = (uint)m_controle->size() - 1;
 
 
 
-	if(!m_controle[0][index] || (m_controle[0][index] ? isStoped(index) : false))
-		printError(m_system->playSound(m_controle[0][index]->sound, nullptr, true, &m_controle[0][index]->channel), "Line 78");
+	if(!m_controle[0][m_index] || (m_controle[0][m_index] ? isStoped(m_index) : false))
+		printError(m_system->playSound(m_controle[0][m_index]->sound, nullptr, true, &m_controle[0][m_index]->channel), "Line 78");
 
 	if(loop)
-		printError(m_controle[0][index]->channel->setMode(FMOD_LOOP_NORMAL), "Line 81"),
-		printError(m_controle[0][index]->channel->setLoopCount(-1), "Line 82"),
-		from < to ? printError(m_controle[0][index]->channel->setLoopPoints(from, unit, to, unit), "Line 83") :
+		printError(m_controle[0][m_index]->channel->setMode(FMOD_LOOP_NORMAL), "Line 81"),
+		printError(m_controle[0][m_index]->channel->setLoopCount(-1), "Line 82"),
+		from < to ? printError(m_controle[0][m_index]->channel->setLoopPoints(from, unit, to, unit), "Line 83") :
 		void();
 	else
-		printError(m_controle[0][index]->channel->setMode(FMOD_LOOP_OFF), "Line 86");
+		printError(m_controle[0][m_index]->channel->setMode(FMOD_LOOP_OFF), "Line 86");
 
 
-	printError(m_controle[0][index]->channel->setPaused(false), "Line 89");
+	printError(m_controle[0][m_index]->channel->setPaused(false), "Line 89");
 	cleanup();
 }
 
@@ -101,26 +101,26 @@ void EmGineAudioPlayer::playAll(bool loop, uint from, uint to, FMOD_TIMEUNIT uni
 	printError(m_system->getMasterChannelGroup(&cg), "Line 101");
 	uint length;
 	printError(cg->setPaused(true), "Line 103");
-	for(uint index = 0; index < m_controle->size(); index++)
+	for(uint m_index = 0; m_index < m_controle->size(); m_index++)
 		if(loop)
 		{
 
-			printError(m_controle[0][index]->channel->setPosition(from, unit), "Line 108");//fixes the issue for streamed audio
+			printError(m_controle[0][m_index]->channel->setPosition(from, unit), "Line 108");//fixes the issue for streamed audio
 
 
-			printError(m_controle[0][index]->channel->setMode(FMOD_LOOP_NORMAL), "Line 111");
-			printError(m_controle[0][index]->sound->getLength(&length, unit), "Line 112");
+			printError(m_controle[0][m_index]->channel->setMode(FMOD_LOOP_NORMAL), "Line 111");
+			printError(m_controle[0][m_index]->sound->getLength(&length, unit), "Line 112");
 
 			from < to && from >= 0 ? to < length ?
-				printError(m_controle[0][index]->channel->setLoopPoints(from, unit, to, unit), "Line 115")/*true*/ :
-				printError(m_controle[0][index]->channel->setLoopPoints(from, unit, length - 1, unit), "Line 116")/*false*/ :
+				printError(m_controle[0][m_index]->channel->setLoopPoints(from, unit, to, unit), "Line 115")/*true*/ :
+				printError(m_controle[0][m_index]->channel->setLoopPoints(from, unit, length - 1, unit), "Line 116")/*false*/ :
 				void()/*else*/;
 
-			printError(m_controle[0][index]->channel->setLoopCount(-1), "Line 119");
+			printError(m_controle[0][m_index]->channel->setLoopCount(-1), "Line 119");
 
 		}
 		else
-			printError(m_controle[0][index]->channel->setMode(FMOD_LOOP_OFF), "Line 123");
+			printError(m_controle[0][m_index]->channel->setMode(FMOD_LOOP_OFF), "Line 123");
 	OutputDebugStringA("\n\n");
 
 	cleanup();
@@ -130,9 +130,9 @@ void EmGineAudioPlayer::playAll(bool loop, uint from, uint to, FMOD_TIMEUNIT uni
 	printError(cg->setPaused(false), "Line 130");
 }
 
-void EmGineAudioPlayer::pause(uint index)
+void EmGineAudioPlayer::pause(uint m_index)
 {
-	printError(m_controle[0][index]->channel->setPaused(true));
+	printError(m_controle[0][m_index]->channel->setPaused(true));
 }
 
 void EmGineAudioPlayer::pauseAll()
@@ -144,10 +144,10 @@ void EmGineAudioPlayer::pauseAll()
 		printError(a->channel->setPaused(true));
 }
 
-void EmGineAudioPlayer::stop(uint index)
+void EmGineAudioPlayer::stop(uint m_index)
 {
-	//stopIndex = index;
-	printError(m_controle[0][index]->channel->stop());
+	//stopIndex = m_index;
+	printError(m_controle[0][m_index]->channel->stop());
 	cleanup();
 }
 
@@ -170,24 +170,24 @@ void EmGineAudioPlayer::stopAll()
 	cg->setPaused(paused);
 }
 
-uint EmGineAudioPlayer::getPosition(uint index, FMOD_TIMEUNIT type)
+uint EmGineAudioPlayer::getPosition(uint m_index, FMOD_TIMEUNIT type)
 {
 	uint pos;
-	printError(m_controle[0][index]->channel->getPosition(&pos, type));
+	printError(m_controle[0][m_index]->channel->getPosition(&pos, type));
 	return pos;
 }
 
-bool EmGineAudioPlayer::isStoped(uint index)
+bool EmGineAudioPlayer::isStoped(uint m_index)
 {
 	bool play;
-	printError(m_controle[0][index]->channel->isPlaying(&play));
+	printError(m_controle[0][m_index]->channel->isPlaying(&play));
 	return !play;
 }
 
-bool EmGineAudioPlayer::isPaused(uint index)
+bool EmGineAudioPlayer::isPaused(uint m_index)
 {
 	bool pause;
-	printError(m_controle[0][index]->channel->getPaused(&pause));
+	printError(m_controle[0][m_index]->channel->getPaused(&pause));
 	return pause;
 }
 
@@ -196,9 +196,9 @@ uint EmGineAudioPlayer::size()
 	return (uint)m_controle->size();
 }
 
-void EmGineAudioPlayer::setVolume(float vol, uint index)
+void EmGineAudioPlayer::setVolume(float vol, uint m_index)
 {
-	printError(m_controle[0][index]->channel->setVolume(vol));
+	printError(m_controle[0][m_index]->channel->setVolume(vol));
 }
 
 void EmGineAudioPlayer::setMasterVolume(float vol)
@@ -213,11 +213,11 @@ AudioSystem * EmGineAudioPlayer::getAudioSystem()
 	return m_system;
 }
 
-void EmGineAudioPlayer::mute(uint index)
+void EmGineAudioPlayer::mute(uint m_index)
 {
 	bool mute;
-	printError(m_controle[0][index]->channel->getMute(&mute));
-	printError(m_controle[0][index]->channel->setMute(!mute));
+	printError(m_controle[0][m_index]->channel->getMute(&mute));
+	printError(m_controle[0][m_index]->channel->setMute(!mute));
 }
 
 void EmGineAudioPlayer::muteAll()

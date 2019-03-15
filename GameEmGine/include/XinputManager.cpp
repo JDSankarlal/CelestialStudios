@@ -5,65 +5,65 @@ XinputDevice* XinputManager::controllers[4];
 void XinputManager::update()
 {
 
-	for(int index = 0; index < 4; index++)
+	for(int m_index = 0; m_index < 4; m_index++)
 	{
-		if(!controllers[index])
-			controllers[index] = new XinputDevice;
+		if(!controllers[m_index])
+			controllers[m_index] = new XinputDevice;
 
 
 
-		controllers[index]->index = index;
-		if(controllerConnected(index))
+		if(controllerConnected(m_index))
 		{
-			if(controllers[index]->type != getControllerType(index))
+			if(controllers[m_index]->type != getControllerType(m_index))
 			{
 				XinputController* controller = new XinputController;
 				XinputDrum* drum = new XinputDrum;
 				XinputGuitar* guitar = new XinputGuitar;
 
-				switch(getControllerType(index))
+				switch(getControllerType(m_index))
 				{
 				case XINPUT_CONTROLLER:
-					*controller = *(XinputController*)controllers[index];
-					delete controllers[index];
-					controllers[index] = controller;
+					*controller = *(XinputController*)controllers[m_index];
+					delete controllers[m_index];
+					controllers[m_index] = controller;
 					delete drum;
 					delete guitar;
 					controller->type = XINPUT_CONTROLLER;
 					break;
 				case XINPUT_GUITAR:
-					*guitar = *(XinputGuitar*)controllers[index];
-					delete controllers[index];
-					controllers[index] = guitar;
+					*guitar = *(XinputGuitar*)controllers[m_index];
+					delete controllers[m_index];
+					controllers[m_index] = guitar;
 					delete controller;
 					delete drum;
 					controller->type = XINPUT_GUITAR;
 					break;
 				case XINPUT_DRUM:
-					*drum = *(XinputDrum*)controllers[index];
-					delete controllers[index];
-					controllers[index] = drum;
+					*drum = *(XinputDrum*)controllers[m_index];
+					delete controllers[m_index];
+					controllers[m_index] = drum;
 					delete controller;
 					delete guitar;
 					controller->type = XINPUT_DRUM;
 					break;
 				}
 			}
-			controllers[index]->update();
+			controllers[m_index]->m_index = m_index;
+			controllers[m_index]->update();
 		}
 	}
 }
 
-bool XinputManager::controllerConnected(int index)
+bool XinputManager::controllerConnected(int m_index)
 {
 	XINPUT_STATE connected;
-	return XInputGetState(index, &connected) == ERROR_SUCCESS;
+	return XInputGetState(m_index, &connected) == ERROR_SUCCESS;
 }
 
-CONTROLLER_TYPE XinputManager::getControllerType(int index)
+CONTROLLER_TYPE XinputManager::getControllerType(int m_index)
 {
 	XINPUT_CAPABILITIES info;
-	XInputGetCapabilities(index, NULL, &info);
+	XInputGetCapabilities(m_index, NULL, &info);
 
 	switch(info.SubType)
 	{
@@ -82,8 +82,8 @@ CONTROLLER_TYPE XinputManager::getControllerType(int index)
 	return XINPUT_UNKNOWN;
 }
 
-XinputDevice* XinputManager::getController(int index)
+XinputDevice* XinputManager::getController(int m_index)
 {
-	return controllers[index];
+	return controllers[m_index];
 }
 

@@ -3,11 +3,15 @@
 
 typedef GameEmGine GAME;
 
-Model* Boss::missles[4];
-Model* Boss::lazer;
 
-Boss::Boss(): Model()
+Model* Boss::minion;//78
+
+void Boss::init()
 {
+	if(!minion)
+		minion = new Minion("Models/Minion/SmallRobot/SmallRobot.obj");
+
+	missles.resize(4);
 	missles[0] = (new Model("Models/Missile/BossMissile.obj"));
 	//GAME::addModel(missles[0]);
 	missles[1] = (new Model(*missles[0]));
@@ -17,20 +21,43 @@ Boss::Boss(): Model()
 	missles[3] = (new Model(*missles[0]));
 	//GAME::addModel(missles[3]);
 
+
 	lazer = new Model("Models/lazer/lazer.obj");
 	lazer->setColour(1, 0, 0);
 	//GAME::addModel(lazer);
+
+	m_lifeBar = new Model("Models/BloodBar/PinkBar/blood.obj");//72
+	m_baseBar = new Model("Models/BloodBar/PinkBarLighter/blood.obj");//73
+
+	//Boss Blood Bar
+	m_baseBar->getTransformer().setPosition(m_lifeBar->getTransformer().getPosition());
+	m_baseBar->getTransformer().setRotation(Coord3D(0, 90, 0));
+	m_baseBar->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+	//m_lifeBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{13.0f,18.5f,0.0f});
+	m_lifeBar->getTransformer().setRotation(Coord3D(0, 90, 0));
+	m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+
+	m_baseBar->addChild(m_lifeBar);
+
+	this->addChild(m_baseBar);
+
+
+	m_initialHealth = m_health = 1000.f;
 }
 
-Boss::Boss(Model& model): Model(model)
-
+Boss::Boss(): Model()
 {
-	Boss();
+	init();
 }
 
-Boss::Boss(const char* path):Model(path)
+Boss::Boss(Model& model) : Model(model)
 {
-	Boss();
+	init();
+}
+
+Boss::Boss(const char* path) : Model(path)
+{
+	init();
 }
 
 Boss::~Boss()
@@ -51,32 +78,35 @@ bool Boss::randAttacks()
 	return false;
 }
 
-int Boss::getHealth()
+float Boss::getHealth()
 {
-	return health;
+	return m_health;
 }
 
-void Boss::setHealth(int v)
+void Boss::setHealth(float v)
 {
-	health = v;
+	m_health = v;
 }
 
-Model* Boss::getMissial(int index)
+std::vector<Model*>& Boss::getMissials()
 {
-	return missles[index];
+	return missles;
 }
 
-void Boss::update()
+void Boss::update(float dt)
 {
 
 	static clock_t  lastDelay[4];
-	static float  curveroni[4], delay[4];
+	static float  curveroni[4], delay[4]{10,10,10,10};
 	static bool hasTarget[4];
 	static Coord3D cat[4];
 	static Coord3D  pointPosition[4];
-	static Model* missileRadious[4]{
+
+	static Model* missileRadious[4]
+	{
 		(new Model("Models/Target Circle/TargetCircle.obj")),(new Model("Models/Target Circle/TargetCircle.obj")),
-		(new Model("Models/Target Circle/TargetCircle.obj")),(new Model("Models/Target Circle/TargetCircle.obj"))};
+		(new Model("Models/Target Circle/TargetCircle.obj")),(new Model("Models/Target Circle/TargetCircle.obj"))
+	};
 
 	missileRadious[0]->setColour(1, 0, 0);
 	missileRadious[1]->setColour(0, 0, 1);
@@ -93,13 +123,6 @@ void Boss::update()
 			static Coord3D bossTarget[4];
 
 			//gets a target for model (players 1,2,3 or 4) randomly
-			if(!hasTarget[a])
-			{
-
-				delay[a] = (rand() % 2 + 1) + (float(rand() % 100) / 100);
-				hasTarget[a] = true;
-
-			}
 
 			if((ans = (clock() - lastDelay[a]) / (float)CLOCKS_PER_SEC) >= delay[a])
 			{
@@ -111,6 +134,15 @@ void Boss::update()
 				}
 				curveroni[a] += .01f;
 			}
+
+			if(!hasTarget[a])
+			{
+
+				delay[a] = (rand() % 2 + 1) + (float(rand() % 100) / 100);
+				hasTarget[a] = true;
+
+			}
+
 			if(curveroni[a] >= 1)
 			{
 				curveroni[a] = 0;
@@ -155,17 +187,77 @@ void Boss::update()
 			missileRadious[a]->getTransformer().setScale(catmull(-7.f, 1.f, 0.7f, -7.f, curveroni[a]));
 
 		}
+
+		static bool slam = false;
+		//Player comes near Boss, gets teleported backwards
+		if(collision2D(targets[a]))
+		{
+			getAnimation("missleShoot")->pause();
+			setAnimation("slam");
+			getAnimation("slam")->setAnimationSpeed(0.2f);
+			getAnimation("slam")->repeat(true);
+			getAnimation("slam")->play();
+			slam = true;
+
+			if(getAnimation("slam")->getFrameNumber() == 5)
+			{
+				targets[a]->hitByEnemy(this);
+				//targets[a]->getTransformer().setPosition(targets[a]->getTransformer().getPosition().x, targets[a]->getTransformer().getPosition().y, getTransformer().getPosition().z - 15);
+				//targets[a]->setHealth(targets[a]->getHealth() - 35);
+			}
+		}
 	}
+
+	//Boss health bar calculation
+	m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.5f * (m_health / m_initialHealth));
+
+	//eliminates the possibility of the bar being too large
+	if(m_health > m_initialHealth)
+		m_initialHealth = m_health;
+
+	/// - Boss Spawns Minions - ///
+	//TODO: More Minions, Have boss spawn minions, Make minions have unifrom move speed. Lerp between colours??
+	if(minions.size() < 10)
+	{
+
+		minions.push_back(new Minion(*minion));
+		GAME::addModel(minions.back());
+		minions.back()->setToRender(true);
+		minions.back()->getTransformer().reset();
+		minions.back()->setColour(200, 100, 50);
+		minions.back()->getTransformer().getPosition();
+		minions.back()->getTransformer().setPosition(float(rand() % 4 + 7), float(rand() % 1 + 2), -float(rand() % 3) + 2); // Random spawns in bottom right of screen
+		minions.back()->getTransformer().setScale(0.4f, 0.6f, 0.4f);
+	}
+
+	//unclump all minions
+	if(!minions.empty())
+		minions[0]->update(dt);
+
+	for(int a = 1; a < (int)minions.size(); a++)
+	{
+		if(!collision2D(minions[a - 1], minions[a]))// Might have to change one of the m values??
+			minions[a]->move(true);
+		else
+			minions[a]->move(false);
+
+		minions[a]->update(dt);
+	}
+
+	//Player Collisions
+	for(int a = 0; a < 4; a++)
+		if(collision3D(missles[a], targets[a]))
+		{
+			targets[a]->setHealth(targets[a]->getHealth() - 35);
+			curveroni[a] = 1;
+		}
 
 
 	//shootLazer(0);
-
 }
 
 void Boss::shootLazer(int playerIndex)
 {
-
-
 	Coord3D start = getTransformer().getPosition() + Coord3D(0.0f, 8.0f, 0.0f)
 		, end = targets[playerIndex]->getTransformer().getPosition();
 
@@ -180,6 +272,7 @@ void Boss::shootLazer(int playerIndex)
 
 		amount *= -1;
 	}
+
 	float angle[3];
 	angle[0] = acosf((start.x * end.x + start.y * end.y) /
 		(sqrtf(start.x * start.x
@@ -200,10 +293,6 @@ void Boss::shootLazer(int playerIndex)
 
 	lazer->getTransformer().setPosition(start);
 	lazer->getTransformer().setScale(.5f, lerp(0.0f, distance, counter), .5f);
-	lazer->getTransformer().setRotation({
-		(atan2f(end.z,end.y) - atan2f(start.z,start.y)) * (180 / (float)M_PI),
-		(atan2f(end.x,end.z) - atan2f(start.x,start.z)) * (180 / (float)M_PI),
-		(atan2f(end.y,end.x) - atan2f(start.y,start.x)) * (180 / (float)M_PI),
-		});
+	lazer->getTransformer().setRotation({angle[2],angle[1],angle[0]});
 
 }

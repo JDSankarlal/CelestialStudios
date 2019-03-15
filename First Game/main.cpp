@@ -6,10 +6,10 @@
 
 int main()
 {
-	
-GameEmGine::init("The Real Game", 1920, 1050, 0, 0, 0, false);
-GameEmGine::setScene(new Splash);
 
-GameEmGine::run();
+	GameEmGine::init("The Real Game", 1920, 1050, 0, 0, 0, false);
+	GameEmGine::setScene(new Splash);
+
+	GameEmGine::run();
 	return 0;
 }

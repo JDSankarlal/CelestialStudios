@@ -35,6 +35,91 @@ Model::Model(const char * path) :
 Model::~Model()
 {}
 
+/// - Collision Function - ///
+
+bool Model::collision2D(Model* k)
+{
+	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	Coord3D thing = getCenter() - k->getCenter();
+
+	float distanceX = abs(thing.x);
+	float distanceZ = abs(thing.z);
+
+	float capW = (getWidth() + k->getWidth()) / 2;
+	float capD = (getDepth() + k->getDepth()) / 2;
+
+	if(std::abs(distanceX) <= capW)
+		if(std::abs(distanceZ) <= capD)
+			return true;
+
+	return false;
+}
+
+bool Model::collision2D(Model * l, Model * k)
+{
+	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	Coord3D thing = l->getCenter() - k->getCenter();
+
+	float distanceX = abs(thing.x);
+	float distanceZ = abs(thing.z);
+
+	float capW = (l->getWidth() + k->getWidth()) / 2;
+	float capD = (l->getDepth() + k->getDepth()) / 2;
+
+	if(std::abs(distanceX) <= capW)
+		if(std::abs(distanceZ) <= capD)
+			return true;
+
+	return false;
+}
+
+
+///~ 3D Collision Function ~///
+
+bool Model::collision3D(Model * k)
+{
+	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	Coord3D thing = getCenter() - k->getCenter();
+
+	float distanceX = abs(thing.x);
+	float distanceY = abs(thing.y);
+	float distanceZ = abs(thing.z);
+
+	float capW = (getWidth() + k->getWidth()) / 2;
+	float capH = (getHeight() + k->getHeight()) / 2;
+	float capD = (getDepth() + k->getDepth()) / 2;
+
+	if(std::abs(distanceX) <= abs(capW))
+		if(std::abs(distanceZ) <= abs(capD))
+			if(std::abs(distanceY) <= abs(capH))
+				return true;
+
+	return false;
+}
+
+
+bool Model::collision3D(Model * l, Model * k)
+{
+	//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
+	Coord3D thing = l->getCenter() - k->getCenter();
+
+	float distanceX = abs(thing.x);
+	float distanceY = abs(thing.y);
+	float distanceZ = abs(thing.z);
+
+	float capW = (l->getWidth() + k->getWidth()) / 2;
+	float capH = (l->getHeight() + k->getHeight()) / 2;
+	float capD = (l->getDepth() + k->getDepth()) / 2;
+
+	if(std::abs(distanceX) <= abs(capW))
+		if(std::abs(distanceZ) <= abs(capD))
+			if(std::abs(distanceY) <= abs(capH))
+				return true;
+
+	return false;
+}
+
+
 void Model::render(Shader& shader, Camera& cam)
 {
 	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };

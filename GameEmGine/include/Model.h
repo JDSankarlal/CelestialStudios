@@ -21,6 +21,14 @@ public:
 	Model(const char* path);
 	virtual ~Model();
 
+	bool collision2D(Model* k);
+
+	bool collision2D(Model* l, Model* k);
+
+	bool collision3D(Model* k);
+
+	bool collision3D(Model* l, Model* k);
+
 	void render(Shader & shader, Camera & cam);
 
 	Transformer& getTransformer();

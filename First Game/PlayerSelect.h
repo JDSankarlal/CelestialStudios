@@ -68,7 +68,7 @@ public:
 
 		LightSource::setSceneAmbient({0,0,0,255});
 
-		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
+		keyPressed = [&](int a, int b) {keyInputPressed(a, b);  };
 	}
 
 	void keyInputPressed(int key, int modfier)
@@ -113,11 +113,7 @@ public:
 
 		static Coord3D tmp = Coord3D(20.0f);
 		float extra = 0;
-		static std::vector<Player*>playerSelections
-		{
-			new Assault("Models/AssaultModel/Idle/ACM1.obj"),new Tank("Models/AssaultModel/Idle/ACM1.obj"),
-			new  Medic("Models/AssaultModel/Idle/ACM1.obj"), new Specialist("Models/AssaultModel/Idle/ACM1.obj")
-		};
+
 
 		for(int a = 0; a < 4; a++)
 		{
@@ -312,9 +308,14 @@ public:
 	}
 
 private:
+	std::vector<Player*>playerSelections
+	{
+		new Assault("Models/AssaultModel/Idle/ACM1.obj"),new Tank("Models/AssaultModel/Idle/ACM1.obj"),
+		new  Medic("Models/AssaultModel/Idle/ACM1.obj"), new Specialist("Models/AssaultModel/Idle/ACM1.obj")
+	};
 	Model* classes[4]
-	{new Assault("Models/ClassPH/Assault/assaultPH.obj"),new Tank("Models/ClassPH/Tank/tankPH.obj"),
-		new  Medic("Models/ClassPH/Medic/medicPH.obj"),new Specialist("Models/ClassPH/Specialist/specPH.obj")};
+	{new Model("Models/ClassPH/Assault/assaultPH.obj"),new Model("Models/ClassPH/Tank/tankPH.obj"),
+		new  Model("Models/ClassPH/Medic/medicPH.obj"),new Model("Models/ClassPH/Specialist/specPH.obj")};
 	std::vector<Player*>players;
 	std::vector<Model*> mod;
 	bool fadein = true;

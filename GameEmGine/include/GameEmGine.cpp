@@ -206,14 +206,14 @@ int GameEmGine::controllersConnected()
 	return m_inputManager->controllersConnected();
 }
 
-bool GameEmGine::isControllerConnected(int index)
+bool GameEmGine::isControllerConnected(int m_index)
 {
-	return m_inputManager->isControllerConnected(index);
+	return m_inputManager->isControllerConnected(m_index);
 }
 
-XinputDevice* GameEmGine::getController(int index)
+XinputDevice* GameEmGine::getController(int m_index)
 {
-	return &m_inputManager->getController(index);
+	return &m_inputManager->getController(m_index);
 }
 
 WindowCreator* GameEmGine::getWindow()
@@ -237,7 +237,6 @@ void GameEmGine::shaderInit()
 	m_blurVertical->create("Shaders/Main Buffer.vtsh", "Shaders/BlurVertical.fmsh");
 	m_blurrComposite = new Shader;
 	m_blurrComposite->create("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
-
 
 	m_grayScalePost = new Shader;
 	m_grayScalePost->create("Shaders/Main Buffer.vtsh", "Shaders/GrayscalePost.fmsh");
@@ -348,7 +347,7 @@ void GameEmGine::setScene(Scene * scene)
 	m_inputManager->mouseButtonPressCallback(scene->mousePressed);
 	m_inputManager->mouseButtonReleaseCallback(scene->mouseReleased);
 	//m_render = scene->render;
-	m_gameLoop = [](double a)->void {m_mainScene->update(a); };
+	m_gameLoop = [&](double a)->void {m_mainScene->update(a); };
 }
 
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)

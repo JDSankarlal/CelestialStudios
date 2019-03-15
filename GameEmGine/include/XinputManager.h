@@ -94,7 +94,7 @@ struct XinputDevice
 
 	virtual void update()
 	{
-		XInputGetState(index, &info);
+		XInputGetState(m_index, &info);
 	}
 
 	//sets the vibration to left and right channels (values range from 0 -> 1)
@@ -104,7 +104,7 @@ struct XinputDevice
 		memset(&vibration, 0, sizeof(XINPUT_VIBRATION));
 		vibration.wLeftMotorSpeed = WORD(65535.f * L); // use any value between 0-65535 here
 		vibration.wRightMotorSpeed = WORD(65535.f * R); // use any value between 0-65535 here
-		XInputSetState(index, &vibration);
+		XInputSetState(m_index, &vibration);
 	}
 
 	//sets the vibration to the left channels (values range from 0 -> 1)
@@ -155,7 +155,7 @@ struct XinputDevice
 	}
 
 	CONTROLLER_TYPE type=CONTROLLER_TYPE::XINPUT_UNKNOWN;
-	int index;
+	int m_index;
 
 protected:
 	XINPUT_STATE info;
@@ -256,14 +256,14 @@ public:
 	//updates all controllers at once
 	static void update();
 
-	//checks if the controller from index 0 -> 3 (inclusive) is connected (up to 4 controllers)
-	static bool controllerConnected(int index);
+	//checks if the controller from m_index 0 -> 3 (inclusive) is connected (up to 4 controllers)
+	static bool controllerConnected(int m_index);
 
 	//gets the type of controller that is connected to the computer 
-	static CONTROLLER_TYPE getControllerType(int index);
+	static CONTROLLER_TYPE getControllerType(int m_index);
 
-	//gets the controller from index 0 -> 3 (inclusive)
-	static XinputDevice* getController(int index);
+	//gets the controller from m_index 0 -> 3 (inclusive)
+	static XinputDevice* getController(int m_index);
 private:
 	static	XinputDevice* controllers[4];
 };

@@ -34,10 +34,10 @@ struct Coord2D
 		return *this / distance();
 	}
 
-	float& operator[](int index)
+	float& operator[](int m_index)
 	{
 		float *error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return static_cast<float&>(x);
@@ -164,10 +164,10 @@ struct Coord3D
 		z *= norm;
 	}
 
-	float& operator[] (int index)
+	float& operator[] (int m_index)
 	{
 		float* error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return const_cast<float&>(x);
@@ -252,10 +252,10 @@ struct Coord3D
 struct Size2D
 {
 	float width = 0, height = 0;
-	float& operator[](int index)
+	float& operator[](int m_index)
 	{
 		float *error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return static_cast<float&>(width);
@@ -311,10 +311,10 @@ struct Size3D
 		this->height = h;
 	}
 
-	float& operator[] (int index)
+	float& operator[] (int m_index)
 	{
 		float* error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return const_cast<float&>(width);
@@ -407,10 +407,10 @@ struct ColourRGBA
 		*this = *this * rgba;
 	}
 
-	GLubyte& operator[](int index)
+	GLubyte& operator[](int m_index)
 	{
 		GLubyte *error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return static_cast<GLubyte&>(colorR);
@@ -441,9 +441,9 @@ struct UV
 		this->uv_v = v;
 	}
 
-	float& operator[](int index)
+	float& operator[](int m_index)
 	{
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return static_cast<float&>(uv_u);
