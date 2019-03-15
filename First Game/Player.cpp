@@ -372,6 +372,7 @@ void Player::update(float dt)
 			m_lifeBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
 			m_lifeBar->getTransformer().setScale(0.08f, 0.08f, 0.065f * ((float)getHealth() / (float)getInitialHealth()));
 			m_baseBar->getTransformer().setPosition(m_lifeBar->getTransformer().getPosition());
+			
 			if(dead)
 			{
 				GAME::removeModel(m_lifeBar);
