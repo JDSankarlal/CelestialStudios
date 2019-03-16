@@ -55,8 +55,10 @@ void Medic::getHealing(Player* player)
 
 void Medic::update(float dt)
 {
-	dt;
-	//Player::update(dt);
+	if(!m_active)
+		return;
+
+	Player::update(dt);
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
 	p1->setStickDeadZone(.2f);
 

@@ -1,11 +1,12 @@
 #include "Player.h"
+#include <algorithm>
 
 typedef GameEmGine GAME;
 
 Model
 * Player::bullet,
-* Player::redBar, * Player::blueBar, * Player::greenBar, * Player::yellowBar,
-* Player::baseRedBar, * Player::baseBlueBar, * Player::baseGreenBar, * Player::baseYellowBar;
+*Player::redBar, *Player::blueBar, *Player::greenBar, *Player::yellowBar,
+*Player::baseRedBar, *Player::baseBlueBar, *Player::baseGreenBar, *Player::baseYellowBar;
 
 void Player::init(int index)
 {
@@ -39,7 +40,7 @@ void Player::init(int index)
 	ringID = new Model("Models/ID/Identifier.obj");
 	gun = new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj");
 
-	Animation* walk = new Animation, * idle = new Animation;
+	Animation* walk = new Animation, *idle = new Animation;
 
 	walk->addDir("Models/AssaultModel/Walk/");
 	idle->addDir("Models/AssaultModel/Idle/");
@@ -52,7 +53,7 @@ void Player::init(int index)
 	idle->repeat(true);
 	idle->setAnimationSpeed(.25);
 	idle->play();
-
+	dead = false;
 	setPlayerIndex(index);
 }
 
@@ -84,6 +85,9 @@ Player::~Player()
 void Player::setPlayerIndex(int index)
 {
 	m_index = index;
+	GAME::removeModel(m_baseBar);
+
+	m_baseBar->removeChild(m_lifeBar);
 	switch(m_index)
 	{
 	case 0:
@@ -106,14 +110,25 @@ void Player::setPlayerIndex(int index)
 		m_lifeBar = yellowBar;
 		ringID->setColour(1.f, 1.f, 0.4314f);
 	}
+
+	//m_lifeBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
+	//m_lifeBar->getTransformer().setPosition(0.35f, 1.6f, 0.0f);
+	m_baseBar->addChild(m_lifeBar);
+	m_baseBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
+	m_baseBar->getTransformer().setRotation({0, 90.f, 0});
+
+
+	GAME::addModel(m_baseBar);
+
+
 }
 
-int Player::getHealth()
+float Player::getHealth()
 {
 	return m_health;
 }
 
-void Player::setHealth(int v)
+void Player::setHealth(float v)
 {
 	m_health = v;
 }
@@ -138,17 +153,24 @@ void Player::setTimeSinceLastMissile(float v)
 	m_timeSinceLastMissile = v;
 }
 
-void Player::hitByEnemy(Model* mod)
+void Player::hitByEnemy(Model* mod, float damage)
 {
+	if(!m_active)
+		return;
+
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
 	if(collision3D(mod))
 	{
 		//curveroni[a] = 1;
 		//CandyMan->getMissial(a)->getTransformer().setPosition(mod[8]->getCenter());
-		setHealth(getHealth() - 35);
+		setHealth(getHealth() - damage);
+
 		//Coord3D test = ;
-		p1->setVibration(.8f, .8f);
-		deathShakeTimer = time;
+
+		GLclampf(damage * .023f);
+		p1->setVibration(glm::clamp(damage*.023f, 0.f, 1.f), glm::clamp(damage*.023f, 0.f, 1.f));
+		onHitShakeTimer = time;
+		onHitShakeDir = glm::clamp(damage * .0175f, 0.f, 1.f);
 	}
 }
 
@@ -191,6 +213,10 @@ void Player::update(float dt)
 	time += dt;
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
 	p1->setStickDeadZone(.2f);
+
+	if(!m_active)
+		return;
+
 
 	if(GAME::isControllerConnected(m_index))
 	{
@@ -261,7 +287,7 @@ void Player::update(float dt)
 				}
 			}
 
-			if(float(time - deathShakeTimer) > deathShakeDir)
+			if(float(time - onHitShakeTimer) > onHitShakeDir)
 				if(float(time - shotBuzzTimer) > shotBuzzDir)
 					p1->resetVibration();
 
@@ -296,8 +322,8 @@ void Player::update(float dt)
 					reloadTimer = time;
 				}
 				reloading = true;
-
 			}
+
 			if(reloading == true)
 			{
 				//put a bar here that lerps up to full or make circle become full
@@ -369,10 +395,10 @@ void Player::update(float dt)
 
 
 			//Update each player's Blood Bar
-			m_lifeBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
-			m_lifeBar->getTransformer().setScale(0.08f, 0.08f, 0.065f * ((float)getHealth() / (float)getInitialHealth()));
-			m_baseBar->getTransformer().setPosition(m_lifeBar->getTransformer().getPosition());
-			
+			//m_lifeBar->getTransformer().setPosition();
+			m_lifeBar->getTransformer().setScale(1.f,1.f, ((float)getHealth() / (float)getInitialHealth()));
+			m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
+
 			if(dead)
 			{
 				GAME::removeModel(m_lifeBar);
@@ -409,7 +435,17 @@ void Player::update(float dt)
 	}
 }
 
-int Player::getInitialHealth()
+void Player::setActive(bool active)
+{
+	m_active = active;
+}
+
+bool Player::isActive()
+{
+	return m_active;
+}
+
+float Player::getInitialHealth()
 {
 	return m_initialHealth;
 }

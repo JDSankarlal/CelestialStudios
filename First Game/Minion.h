@@ -20,7 +20,7 @@ public:
 	void move(bool move);
 
 private:
-	bool m_move;
+	bool m_move=true;
 	static std::vector<Player*> targets;
 	int m_health = 30;
 	float m_moveSpeed;

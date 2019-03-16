@@ -9,14 +9,14 @@ Camera* GameEmGine::m_mainCamera;
 //GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera*>GameEmGine::m_cameras;
-Shader* GameEmGine::m_modelShader, * GameEmGine::m_grayScalePost, * GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
-* GameEmGine::m_blurVertical, * GameEmGine::m_blurrComposite;
+Shader* GameEmGine::m_modelShader, *GameEmGine::m_grayScalePost, *GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,
+*GameEmGine::m_blurVertical, *GameEmGine::m_blurrComposite;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager* GameEmGine::m_inputManager;
 WindowCreator* GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2,*GameEmGine::m_greyscaleBuffer;
+FrameBuffer* GameEmGine::m_mainFrameBuffer, *GameEmGine::m_buffer1, *GameEmGine::m_buffer2, *GameEmGine::m_greyscaleBuffer;
 std::unordered_map<std::string, FrameBuffer*> GameEmGine::m_frameBuffers;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
@@ -156,7 +156,7 @@ void GameEmGine::run()
 	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
 	{
 		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
-		
+
 		InputManager::controllerUpdate();
 		update();
 
@@ -405,9 +405,10 @@ void GameEmGine::addModel(Model * model)
 
 void GameEmGine::removeModel(Model * model)
 {
-	for(unsigned a = 0; a < m_models.size(); a++)
-		if(m_models[a] == model)
-			m_models.erase(m_models.begin() + a);
+	if(model)
+		for(unsigned a = 0; a < m_models.size(); a++)
+			if(m_models[a] == model)
+				m_models.erase(m_models.begin() + a);
 }
 
 
@@ -511,8 +512,8 @@ void GameEmGine::update()
 	FrameBuffer::disable();
 
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
-	
-	
+
+
 	m_greyscaleBuffer->enable();
 	m_blurrComposite->enable();
 	glActiveTexture(GL_TEXTURE0);

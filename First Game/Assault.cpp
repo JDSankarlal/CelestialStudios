@@ -61,6 +61,9 @@ bool Assault::missileCollision(Model* mod)
 
 void Assault::update(float dt)
 {
+	if(!m_active)
+		return;
+
 	Player::update(dt);
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
 

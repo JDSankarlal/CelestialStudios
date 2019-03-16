@@ -179,9 +179,12 @@ Transformer& Model::getTransformer()
 
 void Model::removeChild(Model* child)
 {
-	auto ref = std::find(m_children.begin(), m_children.end(), child);
-	if(ref != m_children.end())
-		m_children.erase(ref);
+	if(child)
+	{
+		auto ref = std::find(m_children.begin(), m_children.end(), child);
+		if(ref != m_children.end())
+			m_children.erase(ref);
+	}
 }
 
 void Model::addChild(Model * child)

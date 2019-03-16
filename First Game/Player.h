@@ -23,18 +23,19 @@ public:
 	Player(const char* path);
 	virtual ~Player();
 	void setPlayerIndex(int index);
-	virtual int getHealth();
-	virtual void setHealth(int v);
+	virtual float getHealth();
+	virtual void setHealth(float v);
 	virtual float getTimeSinceLastMissile();
 	virtual void setTimeSinceLastMissile(float v);
+	void hitByEnemy(Model * mod, float damage = 35.f);
 	int getBulletCount();
 	void setBulletCount(int v);
-	void hitByEnemy(Model* mod);
 	bool bulletCollisions(Model* mod);
 	void onPlayArea(Model* mod);
 	virtual void update(float dt);
-
-	int getInitialHealth();
+	void setActive(bool active);
+	bool isActive();
+	float getInitialHealth();
 
 	//Player Ability Variables
 	float reloadTimer = false;
@@ -45,15 +46,16 @@ public:
 
 	float shotBuzzTimer;
 	float shotBuzzDir = .2f;
-	float deathShakeTimer = 0;
-	float deathShakeDir = 0.6f;
+	float onHitShakeTimer = 0;
+	float onHitShakeDir = 0.6f;
 
-	bool dead;
+	bool dead=false;
 protected:
-	int m_initialHealth = 100;
+	float m_initialHealth = 100;
 	int m_index;
 	float angle;
 	float duration = 0;
+	bool m_active=true;
 	Animation squash;
 	Model* graveStone, //22
 		* bulletCircle,//74
@@ -76,7 +78,7 @@ protected:
 	bool gunControlLaw = false, dashControl = false;
 	float time;
 
-	int m_health = 100;
+	float m_health = 100;
 	int m_bulletCount = 30;
 	float m_timeSinceLastMissile;
 };

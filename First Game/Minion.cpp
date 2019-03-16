@@ -63,7 +63,7 @@ void Minion::update(float dt)
 
 		}
 		moveTo.normalize();
-		getTransformer().translateBy(moveTo * (moveTo.distance() * .001f));
+		getTransformer().translateBy(moveTo * 5);
 	}
 
 

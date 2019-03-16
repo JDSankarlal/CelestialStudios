@@ -39,8 +39,10 @@ void Tank::setTimeSinceLastShield(float v)
 
 void Tank::update(float dt)
 {
-	dt;
+	if(!m_active)
+		return;
 
+	Player::update(dt);
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
 	p1->setStickDeadZone(.2f);
 
@@ -71,5 +73,4 @@ void Tank::update(float dt)
 			}
 		}
 
-	Player::update(dt);
 }

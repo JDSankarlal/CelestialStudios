@@ -1,8 +1,11 @@
 #pragma once
+//#define clamp(val, min, max) (val > max ? max : val < min ? min : val)
 #include <GL/glew.h>
 #include <glm/common.hpp>
 #include <string>
-#include <cstdio>
+
+
+
 
 struct Coord2D
 {
@@ -12,9 +15,9 @@ struct Coord2D
 	{
 		return glm::vec2(x, y);
 	}
-	Coord2D()=default;
-	
-	Coord2D(float a_x,float a_y)
+	Coord2D() = default;
+
+	Coord2D(float a_x, float a_y)
 	{
 		x = a_x, y = a_y;
 	}
@@ -94,7 +97,7 @@ struct Coord3D
 	{
 		return glm::vec3(x, y, z);
 	}
-	
+
 	static float distance(Coord3D v1, Coord3D v2)
 	{
 		v2 = v2 - v1;
