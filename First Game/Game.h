@@ -1035,14 +1035,16 @@ public:
 
 		//	lastTime = (float)clock() / CLOCKS_PER_SEC;
 
-			/// - If game not m_active and Camera is m_active (Move camera mode) - ///
+		/// - If game not m_active and Camera is m_active (Move camera mode) - ///
 		if(!movePlayer)
 			if(GAME::isControllerConnected(0))
 			{
 				for(int a = 0; a < 4; a++)
 					((Player*)mod[a])->setActive(false);
 
-				XinputController* p1 = (XinputController*)GAME::getController(0);
+				((Boss*)mod[8])->setActive(false);
+
+				XinputController * p1 = (XinputController*)GAME::getController(0);
 				deathCounter = 0;
 
 				//move camera

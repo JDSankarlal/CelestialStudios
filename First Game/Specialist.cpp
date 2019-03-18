@@ -65,6 +65,7 @@ void Specialist::update(float dt)
 	Player::update(dt);
 
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	
 	/// - Turret Active - ///
 	if(turretActive == true)
 	{

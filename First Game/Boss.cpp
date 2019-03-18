@@ -95,7 +95,9 @@ std::vector<Model*>& Boss::getMissials()
 
 void Boss::update(float dt)
 {
-
+	if(!m_active)
+		return;
+	
 	static clock_t  lastDelay[4];
 	static float  curveroni[4], delay[4]{10,10,10,10};
 	static bool hasTarget[4];
@@ -111,7 +113,8 @@ void Boss::update(float dt)
 	missileRadious[0]->setColour(1, 0, 0);
 	missileRadious[1]->setColour(0, 0, 1);
 	missileRadious[2]->setColour(0, 1, 0);
-	missileRadious[3]->setColour({255,255,110});
+	missileRadious[3]->setColour({255,255,110}
+	);
 
 	//Missile to Player Collisions
 	for(int a = 0; a < 4; a++)
@@ -264,7 +267,7 @@ void Boss::shootLazer(int playerIndex)
 
 	if(counter > 1 || counter < 0)
 	{
-		counter = float(counter > 0 ? 1 : 0);
+		counter = counter > 0 ? 1.f : 0;
 
 		amount *= -1;
 	}
@@ -290,10 +293,19 @@ void Boss::shootLazer(int playerIndex)
 	lazer->getTransformer().setPosition(start);
 	lazer->getTransformer().setScale(.5f, lerp(0.0f, distance, counter), .5f);
 
-	float anglex = cosf(angle[0])* (360 / (float)M_PI),
+	float anglex = cosf(angle[0]) * (360 / (float)M_PI),
 		angley = tanf(angle[0]) * (360 / (float)M_PI),
 		anglez = sinf(angle[0]) * (360 / (float)M_PI);
 	angley, anglez;
 	lazer->getTransformer().setRotation({anglex,0,0});
 
+}
+void Boss::setActive(bool active)
+{
+	m_active = active;
+}
+
+bool Boss::isActive()
+{
+	return m_active;
 }

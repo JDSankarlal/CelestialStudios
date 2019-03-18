@@ -18,9 +18,11 @@ class Player: public Model
 {
 public:
 	void init(int index);
+
 	Player(int index = 0);
 	Player(Player& model);
 	Player(const char* path);
+
 	virtual ~Player();
 	void setPlayerIndex(int index);
 	virtual float getHealth();
@@ -38,7 +40,7 @@ public:
 	float getInitialHealth();
 
 	//Player Ability Variables
-	float reloadTimer = false;
+	float reloadTimer = 0;
 	bool reloading = false;
 	float cooldown = false;
 	bool f = false;

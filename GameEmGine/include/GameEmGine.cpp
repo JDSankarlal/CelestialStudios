@@ -340,12 +340,14 @@ void GameEmGine::setScene(Scene * scene)
 	m_models.clear();
 	m_frameBuffers.clear();
 	m_frameBuffers[m_mainFrameBuffer->getTag()] = m_mainFrameBuffer;
+	scene->parent = m_mainScene;//set the parent to the previous scene
 	m_mainScene = scene;
 	scene->init();
 	m_inputManager->keyPressedCallback(scene->keyPressed);
 	m_inputManager->keyReleasedCallback(scene->keyReleased);
 	m_inputManager->mouseButtonPressCallback(scene->mousePressed);
 	m_inputManager->mouseButtonReleaseCallback(scene->mouseReleased);
+
 	//m_render = scene->render;
 	m_gameLoop = [&](double a)->void {m_mainScene->update(a); };
 }
@@ -558,8 +560,6 @@ void GameEmGine::update()
 	glfwPollEvents();//updates the event handlers
 
 }
-
-
 
 void GameEmGine::changeViewport(GLFWwindow*, int w, int h)
 {

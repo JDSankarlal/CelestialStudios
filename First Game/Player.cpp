@@ -190,7 +190,6 @@ bool Player::bulletCollisions(Model * mod)
 	for(unsigned b = 0; b < bullets.size(); b++)
 		if(bullets[b])
 		{
-
 			if(collision3D(bullets[b], mod))
 				bulletHit = true;
 
@@ -222,10 +221,7 @@ void Player::update(float dt)
 	{
 		if(!dead)
 		{
-			//deathCounter = 0;
-			//youDead = !true;
-
-
+			//angle of right stick
 			if(p1->getSticks()[RS].x || p1->getSticks()[RS].y)
 			{
 
@@ -235,8 +231,6 @@ void Player::update(float dt)
 				angle += (p1->getSticks()[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
 				angle = fmodf(angle, 360);
 			}
-
-
 
 			//If player dies
 			if(getHealth() <= 0)
@@ -279,48 +273,47 @@ void Player::update(float dt)
 						timer.push_back(0);
 						AudioPlayer::createAudioStream("pew.wav");
 						AudioPlayer::play();
-						bulletCircle->setColour(1, 1, 1);
-						setBulletCount(getBulletCount() - 1);
+						bulletCircle->setColour(1, 1, 1);//set bullet circle colour to white
+						m_bulletCount--;//subtract from bullet count
 						shotBuzzTimer = time;
 						p1->setVibration(.6f, .6f);
 					}
 				}
 			}
+			else
+			{
+				switch(m_index)
+				{
+				case 0:
+					bulletCircle->setColour({255,0,0,150});
+					break;
+				case 1:
+					bulletCircle->setColour({0,0,255,150});
+					break;
+				case 2:
+					bulletCircle->setColour({0,255,0,150});
+					break;
+				case 3:
+					bulletCircle->setColour({255,255,0,150});
+					break;
+				default:
+					break;
+				}
+				gunControlLaw = false;
+			}
 
+			//reset all vibration
 			if(float(time - onHitShakeTimer) > onHitShakeDir)
 				if(float(time - shotBuzzTimer) > shotBuzzDir)
 					p1->resetVibration();
 
-				else if(p1->getTriggers().RT < .95 && gunControlLaw)
-				{
-					switch(m_index)
-					{
-					case 0:
-						bulletCircle->setColour({255,0,0,150});
-						break;
-					case 1:
-						bulletCircle->setColour({0,0,255,150});
-						break;
-					case 2:
-						bulletCircle->setColour({0,255,0,150});
-						break;
-					case 3:
-						bulletCircle->setColour({255,255,0,150});
-						break;
-					default:
-						break;
-					}
-					gunControlLaw = false;
-				}
 
 			/// - Button Presses on controller - ///
 			if((p1->isButtonPressed(CONTROLLER_X)) || (getBulletCount() <= 0))
 			{
-
 				if(reloading == false)
-				{
 					reloadTimer = time;
-				}
+
 				reloading = true;
 			}
 
@@ -337,16 +330,13 @@ void Player::update(float dt)
 				{
 					//Put haptic feedback here
 					puts("Can't Reload yet!\n");
-
 				}
 			}
 
 			/// - Left Trigger to Dash - ///
 			if(p1->getTriggers().LT >= .95)
 			{
-				//static float coolDown[4];
-
-				//get deltaTime put into duraction variable
+				//get total time and put it into duration variable
 
 				if(time - cooldown >= 3)
 				{

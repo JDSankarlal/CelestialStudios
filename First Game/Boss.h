@@ -20,17 +20,19 @@ public:
 	void setHealth(float v);
 	std::vector<Model*>& getMissials();
 	void update(float dt);
+	void setActive(bool active);
+	bool isActive();
 
 	std::vector<Minion*> minions;
 	std::vector<Model* > missles;
 	Model* lazer;
 private:
-
 	void shootLazer(int playerIndex);
 	//boss's blood bar
 	Model* m_lifeBar;
 	Model* m_baseBar;
 
+	bool m_active = true;
 	float m_initialHealth, m_health;
 
 	static Model* minion;
