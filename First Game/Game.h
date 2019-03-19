@@ -570,7 +570,6 @@ public:
 		mod[3]->getTransformer().setRotation(Coord3D(0, 180, 0));
 
 
-
 		//Building Transforms
 		//Building 1s
 		mod[4]->getTransformer().setScale(1), mod[4]->getTransformer().setPosition(-15.175f, 0.0f, -2.0f), mod[4]->getTransformer().setRotation({0.0f,90.0f,0.0f});;
@@ -586,6 +585,7 @@ public:
 		mod[30]->getTransformer().setPosition(10.5f, 0.0f, 23.6f);
 		mod[31]->getTransformer().setPosition(19.5f, 0.0f, 3.75f), mod[31]->getTransformer().setRotation({0,180,0});
 		mod[32]->getTransformer().setPosition(-12.0f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({0,-90,0});
+		
 		//Building 4s //Lillian's building, moved back
 		mod[33]->getTransformer().setPosition(27.0f, 0.0f, 26.0f), mod[33]->getTransformer().setRotation({0,45,0}); //right
 		mod[34]->getTransformer().setPosition(-14.0f, 0.0f, 36.0f), mod[34]->getTransformer().setScale(1.5f, 1.5f, 1.5f), mod[34]->getTransformer().setRotation({0,180,0}); //left
@@ -1036,13 +1036,17 @@ public:
 		//	lastTime = (float)clock() / CLOCKS_PER_SEC;
 
 		/// - If game not m_active and Camera is m_active (Move camera mode) - ///
+		CandyMan->setActive(true);
+		for(int a = 0; a < 4; a++)
+			((Player*)mod[a])->setActive(true);
+
 		if(!movePlayer)
 			if(GAME::isControllerConnected(0))
 			{
 				for(int a = 0; a < 4; a++)
 					((Player*)mod[a])->setActive(false);
 
-				((Boss*)mod[8])->setActive(false);
+				CandyMan->setActive(false);
 
 				XinputController * p1 = (XinputController*)GAME::getController(0);
 				deathCounter = 0;

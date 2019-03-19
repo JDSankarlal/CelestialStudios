@@ -16,15 +16,12 @@ public:
 	bool hitTurret(Model* mod);
 
 	void update(float dt);
-
-	//Specialist
+private:
 	//Turret
 	static Model* turret ;//98
 	std::vector<Model*> pTurrets;
 	bool turretActive = false;
 	float turretTime;
-
-private:
 	float timeSinceLastTurret;
 };
 

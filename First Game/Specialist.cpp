@@ -60,8 +60,10 @@ bool Specialist::hitTurret(Model* mod)
 
 void Specialist::update(float dt)
 {
+	dt;
 	if(!m_active)
 		return;
+
 	Player::update(dt);
 
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);

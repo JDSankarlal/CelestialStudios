@@ -7,15 +7,14 @@ Minion::Minion():Model()
 
 }
 
-Minion::Minion(Model& model): Model(model)
-
+Minion::Minion(Model& model) : Model(model)
 {
-	
+
 }
 
-Minion::Minion(const char* path):Model(path)
+Minion::Minion(const char* path) : Model(path)
 {
-	
+
 }
 
 
@@ -23,7 +22,7 @@ Minion::~Minion()
 {
 }
 
-void Minion::setHealth(int v)
+void Minion::setHealth(float v)
 {
 	m_health = v;
 }
@@ -43,6 +42,19 @@ void Minion::addTarget(Player* mod)
 	targets.push_back(mod);
 }
 
+bool Minion::hitByEnemy(Model* enemy, float damage)
+{
+	if(enemy)
+	{
+		if(collision2D(enemy))
+		{
+			setHealth(getHealth() - damage);
+			return true;
+		}
+	}
+	return false;
+}
+
 void Minion::update(float dt)
 {
 	dt;
@@ -52,6 +64,7 @@ void Minion::update(float dt)
 	{
 		float distance, lastDistance = 0;
 		Coord3D moveTo = targets[0]->getTransformer().getPosition();
+
 		if(!targets.empty())
 			lastDistance = (getTransformer().getPosition() - targets[0]->getTransformer().getPosition()).distance();
 
@@ -59,11 +72,11 @@ void Minion::update(float dt)
 		{
 			distance = (getTransformer().getPosition() - a->getTransformer().getPosition()).distance();
 			if(distance < lastDistance)
-				moveTo = a->getTransformer().getPosition();
-
+				moveTo = a->getTransformer().getPosition() - getTransformer().getPosition();
 		}
+
 		moveTo.normalize();
-		getTransformer().translateBy(moveTo * 5);
+		getTransformer().translateBy(moveTo * m_moveSpeed);
 	}
 
 
@@ -75,7 +88,7 @@ void Minion::move(bool move)
 	m_move = move;
 }
 
-int Minion::getHealth()
+float Minion::getHealth()
 {
 	return m_health;
 }

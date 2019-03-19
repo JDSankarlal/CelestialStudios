@@ -332,6 +332,11 @@ Animation * Model::getAnimation(const char * tag)
 	return m_animations[tag];
 }
 
+Animation * Model::getCurrentAnimation()
+{
+	return m_animations[m_animation];
+}
+
 void Model::setAnimation(const char * tag)
 {
 	m_animation = tag;

@@ -209,13 +209,13 @@ bool Player::bulletCollisions(Model * mod)
 
 void Player::update(float dt)
 {
-	time += dt;
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
-	p1->setStickDeadZone(.2f);
-
 	if(!m_active)
 		return;
 
+	time += dt;
+
+	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	p1->setStickDeadZone(.2f);
 
 	if(GAME::isControllerConnected(m_index))
 	{
@@ -384,10 +384,6 @@ void Player::update(float dt)
 
 
 
-			//Update each player's Blood Bar
-			//m_lifeBar->getTransformer().setPosition();
-			m_lifeBar->getTransformer().setScale(1.f,1.f, ((float)getHealth() / (float)getInitialHealth()));
-			m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
 
 			if(dead)
 			{
@@ -423,6 +419,10 @@ void Player::update(float dt)
 
 		}
 	}
+
+	//Update each player's Blood Bar
+	m_lifeBar->getTransformer().setScale(1.f, 1.f, ((float)getHealth() / (float)getInitialHealth()));
+	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
 }
 
 void Player::setActive(bool active)

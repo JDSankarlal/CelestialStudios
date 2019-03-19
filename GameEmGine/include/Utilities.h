@@ -162,9 +162,9 @@ struct Coord3D
 	void normalize()
 	{
 		float norm = sqrtf(x * x + y * y + z * z);
-		x *= norm;
-		y *= norm;
-		z *= norm;
+		x /= norm;
+		y /= norm;
+		z /= norm;
 	}
 
 	float& operator[] (int m_index)

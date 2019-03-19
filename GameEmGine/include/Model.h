@@ -65,7 +65,8 @@ public:
 
 	void boundingBoxUpdate();
 
-	Animation* getAnimation(const char* tag);
+	Animation* getAnimation(const char* tag );
+	Animation* getCurrentAnimation();
 	void  setAnimation(const char* tag);
 
 	Mesh* getMesh();
