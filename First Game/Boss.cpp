@@ -82,6 +82,10 @@ void Boss::update()
 	missileRadious[1]->setColour(0, 0, 1);
 	missileRadious[2]->setColour(0, 1, 0);
 	missileRadious[3]->setColour({255,255,110});
+	missileRadious[0]->getTransformer().setScale(0.5, 0.5, 0.5); //why isnt this doing anything 
+	missileRadious[1]->getTransformer().setScale(0.5, 0.5, 0.5);
+	missileRadious[2]->getTransformer().setScale(0.5, 0.5, 0.5);
+	missileRadious[3]->getTransformer().setScale(0.5, 0.5, 0.5);
 
 
 	for(int a = 0; a < 4; a++)

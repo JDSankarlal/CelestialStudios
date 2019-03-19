@@ -454,10 +454,10 @@ public:
 		GAME::addModel(mod[92]);
 
 		//Medic Healing Ring
-		mod[93] = (new Model("Models/BulletCircle/BulletCircle.obj"));//93
+		mod[93] = (new Model("Models/MedicCircle/BETTERHealingCircle.obj"));//93
 		GAME::addModel(mod[93]);
 		mod[93]->setToRender(false);
-		mod[93]->getTransformer().setScale(2, 1, 2);
+		mod[93]->getTransformer().setScale(4, 4, 5);
 
 
 		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
