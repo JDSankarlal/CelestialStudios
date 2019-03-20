@@ -246,7 +246,7 @@ public:
 		mod[18]->setToRender(false);
 
 		//Building 2s
-		mod[19] = (new Model("Models/Buildings/Tunnel/Tunnel_Model.obj"));
+		mod[19] = (new Model("Models/Buildings/Tunnel/Tunnel_Back_Final.obj"));
 		GAME::addModel(mod[19]);//19
 		mod[20] = (new Model(*mod[19]));
 		GAME::addModel(mod[20]);//20
@@ -437,7 +437,7 @@ public:
 		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
 		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
 
-		//RAIL
+		//Rail
 		mod[86] = (new Model("Models/Rail/rail.obj"));//86
 		GAME::addModel(mod[86]);
 		mod[87] = (new Model(*mod[86]));//87
@@ -572,6 +572,14 @@ public:
 		GAME::addModel(mod[122]);
 		mod[122]->getTransformer().setScale(1.2f, 1.2f, 1.2f), mod[122]->getTransformer().setPosition(-8.0f, 0.0f, 27.0f), mod[122]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
 
+		//Building 2s
+		mod[123] = (new Model("Models/Buildings/Tunnel/Tunnel_Front_Blue.obj")); //123
+		GAME::addModel(mod[123]);
+		mod[124] = (new Model(*mod[123]));
+		GAME::addModel(mod[124]);//124
+		mod[123]->setColour({ 0,255,255 });
+		mod[124]->setColour({ 0,255,255 });
+
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -584,7 +592,8 @@ public:
 		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
 		mod[3]->getTransformer().setRotation(Coord3D(0, 180, 0));
 
-
+		mod[19]->addChild(mod[123]);
+		mod[20]->addChild(mod[124]);
 
 		//Building Transforms
 		//Building 1s
@@ -596,6 +605,8 @@ public:
 		mod[19]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-18.0f, 0.0f, 6.4f), mod[19]->getTransformer().setRotation({0.0f, 90.0f,0.0f}); //left 
 		mod[20]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(18.0f, 0.0f, 9.5f), mod[20]->getTransformer().setRotation({0.0f, -90.0f, 0.0f}); //right 
 		//mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0.0f, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+		//mod[123]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-18.0f, 0.0f, 6.4f), mod[19]->getTransformer().setRotation({ 0.0f, 90.0f,0.0f }); //left 
+		//mod[124]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(18.0f, 0.0f, 9.5f), mod[20]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
 
 		//Buildings 3s
 		mod[30]->getTransformer().setPosition(10.5f, 0.0f, 23.6f);
@@ -1687,6 +1698,8 @@ public:
 			for(int i = 99; i <= 105; i++)
 			{
 				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
+				mod[123]->setColour({ 255, 0, 0 });
+				mod[124]->setColour({ 255, 0, 0 });
 			}
 		}
 		else
