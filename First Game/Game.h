@@ -831,7 +831,7 @@ public:
 		AudioPlayer::init();
 
 		audio.createAudioStream("Audio/potential mix (with beat).wav");
-
+		
 		audio.play(true);
 	}
 
@@ -1613,9 +1613,9 @@ public:
 			}
 
 		/// - Train Car Movement - ///
-		for(int a = 0; a < 4; a++)
+		for(int a = 0; a < 1; a++)
 		{
-			player = (Player*)mod[a];
+			//player = (Player*)mod[a];
 
 			//Train Sits in middle of map
 			if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
@@ -1654,6 +1654,12 @@ public:
 			{
 				mod[123]->setColour({ 0, 255, 255 });
 				mod[124]->setColour({ 0, 255, 255 });
+				for (int i = 99; i <= 105; i++)
+					{
+						mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
+					}
+				audio.createAudioStream("Audio/RailOff.wav");
+				audio.play();
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ 0.05f, 0.f, 0.f });//Move train cars right
@@ -1699,6 +1705,13 @@ public:
 			{
 				mod[123]->setColour({ 255, 0, 0 });
 				mod[124]->setColour({ 255, 0, 0 });
+				for (int i = 99; i <= 105; i++)
+					{
+						mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
+						
+					}
+				audio.createAudioStream("Audio/RailOn.wav");
+				audio.play();
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
@@ -1810,23 +1823,25 @@ public:
 			}
 		}
 
-		//Check if Train close to map
-		if((mod[79]->getTransformer().getPosition().x - mod[99]->getTransformer().getPosition().x) > 60.0f)
-		{
-			for(int i = 99; i <= 105; i++)
-			{
-				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
-				//mod[123]->setColour({ 255, 0, 0 });
-				//mod[124]->setColour({ 255, 0, 0 });
-			}
-		}
-		else
-		{
-			for(int i = 99; i <= 105; i++)
-			{
-				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
-			}
-		}
+		////Check if Train close to map
+		//if((mod[79]->getTransformer().getPosition().x - mod[99]->getTransformer().getPosition().x) > 60.0f)
+		//{
+		//	for(int i = 99; i <= 105; i++)
+		//	{
+		//		mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
+		//		audio.createAudioStream("Audio/RailOff.wav");
+		//		audio.play();
+		//	}
+		//}
+		//else
+		//{
+		//	for(int i = 99; i <= 105; i++)
+		//	{
+		//		audio.createAudioStream("Audio/RailOn.wav");
+		//		audio.play();
+		//		mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
+		//	}
+		//}
 
 		//Boss health bar calculation
 		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f * (CandyMan->getHealth() / 1000.0f));
