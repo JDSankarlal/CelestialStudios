@@ -1620,6 +1620,8 @@ public:
 			//Train Sits in middle of map
 			if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
 			{
+				mod[123]->setColour({ 255, 0, 0 });
+				mod[124]->setColour({ 255, 0, 0 });
 				for(int t = 0; t < 7; t++)
 				{
 					if(collision(mod[79 + t], player))
@@ -1633,7 +1635,7 @@ public:
 
 			}
 			//Train Moves off map
-			if(10 <= (time - trainTimer) && 20 > (time - trainTimer))
+			else if(10 <= (time - trainTimer) && 13 > (time - trainTimer))
 			{
 				for(int t = 0; t < 7; t++)
 				{
@@ -1648,6 +1650,23 @@ public:
 					}
 				}
 			}
+			else if (13 <= (time - trainTimer) && 20 > (time - trainTimer))
+			{
+				mod[123]->setColour({ 0, 255, 255 });
+				mod[124]->setColour({ 0, 255, 255 });
+				for (int t = 0; t < 7; t++)
+				{
+					mod[79 + t]->getTransformer().translateBy(Coord3D{ 0.05f, 0.f, 0.f });//Move train cars right
+					if (collision(mod[79 + t], player))
+					{
+						player->setHealth(player->getHealth() - 10);
+						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+						if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+					}
+				}
+			}
 			//Train stops
 			else if(20 <= (time - trainTimer) && 30 > (time - trainTimer))
 			{
@@ -1657,7 +1676,7 @@ public:
 				}
 			}
 			//Train moves back onto map
-			else if(30 <= (time - trainTimer) && 40 > (time - trainTimer))
+			else if(30 <= (time - trainTimer) && 37 > (time - trainTimer))
 			{
 				for(int t = 0; t < 7; t++)
 				{
@@ -1674,6 +1693,105 @@ public:
 					}
 				}
 			}
+
+
+			else if (37 <= (time - trainTimer) && 37.5f > (time - trainTimer))
+			{
+				mod[123]->setColour({ 255, 0, 0 });
+				mod[124]->setColour({ 255, 0, 0 });
+				for (int t = 0; t < 7; t++)
+				{
+					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
+					if (collision(mod[79 + t], player))
+					{
+						player->setHealth(player->getHealth() - 10);
+						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+						if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+						//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
+						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+					}
+				}
+			}
+			else if (37.5f <= (time - trainTimer) && 38 > (time - trainTimer))
+			{
+				mod[123]->setColour({ 0, 255, 255 });
+				mod[124]->setColour({ 0, 255, 255 });
+				for (int t = 0; t < 7; t++)
+				{
+					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
+					if (collision(mod[79 + t], player))
+					{
+						player->setHealth(player->getHealth() - 10);
+						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+						if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+						//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
+						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+					}
+				}
+			}
+			else if (38 <= (time - trainTimer) && 38.5f > (time - trainTimer))
+			{
+			mod[123]->setColour({ 255, 0, 0 });
+			mod[124]->setColour({ 255, 0, 0 });
+			for (int t = 0; t < 7; t++)
+			{
+				mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
+				if (collision(mod[79 + t], player))
+				{
+					player->setHealth(player->getHealth() - 10);
+					if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+					if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+					//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
+					//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+				}
+			}
+			}
+			else if (38.5f <= (time - trainTimer) && 39 > (time - trainTimer))
+			{
+			mod[123]->setColour({ 0, 255, 255 });
+			mod[124]->setColour({ 0, 255, 255 });
+			for (int t = 0; t < 7; t++)
+			{
+				mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
+				if (collision(mod[79 + t], player))
+				{
+					player->setHealth(player->getHealth() - 10);
+					if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+					if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+					//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
+					//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+				}
+			}
+			}
+			else if (39 <= (time - trainTimer) && 40 > (time - trainTimer))
+			{
+			mod[123]->setColour({ 255, 0, 0 });
+			mod[124]->setColour({ 255, 0, 0 });
+			for (int t = 0; t < 7; t++)
+			{
+				mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
+				if (collision(mod[79 + t], player))
+				{
+					player->setHealth(player->getHealth() - 10);
+					if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
+					if (player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+					//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
+					//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+				}
+			}
+			}
+
+
 			//Train stops on map
 			else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
 			{
@@ -1698,8 +1816,8 @@ public:
 			for(int i = 99; i <= 105; i++)
 			{
 				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
-				mod[123]->setColour({ 255, 0, 0 });
-				mod[124]->setColour({ 255, 0, 0 });
+				//mod[123]->setColour({ 255, 0, 0 });
+				//mod[124]->setColour({ 255, 0, 0 });
 			}
 		}
 		else
