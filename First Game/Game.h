@@ -1359,7 +1359,7 @@ public:
 								GAME::addModel(minions.back() = new Minion(*mod[78]));
 								minions.back()->setToRender(true);
 								minions.back()->getTransformer().reset();
-								minions.back()->setColour(200, 100, 50);
+								minions.back()->setColour(100, 100, 50); //originally 200,100,50
 								minions.back()->getTransformer().getPosition();
 								minions.back()->getTransformer().setPosition(float(rand() % 4 + 7), float(rand() % 1 + 2), -float(rand() % 3) + 2); // Random spawns in bottom right of screen
 								minions.back()->getTransformer().setScale(0.4f, 0.6f, 0.4f);
