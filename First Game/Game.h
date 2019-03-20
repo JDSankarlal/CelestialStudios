@@ -1520,7 +1520,7 @@ public:
 								//Make boss flash but Id have to make every single keyframe have missing texture... so idk
 								if (bossFlash == true)
 								{
-									mod[8]->setColour({255,100,0});
+									mod[8]->setColour({255,0,0});
 									bossFlash = false;
 									mod[72]->setColour(1,1,1);
 								}
