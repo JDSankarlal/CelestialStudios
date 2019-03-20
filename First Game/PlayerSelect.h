@@ -10,13 +10,13 @@ public:
 	//time = (float)dt;
 	void init()
 	{
+		GAME::m_modelShader->sendUniform("darken", 0);
+
 		mod.push_back(new Model("Models/Scene/PlayerSelect/PlayerSelect.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
 		mod.push_back(new Model("Models/Scene/Menu/Start.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 1
 		mod[1]->setToRender(false);
-
-
 
 		mod.push_back(new Model("Models/ClassPH/Assault/assaultPH.obj")); // I wrote them like this because they will all be different models eventually I think.
 	//	GameEmGine::addModel(mod.back()); // mod 2
@@ -129,16 +129,19 @@ public:
 							option[a] += ((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x < 0 ? 1 : -1;
 							option[a] = option[a] > 3 ? 0 : option[a] < 0 ? 3 : option[a];
 
+							*mod[6 + a] = *classes[option[a]];
 							lerpParam = 0;
+
 							if(a == 2)
 								extra = .7f;
 							else if(a == 3)
 								extra = 2;
 							GameEmGine::removeModel(mod[6 + a]);
 							mod[6 + a]->setColour({255,255,255});
-							*mod[6 + a] = *classes[option[a]];
-							mod[6 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5), -25, 0), mod[6 + a]->getTransformer().setRotation({0,270,0}), mod[6 + a]->getTransformer().setScale(1, 15, 7);
+							mod[6 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5 + extra), -25, 0), mod[6 + a]->getTransformer().setRotation({0,270,0}), mod[6 + a]->getTransformer().setScale(1, 15, 7);
 							GameEmGine::addModel(mod[6 + a]);
+
+
 
 							//tmp = mod[option]->getTransformer().getScale();
 						}

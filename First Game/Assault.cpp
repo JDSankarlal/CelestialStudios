@@ -18,7 +18,7 @@ Assault::Assault():Player()
 	init();
 }
 
-Assault::Assault(Player& model): Player(model)
+Assault::Assault(Player& model) : Player(model)
 {
 	init();
 }
@@ -69,33 +69,30 @@ void Assault::update(float dt)
 
 	/// - Assault Special Ability - ///
 	if(p1->isButtonPressed(CONTROLLER_Y))
-		if(type == assault)
+		if(time - m_timeSinceLastMissile >= 3)
 		{
-			if(time - getTimeSinceLastMissile() >= 3)
-			{
-				pMissiles.push_back(nullptr);
-				GAME::addModel(pMissiles.back() = new Model(*missile));
-				pMissiles.back()->getTransformer().reset();
-				pMissiles.back()->setColour(getColour());
-				Coord3D pos = getTransformer().getPosition();
-				pMissiles.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-				pMissiles.back()->getTransformer().setScale(0.4f);
+			pMissiles.push_back(new Model(*missile));
+			GAME::addModel(pMissiles.back());
+			pMissiles.back()->getTransformer().reset();
+			pMissiles.back()->setColour(getColour());
+			Coord3D pos = getTransformer().getPosition();
 
-				pMissiles.back()->getTransformer().setRotation({0 , angle ,0});
+			pMissiles.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
+			pMissiles.back()->getTransformer().setScale(0.4f);
+			pMissiles.back()->getTransformer().setRotation({0 , angle ,0});
 
-				float cosVal = cos((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
-				float sinVal = sin((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
+			float cosVal = cos((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
+			float sinVal = sin((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 
-				missileVelocity.push_back(Coord3D());
-				missileVelocity.back() = Coord3D(cosVal * move * 6, 0, sinVal * move * 6);
-				setTimeSinceLastMissile(time);
+			missileVelocity.push_back(Coord3D(cosVal * move * 6, 0, sinVal * move * 6));
+			setTimeSinceLastMissile(time);
 
-				timer.push_back(time);
-				AudioPlayer::createAudioStream("pew.wav");
-				AudioPlayer::play();
-				puts("Special Ability ASSAULT\n");
-			}
+			timer.push_back(time);
+			AudioPlayer::createAudioStream("pew.wav");
+			AudioPlayer::play();
+			puts("Special Ability ASSAULT\n");
 		}
+
 
 	for(unsigned a = 0; a < pMissiles.size(); a++)
 		if(pMissiles[a])

@@ -9,14 +9,14 @@ Camera* GameEmGine::m_mainCamera;
 //GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera*>GameEmGine::m_cameras;
-Shader* GameEmGine::m_modelShader, *GameEmGine::m_grayScalePost, *GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,
-*GameEmGine::m_blurVertical, *GameEmGine::m_blurrComposite;
+Shader* GameEmGine::m_modelShader, * GameEmGine::m_grayScalePost, * GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
+* GameEmGine::m_blurVertical, * GameEmGine::m_blurrComposite;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager* GameEmGine::m_inputManager;
 WindowCreator* GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer* GameEmGine::m_mainFrameBuffer, *GameEmGine::m_buffer1, *GameEmGine::m_buffer2, *GameEmGine::m_greyscaleBuffer;
+FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2, * GameEmGine::m_greyscaleBuffer;
 std::unordered_map<std::string, FrameBuffer*> GameEmGine::m_frameBuffers;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
@@ -415,7 +415,7 @@ void GameEmGine::removeModel(Model * model)
 
 
 
-void GameEmGine::addCamera(Camera* cam)
+void GameEmGine::addCamera(Camera * cam)
 {
 	cam;
 
@@ -450,6 +450,14 @@ void GameEmGine::update()
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
 		m_modelShader->disable();
 	}
+
+	///~ model sorting ~///
+
+	std::sort(m_models.begin(), m_models.end(), [](Model* a, Model* b)->bool
+		{
+			return a->getTransformer().getPosition().distance()
+		> b->getTransformer().getPosition().distance(); 
+		});
 
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 	///~ 3D-Graphics 1 ~///

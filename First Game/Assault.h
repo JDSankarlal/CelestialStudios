@@ -2,14 +2,14 @@
 #include "Player.h"
 
 
-class Assault :
+class Assault:
 	public Player
 {
 public:
 	void init();
 	Assault();
 	Assault(Player& model);
-	Assault(const char * path);
+	Assault(const char* path);
 	~Assault();
 	virtual float getTimeSinceLastMissile();
 	virtual void setTimeSinceLastMissile(float v);
@@ -25,6 +25,6 @@ public:
 
 private:
 	static Model* missile;//44
-	float m_timeSinceLastMissile=0;
+	float m_timeSinceLastMissile = 0;
 };
 

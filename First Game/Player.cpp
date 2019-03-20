@@ -5,8 +5,8 @@ typedef GameEmGine GAME;
 
 Model
 * Player::bullet,
-*Player::redBar, *Player::blueBar, *Player::greenBar, *Player::yellowBar,
-*Player::baseRedBar, *Player::baseBlueBar, *Player::baseGreenBar, *Player::baseYellowBar;
+* Player::redBar, * Player::blueBar, * Player::greenBar, * Player::yellowBar,
+* Player::baseRedBar, * Player::baseBlueBar, * Player::baseGreenBar, * Player::baseYellowBar;
 
 void Player::init(int index)
 {
@@ -29,18 +29,22 @@ void Player::init(int index)
 	if(!baseYellowBar)
 		Player::baseYellowBar = new Model("Models/BloodBar/YellowBarLighter/blood.obj");//71
 
-	squash.addDir("Models/RIP/Rip Ani/");
-	squash.setAnimationSpeed(.2f);
+	squash = new Animation();
+	squash->addDir("Models/RIP/Rip Ani/");
+	squash->setAnimationSpeed(.2f);
 	//	squash[a].repeat(true);
 
 	graveStone = new Model("Models/RIP/Rip Ani/RIP1.obj");
 	bulletCircle = new Model("Models/BulletCircle/BulletCircle.obj");
 
-
 	ringID = new Model("Models/ID/Identifier.obj");
+	this->addChild(ringID);
+	ringID->getTransformer().setPosition(0, .5f, 0);
+	ringID->getTransformer().setRotation({0,-90.f, 0});
+
 	gun = new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj");
 
-	Animation* walk = new Animation, *idle = new Animation;
+	Animation* walk = new Animation, * idle = new Animation;
 
 	walk->addDir("Models/AssaultModel/Walk/");
 	idle->addDir("Models/AssaultModel/Idle/");
@@ -65,11 +69,6 @@ Player::Player(int index):Model()
 Player::Player(Player& model) : Model(model)
 {
 	type = model.type;
-	squash = model.squash;
-	graveStone = new Model(*model.graveStone);
-	bulletCircle = new Model(*model.bulletCircle);
-	ringID = new Model(*model.ringID);
-	gun = new Model(*model.gun);
 	init(0);
 }
 
@@ -168,7 +167,7 @@ void Player::hitByEnemy(Model* mod, float damage)
 		//Coord3D test = ;
 
 		GLclampf(damage * .023f);
-		p1->setVibration(glm::clamp(damage*.023f, 0.f, 1.f), glm::clamp(damage*.023f, 0.f, 1.f));
+		p1->setVibration(glm::clamp(damage * .023f, 0.f, 1.f), glm::clamp(damage * .023f, 0.f, 1.f));
 		onHitShakeTimer = time;
 		onHitShakeDir = glm::clamp(damage * .0175f, 0.f, 1.f);
 	}
@@ -239,7 +238,7 @@ void Player::update(float dt)
 				graveStone->setColour(getColour());
 				graveStone->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->getTransformer().setPosition(getTransformer().getPosition()), graveStone->getTransformer().setRotation({0.0f,270.0f,0.0f});
 				GAME::addModel(graveStone);
-				graveStone->addAnimation("squash", &squash);
+				graveStone->addAnimation("squash", squash);
 
 				graveStone->setAnimation("squash");
 				GAME::removeModel(this);
@@ -280,7 +279,7 @@ void Player::update(float dt)
 					}
 				}
 			}
-			else
+			else if(p1->getTriggers().RT < .95 && gunControlLaw)
 			{
 				switch(m_index)
 				{
@@ -328,7 +327,7 @@ void Player::update(float dt)
 				}
 				else
 				{
-					//Put haptic feedback here
+					//Put heptic feedback here
 					puts("Can't Reload yet!\n");
 				}
 			}
@@ -387,17 +386,28 @@ void Player::update(float dt)
 
 			if(dead)
 			{
+				GAME::removeModel(this);
 				GAME::removeModel(m_lifeBar);
 				GAME::removeModel(m_baseBar);
 
 				GAME::removeModel(ringID);
 				GAME::removeModel(gun);
 				GAME::removeModel(bulletCircle);
+
+				for(int a = 0; a < (int)bullets.size(); a++)
+				{
+					GAME::removeModel(bullets[a]);
+					bullets.erase(bullets.begin());
+					velocity.erase(velocity.begin());
+					timer.erase(timer.begin());
+					a--;
+				}
+
 			}
 
 			//Update each player's Bullet Circle
 			bulletCircle->getTransformer().setScale(0.65f * (getBulletCount() / 30.0f));
-
+			bulletCircle->getTransformer().setPosition(getTransformer().getPosition());
 
 			//checks if bullet timer is up
 			for(unsigned b = 0; b < bullets.size(); b++)

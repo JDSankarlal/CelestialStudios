@@ -205,6 +205,8 @@ bool Mesh::loadMesh(std::string path)
 	cDir((char*)path.c_str());
 
 
+	//path.insert(path.begin(), '\"');
+	//path.insert(path.end(), '\"');
 
 	if(!fs::exists((path.substr(0, path.find('/') + 1) + "BIN") + path.substr(path.find_last_of('/'), path.find_first_of('.') - path.find_last_of('/') + 1) + "bin"))
 	{

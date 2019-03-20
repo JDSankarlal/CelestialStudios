@@ -58,7 +58,7 @@ protected:
 	float angle;
 	float duration = 0;
 	bool m_active=true;
-	Animation squash;
+	Animation* squash;
 	Model* graveStone, //22
 		* bulletCircle,//74
 		* ringID,//26

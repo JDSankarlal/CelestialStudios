@@ -8,6 +8,8 @@ public:
 	// Set menu screen
 	void init()
 	{
+		GAME::m_modelShader->sendUniform("darken", 0);
+
 		mod.push_back(new Model("Models/Scene/Menu/menu.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
 		mod.push_back(new Model("Models/Scene/Menu/Start.obj"));

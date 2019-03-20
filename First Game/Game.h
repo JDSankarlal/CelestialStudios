@@ -150,6 +150,8 @@ public:
 	// Set game screen
 	void init()
 	{
+		GAME::m_modelShader->sendUniform("darken", 1);
+
 		mod.resize(123);//sets the initial size of the vector (if u add any more models, increase this number)
 
 		/// - Set Camera  - ///
@@ -876,29 +878,30 @@ public:
 			switch(player->type)
 			{
 			case assault:
-				//Missile collision with boss
-				if(((Assault*)player)->missileCollision(CandyMan))
-				{
-					CandyMan->setHealth(CandyMan->getHealth() - 20);
-				}
-
-				//Missile collision with minions
-				for(auto& minion : CandyMan->minions)
-				{
-					if(((Assault*)player)->bulletCollisions(minion))
-					{
-						minion->setHealth(minion->getHealth() - 20);
-					}
-				}
-
-				//Missile collision with train cars
-				for(int t = 0; t < 7; t++)
-				{
-					if(((Assault*)player)->bulletCollisions(mod[79 + t]))
-					{
-						//do something?
-					}
-				}
+				////Missile collision with boss
+				//if(((Assault*)player)->missileCollision(CandyMan))
+				//{
+				//	CandyMan->setHealth(CandyMan->getHealth() - 20);
+				//}
+				//
+				////Missile collision with minions
+				//for(auto& minion : CandyMan->minions)
+				//{
+				//	if(((Assault*)player)->bulletCollisions(minion))
+				//	{
+				//		minion->setHealth(minion->getHealth() - 20);
+				//	}
+				//}
+				//
+				////Missile collision with train cars
+				//for(int t = 0; t < 7; t++)
+				//{
+				//	if(((Assault*)player)->bulletCollisions(mod[79 + t]))
+				//	{
+				//		//do something?
+				//	}
+				//}
+				
 				break;
 			case tank:
 				//nothing special needed

@@ -32,7 +32,7 @@ private:
 	Model* m_lifeBar;
 	Model* m_baseBar;
 
-	bool m_active = true;
+	bool m_active = true,m_dead=false;
 	float m_initialHealth, m_health;
 
 	static Model* minion;
