@@ -151,7 +151,7 @@ public:
 	// Set game screen
 	void init()
 	{
-		mod.resize(123);//sets the initial size of the vector (if u add any more models, increase this number)
+		mod.resize(125);//sets the initial size of the vector (if u add any more models, increase this number)
 
 
 
@@ -694,6 +694,7 @@ public:
 		mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
 		mod[73]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[73]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+		mod[72]->setColour({ 255,0,255 });
 
 		//Bullet Circle
 		mod[74]->setColour({255,0,0,150});
@@ -890,6 +891,9 @@ public:
 		static Boss* CandyMan;
 		CandyMan = (Boss*)mod[8]; //Set model 8 as Boss called "CandyMan"
 		static bool bossActive = true; //
+
+		static float bossFlashTime;
+		static bool bossFlash = false;
 
 		//Minion Variables
 		static vector<Minion*>minions;//Vector of minions
@@ -1495,6 +1499,8 @@ public:
 								if(mod[8])
 									if(collision(bullets[a][b], mod[8]))
 									{
+										bossFlash = true;
+										bossFlashTime = time;
 										GAME::removeModel(bullets[a][b]);
 										bullets[a].erase(bullets[a].begin() + b);
 										velocity[a].erase(velocity[a].begin() + b);
@@ -1511,6 +1517,18 @@ public:
 										puts("Hit The BOSS\n");
 										break;
 									}
+								//Make boss flash but Id have to make every single keyframe have missing texture... so idk
+								if (bossFlash == true)
+								{
+									mod[8]->setColour({255,100,0});
+									bossFlash = false;
+									mod[72]->setColour(1,1,1);
+								}
+								if (bossFlash == false && (time - bossFlashTime >= 0.15f))
+								{
+									mod[8]->setColour(1,1,1);
+									mod[72]->setColour({ 255,0,255 });
+								}
 
 								for(auto& minion : minions)
 								{
@@ -1656,10 +1674,10 @@ public:
 				mod[124]->setColour({ 0, 255, 255 });
 				for (int i = 99; i <= 105; i++)
 					{
-						mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
+						
+						mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
 					}
-				audio.createAudioStream("Audio/RailOff.wav");
-				audio.play();
+				
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ 0.05f, 0.f, 0.f });//Move train cars right
@@ -1672,6 +1690,8 @@ public:
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
 					}
 				}
+				audio.createAudioStream("Audio/RailOff.wav");
+				audio.play();
 			}
 			//Train stops
 			else if(20 <= (time - trainTimer) && 30 > (time - trainTimer))
@@ -1700,18 +1720,17 @@ public:
 				}
 			}
 
-
+			// Tunnel starts blinking 
 			else if (37 <= (time - trainTimer) && 37.5f > (time - trainTimer))
 			{
 				mod[123]->setColour({ 255, 0, 0 });
 				mod[124]->setColour({ 255, 0, 0 });
 				for (int i = 99; i <= 105; i++)
 					{
-						mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
+						mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
 						
 					}
-				audio.createAudioStream("Audio/RailOn.wav");
-				audio.play();
+				
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
@@ -1726,6 +1745,8 @@ public:
 						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
 					}
 				}
+				audio.createAudioStream("Audio/RailOn.wav");
+				audio.play();
 			}
 			else if (37.5f <= (time - trainTimer) && 38 > (time - trainTimer))
 			{
