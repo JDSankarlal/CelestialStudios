@@ -5,8 +5,8 @@ typedef GameEmGine GAME;
 
 Model
 * Player::bullet,
-* Player::redBar, * Player::blueBar, * Player::greenBar, * Player::yellowBar,
-* Player::baseRedBar, * Player::baseBlueBar, * Player::baseGreenBar, * Player::baseYellowBar;
+*Player::redBar, *Player::blueBar, *Player::greenBar, *Player::yellowBar,
+*Player::baseRedBar, *Player::baseBlueBar, *Player::baseGreenBar, *Player::baseYellowBar;
 
 void Player::init(int index)
 {
@@ -35,16 +35,18 @@ void Player::init(int index)
 	//	squash[a].repeat(true);
 
 	graveStone = new Model("Models/RIP/Rip Ani/RIP1.obj");
-	bulletCircle = new Model("Models/BulletCircle/BulletCircle.obj");
 
 	ringID = new Model("Models/ID/Identifier.obj");
+	bulletCircle = new Model("Models/BulletCircle/BulletCircle.obj");
+
+	ringID->addChild(bulletCircle);
 	this->addChild(ringID);
-	ringID->getTransformer().setPosition(0, .5f, 0);
+
 	ringID->getTransformer().setRotation({0,-90.f, 0});
 
 	gun = new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj");
 
-	Animation* walk = new Animation, * idle = new Animation;
+	Animation* walk = new Animation, *idle = new Animation;
 
 	walk->addDir("Models/AssaultModel/Walk/");
 	idle->addDir("Models/AssaultModel/Idle/");
@@ -109,6 +111,8 @@ void Player::setPlayerIndex(int index)
 		m_lifeBar = yellowBar;
 		ringID->setColour(1.f, 1.f, 0.4314f);
 	}
+
+	ringID->getTransformer().setPosition(Coord3D{0, .06f + .02f * index + .01f,0});
 
 	//m_lifeBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 	//m_lifeBar->getTransformer().setPosition(0.35f, 1.6f, 0.0f);
@@ -406,8 +410,7 @@ void Player::update(float dt)
 			}
 
 			//Update each player's Bullet Circle
-			bulletCircle->getTransformer().setScale(0.65f * (getBulletCount() / 30.0f));
-			bulletCircle->getTransformer().setPosition(getTransformer().getPosition());
+			bulletCircle->getTransformer().setScale((getBulletCount() / 30.0f));
 
 			//checks if bullet timer is up
 			for(unsigned b = 0; b < bullets.size(); b++)

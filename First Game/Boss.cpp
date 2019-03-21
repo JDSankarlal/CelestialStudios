@@ -199,7 +199,7 @@ void Boss::update(float dt)
 					if(hasTarget[a])
 					{
 						missles[a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
-						missileRadious[a]->getTransformer().setPosition(bossTarget[a] + Coord3D{0,.03f * (a + 1),0});
+						missileRadious[a]->getTransformer().setPosition(bossTarget[a] + Coord3D{0,.06f + .02f * a,0});
 						missileRadious[a]->getTransformer().setScale(catmull(-7.f, 1.f, 0.7f, -7.f, curveroni[a]));
 					}
 

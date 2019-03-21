@@ -5,7 +5,7 @@
 Model::Model()
 {}
 
-Model::Model(Model& model) :
+Model::Model(Model& model):
 	m_transform(model.m_transform),
 	m_mesh(model.m_mesh),
 	m_colour(model.m_colour),
@@ -16,7 +16,7 @@ Model::Model(Model& model) :
 	//boundingBoxInit();
 }
 
-Model::Model(const char * path) :
+Model::Model(const char * path):
 	m_transBB(glm::mat4(1))
 {
 	if(loadModel(path))
@@ -122,13 +122,22 @@ bool Model::collision3D(Model * l, Model * k)
 
 void Model::render(Shader& shader, Camera& cam)
 {
-	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
+	float colour[4]{(float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255};
 
 	shader.enable();
 	m_shader = shader;
 
 	if(m_parent)
-		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_parent->m_transform.getTransformation() * m_transform.getTransformation())[0][0]));
+		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &(([&]()->glm::mat4
+			{
+				glm::mat4 tmp(1);
+				Model* parent = m_parent; while(parent)
+				{
+					tmp = parent->getTransformer().getTransformation() * tmp;
+					parent = parent->m_parent;
+				}
+				return tmp; 
+			}() *m_transform.getTransformation())[0][0]));
 	else
 		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &((m_transform.getTransformation())[0][0]));
 
@@ -154,14 +163,14 @@ void Model::render(Shader& shader, Camera& cam)
 		for(auto&a : m_children)
 			a->render(shader, cam);
 	}
-		shader.disable();
+	shader.disable();
 }
 
 void Model::drawBoundingBox()
 {
 
 	m_shaderBB.enable();
-	float colour[4]{ (float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255 };
+	float colour[4]{(float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255};
 
 	glUniform4fv(m_shaderBB.getUniformLocation("colourMod"), 1, colour);
 
@@ -287,8 +296,8 @@ void Model::boundingBoxUpdate()
 		glUniformMatrix4fv(m_shaderBB.getUniformLocation("trans"), 1, false, &(m_transBB)[0][0]);
 		m_shaderBB.disable();
 	}
-	glm::mat4 tmpMat= m_parent?m_parent->m_transform.getTransformation()*
-	m_transform.getTransformation(): m_transform.getTransformation();
+	glm::mat4 tmpMat = m_parent ? m_parent->m_transform.getTransformation()*
+		m_transform.getTransformation() : m_transform.getTransformation();
 	for(auto &a : thing)
 	{
 
@@ -299,7 +308,8 @@ void Model::boundingBoxUpdate()
 		{
 			m_front = m_back = m_left = m_right = m_top = m_bottom = Coord3D(a.x, a.y, a.z);
 			first = false;
-		} else
+		}
+		else
 		{
 			m_front = a.z > m_front.z ? Coord3D(a.x, a.y, a.z) : m_front;
 			m_back = a.z < m_back.z ? Coord3D(a.x, a.y, a.z) : m_back;
@@ -311,18 +321,18 @@ void Model::boundingBoxUpdate()
 	}
 
 	glm::vec4
-		top =  glm::vec4(m_top.x, m_top.y, m_top.z, 1),
+		top = glm::vec4(m_top.x, m_top.y, m_top.z, 1),
 		bottom = glm::vec4(m_bottom.x, m_bottom.y, m_bottom.z, 1),
-		left =  glm::vec4(m_left.x, m_left.y, m_left.z, 1),
-		right =  glm::vec4(m_right.x, m_right.y, m_right.z, 1),
-		front =  glm::vec4(m_front.x, m_front.y, m_front.z, 1),
-		back =  glm::vec4(m_back.x, m_back.y, m_back.z, 1);
+		left = glm::vec4(m_left.x, m_left.y, m_left.z, 1),
+		right = glm::vec4(m_right.x, m_right.y, m_right.z, 1),
+		front = glm::vec4(m_front.x, m_front.y, m_front.z, 1),
+		back = glm::vec4(m_back.x, m_back.y, m_back.z, 1);
 
 	m_width = abs(right.x - left.x);
 	m_height = abs(top.y - bottom.y);
 	m_depth = abs(front.z - back.z);
 	m_center = Coord3D((right.x + left.x), (top.y + bottom.y), (front.z + back.z)) / 2;
-	
+
 	if(m_enableBB)
 		boundingBoxInit();
 }
@@ -373,14 +383,14 @@ void Model::boundingBoxInit()
 		back = m_back.z;
 
 	Vertex3D
-		topLeftBack{ { left,top,back } },
-		topRightBack{ { right,top,back } },
-		topLeftFront{ { left, top,front } },
-		topRightFront{ { right,top,front } },
-		bottomLeftBack{ { left, bottom,back } },
-		bottomRightBack{ { right,bottom,back } },
-		bottomLeftFront{ { left, bottom,front } },
-		bottomRightFront{ { right,bottom,front } };
+		topLeftBack{{ left,top,back }},
+		topRightBack{{ right,top,back }},
+		topLeftFront{{ left, top,front }},
+		topRightFront{{ right,top,front }},
+		bottomLeftBack{{ left, bottom,back }},
+		bottomRightBack{{ right,bottom,back }},
+		bottomLeftFront{{ left, bottom,front }},
+		bottomRightFront{{ right,bottom,front }};
 
 
 	Vertex3D tmp[12 * 3]{
