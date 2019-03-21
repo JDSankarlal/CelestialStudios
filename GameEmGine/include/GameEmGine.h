@@ -89,7 +89,7 @@ public:
 	void addModelBatch(const char *model);
 
 
-	void removeSprite(int index);
+	void removeSprite(int m_index);
 
 
 	static void addCamera(Camera* camera);
@@ -109,9 +109,9 @@ public:
 
 	static int controllersConnected();
 
-	static bool isControllerConnected(int index);
+	static bool isControllerConnected(int m_index);
 
-	static XinputDevice* getController(int index);
+	static XinputDevice* getController(int m_index);
 
 	static Shader *m_modelShader,*m_grayScalePost,*m_bloomHighPass,*m_blurHorizontal,*m_blurVertical,*m_blurrComposite;
 

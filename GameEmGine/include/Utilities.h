@@ -1,8 +1,11 @@
 #pragma once
+//#define clamp(val, min, max) (val > max ? max : val < min ? min : val)
 #include <GL/glew.h>
 #include <glm/common.hpp>
 #include <string>
-#include <cstdio>
+
+
+
 
 struct Coord2D
 {
@@ -12,9 +15,9 @@ struct Coord2D
 	{
 		return glm::vec2(x, y);
 	}
-	Coord2D()=default;
-	
-	Coord2D(float a_x,float a_y)
+	Coord2D() = default;
+
+	Coord2D(float a_x, float a_y)
 	{
 		x = a_x, y = a_y;
 	}
@@ -34,10 +37,10 @@ struct Coord2D
 		return *this / distance();
 	}
 
-	float& operator[](int index)
+	float& operator[](int m_index)
 	{
 		float *error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return static_cast<float&>(x);
@@ -94,7 +97,7 @@ struct Coord3D
 	{
 		return glm::vec3(x, y, z);
 	}
-	
+
 	static float distance(Coord3D v1, Coord3D v2)
 	{
 		v2 = v2 - v1;
@@ -159,15 +162,15 @@ struct Coord3D
 	void normalize()
 	{
 		float norm = sqrtf(x * x + y * y + z * z);
-		x *= norm;
-		y *= norm;
-		z *= norm;
+		x /= norm;
+		y /= norm;
+		z /= norm;
 	}
 
-	float& operator[] (int index)
+	float& operator[] (int m_index)
 	{
 		float* error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return const_cast<float&>(x);
@@ -252,10 +255,10 @@ struct Coord3D
 struct Size2D
 {
 	float width = 0, height = 0;
-	float& operator[](int index)
+	float& operator[](int m_index)
 	{
 		float *error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return static_cast<float&>(width);
@@ -311,10 +314,10 @@ struct Size3D
 		this->height = h;
 	}
 
-	float& operator[] (int index)
+	float& operator[] (int m_index)
 	{
 		float* error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return const_cast<float&>(width);
@@ -407,10 +410,10 @@ struct ColourRGBA
 		*this = *this * rgba;
 	}
 
-	GLubyte& operator[](int index)
+	GLubyte& operator[](int m_index)
 	{
 		GLubyte *error = nullptr;
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return static_cast<GLubyte&>(colorR);
@@ -441,9 +444,9 @@ struct UV
 		this->uv_v = v;
 	}
 
-	float& operator[](int index)
+	float& operator[](int m_index)
 	{
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return static_cast<float&>(uv_u);

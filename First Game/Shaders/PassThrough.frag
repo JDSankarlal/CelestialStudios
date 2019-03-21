@@ -31,6 +31,7 @@ uniform float LightAngleConstraint[MAX_LIGHTS_SIZE];
 uniform sampler2D uTex;
 uniform vec4 colourMod;
 uniform bool textured;
+uniform bool darken ;
 
 in vec2 texcoord;
 in vec3 norm;
@@ -106,7 +107,7 @@ void main()
     {       
         vec4 textureColor = texture(uTex, texcoord);
         outColor = textureColor;
-        outColor.rgb *= textureColor.rgb*1.2;
+        outColor.rgb *= darken ? textureColor.rgb * 1.2 : vec3(1);
         outColor *= colourMod;
     }
     else     

@@ -12,7 +12,7 @@ public:
 	int getHealth();
 
 private:
-	float lifeTime;
-	int health;
+	float m_lifeTime;
+	int m_health;
 };
 

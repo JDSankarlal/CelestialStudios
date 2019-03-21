@@ -6,9 +6,9 @@
 struct Size
 {
 	int row, colum;
-	int& operator[](int index)
+	int& operator[](int m_index)
 	{
-		switch(index)
+		switch(m_index)
 		{
 		case 0:
 			return row;

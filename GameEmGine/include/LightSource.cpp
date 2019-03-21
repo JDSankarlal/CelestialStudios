@@ -11,19 +11,19 @@ LightInfo LightSource::m_info;
 
 
 
-void LightSource::setLightType(LIGHT_TYPE type, unsigned index)
+void LightSource::setLightType(LIGHT_TYPE type, unsigned m_index)
 {
-	m_lights[index].type = type;
+	m_lights[m_index].type = type;
 }
 
-void LightSource::setPosition(Coord3D pos, unsigned index)
+void LightSource::setPosition(Coord3D pos, unsigned m_index)
 {
-	m_lights[index].transform->setPosition(pos.x, pos.y, pos.z);
+	m_lights[m_index].transform->setPosition(pos.x, pos.y, pos.z);
 }
 
-void LightSource::setDirection(Coord3D dir, int index)
+void LightSource::setDirection(Coord3D dir, int m_index)
 {
-	m_lights[index].direction = -dir;
+	m_lights[m_index].direction = -dir;
 }
 
 void LightSource::setSceneAmbient(ColourRGBA ambi)
@@ -31,39 +31,39 @@ void LightSource::setSceneAmbient(ColourRGBA ambi)
 	m_ambient = ambi;
 }
 
-void LightSource::setDiffuse(ColourRGBA diff, unsigned index)
+void LightSource::setDiffuse(ColourRGBA diff, unsigned m_index)
 {
-	m_lights[index].diffuse = diff;
+	m_lights[m_index].diffuse = diff;
 }
 
-void LightSource::setSpecular(ColourRGBA spec, unsigned index)
+void LightSource::setSpecular(ColourRGBA spec, unsigned m_index)
 {
-	m_lights[index].specular = spec;
+	m_lights[m_index].specular = spec;
 }
 
-void LightSource::setSpecularExponent(float specEx, unsigned index)
+void LightSource::setSpecularExponent(float specEx, unsigned m_index)
 {
-	m_lights[index].specularExponent = specEx;
+	m_lights[m_index].specularExponent = specEx;
 }
 
-void LightSource::setAttenuationConstant(float attenConst, unsigned index)
+void LightSource::setAttenuationConstant(float attenConst, unsigned m_index)
 {
-	m_lights[index].attenuationConst = attenConst;
+	m_lights[m_index].attenuationConst = attenConst;
 }
 
-void LightSource::setAttenuationLinear(float attenLinear, unsigned index)
+void LightSource::setAttenuationLinear(float attenLinear, unsigned m_index)
 {
-	m_lights[index].attenuationLinear = attenLinear;
+	m_lights[m_index].attenuationLinear = attenLinear;
 }
 
-void LightSource::setAttenuationQuadratic(float attenQuad, unsigned index)
+void LightSource::setAttenuationQuadratic(float attenQuad, unsigned m_index)
 {
-	m_lights[index].attenuationQuadratic = attenQuad;
+	m_lights[m_index].attenuationQuadratic = attenQuad;
 }
 
-void LightSource::setParent(Model* parent, unsigned index)
+void LightSource::setParent(Model* parent, unsigned m_index)
 {
-	m_lights[index].parent = parent;
+	m_lights[m_index].parent = parent;
 }
 
 void LightSource::setCamera(Camera* cam)

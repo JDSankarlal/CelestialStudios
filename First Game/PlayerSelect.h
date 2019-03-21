@@ -10,6 +10,8 @@ public:
 	//time = (float)dt;
 	void init()
 	{
+		GAME::m_modelShader->sendUniform("darken", 0);
+
 		mod.push_back(new Model("Models/Scene/PlayerSelect/PlayerSelect.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
 		mod.push_back(new Model("Models/Scene/Menu/Start.obj"));
@@ -172,11 +174,6 @@ public:
 
 		static Coord3D tmp = Coord3D(20.0f);
 		float extra = 0;
-		static std::vector<Player*>playerSelections
-		{
-			new Assault("Models/AssaultModel/Idle/ACM1.obj"),new Tank("Models/AssaultModel/Idle/ACM1.obj"),
-			new  Medic("Models/AssaultModel/Idle/ACM1.obj"), new Specialist("Models/AssaultModel/Idle/ACM1.obj")
-		};
 
 		for (int a = 0; a < 4; a++)
 		{
@@ -192,6 +189,7 @@ public:
 							option[a] += ((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x < 0 ? 1 : -1;
 							option[a] = option[a] > 3 ? 0 : option[a] < 0 ? 3 : option[a];
 
+							*mod[6 + a] = *classes[option[a]];
 							lerpParam = 0;
 							if (a == 2)
 								extra = .7f;
@@ -386,6 +384,11 @@ public:
 	}
 	
 private:
+	std::vector<Player*>playerSelections
+	{
+		new Assault("Models/AssaultModel/Idle/ACM1.obj"),new Tank("Models/AssaultModel/Idle/ACM1.obj"),
+		new  Medic("Models/AssaultModel/Idle/ACM1.obj"), new Specialist("Models/AssaultModel/Idle/ACM1.obj")
+	};
 	Model* classes[4]
 	{ new Model("Models/ClassPH/Assault/assaultPH.obj"),new Model("Models/ClassPH/Tank/tankPH.obj"),
 		new  Model("Models/ClassPH/Medic/medicPH.obj"),new Model("Models/ClassPH/Specialist/specPH.obj") };
