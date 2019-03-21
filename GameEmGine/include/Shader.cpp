@@ -207,9 +207,9 @@ void Shader::linkShaders()
 
 }
 
-void Shader::addAtribute(const std::string attributeName, short index)
+void Shader::addAtribute(const std::string attributeName, short m_index)
 {
-	glBindAttribLocation(m_programID, index, attributeName.c_str());
+	glBindAttribLocation(m_programID, m_index, attributeName.c_str());
 	linkShaders();
 }
 

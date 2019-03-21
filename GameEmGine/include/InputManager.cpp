@@ -128,14 +128,14 @@ int InputManager::controllersConnected()
 	return count;
 }
 
-bool InputManager::isControllerConnected(unsigned int index)
+bool InputManager::isControllerConnected(unsigned int m_index)
 {
-	return XinputManager::controllerConnected(index);
+	return XinputManager::controllerConnected(m_index);
 }
 
-XinputDevice& InputManager::getController(unsigned int index)
+XinputDevice& InputManager::getController(unsigned int m_index)
 {
-	return *XinputManager::getController(index);
+	return *XinputManager::getController(m_index);
 }
 
 void InputManager::controllerUpdate()

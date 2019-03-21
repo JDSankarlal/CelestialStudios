@@ -21,6 +21,14 @@ public:
 	Model(const char* path);
 	virtual ~Model();
 
+	bool collision2D(Model* k);
+
+	bool collision2D(Model* l, Model* k);
+
+	bool collision3D(Model* k);
+
+	bool collision3D(Model* l, Model* k);
+
 	void render(Shader & shader, Camera & cam);
 
 	Transformer& getTransformer();
@@ -57,16 +65,19 @@ public:
 
 	void boundingBoxUpdate();
 
-	Animation* getAnimation(const char* tag);
+	Animation* getAnimation(const char* tag );
+	Animation* getCurrentAnimation();
 	void  setAnimation(const char* tag);
 
 	Mesh* getMesh();
 	Shader* getShader();
 
 	void setToRender(bool render);
-
+	void setTransparent(bool trans);
+	bool isTransparent();
 private:
 	bool m_render = true;
+	bool m_transparent = false;
 	std::unordered_map< std::string, Animation *>m_animations;
 	std::string m_animation;
 	Mesh m_mesh;

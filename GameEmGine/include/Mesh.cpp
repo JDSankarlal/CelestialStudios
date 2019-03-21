@@ -2,7 +2,7 @@
 #include <functional>
 #include <filesystem>
 
-namespace fs = std::filesystem;
+namespace fs = std::experimental::filesystem;
 
 Mesh::Mesh()
 {
@@ -205,6 +205,8 @@ bool Mesh::loadMesh(std::string path)
 	cDir((char*)path.c_str());
 
 
+	//path.insert(path.begin(), '\"');
+	//path.insert(path.end(), '\"');
 
 	if(!fs::exists((path.substr(0, path.find('/') + 1) + "BIN") + path.substr(path.find_last_of('/'), path.find_first_of('.') - path.find_last_of('/') + 1) + "bin"))
 	{
@@ -763,14 +765,14 @@ void Mesh::render(Shader & shader)
 	shader.disable();
 }
 
-GLuint Mesh::getNumFaces(int index) const
+GLuint Mesh::getNumFaces(int m_index) const
 {
-	return m_numFaces[index];
+	return m_numFaces[m_index];
 }
 
-GLuint Mesh::getNumVerticies(int index) const
+GLuint Mesh::getNumVerticies(int m_index) const
 {
-	return m_numVerts[index];
+	return m_numVerts[m_index];
 }
 
 void Mesh::init()

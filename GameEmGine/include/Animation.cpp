@@ -9,7 +9,7 @@ Animation::Animation()
 Animation::~Animation()
 {}
 
-void Animation::addFrame(Mesh * frame, float speed)
+void Animation::addFrame(Mesh* frame, float speed)
 {
 	frame, speed;
 }
@@ -23,10 +23,10 @@ void Animation::addDir(const char * dir)
 {
 	std::string path(dir);
 	//path += fileName;
-	auto filePath = fs::directory_iterator(path);
+	auto filePathData = fs::directory_iterator(path);
 
 	m_unpackedData.clear();
-	for(auto&a : filePath)
+	for(auto&a : filePathData)
 	{
 		std::wstring tmpPath = a.path();
 		int check = (int)tmpPath.find(L".obj");
@@ -39,7 +39,6 @@ void Animation::addDir(const char * dir)
 
 		m_unpackedData.push_back(tmp.loadAni(str));
 	}
-
 }
 
 void Animation::update(Shader* shader, Mesh* mesh)
@@ -102,6 +101,11 @@ int Animation::getFrameNumber()
 bool Animation::checkEnd()
 {
 	return m_frame == m_frames.size();
+}
+
+bool Animation::checkPlay()
+{
+	return !m_pause;
 }
 
 void Animation::stop()

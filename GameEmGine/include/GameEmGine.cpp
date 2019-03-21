@@ -16,7 +16,7 @@ InputManager* GameEmGine::m_inputManager;
 WindowCreator* GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2,*GameEmGine::m_greyscaleBuffer;
+FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2, * GameEmGine::m_greyscaleBuffer;
 std::unordered_map<std::string, FrameBuffer*> GameEmGine::m_frameBuffers;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
@@ -147,7 +147,7 @@ void GameEmGine::run()
 
 	glEnable(GL_TEXTURE_2D);
 
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -156,7 +156,7 @@ void GameEmGine::run()
 	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
 	{
 		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
-		
+
 		InputManager::controllerUpdate();
 		update();
 
@@ -206,14 +206,14 @@ int GameEmGine::controllersConnected()
 	return m_inputManager->controllersConnected();
 }
 
-bool GameEmGine::isControllerConnected(int index)
+bool GameEmGine::isControllerConnected(int m_index)
 {
-	return m_inputManager->isControllerConnected(index);
+	return m_inputManager->isControllerConnected(m_index);
 }
 
-XinputDevice* GameEmGine::getController(int index)
+XinputDevice* GameEmGine::getController(int m_index)
 {
-	return &m_inputManager->getController(index);
+	return &m_inputManager->getController(m_index);
 }
 
 WindowCreator* GameEmGine::getWindow()
@@ -237,7 +237,6 @@ void GameEmGine::shaderInit()
 	m_blurVertical->create("Shaders/Main Buffer.vtsh", "Shaders/BlurVertical.fmsh");
 	m_blurrComposite = new Shader;
 	m_blurrComposite->create("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
-
 
 	m_grayScalePost = new Shader;
 	m_grayScalePost->create("Shaders/Main Buffer.vtsh", "Shaders/GrayscalePost.fmsh");
@@ -341,14 +340,16 @@ void GameEmGine::setScene(Scene * scene)
 	m_models.clear();
 	m_frameBuffers.clear();
 	m_frameBuffers[m_mainFrameBuffer->getTag()] = m_mainFrameBuffer;
+	scene->parent = m_mainScene;//set the parent to the previous scene
 	m_mainScene = scene;
 	scene->init();
 	m_inputManager->keyPressedCallback(scene->keyPressed);
 	m_inputManager->keyReleasedCallback(scene->keyReleased);
 	m_inputManager->mouseButtonPressCallback(scene->mousePressed);
 	m_inputManager->mouseButtonReleaseCallback(scene->mouseReleased);
+
 	//m_render = scene->render;
-	m_gameLoop = [](double a)->void {m_mainScene->update(a); };
+	m_gameLoop = [&](double a)->void {m_mainScene->update(a); };
 }
 
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
@@ -406,14 +407,15 @@ void GameEmGine::addModel(Model * model)
 
 void GameEmGine::removeModel(Model * model)
 {
-	for(unsigned a = 0; a < m_models.size(); a++)
-		if(m_models[a] == model)
-			m_models.erase(m_models.begin() + a);
+	if(model)
+		for(unsigned a = 0; a < m_models.size(); a++)
+			if(m_models[a] == model)
+				m_models.erase(m_models.begin() + a);
 }
 
 
 
-void GameEmGine::addCamera(Camera* cam)
+void GameEmGine::addCamera(Camera * cam)
 {
 	cam;
 
@@ -449,13 +451,31 @@ void GameEmGine::update()
 		m_modelShader->disable();
 	}
 
+	///~ model sorting ~///
+
+	std::sort(m_models.begin(), m_models.end(), [](Model* a, Model* b)->bool
+		{
+			return a->getTransformer().getPosition().distance()
+		> b->getTransformer().getPosition().distance(); 
+		});
+	std::vector<Model*> transparent;
+	for(auto&a : m_models)
+	{
+		if(a->isTransparent())
+			transparent.push_back(a);
+	}
+
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 	///~ 3D-Graphics 1 ~///
 	m_frameBuffers["Main Buffer"]->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
 	{
+		if (!m_models[a]->isTransparent())
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
 	}
+	for(auto&a :transparent)
+		a->render(*m_modelShader, *m_mainCamera);
+
 	m_frameBuffers["Main Buffer"]->disable();
 
 	//std::vector<std::pair<std::string, FrameBuffer*>>tmp(m_frameBuffers.begin(), m_frameBuffers.end());
@@ -512,8 +532,8 @@ void GameEmGine::update()
 	FrameBuffer::disable();
 
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
-	
-	
+
+
 	m_greyscaleBuffer->enable();
 	m_blurrComposite->enable();
 	glActiveTexture(GL_TEXTURE0);
@@ -558,8 +578,6 @@ void GameEmGine::update()
 	glfwPollEvents();//updates the event handlers
 
 }
-
-
 
 void GameEmGine::changeViewport(GLFWwindow*, int w, int h)
 {
