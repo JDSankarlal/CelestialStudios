@@ -39,8 +39,14 @@ void Tank::setTimeSinceLastShield(float v)
 
 void Tank::update(float dt)
 {
-	if(!m_active)
+	if (!m_active)
+	{
+		getCurrentAnimation()->pause();
 		return;
+	}
+	else
+		if (!getCurrentAnimation()->checkPlay())
+			getCurrentAnimation()->play();
 
 	Player::update(dt);
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);

@@ -143,7 +143,7 @@ public:
 
 	void playerTypes(vector<Player*> & playerType)
 	{
-		for(Player* a : playerType)
+		for (Player* a : playerType)
 			mod.push_back(a);
 	}
 
@@ -166,7 +166,7 @@ public:
 			if (a)
 				GAME::addModel(a),
 				Minion::addTarget((Player*)a);
-			
+
 			else
 				break;
 
@@ -638,22 +638,22 @@ public:
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 10);
 		LightSource::setParent(((Boss*)mod[8])->getMissials()[0], 10);
-		LightSource::setDiffuse({255,100,0,100}, 10);
+		LightSource::setDiffuse({ 255,100,0,100 }, 10);
 		LightSource::setAttenuationQuadratic(0.06f, 10);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 11);
 		LightSource::setParent(((Boss*)mod[8])->getMissials()[1], 11);
-		LightSource::setDiffuse({255,100,0,100}, 11);
+		LightSource::setDiffuse({ 255,100,0,100 }, 11);
 		LightSource::setAttenuationQuadratic(0.06f, 11);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 12);
 		LightSource::setParent(((Boss*)mod[8])->getMissials()[2], 12);
-		LightSource::setDiffuse({255,100,0,100}, 12);
+		LightSource::setDiffuse({ 255,100,0,100 }, 12);
 		LightSource::setAttenuationQuadratic(0.06f, 12);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 13);
 		LightSource::setParent(((Boss*)mod[8])->getMissials()[3], 13);
-		LightSource::setDiffuse({255,100,0,100}, 13);
+		LightSource::setDiffuse({ 255,100,0,100 }, 13);
 		LightSource::setAttenuationQuadratic(0.06f, 13);
 
 		LightSource::setSceneAmbient({ 255,255,255,255 });
@@ -707,12 +707,12 @@ public:
 		CandyMan->setPlayers((Player * *)mod.data());
 		CandyMan->update((float)dt);
 
-		for(int a = 0; a < 4; a++)
+		for (int a = 0; a < 4; a++)
 		{
 			player = (Player*)mod[a];
 			player->setPlayerIndex(a);
 
-			if(!player->dead)
+			if (!player->dead)
 				deathCounter = 0;
 
 			player->update((float)dt);
@@ -723,26 +723,50 @@ public:
 			if (player->bulletCollisions(CandyMan))
 			{
 				CandyMan->setHealth(CandyMan->getHealth() - 10);
-			
+
 				CandyMan->bossFlash = true;
 			}
 
 			//bullet collision with minions
-			for(auto& minion : CandyMan->minions)
-				if(player->bulletCollisions(minion))
+			for (auto& minion : CandyMan->minions)
+				if (player->bulletCollisions(minion))
 					minion->setHealth(minion->getHealth() - 10);
 
 
 
-			for(int t = 0; t < 7; t++)
+
+			//Old code, make this new
+			/// - Bullet Collisions with Train - /// 
+			//for (int t = 0; t < 7; t++)
+			//{
+			//	if (collision(bullets[a][b], mod[79 + t]))
+			//	{
+			//		GAME::removeModel(bullets[a][b]);
+			//		
+			//		//GAME::removeModel();
+			//		//erase bulletr
+			//		//bullets[a].erase(bullets[a].begin() + b),
+			//		//	timer[a].erase(timer[a].begin() + b),
+			//		//	velocity[a].erase(velocity[a].begin() + b);
+			//	}
+			//}
+
+				//}
+			//}
+
+			for (int b = 0; b < 7; b++)
 			{
-				if(player->bulletCollisions(mod[79 + t]))
+				player->bulletCollisions(mod[79 + b]);
+				if (player->collision2D(mod[79 + b]))
 				{
-					//do something?
+
+					player->getTransformer().translateBy(((XinputController*)GAME::getController(a))->getSticks()[LS].x * -move *1.2f, 0, ((XinputController*)GAME::getController(a))->getSticks()[LS].y * -move * 1.2f); //move player
+
 				}
+
 			}
 
-			switch(player->type)
+			switch (player->type)
 			{
 			case assault:
 				break;
@@ -750,28 +774,28 @@ public:
 				//nothing special needed
 				break;
 			case medic:
-				for(int b = 0; b < 4; b++)
+				for (int b = 0; b < 4; b++)
 					((Medic*)player)->getHealing((Player*)mod[b]);
 				break;
 			case specialist:
 
-				if(((Specialist*)player)->hitTurret(CandyMan))
+				if (((Specialist*)player)->hitTurret(CandyMan))
 				{
 					//do something?
 				}
 
 				//bullet collision with minions
-				for(auto& minion : CandyMan->minions)
+				for (auto& minion : CandyMan->minions)
 				{
-					if(((Specialist*)player)->hitTurret(minion))
+					if (((Specialist*)player)->hitTurret(minion))
 					{
 						//do something?
 
 					}
 				}
 
-				for(auto& missile : CandyMan->getMissials())
-					if(((Specialist*)player)->hitTurret(missile))
+				for (auto& missile : CandyMan->getMissials())
+					if (((Specialist*)player)->hitTurret(missile))
 					{
 						//do something?
 					}
@@ -779,12 +803,8 @@ public:
 				break;
 			}
 
-
 		}
 
-								
-										
-								
 		/// - Train Car Movement - ///
 		for (int a = 0; a < 1; a++)
 		{
@@ -797,7 +817,7 @@ public:
 				mod[124]->setColour({ 255, 0, 0 });
 				for (int t = 0; t < 7; t++)
 				{
-					if(collision2D(mod[79 + t], player))
+					if (collision2D(mod[79 + t], player))
 					{
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
@@ -812,8 +832,8 @@ public:
 			{
 				for (int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{0.05f, 0.f, 0.f});//Move train cars right
-					if(collision2D(mod[79 + t], player))
+					mod[79 + t]->getTransformer().translateBy(Coord3D{ 0.05f, 0.f, 0.f });//Move train cars right
+					if (collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
@@ -827,7 +847,7 @@ public:
 			{
 				audio.createAudioStream("Audio/RailOff.wav");
 				audio.play();
-				
+
 				mod[123]->setColour({ 0, 255, 255 });
 				mod[124]->setColour({ 0, 255, 255 });
 				for (int i = 99; i <= 105; i++)
@@ -863,8 +883,8 @@ public:
 			{
 				for (int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
-					if(collision2D(mod[79 + t], player))
+					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
+					if (collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
@@ -989,8 +1009,8 @@ public:
 			{
 				for (int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
-					if(collision2D(mod[79 + t], player))
+					mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.00f, 0.f, 0.f });//Stop Train cars on map
+					if (collision2D(mod[79 + t], player))
 					{
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
@@ -1028,13 +1048,13 @@ public:
 
 		/// - If game not m_active and Camera is m_active (Move camera mode) - ///
 		CandyMan->setActive(true);
-		for(int a = 0; a < 4; a++)
+		for (int a = 0; a < 4; a++)
 			((Player*)mod[a])->setActive(true);
 
-		if(!movePlayer)
-			if(GAME::isControllerConnected(0))
+		if (!movePlayer)
+			if (GAME::isControllerConnected(0))
 			{
-				for(int a = 0; a < 4; a++)
+				for (int a = 0; a < 4; a++)
 					((Player*)mod[a])->setActive(false);
 
 				CandyMan->setActive(false);

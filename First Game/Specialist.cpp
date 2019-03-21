@@ -62,7 +62,13 @@ void Specialist::update(float dt)
 {
 	dt;
 	if(!m_active)
+	{
+		getCurrentAnimation()->pause();
 		return;
+	}
+	else
+		if (!getCurrentAnimation()->checkPlay())
+			getCurrentAnimation()->play();
 
 	Player::update(dt);
 

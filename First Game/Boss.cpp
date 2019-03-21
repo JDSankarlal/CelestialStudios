@@ -108,7 +108,14 @@ std::vector<Model*>& Boss::getMissials()
 void Boss::update(float dt)
 {
 	if (!m_active)
+	{
+		getCurrentAnimation()->pause();
 		return;
+	}
+	else
+		if (!getCurrentAnimation()->checkPlay())
+			getCurrentAnimation()->play();
+
 	m_time += dt;
 
 	static clock_t  lastDelay[4];
@@ -117,16 +124,16 @@ void Boss::update(float dt)
 	static Coord3D cat[4];
 	static Coord3D  pointPosition[4];
 
-	static Model* missileRadious[4]
+	static Model* missileRadius[4]
 	{
 		(new Model("Models/Target Circle/TargetCircle.obj")),(new Model("Models/Target Circle/TargetCircle.obj")),
 		(new Model("Models/Target Circle/TargetCircle.obj")),(new Model("Models/Target Circle/TargetCircle.obj"))
 	};
 
-	missileRadious[0]->setColour(1, 0, 0);
-	missileRadious[1]->setColour(0, 0, 1);
-	missileRadious[2]->setColour(0, 1, 0);
-	missileRadious[3]->setColour({ 255,255,110 }
+	missileRadius[0]->setColour(1, 0, 0);
+	missileRadius[1]->setColour(0, 0, 1);
+	missileRadius[2]->setColour(0, 1, 0);
+	missileRadius[3]->setColour({ 255,255,110 }
 	);
 
 	if (!m_dead)
@@ -146,7 +153,7 @@ void Boss::update(float dt)
 						if (!curveroni[a])
 						{
 							GAME::addModel(missles[a]);
-							GAME::addModel(missileRadious[a]);
+							GAME::addModel(missileRadius[a]);
 							bossTarget[a] = targets[a]->getTransformer().getPosition();
 						}
 						curveroni[a] += .01f;
@@ -163,8 +170,8 @@ void Boss::update(float dt)
 					if (curveroni[a] >= 1)
 					{
 						//Missile to Player Collisions
-						if (collision3D(missles[a], targets[a]))
-							targets[a]->setHealth(targets[a]->getHealth() - 35);
+						for (int b = 0; b < (int)missles.size(); b++)
+							targets[a]->hitByEnemy(missileRadius[b], 35);
 
 
 						curveroni[a] = 0;
@@ -172,7 +179,7 @@ void Boss::update(float dt)
 						hasTarget[a] = false;
 
 						GAME::removeModel(missles[a]);
-						GAME::removeModel(missileRadious[a]);
+						GAME::removeModel(missileRadius[a]);
 						missles[a]->getTransformer().setPosition(getTransformer().getPosition());
 					}
 
@@ -205,8 +212,8 @@ void Boss::update(float dt)
 					if (hasTarget[a])
 					{
 						missles[a]->getTransformer().setPosition(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
-						missileRadious[a]->getTransformer().setPosition(bossTarget[a] + Coord3D{ 0,.06f + .02f * a,0 });
-						missileRadious[a]->getTransformer().setScale(catmull(-7.f, 1.f, 0.7f, -7.f, curveroni[a]));
+						missileRadius[a]->getTransformer().setPosition(bossTarget[a] + Coord3D{ 0,.06f + .02f * a,0 });
+						missileRadius[a]->getTransformer().setScale(catmull(-7.f, 1.f, 0.7f, -7.f, curveroni[a]));
 					}
 
 
@@ -240,7 +247,7 @@ void Boss::update(float dt)
 		m_lifeBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_baseBar->getWidth() / 4 + 2 ,this->getHeight(),0 });
 
 		//Boss health bar calculation
-		m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.5f* (m_health / m_initialHealth));
+		m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.5f * (m_health / m_initialHealth));
 		//m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0, getHeight(), 0});
 
 		//eliminates the possibility of the bar being too large
@@ -294,7 +301,7 @@ void Boss::update(float dt)
 				GAME::removeModel(a);
 
 			for (int a = 0; a < 4; a++)
-				GAME::removeModel(missileRadious[a]);
+				GAME::removeModel(missileRadius[a]);
 
 			minions.clear();
 			GAME::removeModel(this);
