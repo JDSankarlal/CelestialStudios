@@ -586,7 +586,7 @@ public:
 		//boss portrait beside its health bar 
 		mod.push_back(new Model("Models/BOSS/bossPORTRAIT.obj"));
 		GAME::addModel(mod[123]);
-		mod[123]->getTransformer().setPosition(-16.0f, 16.5, 21);
+		mod[123]->getTransformer().setPosition(10.0f, 17.8f, 21.5f);
 		mod[123]->getTransformer().setScale(2.0f, 2.0f, 2.0f);
 		mod[123]->getTransformer().setRotation({ 0, 0, 0 });
 
@@ -633,7 +633,7 @@ public:
 		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.5f, 5.34f, 22.5f);
 
 		//Boss Trarrnsforms
-		mod[8]->getTransformer().setScale(1.6f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
+		mod[8]->getTransformer().setScale(1.8f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
 
 		//Floor Transforms
 		mod[9]->getTransformer().setScale(2.25f, 1.0f, 5.0f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
@@ -694,12 +694,12 @@ public:
 		}
 
 		//Boss Blood Bar
-		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{13.0f,18.5f,0.0f});
+		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{11.5f,19.5f,0.0f});
 		mod[72]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[72]->getTransformer().setScale(0.4f, 0.4f, 2.5f); //0.8 originally
+		mod[72]->getTransformer().setScale(0.6f, 0.6f, 2.0f); //0.8 originally
 		mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
 		mod[73]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[73]->getTransformer().setScale(0.4f, 0.4f, 2.5f);
+		mod[73]->getTransformer().setScale(0.6f, 0.6f, 2.0f);
 
 		//Bullet Circle
 		mod[74]->setColour({255,0,0,150});
@@ -1715,7 +1715,7 @@ public:
 		}
 
 		//Boss health bar calculation
-		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f * (CandyMan->getHealth() / 1000.0f));
+		mod[72]->getTransformer().setScale(0.6f, 0.6f, 2.0f * (CandyMan->getHealth() / 1000.0f)); //0.8,0.8,2.5
 
 		if(youDead)
 		{
