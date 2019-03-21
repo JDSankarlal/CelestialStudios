@@ -5,28 +5,28 @@ typedef GameEmGine GAME;
 
 Model
 * Player::bullet,
-*Player::redBar, *Player::blueBar, *Player::greenBar, *Player::yellowBar,
-*Player::baseRedBar, *Player::baseBlueBar, *Player::baseGreenBar, *Player::baseYellowBar;
+* Player::redBar, * Player::blueBar, * Player::greenBar, * Player::yellowBar,
+* Player::baseRedBar, * Player::baseBlueBar, * Player::baseGreenBar, * Player::baseYellowBar;
 
 void Player::init(int index)
 {
-	if(!bullet)
+	if (!bullet)
 		Player::bullet = new Model("Models/Bullet/bullet.obj");
-	if(!redBar)
+	if (!redBar)
 		Player::redBar = new Model("Models/BloodBar/RedBar/blood.obj");//64
-	if(!blueBar)
+	if (!blueBar)
 		Player::blueBar = new Model("Models/BloodBar/BlueBar/blood.obj");//65
-	if(!greenBar)
+	if (!greenBar)
 		Player::greenBar = new Model("Models/BloodBar/GreenBar/blood.obj");//66
-	if(!yellowBar)
+	if (!yellowBar)
 		Player::yellowBar = new Model("Models/BloodBar/YellowBar/blood.obj");//67
-	if(!baseRedBar)
+	if (!baseRedBar)
 		Player::baseRedBar = new Model("Models/BloodBar/RedBarLighter/blood.obj");//68
-	if(!baseBlueBar)
+	if (!baseBlueBar)
 		Player::baseBlueBar = new Model("Models/BloodBar/BlueBarLighter/blood.obj");//69
-	if(!baseGreenBar)
+	if (!baseGreenBar)
 		Player::baseGreenBar = new Model("Models/BloodBar/GreenBarLighter/blood.obj");//70
-	if(!baseYellowBar)
+	if (!baseYellowBar)
 		Player::baseYellowBar = new Model("Models/BloodBar/YellowBarLighter/blood.obj");//71
 
 	squash = new Animation();
@@ -42,11 +42,11 @@ void Player::init(int index)
 	ringID->addChild(bulletCircle);
 	this->addChild(ringID);
 
-	ringID->getTransformer().setRotation({0,-90.f, 0});
-
+	ringID->getTransformer().setRotation({ 0,-90.f, 0 });
+	ringID->getTransformer().setScale(.75f);
 	gun = new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj");
 
-	Animation* walk = new Animation, *idle = new Animation;
+	Animation* walk = new Animation, * idle = new Animation;
 
 	walk->addDir("Models/AssaultModel/Walk/");
 	idle->addDir("Models/AssaultModel/Idle/");
@@ -63,7 +63,7 @@ void Player::init(int index)
 	setPlayerIndex(index);
 }
 
-Player::Player(int index):Model()
+Player::Player(int index) :Model()
 {
 	init(index);
 }
@@ -74,7 +74,7 @@ Player::Player(Player& model) : Model(model)
 	init(0);
 }
 
-Player::Player(const char* path):Model(path)
+Player::Player(const char* path) :Model(path)
 {
 	init(0);
 }
@@ -89,36 +89,40 @@ void Player::setPlayerIndex(int index)
 	GAME::removeModel(m_baseBar);
 
 	m_baseBar->removeChild(m_lifeBar);
-	switch(m_index)
+	switch (m_index)
 	{
 	case 0:
 		m_baseBar = baseRedBar;
 		m_lifeBar = redBar;
 		ringID->setColour(1.f, 0, 0);
+		bulletCircle->setColour({ 255,50,50,150 });
 		break;
 	case 1:
 		m_baseBar = baseBlueBar;
 		m_lifeBar = blueBar;
 		ringID->setColour(0, 0, 1.f);
+		bulletCircle->setColour({ 50,50,200,150 });
 		break;
 	case 2:
 		m_baseBar = baseGreenBar;
 		m_lifeBar = greenBar;
 		ringID->setColour(0, 1.f, 0);
+		bulletCircle->setColour({ 50,200,50,150 });
 		break;
 	case 3:
 		m_baseBar = baseYellowBar;
 		m_lifeBar = yellowBar;
+		bulletCircle->setColour({ 200,200,50,150 });
 		ringID->setColour(1.f, 1.f, 0.4314f);
 	}
 
-	ringID->getTransformer().setPosition(Coord3D{0, .06f + .02f * index + .01f,0});
+	ringID->getTransformer().setPosition(Coord3D{ 0, .06f + .02f * index + .01f,0 });
 
 	//m_lifeBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 	//m_lifeBar->getTransformer().setPosition(0.35f, 1.6f, 0.0f);
 	m_baseBar->addChild(m_lifeBar);
 	m_baseBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
-	m_baseBar->getTransformer().setRotation({0, 90.f, 0});
+	m_baseBar->getTransformer().setRotation({ 0, 90.f, 0 });
 
 
 	GAME::addModel(m_baseBar);
@@ -158,11 +162,11 @@ void Player::setTimeSinceLastMissile(float v)
 
 void Player::hitByEnemy(Model* mod, float damage)
 {
-	if(!m_active)
+	if (!m_active)
 		return;
 
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
-	if(collision3D(mod))
+	if (collision2D(ringID, mod))
 	{
 		//curveroni[a] = 1;
 		//CandyMan->getMissial(a)->getTransformer().setPosition(mod[8]->getCenter());
@@ -179,7 +183,7 @@ void Player::hitByEnemy(Model* mod, float damage)
 
 void Player::onPlayArea(Model * mod)
 {
-	if(!collision2D(mod))
+	if (!collision2D(mod))
 		getTransformer().setPosition(
 			abs(getTransformer().getPosition().x) > mod->getWidth() / 2 ? getTransformer().getPosition().x < 0 ? -mod->getWidth() / 2 : mod->getWidth() / 2 : getTransformer().getPosition().x,
 			0,
@@ -190,14 +194,14 @@ bool Player::bulletCollisions(Model * mod)
 {
 	///- Bullet Collisions -///
 	bool bulletHit = false;
-	for(unsigned b = 0; b < bullets.size(); b++)
-		if(bullets[b])
+	for (unsigned b = 0; b < bullets.size(); b++)
+		if (bullets[b])
 		{
-			if(collision3D(bullets[b], mod))
+			if (collision2D(bullets[b], mod))
 				bulletHit = true;
 
 
-			if(bulletHit)
+			if (bulletHit)
 			{
 				GAME::removeModel(bullets[b]);
 				bullets.erase(bullets.begin() + b);
@@ -212,20 +216,22 @@ bool Player::bulletCollisions(Model * mod)
 
 void Player::update(float dt)
 {
-	if(!m_active)
+	if (!m_active)
+	{
+		getCurrentAnimation()->pause();
 		return;
-
+	}
 	time += dt;
 
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
 	p1->setStickDeadZone(.2f);
 
-	if(GAME::isControllerConnected(m_index))
+	if (GAME::isControllerConnected(m_index))
 	{
-		if(!dead)
+		if (!dead)
 		{
 			//angle of right stick
-			if(p1->getSticks()[RS].x || p1->getSticks()[RS].y)
+			if (p1->getSticks()[RS].x || p1->getSticks()[RS].y)
 			{
 
 				angle = acosf(p1->getSticks()[RS].x /
@@ -236,11 +242,11 @@ void Player::update(float dt)
 			}
 
 			//If player dies
-			if(getHealth() <= 0)
+			if (getHealth() <= 0)
 			{
 				dead = true;
 				graveStone->setColour(getColour());
-				graveStone->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->getTransformer().setPosition(getTransformer().getPosition()), graveStone->getTransformer().setRotation({0.0f,270.0f,0.0f});
+				graveStone->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->getTransformer().setPosition(getTransformer().getPosition()), graveStone->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
 				GAME::addModel(graveStone);
 				graveStone->addAnimation("squash", squash);
 
@@ -251,11 +257,11 @@ void Player::update(float dt)
 			}
 
 			/// - Player Shooting - ///
-			if(p1->getTriggers().RT >= .95 && !gunControlLaw)
+			if (p1->getTriggers().RT >= .95 && !gunControlLaw)
 			{
-				if(reloading == false)
+				if (reloading == false)
 				{
-					if(getBulletCount() > 0)
+					if (getBulletCount() > 0)
 					{
 						gunControlLaw = true; //gun Control Law makes it so the guns function "manualy" instead of "fully automatic"
 
@@ -265,7 +271,7 @@ void Player::update(float dt)
 						Coord3D pos = getTransformer().getPosition();
 						bullets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
 						bullets.back()->getTransformer().setScale(.25f);
-						bullets.back()->getTransformer().setRotation({90 , angle ,0});
+						bullets.back()->getTransformer().setRotation({ 90 , angle ,0 });
 
 						float cosVal = cos((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 						float sinVal = sin((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
@@ -283,21 +289,21 @@ void Player::update(float dt)
 					}
 				}
 			}
-			else if(p1->getTriggers().RT < .95 && gunControlLaw)
+			else if (p1->getTriggers().RT < .95 && gunControlLaw)
 			{
-				switch(m_index)
+				switch (m_index)
 				{
 				case 0:
-					bulletCircle->setColour({255,0,0,150});
+					bulletCircle->setColour({ 255,50,50,150 });
 					break;
 				case 1:
-					bulletCircle->setColour({0,0,255,150});
+					bulletCircle->setColour({ 50,50,200,150 });
 					break;
 				case 2:
-					bulletCircle->setColour({0,255,0,150});
+					bulletCircle->setColour({ 50,200,50,150 });
 					break;
 				case 3:
-					bulletCircle->setColour({255,255,0,150});
+					bulletCircle->setColour({ 200,200,50,150 });
 					break;
 				default:
 					break;
@@ -305,25 +311,22 @@ void Player::update(float dt)
 				gunControlLaw = false;
 			}
 
-			//reset all vibration
-			if(float(time - onHitShakeTimer) > onHitShakeDir)
-				if(float(time - shotBuzzTimer) > shotBuzzDir)
-					p1->resetVibration();
+			
 
 
 			/// - Button Presses on controller - ///
-			if((p1->isButtonPressed(CONTROLLER_X)) || (getBulletCount() <= 0))
+			if ((p1->isButtonPressed(CONTROLLER_X)) || (getBulletCount() <= 0))
 			{
-				if(reloading == false)
+				if (reloading == false)
 					reloadTimer = time;
 
 				reloading = true;
 			}
 
-			if(reloading == true)
+			if (reloading == true)
 			{
 				//put a bar here that lerps up to full or make circle become full
-				if((time - reloadTimer) >= 2)
+				if ((time - reloadTimer) >= 2)
 				{
 					setBulletCount(30);
 					reloading = false;
@@ -337,19 +340,19 @@ void Player::update(float dt)
 			}
 
 			/// - Left Trigger to Dash - ///
-			if(p1->getTriggers().LT >= .95)
+			if (p1->getTriggers().LT >= .95)
 			{
 				//get total time and put it into duration variable
 
-				if(time - cooldown >= 3)
+				if (time - cooldown >= 3)
 				{
-					if(f == true)
+					if (f == true)
 					{
 						duration = time;
 						f = false;
 					}
 					move = 0.5f;
-					if(time - 0.1f >= duration)
+					if (time - 0.1f >= duration)
 					{
 						move = 0.1f;
 						//If getTriggers() up then coolDown = time;
@@ -363,20 +366,20 @@ void Player::update(float dt)
 			else//Do the same with the LT button, have it so will only work every X seconds.
 			{
 				move -= .001f;
-				if(move <= .1f)
+				if (move <= .1f)
 					move = .1f;
 				//f = false;
 				dashControl = false;
 			}
 
-			getTransformer().setRotation({0,angle, 0});
+			getTransformer().setRotation({ 0,angle, 0 });
 			getTransformer().translateBy(p1->getSticks()[LS].x * move, 0, p1->getSticks()[LS].y * move); //move player
 			float speed = p1->getSticks()[LS].x * p1->getSticks()[LS].x + p1->getSticks()[LS].y * p1->getSticks()[LS].y;
 
 
 
 			//Player Animations
-			if(!speed)
+			if (!speed)
 				getAnimation("walk")->pause();
 			else
 			{
@@ -388,7 +391,7 @@ void Player::update(float dt)
 
 
 
-			if(dead)
+			if (dead)
 			{
 				GAME::removeModel(this);
 				GAME::removeModel(m_lifeBar);
@@ -398,7 +401,7 @@ void Player::update(float dt)
 				GAME::removeModel(gun);
 				GAME::removeModel(bulletCircle);
 
-				for(int a = 0; a < (int)bullets.size(); a++)
+				for (int a = 0; a < (int)bullets.size(); a++)
 				{
 					GAME::removeModel(bullets[a]);
 					bullets.erase(bullets.begin());
@@ -406,20 +409,19 @@ void Player::update(float dt)
 					timer.erase(timer.begin());
 					a--;
 				}
-
 			}
 
 			//Update each player's Bullet Circle
-			bulletCircle->getTransformer().setScale((getBulletCount() / 30.0f));
+			bulletCircle->getTransformer().setScale((getBulletCount() / 30.0f) * .75f);
 
 			//checks if bullet timer is up
-			for(unsigned b = 0; b < bullets.size(); b++)
-				if(bullets[b])
+			for (unsigned b = 0; b < bullets.size(); b++)
+				if (bullets[b])
 				{
 					timer[b] += dt;
 					bullets[b]->getTransformer().translateBy(velocity[b].x, velocity[b].y, velocity[b].z);
 
-					if(timer[b] >= 1)
+					if (timer[b] >= 1)
 					{
 						GAME::removeModel(bullets[b]);
 						bullets.erase(bullets.begin() + b);
@@ -431,11 +433,15 @@ void Player::update(float dt)
 
 
 		}
+		//reset all vibration
+		if (float(time - onHitShakeTimer) > onHitShakeDir)
+			if (float(time - shotBuzzTimer) > shotBuzzDir)
+				p1->resetVibration();
 	}
 
 	//Update each player's Blood Bar
 	m_lifeBar->getTransformer().setScale(1.f, 1.f, ((float)getHealth() / (float)getInitialHealth()));
-	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
+	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 }
 
 void Player::setActive(bool active)

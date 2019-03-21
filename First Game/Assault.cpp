@@ -9,11 +9,11 @@ void Assault::init()
 	m_initialHealth = 100;
 	setHealth(100);
 
-	if(!missile)
+	if (!missile)
 		Assault::missile = new Model("Models/missile/candyMissile.obj");
 }
 
-Assault::Assault():Player()
+Assault::Assault() :Player()
 {
 	init();
 }
@@ -47,8 +47,8 @@ bool Assault::missileCollision(Model* mod)
 {
 	///- Missile Collisions -///
 	bool collision = false;
-	for(unsigned a = 0; a < pMissiles.size(); a++)
-		if(collision3D(pMissiles[a], mod))
+	for (unsigned a = 0; a < pMissiles.size(); a++)
+		if (collision3D(pMissiles[a], mod))
 		{
 			collision = true;
 			GAME::removeModel(pMissiles[a]);
@@ -61,15 +61,23 @@ bool Assault::missileCollision(Model* mod)
 
 void Assault::update(float dt)
 {
-	if(!m_active)
+	if (!m_active)
+	{
+		getCurrentAnimation()->pause();
 		return;
+	}
+	else	
+	if (!getCurrentAnimation()->checkPlay())
+		getCurrentAnimation()->play();
+
+
 
 	Player::update(dt);
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
 
 	/// - Assault Special Ability - ///
-	if(p1->isButtonPressed(CONTROLLER_Y))
-		if(time - m_timeSinceLastMissile >= 3)
+	if (p1->isButtonPressed(CONTROLLER_Y))
+		if (time - m_timeSinceLastMissile >= 3)
 		{
 			pMissiles.push_back(new Model(*missile));
 			GAME::addModel(pMissiles.back());
@@ -79,7 +87,7 @@ void Assault::update(float dt)
 
 			pMissiles.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
 			pMissiles.back()->getTransformer().setScale(0.4f);
-			pMissiles.back()->getTransformer().setRotation({0 , angle ,0});
+			pMissiles.back()->getTransformer().setRotation({ 0 , angle ,0 });
 
 			float cosVal = cos((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 			float sinVal = sin((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
@@ -94,13 +102,13 @@ void Assault::update(float dt)
 		}
 
 
-	for(unsigned a = 0; a < pMissiles.size(); a++)
-		if(pMissiles[a])
+	for (unsigned a = 0; a < pMissiles.size(); a++)
+		if (pMissiles[a])
 		{
 			timer[a] += dt;
 			pMissiles[a]->getTransformer().translateBy(missileVelocity[a].x, missileVelocity[a].y, missileVelocity[a].z);
 
-			if(timer[a] >= 1)
+			if (timer[a] >= 1)
 			{
 				GAME::removeModel(pMissiles[a]);
 				pMissiles.erase(pMissiles.begin() + a);
