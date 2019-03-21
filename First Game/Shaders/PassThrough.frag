@@ -107,7 +107,7 @@ void main()
     {       
         vec4 textureColor = texture(uTex, texcoord);
         outColor = textureColor;
-        outColor.rgb *= darken ? textureColor.rgb * 1.2 : vec3(1);
+        outColor.rgb *= !darken ? textureColor.rgb * 1.2 : vec3(1);
         outColor *= colourMod;
     }
     else     

@@ -164,9 +164,9 @@ public:
 
 		for (auto& a : mod)
 			if (a)
-				GAME::addModel(a);
+				GAME::addModel(a),
 				Minion::addTarget((Player*)a);
-			}
+			
 			else
 				break;
 
@@ -880,9 +880,12 @@ public:
 			player->onPlayArea(mod[9]);
 
 			//bullet collisions with boss
-			if(player->bulletCollisions(CandyMan))
+			if (player->bulletCollisions(CandyMan))
+			{
 				CandyMan->setHealth(CandyMan->getHealth() - 10);
-
+			
+				CandyMan->bossFlash = true;
+			}
 
 			//bullet collision with minions
 			for(auto& minion : CandyMan->minions)
@@ -902,30 +905,6 @@ public:
 			switch(player->type)
 			{
 			case assault:
-				////Missile collision with boss
-				//if(((Assault*)player)->missileCollision(CandyMan))
-				//{
-				//	CandyMan->setHealth(CandyMan->getHealth() - 20);
-				//}
-				//
-				////Missile collision with minions
-				//for(auto& minion : CandyMan->minions)
-				//{
-				//	if(((Assault*)player)->bulletCollisions(minion))
-				//	{
-				//		minion->setHealth(minion->getHealth() - 20);
-				//	}
-				//}
-				//
-				////Missile collision with train cars
-				//for(int t = 0; t < 7; t++)
-				//{
-				//	if(((Assault*)player)->bulletCollisions(mod[79 + t]))
-				//	{
-				//		//do something?
-				//	}
-				//}
-
 				break;
 			case tank:
 				//nothing special needed
@@ -963,39 +942,9 @@ public:
 
 		}
 
-								if (bossFlash == true)
-								{
-								//Make boss flash but Id have to make every single keyframe have missing texture... so idk
-									mod[8]->setColour({ 255,0,0 });
-									bossFlash = false;
-									mod[72]->setColour(1, 1, 1);
-								}
-								if (bossFlash == false && (time - bossFlashTime >= 0.15f))
-								{
-									mod[8]->setColour(1, 1, 1);
-									mod[72]->setColour({ 255,0,255 });
-								}
-										bossFlash = true;
-										bossFlashTime = time;
-								if (mod[8])
-									if (collision(bullets[a][b], mod[8]))
-									{
-										GAME::removeModel(bullets[a][b]);
-										bullets[a].erase(bullets[a].begin() + b);
-										velocity[a].erase(velocity[a].begin() + b);
-										//Boss a.k.a model 8, is now called "CandyMan" for the purposes of functions.
-										timer[a].erase(timer[a].begin() + b);
-										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
-										{
-											GAME::removeModel(CandyMan); // If health = 0 then boss dead
-											bossActive = false;
-											puts("Killed The BOSS\n");
-											//	mod[8] = nullptr;
-										if (CandyMan->getHealth() <= 0)
-										}
-										puts("Hit The BOSS\n");
-										break;
-									}
+								
+										
+								
 		/// - Train Car Movement - ///
 		for (int a = 0; a < 1; a++)
 		{
@@ -1050,7 +999,7 @@ public:
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ 0.05f, 0.f, 0.f });//Move train cars right
-					if (collision(mod[79 + t], player))
+					if (collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
@@ -1105,7 +1054,7 @@ public:
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
-					if (collision(mod[79 + t], player))
+					if (collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
@@ -1124,7 +1073,7 @@ public:
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
-					if (collision(mod[79 + t], player))
+					if (collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
@@ -1143,7 +1092,7 @@ public:
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
-					if (collision(mod[79 + t], player))
+					if (collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
@@ -1162,7 +1111,7 @@ public:
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
-					if (collision(mod[79 + t], player))
+					if (collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
@@ -1181,7 +1130,7 @@ public:
 				for (int t = 0; t < 7; t++)
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{ -0.05f, 0.f, 0.f });//Move train cars back to the right
-					if (collision(mod[79 + t], player))
+					if (collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
 						if (player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)

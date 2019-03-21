@@ -4,7 +4,7 @@
 #include <GameEmGine.h>
 
 
-class Boss: public Model
+class Boss : public Model
 {
 public:
 	void init();
@@ -26,13 +26,14 @@ public:
 	std::vector<Minion*> minions;
 	std::vector<Model* > missles;
 	Model* lazer;
+	bool 	bossFlash;
 private:
 	void shootLazer(int playerIndex);
 	//boss's blood bar
 	Model* m_lifeBar;
 	Model* m_baseBar;
-
-	bool m_active = true,m_dead=false;
+	float 	m_time , m_bossFlashTime;
+	bool m_active = true, m_dead = false;
 	float m_initialHealth, m_health;
 
 	static Model* minion;
