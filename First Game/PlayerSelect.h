@@ -20,50 +20,6 @@ public:
 
 
 
-		//	mod.push_back(new Model("Models/ClassPH/Assault/assaultPH.obj")); // I wrote them like this because they will all be different models eventually I think.
-		////	GameEmGine::addModel(mod.back()); // mod 2
-		//	mod[2]->getTransformer().setRotation({0,270,180}), mod[2]->getTransformer().setScale(10);
-		//	//	mod[2]->setToRender(false);
-		//
-		//	mod.push_back(new Model("Models/ClassPH/Tank/tankPH.obj"));
-		//	//	GameEmGine::addModel(mod.back()); // mod 3
-		//	mod[3]->getTransformer().setRotation({0,270,180}), mod[3]->getTransformer().setScale(10);
-		//	//	mod[3]->setToRender(false);
-		//
-		//	mod.push_back(new Model("Models/ClassPH/Medic/medicPH.obj"));
-		//	//	GameEmGine::addModel(mod.back()); // mod 4
-		//	mod[4]->getTransformer().setRotation({0,270,180}), mod[4]->getTransformer().setScale(10);
-		//	//	mod[4]->setToRender(false);
-		//
-		//	mod.push_back(new Model("Models/ClassPH/Specialist/specPH.obj"));
-		//	//	GameEmGine::addModel(mod.back()); // mod 5
-		//	mod[5]->getTransformer().setRotation({0,270,180}), mod[5]->getTransformer().setScale(10);
-		//	//	mod[5]->setToRender(false);
-		//
-		//	
-		//	
-		//	
-		//	mod.push_back(new Model("Models/ClassPH/Assault/assaultPH.obj")); // I wrote them like this because they will all be different models eventually I think.
-		////	GameEmGine::addModel(mod.back()); // mod 2
-		//	mod[6]->getTransformer().setRotation({ 0,270,180 }), mod[6]->getTransformer().setScale(10);
-		//	//	mod[2]->setToRender(false);
-		//
-		//	mod.push_back(new Model("Models/ClassPH/Tank/tankPH.obj"));
-		//	//	GameEmGine::addModel(mod.back()); // mod 3
-		//	mod[7]->getTransformer().setRotation({ 0,270,180 }), mod[7]->getTransformer().setScale(10);
-		//	//	mod[3]->setToRender(false);
-		//
-		//	mod.push_back(new Model("Models/ClassPH/Medic/medicPH.obj"));
-		//	//	GameEmGine::addModel(mod.back()); // mod 4
-		//	mod[8]->getTransformer().setRotation({ 0,270,180 }), mod[8]->getTransformer().setScale(10);
-		//	//	mod[4]->setToRender(false);
-		//
-		//	mod.push_back(new Model("Models/ClassPH/Specialist/specPH.obj"));
-		//	//	GameEmGine::addModel(mod.back()); // mod 5
-		//	mod[9]->getTransformer().setRotation({ 0,270,180 }), mod[9]->getTransformer().setScale(10);
-		//	//	mod[5]->setToRender(false);
-
-
 				//TODO: Add back button and more flashy start button and "Press A to ready" buttons
 		float extra = 0;
 		for (int a = 0; a < 4; a++)
@@ -90,12 +46,6 @@ public:
 				extra = 2;
 			mod.push_back(new Model(*classDescription[0]));
 
-			//setPosition(float(-42.2 + a * 27.5 + extra) <- ORIGINAL
-			//mod[6 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5 + extra), -20.9f, 0), mod[6 + a]->getTransformer().setRotation({ 0,270,0 }), mod[6 + a]->getTransformer().setScale(1, 15, 7);
-			//mod[10]->getTransformer().setPosition(-51, -47, -4);
-			//mod[10]->getTransformer().setScale(10, 20, 10);
-			//mod[10]->getTransformer().setRotation({ 0, 270, 0 });
-
 			mod[6 + a]->getTransformer().setPosition(float(-51 + a * 27.5 + extra), -47, -4);
 			mod[6 + a]->getTransformer().setScale(10, 20, 10);
 			mod[6 + a]->getTransformer().setRotation({ 0, -90, 0 });
@@ -105,15 +55,7 @@ public:
 		}
 
 		//start adding in character descriptions OH MY GOT WHY ISNT IT SHOWING UPFD;OIFOIHFDUISSDFJJSDK
-		//mod 10,11,12,13
-		//mod.push_back(new Model("Models/Scene/PlayerSelect/assaultDes.obj"));
-		//GAME::addModel(mod[10]);
-		////	GameEmGine::addModel(mod.back()); // mod 10
-		////mod[10]->getTransformer().setRotation({ 0,270,180 }), mod[10]->getTransformer().setScale(10);
-		//mod[10]->getTransformer().setPosition(-51, -47, -4);
-		//mod[10]->getTransformer().setScale(10, 20, 10);
-		//mod[10]->getTransformer().setRotation({ 0, 270, 0 });
-
+		
 
 
 		//See GDD for general layout of this screen.

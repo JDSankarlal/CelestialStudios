@@ -245,16 +245,6 @@ public:
 		mod[24] = (new Model("Models/RIP/Rip Ani/RIP1.obj"));//24
 		mod[25] = (new Model("Models/RIP/Rip Ani/RIP1.obj"));//25
 
-		////Coloured ring "IDs"
-		//mod[26] = (new Model("Models/ID/Identifier.obj"));//26
-		//GAME::addModel(mod[26]);
-		//mod[27] = (new Model(*mod[26]));//27
-		//GAME::addModel(mod[27]);
-		//mod[28] = (new Model(*mod[27]));//28
-		//GAME::addModel(mod[28]);
-		//mod[29] = (new Model(*mod[28]));//29
-		//GAME::addModel(mod[29]);
-
 		//Building 3s
 		mod[30] = (new Model("Models/Buildings/Building3/House.obj"));
 		GAME::addModel(mod[30]);//30
@@ -333,7 +323,6 @@ public:
 		mod[56]->setToRender(false);
 		mod[57]->setToRender(false);
 
-
 		mod[58] = (new Model("Models/Planet/Planet2/planet.obj"));
 		GAME::addModel(mod[58]); //58
 
@@ -347,62 +336,6 @@ public:
 
 		mod[59]->setToRender(false);
 		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
-
-		////missile hit boxes
-		//mod[60] = (*(Boss*)mod[8]).getMissials()[0];//60
-		////GAME::addModel(mod[60]); //
-		//mod[60]->setToRender(false);
-		//mod[60]->getTransformer().setScale(6, 1, 1);
-		//mod[61] = (new Model(*mod[60]));//61
-		////GAME::addModel(mod[61]);//
-		//mod[62] = (new Model(*mod[60]));//62
-		////GAME::addModel(mod[62]);//
-		//mod[63] = (new Model(*mod[60]));//63
-		////GAME::addModel(mod[63]);//
-
-		//((Boss*)mod[8])->getMissials()[0]->addChild(mod[60]);
-		//((Boss*)mod[8])->getMissials()[1]->addChild(mod[61]);
-		//((Boss*)mod[8])->getMissials()[2]->addChild(mod[62]);
-		//((Boss*)mod[8])->getMissials()[3]->addChild(mod[63]);
-
-		////player's blood bar
-		//mod[64] = (new Model("Models/BloodBar/RedBar/blood.obj"));//64
-		//GAME::addModel(mod[64]);
-		//mod[65] = (new Model("Models/BloodBar/BlueBar/blood.obj"));//65
-		//GAME::addModel(mod[65]);
-		//mod[66] = (new Model("Models/BloodBar/GreenBar/blood.obj"));//66
-		//GAME::addModel(mod[66]);
-		//mod[67] = (new Model("Models/BloodBar/YellowBar/blood.obj"));//67
-		//GAME::addModel(mod[67]);
-		//mod[68] = (new Model("Models/BloodBar/RedBarLighter/blood.obj"));//68
-		//GAME::addModel(mod[68]);
-		//mod[69] = (new Model("Models/BloodBar/BlueBarLighter/blood.obj"));//69
-		//GAME::addModel(mod[69]);
-		//mod[70] = (new Model("Models/BloodBar/GreenBarLighter/blood.obj"));//70
-		//GAME::addModel(mod[70]);
-		//mod[71] = (new Model("Models/BloodBar/YellowBarLighter/blood.obj"));//71
-		//GAME::addModel(mod[71]);
-
-		////boss's blood bar
-		//mod[72] = (new Model("Models/BloodBar/PinkBar/blood.obj"));//72
-		//GAME::addModel(mod[72]);
-		//mod[73] = (new Model("Models/BloodBar/PinkBarLighter/blood.obj"));//73
-		//GAME::addModel(mod[73]);
-
-		////bullet's circle
-		//mod[74] = (new Model("Models/BulletCircle/BulletCircle.obj"));//74
-		//GAME::addModel(mod[74]);
-		//mod[75] = (new Model(*mod[74]));//75
-		//GAME::addModel(mod[75]);
-		//mod[76] = (new Model(*mod[75]));//76
-		//GAME::addModel(mod[76]);
-		//mod[77] = (new Model(*mod[76]));//77
-		//GAME::addModel(mod[77]);
-
-		////Minions
-		//mod[78] = (new Minion("Models/Minion/SmallRobot/SmallRobot.obj"));//78
-		//GAME::addModel(mod[78]);
-		//mod[78]->setToRender(false);
 
 		//TRAIN
 		mod[79] = (new Model("Models/Train/Head/trainhead.obj"));//79
@@ -443,13 +376,6 @@ public:
 		mod[92] = (new Model(*mod[91]));//92
 		GAME::addModel(mod[92]);
 
-		////Medic Healing Ring
-		//mod[93] = (new Model("Models/BulletCircle/BulletCircle.obj"));//93
-		////GAME::addModel(mod[93]);
-		//mod[93]->setToRender(false);
-		//mod[93]->getTransformer().setScale(2, 1, 2);
-
-
 		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
@@ -474,13 +400,6 @@ public:
 		mod[95]->setToRender(false);
 		mod[96]->setToRender(false);
 		mod[97]->setToRender(false);
-
-		////Turret
-		//mod[98] = (new Model("Models/Turret/turret.obj"));//98
-		//GAME::addModel(mod[98]);
-		//mod[98]->setToRender(false);
-
-
 
 		//RailLight
 		mod[99] = (new Model("Models/Rail/railLight.obj"));//99
@@ -579,7 +498,7 @@ public:
 
 		//boss portrait beside its health bar 
 		mod[125] = (new Model("Models/BOSS/bossPORTRAIT.obj")); //125
-		mod[125]->getTransformer().setPosition(-16.0f, 16.5, 21);
+		mod[125]->getTransformer().setPosition(-16.0f, 19.5, 21);
 		mod[125]->getTransformer().setScale(2.0f, 2.0f, 2.0f);
 		mod[125]->getTransformer().setRotation({ 0, 0, 0 });
 		GAME::addModel(mod[125]);
@@ -608,9 +527,6 @@ public:
 		//Building 2s
 		mod[19]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-18.0f, 0.0f, 6.4f), mod[19]->getTransformer().setRotation({ 0.0f, 90.0f,0.0f }); //left 
 		mod[20]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(18.0f, 0.0f, 9.5f), mod[20]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f }); //right 
-		//mod[21]->getTransformer().setScale(1.75f), mod[21]->getTransformer().setPosition(13.5f, 0.0f, 22.4f), mod[21]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
-		//mod[123]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-18.0f, 0.0f, 6.4f), mod[19]->getTransformer().setRotation({ 0.0f, 90.0f,0.0f }); //left 
-		//mod[124]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(18.0f, 0.0f, 9.5f), mod[20]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
 
 		//Buildings 3s
 		mod[30]->getTransformer().setPosition(10.5f, 0.0f, 23.6f);
@@ -622,10 +538,6 @@ public:
 		//Building 5s
 		mod[39]->getTransformer().setScale(1.0f, 1.0f, 1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 16.5f), mod[39]->getTransformer().setRotation({ 0,180,0 });
 		mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f), mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({ 0,90,0 });
-		//mod[41]->getTransformer().setScale(1.0f, 1.3f, 1.6f), mod[41]->getTransformer().setPosition(1.0f, 0.0f, 25.5f), mod[41]->getTransformer().setRotation({0,-90,0});
-		//Building 6s
-		//mod[42]->getTransformer().setScale(1.0f, 1.5f, 1.8f), mod[42]->getTransformer().setPosition(-14.2f, 0.0f, 22.9f), mod[42]->getTransformer().setRotation({0,-90,0});
-		//mod[43]->getTransformer().setPosition(16.65f, 0.0f, -3.15f), mod[43]->getTransformer().setRotation({0,180,0});
 
 		//Project Nebula Sign Transforms
 		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.5f, 5.34f, 22.5f);
@@ -652,19 +564,6 @@ public:
 		mod[18]->getTransformer().setPosition(9.0f, 17.0f, 36.0f);
 		//mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
 
-		////ID rings?
-		//mod[26]->setColour({255,110,110});
-		//mod[26]->getTransformer().setScale(0.65f), mod[26]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[26]->getTransformer().setRotation({0,-90,0});
-		//
-		//mod[27]->setColour({110,110,255});
-		//mod[27]->getTransformer().setScale(0.65f), mod[27]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[27]->getTransformer().setRotation({0,-90,0});
-		//
-		//mod[28]->setColour({110,255,110});
-		//mod[28]->getTransformer().setScale(0.65f), mod[28]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[28]->getTransformer().setRotation({0,-90,0});
-		//
-		//mod[29]->setColour({255,255,110});
-		//mod[29]->getTransformer().setScale(0.65f), mod[29]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[29]->getTransformer().setRotation({0,-90,0});
-
 		//Trees
 		mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({ 0,-0,0 });
 		mod[36]->getTransformer().setScale(0.3f), mod[36]->getTransformer().setPosition(-13.0f, 0.0f, -3.0f), mod[36]->getTransformer().setRotation({ 0,-0,0 });
@@ -673,61 +572,6 @@ public:
 
 		//Pizza Sign
 		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-13.0f, 5.4f, 22.3f);
-
-		//Player Blood Bar
-		for(int i = 0; i < 4; i++)
-		{
-			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
-			mod[i + 64]->getTransformer().setRotation(Coord3D(0, 90, 0));
-			mod[i + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
-			mod[i + 68]->getTransformer().setPosition(mod[i + 64]->getTransformer().getPosition());
-			mod[i + 68]->getTransformer().setRotation(Coord3D(0, 90, 0));
-			mod[i + 68]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
-		}
-		//Assault Weapons
-		mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[54]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
-		mod[55]->getTransformer().setScale(0.075f), mod[55]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[55]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
-		mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
-		mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
-
-
-		////Player Blood Bar
-		//for(int i = 0; i < 4; i++)
-		//{
-		//	mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
-		//	mod[i + 64]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		//	mod[i + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
-		//	mod[i + 68]->getTransformer().setPosition(mod[i + 64]->getTransformer().getPosition());
-		//	mod[i + 68]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		//	mod[i + 68]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
-		//}
-		//
-		////Boss Blood Bar
-		//mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{13.0f,18.5f,0.0f});
-		//mod[72]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		//mod[72]->getTransformer().setScale(0.4f, 0.4f, 2.5f); //0.8 originally
-		//mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
-		//mod[73]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		//mod[73]->getTransformer().setScale(0.4f, 0.4f, 2.5f);
-
-		////Bullet Circle
-		//mod[74]->setColour({255,0,0,150});
-		//mod[74]->getTransformer().setScale(0.65f), mod[74]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[74]->getTransformer().setRotation({0,-90,0});
-		//
-		//mod[75]->setColour({0,0,255,150});
-		//mod[75]->getTransformer().setScale(0.65f), mod[75]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[75]->getTransformer().setRotation({0,-90,0});
-		//
-		//mod[76]->setColour({0,255,0,150});
-		//mod[76]->getTransformer().setScale(0.65f), mod[76]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[76]->getTransformer().setRotation({0,-90,0});
-		//
-		//mod[77]->setColour({255,255,0,150});
-		//mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
-		//
-		//mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({0,90,0});
-		//mod[95]->getTransformer().setPosition(-4, 0, -8), mod[95]->getTransformer().setRotation({0,90,0});
-		//mod[96]->getTransformer().setPosition(4, 0, -8), mod[96]->getTransformer().setRotation({0,90,0});
-		//mod[97]->getTransformer().setPosition(12, 0, -8), mod[97]->getTransformer().setRotation({0,90,0});
-
 
 		//Train
 		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
@@ -755,25 +599,6 @@ public:
 		mod[103]->getTransformer().setScale(0.7f), mod[103]->getTransformer().setPosition(6.0f, 0.03f, 8.0f), mod[103]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[104]->getTransformer().setScale(0.7f), mod[104]->getTransformer().setPosition(12.0f, 0.03f, 8.0f), mod[104]->getTransformer().setRotation(Coord3D(0, 90, 0));
 		mod[105]->getTransformer().setScale(0.7f), mod[105]->getTransformer().setPosition(18.0f, 0.03f, 8.0f), mod[105]->getTransformer().setRotation(Coord3D(0, 90, 0));
-
-		/// - Set Model Colour - ///
-		////Players colors and children
-		//mod[0]->setColour(1, 0.5, 0.5);
-		//mod[1]->setColour(0.5, 0.5, 1);
-		//mod[2]->setColour(0.5, 1, 0.5);
-		//mod[3]->setColour(1, 1, 0.5);
-		//mod[0]->addChild(mod[26]);
-		//mod[1]->addChild(mod[27]);
-		//mod[2]->addChild(mod[28]);
-		//mod[3]->addChild(mod[29]);
-		//mod[0]->addChild(mod[54]);
-		//mod[1]->addChild(mod[55]);
-		//mod[2]->addChild(mod[56]);
-		//mod[3]->addChild(mod[57]);
-		//mod[0]->addChild(mod[74]);
-		//mod[1]->addChild(mod[75]);
-		//mod[2]->addChild(mod[76]);
-		//mod[3]->addChild(mod[77]);
 
 		LightSource::setLightAmount(14);
 		for (int a = 0; a < 6; a++)

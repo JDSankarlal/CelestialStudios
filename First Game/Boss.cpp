@@ -32,11 +32,11 @@ void Boss::init()
 	m_baseBar->setToRender(true);
 
 	//Boss Blood Bar
-	m_baseBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_baseBar->getWidth() / 2, this->getHeight() , 0 });
+	m_baseBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_baseBar->getWidth() / 2, this->getHeight() - 5 , 0 });
 	m_baseBar->getTransformer().setRotation(Coord3D(0, 90, 0));
 	m_baseBar->getTransformer().setScale(0.8f, 0.8f, 2.5f);
 
-	m_lifeBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_lifeBar->getWidth() / 2  ,this->getHeight(), 0 });
+	m_lifeBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_lifeBar->getWidth() / 2  ,this->getHeight() - 5, 0 });
 	m_lifeBar->getTransformer().setRotation(Coord3D(0, 90, 0));
 	m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.5f);
 
@@ -259,7 +259,7 @@ void Boss::update(float dt)
 				minions.push_back(new Minion(*minion));
 				GAME::addModel(minions.back());
 
-				minions.back()->setColour(200, 100, 50);
+				minions.back()->setColour({ 200, 50, 50 });
 				minions.back()->getTransformer().setPosition(float(rand() % 15 + rand() % 1000 * .001f) * -(rand() % 2), 0, -float(rand() % 2 + rand() % 100 * .001f)); // Random spawns in bottom right of screen
 				minions.back()->getTransformer().setScale(0.4f, 0.6f, 0.4f);
 

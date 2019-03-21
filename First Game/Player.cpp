@@ -95,20 +95,24 @@ void Player::setPlayerIndex(int index)
 		m_baseBar = baseRedBar;
 		m_lifeBar = redBar;
 		ringID->setColour(1.f, 0, 0);
+		bulletCircle->setColour({ 255,50,50,150 });
 		break;
 	case 1:
 		m_baseBar = baseBlueBar;
 		m_lifeBar = blueBar;
 		ringID->setColour(0, 0, 1.f);
+		bulletCircle->setColour({ 50,50,200,150 });
 		break;
 	case 2:
 		m_baseBar = baseGreenBar;
 		m_lifeBar = greenBar;
 		ringID->setColour(0, 1.f, 0);
+		bulletCircle->setColour({ 50,200,50,150 });
 		break;
 	case 3:
 		m_baseBar = baseYellowBar;
 		m_lifeBar = yellowBar;
+		bulletCircle->setColour({ 200,200,50,150 });
 		ringID->setColour(1.f, 1.f, 0.4314f);
 	}
 
@@ -288,16 +292,16 @@ void Player::update(float dt)
 				switch(m_index)
 				{
 				case 0:
-					bulletCircle->setColour({255,0,0,150});
+					bulletCircle->setColour({ 255,50,50,150 });
 					break;
 				case 1:
-					bulletCircle->setColour({0,0,255,150});
+					bulletCircle->setColour({ 50,50,200,150 });
 					break;
 				case 2:
-					bulletCircle->setColour({0,255,0,150});
+					bulletCircle->setColour({ 50,200,50,150 });
 					break;
 				case 3:
-					bulletCircle->setColour({255,255,0,150});
+					bulletCircle->setColour({ 200,200,50,150 });
 					break;
 				default:
 					break;
