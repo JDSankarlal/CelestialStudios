@@ -328,6 +328,11 @@ public:
 		GAME::addModel(mod[56]); //56
 		mod[57] = (new Model(*mod[54]));
 		GAME::addModel(mod[57]); //57
+		mod[54]->setToRender(false);
+		mod[55]->setToRender(false);
+		mod[56]->setToRender(false);
+		mod[57]->setToRender(false);
+
 
 		mod[58] = (new Model("Models/Planet/Planet2/planet.obj"));
 		GAME::addModel(mod[58]); //58
@@ -669,6 +674,16 @@ public:
 		//Pizza Sign
 		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-13.0f, 5.4f, 22.3f);
 
+		//Player Blood Bar
+		for(int i = 0; i < 4; i++)
+		{
+			mod[i + 64]->getTransformer().setPosition(mod[i]->getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
+			mod[i + 64]->getTransformer().setRotation(Coord3D(0, 90, 0));
+			mod[i + 64]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
+			mod[i + 68]->getTransformer().setPosition(mod[i + 64]->getTransformer().getPosition());
+			mod[i + 68]->getTransformer().setRotation(Coord3D(0, 90, 0));
+			mod[i + 68]->getTransformer().setScale(0.08f, 0.08f, 0.065f);
+		}
 		//Assault Weapons
 		mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[54]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });
 		mod[55]->getTransformer().setScale(0.075f), mod[55]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[55]->getTransformer().setRotation({ 0.0f,0.0f,0.0f });

@@ -24,6 +24,8 @@ public:
 
 	bool checkEnd();
 
+	bool checkPlay();
+
 	void stop();
 
 	void play();
