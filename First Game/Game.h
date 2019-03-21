@@ -477,6 +477,12 @@ public:
 		GAME::addModel(mod[96]);
 		mod[97] = (new Model(*mod[94]));//97
 		GAME::addModel(mod[97]);
+		
+		//yeah we arent using these anytime soon so :) 
+		mod[94]->setToRender(false);
+		mod[95]->setToRender(false);
+		mod[96]->setToRender(false);
+		mod[97]->setToRender(false);
 
 		//Turret
 		mod[98] = (new Model("Models/Turret/turret.obj"));//98
@@ -504,7 +510,7 @@ public:
 		//Background
 		mod[106] = (new Model("Models/BackgroundSky/sky.obj"));//106
 		GAME::addModel(mod[106]);
-		mod[106]->getTransformer().setScale(8.0f, 8.0f, 5.0f), mod[106]->getTransformer().setPosition(1.0f, 0.0f, 40.0f), mod[106]->getTransformer().setRotation({90.0f,0.0f,0.0f});
+		mod[106]->getTransformer().setScale(8.0f, 8.0f, 5.0f), mod[106]->getTransformer().setPosition(1.0f, 4.0f, 40.0f), mod[106]->getTransformer().setRotation({90.0f,0.0f,0.0f});
 
 		//Add more buildings in the back
 		mod[107] = (new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//107
@@ -572,6 +578,17 @@ public:
 		GAME::addModel(mod[122]);
 		mod[122]->getTransformer().setScale(1.2f, 1.2f, 1.2f), mod[122]->getTransformer().setPosition(-8.0f, 0.0f, 27.0f), mod[122]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
 
+		//mod.push_back(new Model("Models/Scene/PlayerSelect/assaultDes.obj"));
+		//GAME::addModel(mod[123]);
+		//mod[123]->getTransformer().setPosition(0, 0, -1);
+		//mod[123]->getTransformer().setRotation({ 0, 270, 0 });
+		
+		//boss portrait beside its health bar 
+		mod.push_back(new Model("Models/BOSS/bossPORTRAIT.obj"));
+		GAME::addModel(mod[123]);
+		mod[123]->getTransformer().setPosition(-16.0f, 16.5, 21);
+		mod[123]->getTransformer().setScale(2.0f, 2.0f, 2.0f);
+		mod[123]->getTransformer().setRotation({ 0, 0, 0 });
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -616,7 +633,7 @@ public:
 		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.5f, 5.34f, 22.5f);
 
 		//Boss Trarrnsforms
-		mod[8]->getTransformer().setScale(1.3f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
+		mod[8]->getTransformer().setScale(1.6f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
 
 		//Floor Transforms
 		mod[9]->getTransformer().setScale(2.25f, 1.0f, 5.0f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
@@ -679,10 +696,10 @@ public:
 		//Boss Blood Bar
 		mod[72]->getTransformer().setPosition(mod[8]->getTransformer().getPosition() + Coord3D{13.0f,18.5f,0.0f});
 		mod[72]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[72]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+		mod[72]->getTransformer().setScale(0.4f, 0.4f, 2.5f); //0.8 originally
 		mod[73]->getTransformer().setPosition(mod[72]->getTransformer().getPosition());
 		mod[73]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[73]->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+		mod[73]->getTransformer().setScale(0.4f, 0.4f, 2.5f);
 
 		//Bullet Circle
 		mod[74]->setColour({255,0,0,150});
@@ -1359,7 +1376,7 @@ public:
 								GAME::addModel(minions.back() = new Minion(*mod[78]));
 								minions.back()->setToRender(true);
 								minions.back()->getTransformer().reset();
-								minions.back()->setColour(100, 100, 50); //originally 200,100,50
+								minions.back()->setColour({ 183, 51, 64 }); //originally (200,100,50)
 								minions.back()->getTransformer().getPosition();
 								minions.back()->getTransformer().setPosition(float(rand() % 4 + 7), float(rand() % 1 + 2), -float(rand() % 3) + 2); // Random spawns in bottom right of screen
 								minions.back()->getTransformer().setScale(0.4f, 0.6f, 0.4f);
