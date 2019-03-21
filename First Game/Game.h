@@ -857,6 +857,9 @@ public:
 
 		}
 
+
+		static bool trainInit = false;
+
 		/// - Train Car Movement - ///
 		for(int a = 0; a < 1; a++)
 		{
@@ -877,7 +880,7 @@ public:
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
 					}
 				}
-
+				trainInit = false;
 			}
 			//Train Moves off map
 			else if(10 <= (time - trainTimer) && 13 > (time - trainTimer))
@@ -894,12 +897,16 @@ public:
 							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
 					}
 				}
+				trainInit = false;
 			}
 			else if(13 <= (time - trainTimer) && 20 > (time - trainTimer))
 			{
-				audio.createAudioStream("Audio/RailOff.wav");
-				audio.play();
-
+				if(!trainInit)
+				{
+					audio.createAudioStream("Audio/RailOff.wav");
+					audio.play();
+					trainInit = true;
+				}
 				mod[123]->setColour({0, 255, 255});
 				mod[124]->setColour({0, 255, 255});
 				for(int i = 99; i <= 105; i++)
@@ -929,6 +936,7 @@ public:
 				{
 					mod[79 + t]->getTransformer().translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
 				}
+				trainInit = false;
 			}
 			//Train moves back onto map
 			else if(30 <= (time - trainTimer) && 37 > (time - trainTimer))
@@ -947,14 +955,19 @@ public:
 						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
 					}
 				}
+				trainInit = false;
 			}
 
 			// Tunnel starts blinking 
 			else if(37 <= (time - trainTimer) && 37.5f > (time - trainTimer))
 			{
-				audio.createAudioStream("Audio/RailOn.wav");
-				audio.play();
-
+				if(!trainInit)
+				{
+					audio.createAudioStream("Audio/RailOff.wav");
+					audio.play();
+					trainInit = true;
+				}
+				
 				mod[123]->setColour({255, 0, 0});
 				mod[124]->setColour({255, 0, 0});
 				for(int i = 99; i <= 105; i++)
@@ -996,6 +1009,7 @@ public:
 						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
 					}
 				}
+				trainInit = false;
 			}
 			else if(38 <= (time - trainTimer) && 38.5f > (time - trainTimer))
 			{
@@ -1015,6 +1029,7 @@ public:
 						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
 					}
 				}
+				trainInit = false;
 			}
 			else if(38.5f <= (time - trainTimer) && 39 > (time - trainTimer))
 			{
@@ -1034,6 +1049,7 @@ public:
 						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
 					}
 				}
+				trainInit = false;
 			}
 			else if(39 <= (time - trainTimer) && 40 > (time - trainTimer))
 			{
@@ -1053,9 +1069,8 @@ public:
 						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
 					}
 				}
+				trainInit = false;
 			}
-
-
 			//Train stops on map
 			else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
 			{
@@ -1071,6 +1086,7 @@ public:
 					}
 					trainTimer += time; //Reset Train timer so it all starts again.
 				}
+				trainInit = false;
 			}
 		}
 
@@ -1094,9 +1110,6 @@ public:
 		//	}
 		//}
 
-
-
-		//	lastTime = (float)clock() / CLOCKS_PER_SEC;
 
 		/// - If game not m_active and Camera is m_active (Move camera mode) - ///
 		CandyMan->setActive(true);

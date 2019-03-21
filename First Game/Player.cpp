@@ -284,7 +284,7 @@ void Player::update(float dt)
 						velocity.back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
 
 						timer.push_back(0);
-						AudioPlayer::createAudioStream("pew.wav");
+						AudioPlayer::createAudioStream("Audio/pew.wav");
 						AudioPlayer::play();
 						bulletCircle->setColour(1, 1, 1);//set bullet circle colour to white
 						m_bulletCount--;//subtract from bullet count
