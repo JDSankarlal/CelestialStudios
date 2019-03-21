@@ -458,14 +458,24 @@ void GameEmGine::update()
 			return a->getTransformer().getPosition().distance()
 		> b->getTransformer().getPosition().distance(); 
 		});
+	std::vector<Model*> transparent;
+	for(auto&a : m_models)
+	{
+		if(a->isTransparent())
+			transparent.push_back(a);
+	}
 
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 	///~ 3D-Graphics 1 ~///
 	m_frameBuffers["Main Buffer"]->enable();
 	for(unsigned a = 0; a < m_models.size(); a++)
 	{
+		if (!m_models[a]->isTransparent())
 		m_models[a]->render(*m_modelShader, *m_mainCamera);
 	}
+	for(auto&a :transparent)
+		a->render(*m_modelShader, *m_mainCamera);
+
 	m_frameBuffers["Main Buffer"]->disable();
 
 	//std::vector<std::pair<std::string, FrameBuffer*>>tmp(m_frameBuffers.begin(), m_frameBuffers.end());

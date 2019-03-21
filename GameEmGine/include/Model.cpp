@@ -367,6 +367,16 @@ void Model::setToRender(bool render)
 	m_render = render;
 }
 
+void Model::setTransparent(bool trans)
+{
+	m_transparent = trans;
+}
+
+bool Model::isTransparent()
+{
+	return m_transparent;
+}
+
 void Model::boundingBoxInit()
 {
 	if(!m_BBVaoID)

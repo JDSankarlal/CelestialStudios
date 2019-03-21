@@ -73,9 +73,11 @@ public:
 	Shader* getShader();
 
 	void setToRender(bool render);
-
+	void setTransparent(bool trans);
+	bool isTransparent();
 private:
 	bool m_render = true;
+	bool m_transparent = false;
 	std::unordered_map< std::string, Animation *>m_animations;
 	std::string m_animation;
 	Mesh m_mesh;
