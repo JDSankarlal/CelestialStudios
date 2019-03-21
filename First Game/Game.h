@@ -170,20 +170,63 @@ public:
 			else
 				break;
 
-		static Animation walk[4], idle[4];
+		static Animation  walk[4], idle[4];
 
 		for(int a = 0; a < 4; a++)
 		{
-			walk[a].addDir("Models/Class/Assault/Run/");
-			idle[a].addDir("Models/Class/Assault/Idle/");
-			mod[a]->addAnimation("walk", &walk[a]);
-			mod[a]->addAnimation("idle", &idle[a]);
-			mod[a]->setAnimation("idle");
-			walk[a].repeat(true);
-			walk[a].setAnimationSpeed(0.05f);
-			idle[a].repeat(true);
-			idle[a].setAnimationSpeed(.25);
-			idle[a].play();
+			Player *player = (Player*)mod[a];
+			if (player->type == 0)
+			{
+				walk[a].addDir("Models/Class/Assault/Run/");
+				idle[a].addDir("Models/Class/Assault/Idle/");
+				mod[a]->addAnimation("walk", &walk[a]);
+				mod[a]->addAnimation("idle", &idle[a]);
+				mod[a]->setAnimation("idle");
+				walk[a].repeat(true);
+				walk[a].setAnimationSpeed(0.05f);
+				idle[a].repeat(true);
+				idle[a].setAnimationSpeed(.25);
+				idle[a].play();
+			}
+			else if(player->type == 1)
+			{
+				walk[a].addDir("Models/Class/Tank/Run/");
+				idle[a].addDir("Models/Class/Tank/Idle/");
+				mod[a]->addAnimation("walk", &walk[a]);
+				mod[a]->addAnimation("idle", &idle[a]);
+				mod[a]->setAnimation("idle");
+				walk[a].repeat(true);
+				walk[a].setAnimationSpeed(0.05f);
+				idle[a].repeat(true);
+				idle[a].setAnimationSpeed(.25);
+				idle[a].play();
+			}
+			else if (player->type == 2)
+			{
+				walk[a].addDir("Models/Class/Medic/Run/");
+				idle[a].addDir("Models/Class/Medic/Idle/");
+				mod[a]->addAnimation("walk", &walk[a]);
+				mod[a]->addAnimation("idle", &idle[a]);
+				mod[a]->setAnimation("idle");
+				walk[a].repeat(true);
+				walk[a].setAnimationSpeed(0.05f);
+				idle[a].repeat(true);
+				idle[a].setAnimationSpeed(.25);
+				idle[a].play();
+			}
+			else
+			{
+				walk[a].addDir("Models/Class/Specialist/Run/");
+				idle[a].addDir("Models/Class/Specialist/Idle/");
+				mod[a]->addAnimation("walk", &walk[a]);
+				mod[a]->addAnimation("idle", &idle[a]);
+				mod[a]->setAnimation("idle");
+				walk[a].repeat(true);
+				walk[a].setAnimationSpeed(0.05f);
+				idle[a].repeat(true);
+				idle[a].setAnimationSpeed(.25);
+				idle[a].play();
+			}
 		}
 
 		//Building 1s
