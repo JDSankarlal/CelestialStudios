@@ -104,6 +104,11 @@ bool Animation::checkEnd()
 	return m_frame == m_frames.size();
 }
 
+bool Animation::checkPlay()
+{
+	return !m_pause;
+}
+
 void Animation::stop()
 {
 	m_frame = 0;

@@ -115,8 +115,8 @@ public:
 		float extra = 0;
 		static std::vector<Player*>playerSelections
 		{
-			new Assault("Models/AssaultModel/Idle/ACM1.obj"),new Tank("Models/AssaultModel/Idle/ACM1.obj"),
-			new  Medic("Models/AssaultModel/Idle/ACM1.obj"), new Specialist("Models/AssaultModel/Idle/ACM1.obj")
+			new Assault("Models/Class/Assault/Idle/ASI1.obj"),new Tank("Models/Class/Assault/Idle/ASI1.obj"),
+			new  Medic("Models/Class/Assault/Idle/ASI1.obj"), new Specialist("Models/Class/Assault/Idle/ASI1.obj")
 		};
 
 		for(int a = 0; a < 4; a++)

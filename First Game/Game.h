@@ -174,12 +174,13 @@ public:
 
 		for(int a = 0; a < 4; a++)
 		{
-			walk[a].addDir("Models/AssaultModel/Walk/");
-			idle[a].addDir("Models/AssaultModel/Idle/");
+			walk[a].addDir("Models/Class/Assault/Run/");
+			idle[a].addDir("Models/Class/Assault/Idle/");
 			mod[a]->addAnimation("walk", &walk[a]);
 			mod[a]->addAnimation("idle", &idle[a]);
 			mod[a]->setAnimation("idle");
 			walk[a].repeat(true);
+			walk[a].setAnimationSpeed(0.05f);
 			idle[a].repeat(true);
 			idle[a].setAnimationSpeed(.25);
 			idle[a].play();
@@ -343,6 +344,11 @@ public:
 		GAME::addModel(mod[56]); //56
 		mod[57] = (new Model(*mod[54]));
 		GAME::addModel(mod[57]); //57
+		mod[54]->setToRender(false);
+		mod[55]->setToRender(false);
+		mod[56]->setToRender(false);
+		mod[57]->setToRender(false);
+
 
 		mod[58] = (new Model("Models/Planet/Planet2/planet.obj"));
 		GAME::addModel(mod[58]); //58
@@ -670,12 +676,6 @@ public:
 		//Pizza Sign
 		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-13.0f, 5.4f, 22.3f);
 
-		//Assault Weapons
-		mod[54]->getTransformer().setScale(0.075f), mod[54]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[54]->getTransformer().setRotation({0.0f,0.0f,0.0f});
-		mod[55]->getTransformer().setScale(0.075f), mod[55]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[55]->getTransformer().setRotation({0.0f,0.0f,0.0f});
-		mod[56]->getTransformer().setScale(0.075f), mod[56]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[56]->getTransformer().setRotation({0.0f,0.0f,0.0f});
-		mod[57]->getTransformer().setScale(0.075f), mod[57]->getTransformer().setPosition(-0.1f, 0.65f, -0.15f), mod[57]->getTransformer().setRotation({0.0f,0.0f,0.0f});
-
 		//Player Blood Bar
 		for(int i = 0; i < 4; i++)
 		{
@@ -752,10 +752,6 @@ public:
 		mod[1]->addChild(mod[27]);
 		mod[2]->addChild(mod[28]);
 		mod[3]->addChild(mod[29]);
-		mod[0]->addChild(mod[54]);
-		mod[1]->addChild(mod[55]);
-		mod[2]->addChild(mod[56]);
-		mod[3]->addChild(mod[57]);
 		mod[0]->addChild(mod[74]);
 		mod[1]->addChild(mod[75]);
 		mod[2]->addChild(mod[76]);
@@ -1442,13 +1438,19 @@ public:
 									abs(mod[a]->getTransformer().getPosition().z) > mod[59]->getDepth() / 2 ? mod[a]->getTransformer().getPosition().z < 0 ? -mod[59]->getDepth() / 2 : mod[59]->getDepth() / 2 : mod[a]->getTransformer().getPosition().z);
 
 							//Player Animations
-							if(!speed)
-								mod[a]->getAnimation("walk")->pause();
-							else
+							if (!speed && mod[a]->getAnimation("walk")->checkPlay())
 							{
+								mod[a]->getAnimation("walk")->pause();
+								mod[a]->getAnimation("idle")->play();
+								mod[a]->setAnimation("idle");
+							}
+
+							else if(speed && !mod[a]->getAnimation("walk")->checkPlay())
+							{
+								mod[a]->getAnimation("idle")->pause();
 								mod[a]->getAnimation("walk")->play();
 								mod[a]->setAnimation("walk");
-								mod[a]->getAnimation("walk")->setAnimationSpeed(.25f / speed);
+								//mod[a]->getAnimation("walk")->setAnimationSpeed(.1f / speed);
 							}
 
 							//Update each player's Blood Bar
@@ -1461,7 +1463,6 @@ public:
 								GAME::removeModel(mod[a + 68]);
 
 								GAME::removeModel(mod[a + 26]);
-								GAME::removeModel(mod[a + 54]);
 								GAME::removeModel(mod[a + 74]);
 							}
 
