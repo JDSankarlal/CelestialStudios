@@ -29,8 +29,8 @@ public:
 
 	void unload();
 
-	GLuint getNumFaces(int index)const;
-	GLuint getNumVerticies(int index)const;
+	GLuint getNumFaces(int m_index)const;
+	GLuint getNumVerticies(int m_index)const;
 
 	Coord3D top , bottom , left, right , front, back;
 

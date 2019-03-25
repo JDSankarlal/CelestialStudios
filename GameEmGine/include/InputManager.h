@@ -104,9 +104,9 @@ public:
 
 	int controllersConnected();
 
-	bool isControllerConnected(unsigned int index);
+	bool isControllerConnected(unsigned int m_index);
 
-	XinputDevice& getController(unsigned int index);
+	XinputDevice& getController(unsigned int m_index);
 
 	static void controllerUpdate();
 

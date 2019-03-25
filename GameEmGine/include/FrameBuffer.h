@@ -13,7 +13,7 @@ public:
 	~FrameBuffer();
 
 	void initDepthTexture(unsigned width, unsigned height);
-	void initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap);
+	void initColourTexture(unsigned m_index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap);
 	bool checkFBO();
 
 	// Clears all OpenGL memory
@@ -35,7 +35,7 @@ public:
 	void moveToBackBuffer(int windowWidth, int windowHeight);
 
 	GLuint getDepthHandle() const;
-	GLuint getColorHandle(unsigned index) const;
+	GLuint getColorHandle(unsigned m_index) const;
 
 	void setPostProcess(std::function<void()>, unsigned layer = 0);
 	std::function<void()> getPostProcess();

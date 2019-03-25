@@ -31,27 +31,27 @@ class LightSource
 {
 public:
 	
-	static void setLightType(LIGHT_TYPE type, unsigned index);
+	static void setLightType(LIGHT_TYPE type, unsigned m_index);
 
-	static void setPosition(Coord3D pos, unsigned index);
+	static void setPosition(Coord3D pos, unsigned m_index);
 
 	static void setSceneAmbient(ColourRGBA ambi);
 
-	static void setDirection(Coord3D dir, int index);
+	static void setDirection(Coord3D dir, int m_index);
 
-	static 	void setDiffuse(ColourRGBA diff, unsigned index);
+	static 	void setDiffuse(ColourRGBA diff, unsigned m_index);
 
-	static void setSpecular(ColourRGBA spec, unsigned index);
+	static void setSpecular(ColourRGBA spec, unsigned m_index);
 
-	static 	void setSpecularExponent(float specEx, unsigned index);
+	static 	void setSpecularExponent(float specEx, unsigned m_index);
 
-	static void setAttenuationConstant(float attenConst, unsigned index);
+	static void setAttenuationConstant(float attenConst, unsigned m_index);
 
-	static void setAttenuationLinear(float attenLinear, unsigned index);
+	static void setAttenuationLinear(float attenLinear, unsigned m_index);
 
-	static void setAttenuationQuadratic(float attenQuad, unsigned index);
+	static void setAttenuationQuadratic(float attenQuad, unsigned m_index);
 
-	static void setParent(Model* parent, unsigned index);
+	static void setParent(Model* parent, unsigned m_index);
 
 	static void setCamera(Camera* cam);
 

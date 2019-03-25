@@ -40,13 +40,13 @@ void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 
 }
-void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
+void FrameBuffer::initColourTexture(unsigned m_index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
 	//create depth texture
-	glGenTextures(1, &m_colorAttachments[index]);
-	glBindTexture(GL_TEXTURE_2D, m_colorAttachments[index]);
+	glGenTextures(1, &m_colorAttachments[m_index]);
+	glBindTexture(GL_TEXTURE_2D, m_colorAttachments[m_index]);
 	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
@@ -54,7 +54,7 @@ void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned hei
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 
 	//Bind texture to the fbo
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_index, GL_TEXTURE_2D, m_colorAttachments[m_index], 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
@@ -150,9 +150,9 @@ GLuint FrameBuffer::getDepthHandle() const
 {
 	return m_depthAttachment;
 }
-GLuint FrameBuffer::getColorHandle(unsigned index) const
+GLuint FrameBuffer::getColorHandle(unsigned m_index) const
 {
-	return m_colorAttachments[index];
+	return m_colorAttachments[m_index];
 }
 
 void FrameBuffer::setPostProcess(std::function<void()>post, unsigned layer)
