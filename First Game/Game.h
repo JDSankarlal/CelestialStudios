@@ -125,7 +125,8 @@ public:
 						//GAME::setCameraAngle(0, { 1, 1, 1 });
 						//	GAME::setCameraPosition({0,0,0});
 		}
-
+		if (key == GLFW_KEY_Q)
+			GameEmGine::lutActive = (GameEmGine::lutActive == false) ? true : false;
 		if(key == 'R')
 			GAME::setCameraAngle(0, {1,1,1});
 
@@ -497,7 +498,7 @@ public:
 
 		//boss portrait beside its health bar 
 		mod[125] = (new Model("Models/BOSS/bossPORTRAIT.obj")); //125
-		mod[125]->getTransformer().setPosition(-16.0f, 19.5, 21);
+		mod[125]->getTransformer().setPosition(10.2f, 18.2f, 19.2f);
 		mod[125]->getTransformer().setScale(2.0f, 2.0f, 2.0f);
 		mod[125]->getTransformer().setRotation({0, 0, 0});
 		GAME::addModel(mod[125]);
@@ -542,7 +543,7 @@ public:
 		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.5f, 5.34f, 22.5f);
 
 		//Boss Trarrnsforms
-		mod[8]->getTransformer().setScale(1.6f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
+		mod[8]->getTransformer().setScale(2.0f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
 
 		//Floor Transforms
 		mod[9]->getTransformer().setScale(2.25f, 1.0f, 5.0f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
@@ -731,7 +732,7 @@ public:
 				init = true;
 			}
 
-			count->getTransformer().setPosition(lerp(-GAME::getMainCamera()->getPosition() + Coord3D{0,-5,7}, -GAME::getMainCamera()->getPosition() - Coord3D{0,1,0}, (time - countdownTimer) / 2.f));
+			count->getTransformer().setPosition(lerp(-GAME::getMainCamera()->getPosition() + Coord3D{0,-5,7}, -GAME::getMainCamera()->getPosition() - Coord3D{0,1,0}, (time - countdownTimer) / 3.5f));
 
 			if(int((time - countdownTimer) / 2))
 			{
@@ -887,7 +888,7 @@ public:
 			{
 				for(int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{0.05f, 0.f, 0.f});//Move train cars right
+					mod[79 + t]->getTransformer().translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
@@ -917,7 +918,7 @@ public:
 
 				for(int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{0.05f, 0.f, 0.f});//Move train cars right
+					mod[79 + t]->getTransformer().translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
@@ -943,7 +944,7 @@ public:
 			{
 				for(int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
+					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
@@ -978,7 +979,7 @@ public:
 
 				for(int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
+					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
@@ -997,7 +998,7 @@ public:
 				mod[124]->setColour({0, 255, 255});
 				for(int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
+					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
@@ -1017,7 +1018,7 @@ public:
 				mod[124]->setColour({255, 0, 0});
 				for(int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
+					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
@@ -1037,7 +1038,7 @@ public:
 				mod[124]->setColour({0, 255, 255});
 				for(int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
+					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
@@ -1057,7 +1058,7 @@ public:
 				mod[124]->setColour({255, 0, 0});
 				for(int t = 0; t < 7; t++)
 				{
-					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.05f, 0.f, 0.f});//Move train cars back to the right
+					mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);

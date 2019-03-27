@@ -23,7 +23,9 @@ bool GameEmGine::exitGame = false;
 float GameEmGine::m_fps;
 short GameEmGine::m_fpsLimit;
 Scene* GameEmGine::m_mainScene;
-
+GLuint GameEmGine::colorCustom;
+int GameEmGine::LUTsize = 0;
+bool GameEmGine::lutActive = false;
 //uniform vec4 LightPosition;
 //1uniform vec3 LightAmbient;
 #define SCREEN_RATIO 2
@@ -47,15 +49,42 @@ GameEmGine::MessageCallback(GLenum source,
 void GameEmGine::init(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	createNewWindow(name, width, height, x, y, monitor, fullScreen, visable);
-	m_mainFrameBuffer->setPostProcess([&]()->void {
-		//main frame buffer render
-		m_bloomHighPass->enable();
-		glUniform1i(m_bloomHighPass->getUniformLocation("uTex"), 0);
-		glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0));
-		drawFullScreenQuad();
-		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-		m_bloomHighPass->disable();
-		});
+	/////////////////////////////////////Bind Custom 3D Texture////////////////////////////////////////////
+	std::vector<RGB> LUT{};
+	std::string LUTpath="";
+	
+	LUTpath = "Texture/CUSTOM.cube";
+	std::ifstream LUTfile2(LUTpath.c_str());
+	while (!LUTfile2.eof())
+	{
+		std::string LUTline;
+		getline(LUTfile2, LUTline);
+		if (LUTline.empty()) continue;
+		if (strstr(LUTline.c_str(), "LUT_3D_SIZE"))
+		{
+			sscanf_s(LUTline.c_str(), "LUT_3D_SIZE %d", &LUTsize);
+		}
+		RGB line;
+		if (sscanf_s(LUTline.c_str(), "%f %f %f", &line.r, &line.g, &line.b) == 3) LUT.push_back(line);
+	}
+	glEnable(GL_TEXTURE_3D);
+
+	glGenTextures(1, &colorCustom);
+	glBindTexture(GL_TEXTURE_3D, colorCustom);
+
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, LUTsize, LUTsize, LUTsize, 0, GL_RGB, GL_FLOAT, &LUT[0]);
+
+	glBindTexture(GL_TEXTURE_3D, 0);
+	glDisable(GL_TEXTURE_3D);
+
+	LUT.clear();
+	////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 //GameEmGine::~GameEmGine()
@@ -554,11 +583,25 @@ void GameEmGine::update()
 	m_blurrComposite->disable();
 	m_greyscaleBuffer->disable();
 
+	// Bind 3D textures
+	/*glActiveTexture(GL_TEXTURE0 + 6);
+	glBindTexture(GL_TEXTURE_3D, colorCustom);*/
+
+
 	m_grayScalePost->enable();
 	m_grayScalePost->sendUniform("uTex", 0);
+	m_grayScalePost->sendUniform("customTexure", 6);
+	m_grayScalePost->sendUniform("lutSize", LUTsize);
+	m_grayScalePost->sendUniform("lutActive", lutActive);
 	glBindTexture(GL_TEXTURE_2D, m_greyscaleBuffer->getColorHandle(0));
+	glActiveTexture(GL_TEXTURE0 + 6);
+	glBindTexture(GL_TEXTURE_3D, colorCustom);
 	drawFullScreenQuad();
+	glActiveTexture(GL_TEXTURE0 );
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	glActiveTexture(GL_TEXTURE0 + 6);
+	glBindTexture(GL_TEXTURE_3D, GL_NONE);
+
 	m_grayScalePost->disable();
 
 

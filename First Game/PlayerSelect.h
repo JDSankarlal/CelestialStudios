@@ -47,9 +47,8 @@ public:
 			mod.push_back(new Model(*classDescription[0]));
 
 			mod[6 + a]->getTransformer().setPosition(float(-51 + a * 27.5 + extra), -47, -4);
-			mod[6 + a]->getTransformer().setScale(10, 20, 10);
-			mod[6 + a]->getTransformer().setRotation({ 0, -90, 0 });
-			mod[6 + a]->setColour(1,1,1,1);
+			mod[6 + a]->getTransformer().setScale(Coord3D{ 10, 20, 10 });
+			mod[6 + a]->getTransformer().setRotation({ 0, 270, 0 });
 			mod[6 + a]->setToRender(true);
 			GAME::addModel(mod.back()); //6, 7, 8, 9
 		}

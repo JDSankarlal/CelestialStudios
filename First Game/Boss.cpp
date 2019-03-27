@@ -32,16 +32,20 @@ void Boss::init()
 	m_baseBar->setToRender(true);
 
 	//Boss Blood Bar
-	m_baseBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_baseBar->getWidth() / 2, this->getHeight() - 5 , 0 });
+	//m_baseBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_baseBar->getWidth() / 2, this->getHeight() - 10 , 0 });
+	m_baseBar->getTransformer().setPosition(10.5f, 20.0f, 20.0f);
 	m_baseBar->getTransformer().setRotation(Coord3D(0, 90, 0));
-	m_baseBar->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+	m_baseBar->getTransformer().setScale(0.8f, 0.8f, 2.0f);
 
-	m_lifeBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_lifeBar->getWidth() / 2  ,this->getHeight() - 5, 0 });
+	//m_lifeBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_lifeBar->getWidth() / 2  ,this->getHeight() - 10, 0 });
+	m_lifeBar->getTransformer().setPosition(10.5f, 20.0f, 20.0f);
 	m_lifeBar->getTransformer().setRotation(Coord3D(0, 90, 0));
-	m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.5f);
+	m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.0f);
 
 	GAME::addModel(m_baseBar);
 	GAME::addModel(m_lifeBar);
+
+
 
 
 	//m_baseBar->addChild(m_lifeBar);
@@ -140,6 +144,7 @@ void Boss::update(float dt)
 	{
 		for (int a = 0; a < 4; a++)
 		{
+			missles[a]->getTransformer().setScale(1.5f); //every missile shot is scaled up a bit since the original is small 
 			pointPosition[a] = getTransformer().getPosition();
 			if (targets[a]->isActive())
 				if (!targets[a]->dead)
@@ -240,12 +245,9 @@ void Boss::update(float dt)
 		}
 
 
-		//Health bar position
-		m_baseBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_baseBar->getWidth() / 4 + 2, this->getHeight() , 0 });
-		m_lifeBar->getTransformer().setPosition(this->getTransformer().getPosition() + Coord3D{ m_baseBar->getWidth() / 4 + 2 ,this->getHeight(),0 });
 
 		//Boss health bar calculation
-		m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.5f * (m_health / m_initialHealth));
+		m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.0f * (m_health / m_initialHealth));
 		//m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0, getHeight(), 0});
 
 		//eliminates the possibility of the bar being too large

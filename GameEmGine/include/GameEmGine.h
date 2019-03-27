@@ -18,6 +18,18 @@
 #include "FrameBuffer.h"
 #include "LightSource.h"
 
+struct RGB
+
+{
+
+	float r;
+
+	float g;
+
+	float b;
+
+};
+
 class GameEmGine
 {
 public:
@@ -117,6 +129,8 @@ public:
 
 	static void drawFullScreenQuad();
 
+	static bool lutActive;
+
 private:
 	static void shaderInit();
 	static void calculateFPS();
@@ -147,5 +161,8 @@ private:
 	static bool exitGame;
 	static float m_fps;
 	static short m_fpsLimit;
+
+	static GLuint colorCustom;
+	static int LUTsize;
 };
 
