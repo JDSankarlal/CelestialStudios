@@ -92,5 +92,5 @@ float Minion::getHealth()
 
 bool operator>(Minion a, Minion b)
 {
-	return ;
+	return 1;
 }
