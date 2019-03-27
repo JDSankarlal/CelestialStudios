@@ -28,6 +28,7 @@ uniform int LightType[MAX_LIGHTS_SIZE];
 uniform vec3 LightDirection[MAX_LIGHTS_SIZE] ;
 uniform float LightAngleConstraint[MAX_LIGHTS_SIZE];
 
+
 uniform sampler2D uTex;
 uniform vec4 colourMod;
 uniform bool textured;
@@ -136,5 +137,6 @@ void main()
             defaultLight(a);
         }
      // outColor.rgb = vec3(NdotL,NdotL,NdotL); 
-    }    
+    } 
+	
 }
