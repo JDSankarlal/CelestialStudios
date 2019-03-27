@@ -125,7 +125,8 @@ public:
 						//GAME::setCameraAngle(0, { 1, 1, 1 });
 						//	GAME::setCameraPosition({0,0,0});
 		}
-
+		if (key == GLFW_KEY_Q)
+			GameEmGine::lutActive = (GameEmGine::lutActive == false) ? true : false;
 		if(key == 'R')
 			GAME::setCameraAngle(0, {1,1,1});
 
