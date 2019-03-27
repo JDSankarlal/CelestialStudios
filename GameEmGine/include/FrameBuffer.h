@@ -13,6 +13,9 @@ public:
 	~FrameBuffer();
 
 	void initDepthTexture(unsigned width, unsigned height);
+	void resizeDepth(unsigned width, unsigned height);
+	void resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap);
+	void resizeColour(unsigned index, unsigned width, unsigned height);
 	void initColourTexture(unsigned m_index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap);
 	bool checkFBO();
 
@@ -40,6 +43,9 @@ public:
 	void setPostProcess(std::function<void()>, unsigned layer = 0);
 	std::function<void()> getPostProcess();
 
+	unsigned getNumColourAttachments();
+
+
 	std::string getTag();
 	unsigned getLayer();
 
@@ -48,9 +54,15 @@ private:
 		m_layer = GL_NONE,
 		m_fboID = GL_NONE,
 		m_depthAttachment = GL_NONE,
-		*m_colorAttachments = nullptr;
+		* m_colorAttachments = nullptr;
 
-	GLenum *m_buffs = nullptr;
+	GLint m_internalFormat = GL_RGBA8,
+		m_filter = GL_LINEAR,
+		m_wrap = GL_CLAMP_TO_EDGE;
+
+	unsigned m_width, m_height;
+
+	GLenum* m_buffs = nullptr;
 
 	unsigned int m_numColorAttachments = 0;
 

@@ -170,9 +170,7 @@ void Boss::update(float dt)
 					if (curveroni[a] >= 1)
 					{
 						//Missile to Player Collisions
-						for (int b = 0; b < (int)missles.size(); b++)
-							targets[a]->hitByEnemy(missileRadius[b], 35);
-
+						targets[a]->hitByEnemy(missles[a], 35);
 
 						curveroni[a] = 0;
 						lastDelay[a] = clock();

@@ -151,7 +151,7 @@ public:
 	void init()
 	{
 		GAME::m_modelShader->sendUniform("darken", 1);
-		mod.resize(125);//sets the initial size of the vector (if u add any more models, increase this number)
+		mod.resize(126);//sets the initial size of the vector (if u add any more models, increase this number)
 
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);

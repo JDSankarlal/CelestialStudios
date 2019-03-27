@@ -242,6 +242,7 @@ void Shader::sendUniform(const char* uniform, int val)
 	glUniform1i(uni, val);
 }
 
+
 void Shader::enable()
 {
 	glUseProgram (m_programID);

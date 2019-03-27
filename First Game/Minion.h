@@ -6,8 +6,8 @@ class Minion: public Model
 {
 public:
 	Minion();
-	Minion(Model & model);
-	Minion(const char * path);
+	Minion(Model& model);
+	Minion(const char* path);
 	~Minion();
 
 	float getHealth();
@@ -15,11 +15,12 @@ public:
 	float getTimeSinceLastSpawn();
 	void setTimeSinceLastSpawn(float v);
 	static void addTarget(Player* mod);
-	bool hitByEnemy(Model *, float damage = 35.f);
+	bool hitByEnemy(Model*, float damage = 35.f);
 	void update(float dt);
 
 	void move(bool move);
 
+	friend bool operator>(Minion a, Minion b);
 private:
 	bool m_move = true;
 	static std::vector<Player*> targets;

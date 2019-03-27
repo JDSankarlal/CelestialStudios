@@ -7,6 +7,7 @@ void Medic::init()
 	setHealth(150);
 	healingCircle = new Model("Models/BulletCircle/BulletCircle.obj");
 	healingCircle->setToRender(false);
+	GAME::addModel(healingCircle);
 }
 
 Medic::Medic():Player()
@@ -73,8 +74,8 @@ void Medic::update(float dt)
 		if(isHealing == false)
 		{
 			if(time - getTimeSinceLastHeal() >= 5)
-			{
-				healingCircle->getTransformer().setPosition(getTransformer().getPosition() + (Coord3D({0.0f, 0.1f, 0.0f})));
+			{				
+				healingCircle->getTransformer().setPosition(getTransformer().getPosition() + (Coord3D({0.0f, 1.f, 0.0f})));
 				healingCircle->setToRender(true);
 				circleTime = time;
 				puts("Special Ability MEDIC");
