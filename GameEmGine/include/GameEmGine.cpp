@@ -45,7 +45,17 @@ GameEmGine::MessageCallback(GLenum source,
 		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
 		type, severity, message);
 }
+struct RGB
 
+{
+
+	float r;
+
+	float g;
+
+	float b;
+
+};
 void GameEmGine::init(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	createNewWindow(name, width, height, x, y, monitor, fullScreen, visable);
@@ -254,8 +264,7 @@ void GameEmGine::shaderInit()
 {
 	//m_cameraShader = new GLSLCompiler;
 	//m_cameraShader->create("Shaders/Texture.vtsh", "Shaders/Texture.fmsh");
-	m_modelShader = new Shader;
-	m_modelShader->create("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
+	m_modelShader = &ResourceManager::getShader("Shaders/PassThrough.vert", "Shaders/PassThrough.frag");
 
 
 	m_bloomHighPass = new Shader;

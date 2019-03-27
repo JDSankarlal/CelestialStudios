@@ -12,8 +12,8 @@ m_fragID(0)
 
 Shader::Shader(Shader& shad):m_vtsh(shad.m_vtsh), m_vtPath(shad.m_vtPath), m_fmPath(shad.m_fmPath), m_attribNum(shad.m_attribNum),
 m_enabled(shad.m_enabled), m_programID(shad.m_programID),
-m_vertID(0),
-m_fragID(0)
+m_vertID(shad.m_vertID),
+m_fragID(shad.m_fragID)
 {
 	glewInit();
 }

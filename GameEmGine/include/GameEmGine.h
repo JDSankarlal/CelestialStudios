@@ -18,17 +18,7 @@
 #include "FrameBuffer.h"
 #include "LightSource.h"
 
-struct RGB
 
-{
-
-	float r;
-
-	float g;
-
-	float b;
-
-};
 
 class GameEmGine
 {
