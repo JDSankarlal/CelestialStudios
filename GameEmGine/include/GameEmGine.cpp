@@ -53,7 +53,7 @@ void GameEmGine::init(std::string name, int width, int height, int x, int y, int
 	std::vector<RGB> LUT{};
 	std::string LUTpath="";
 	
-	LUTpath = "Texture/CUSTOM.cube";
+	LUTpath = "Texture/IWLTBAP_Sedona_-_Standard.cube";
 	std::ifstream LUTfile2(LUTpath.c_str());
 	while (!LUTfile2.eof())
 	{
