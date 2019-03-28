@@ -5,7 +5,8 @@ void Medic::init()
 	type = medic;
 	m_initialHealth = 150;
 	setHealth(150);
-	healingCircle = new Model("Models/BulletCircle/BulletCircle.obj");
+	healingCircle = new Model("Models/MedicCircle/BETTERHealingCircle.obj");
+	GameEmGine::addModel(healingCircle); 
 	healingCircle->setToRender(false);
 }
 
@@ -43,13 +44,12 @@ void Medic::getHealing(Player* player)
 {
 	//if(time - getTimeSinceLastMissile() >= 3)
 		//Healing
-	if(collision3D(player))
+	if(collision2D(healingCircle,player))
 	{
-		static int healAmount = 5;
+		static float healAmount = .02f;
 		if(player->getHealth() + healAmount < player->getInitialHealth())
-		{
 			player->setHealth(player->getHealth() + healAmount);
-		}
+		
 	}
 }
 
@@ -75,6 +75,7 @@ void Medic::update(float dt)
 			if(time - getTimeSinceLastHeal() >= 5)
 			{
 				healingCircle->getTransformer().setPosition(getTransformer().getPosition() + (Coord3D({0.0f, 0.1f, 0.0f})));
+				healingCircle->getTransformer().setScale(600);
 				healingCircle->setToRender(true);
 				circleTime = time;
 				puts("Special Ability MEDIC");
