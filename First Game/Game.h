@@ -765,7 +765,7 @@ public:
 			static bool pausedAgain[4] = { 0,0,0,0 };
 			if (GAME::isControllerConnected(a))
 			{
-				if (GAME::getController(a)->isButtonPressed(CONTROLLER_START)&&!pausedAgain[a])
+				if (GAME::getController(a)->isButtonPressed(CONTROLLER_START) && !pausedAgain[a])
 				{
 					pausedAgain[a] = true;
 					//static bool paused = false;
@@ -839,6 +839,21 @@ public:
 			switch (player->type)
 			{
 			case assault:
+				
+
+				for (int b = 0; b < (int)((Assault*)player)->pMissiles.size(); b++)
+				{
+					CandyMan->hitByEnemy(((Assault*)player)->pMissiles[b], 50);
+				}
+					((Assault*)player)->missileCollision(CandyMan);
+
+				for (int t = 79; t < 79 + 7; t++)
+				{
+					((Assault*)player)->missileCollision(mod[t]);
+				}
+
+
+
 				break;
 			case tank:
 				//nothing special needed

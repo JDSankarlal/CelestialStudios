@@ -69,7 +69,7 @@ void Medic::update(float dt)
 	p1->setStickDeadZone(.2f);
 
 	///- Medic Special Ability Inactive - ///
-	if(p1->isButtonPressed(CONTROLLER_Y))
+	if(p1->isButtonStroked(CONTROLLER_Y))
 		if(isHealing == false)
 		{
 			if(time - getTimeSinceLastHeal() >= 5)
