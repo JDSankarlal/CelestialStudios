@@ -152,7 +152,7 @@ public:
 	void init()
 	{
 		GAME::m_modelShader->sendUniform("darken", 1);
-		mod.resize(126);//sets the initial size of the vector (if u add any more models, increase this number)
+		mod.resize(127);//sets the initial size of the vector (if u add any more models, increase this number)
 
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
@@ -503,6 +503,14 @@ public:
 		mod[125]->getTransformer().setRotation({ 0, 0, 0 });
 		GAME::addModel(mod[125]);
 
+		//pause screen
+		mod[126] = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
+		mod[126]->getTransformer().setPosition(-0.5f, 10.0f, -8.0f);
+		mod[126]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
+		GAME::addModel(mod[126]);
+		mod[126]->setToRender(false);
+		mod[126]->setTransparent(true);
+
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -757,12 +765,16 @@ public:
 		CandyMan->setPlayers((Player * *)mod.data());
 		CandyMan->update((float)dt);
 
+		//add mod for pause screen here but set render to false 
+
+
 		for (int a = 0; a < 4; a++)
 		{
 
 			player = (Player*)mod[a];
 			player->setPlayerIndex(a);
 			static bool pausedAgain[4] = { 0,0,0,0 };
+			//static bool pauseScreen[4] = { 0,0,0,0 }; 
 			if (GAME::isControllerConnected(a))
 			{
 				if (GAME::getController(a)->isButtonPressed(CONTROLLER_START)&&!pausedAgain[a])
@@ -771,13 +783,19 @@ public:
 					//static bool paused = false;
 					for (int b = 0; b < 4; b++)
 						((Player*)mod[b])->setActive(pause);
-
+					
+					mod[126]->getTransformer().setRotation(GAME::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
+					mod[126]->setToRender(!pause);
 					CandyMan->setActive(pause);
 					pause = !pause;
+					screenPause = !screenPause; 
+					
 				}
 				else if (GAME::getController(a)->isButtonReleased(CONTROLLER_START))
 				{
 					pausedAgain[a] = false;
+					//pauseScreen[a] = false; 
+					//mod[126]->setToRender(false);
 				}
 
 				if (!player->dead)
@@ -1183,4 +1201,5 @@ private:
 	Coord2D leftM, rightM;
 	AudioPlayer audio;
 	bool pause = false;
+	bool screenPause = false; 
 };
