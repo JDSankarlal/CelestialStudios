@@ -129,5 +129,8 @@
     <ClInclude Include="PlayerSelect.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Controls.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
