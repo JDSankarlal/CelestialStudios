@@ -1,17 +1,9 @@
 #include "Shader.h"
 
-GLuint *Shader::m_programs = new GLuint[0], *Shader::m_attribs = new GLuint[0], Shader::m_num;
+//GLuint *Shader::m_programs = new GLuint[0], *Shader::m_attribs = new GLuint[0], Shader::m_num;
 
-Shader::Shader() :m_vtsh(""), m_vtPath(""), m_fmPath(""), m_attribNum(0),
+Shader::Shader():m_vtsh(""), m_vtPath(""), m_fmPath(""), m_attribNum(0),
 m_enabled(false), m_programID(0),
-m_vertID(0),
-m_fragID(0)
-{
-	glewInit();
-}
-
-Shader::Shader(Shader& shad):m_vtsh(shad.m_vtsh), m_vtPath(shad.m_vtPath), m_fmPath(shad.m_fmPath), m_attribNum(shad.m_attribNum),
-m_enabled(shad.m_enabled), m_programID(shad.m_programID),
 m_vertID(0),
 m_fragID(0)
 {
@@ -29,15 +21,15 @@ void Shader::refresh()
 	create(m_vtPath, m_fmPath);
 }
 
-void Shader::create(const std::string & vertFilePath, const std::string & fragFilePath)
+void Shader::create(const std::string& vertFilePath, const std::string& fragFilePath)
 {
 	if(compileShaders(vertFilePath, fragFilePath))
 		linkShaders();
 }
 
-void Shader::create(const std::string & vertFilePath, const std::string & fragFilePath, const std::string & geoFilePath)
+void Shader::create(const std::string& vertFilePath, const std::string& fragFilePath, const std::string& geoFilePath)
 {
-	if(compileShaders(vertFilePath, fragFilePath,geoFilePath))
+	if(compileShaders(vertFilePath, fragFilePath, geoFilePath))
 		linkShaders();
 }
 
@@ -89,7 +81,7 @@ void Shader::createDefault()
 		;
 
 	m_vtsh = tmpFileContent;
-	const char * tmp = tmpFileContent.c_str();
+	const char* tmp = tmpFileContent.c_str();
 
 	glShaderSource(m_vertID, 1, &tmp, nullptr);
 	glCompileShader(m_vertID);
@@ -118,11 +110,11 @@ void Shader::createDefault()
 	//delete tmpFileContent;
 }
 
-bool Shader::compileShaders(const std::string & vertFilePath, const std::string & fragFilePath)
+bool Shader::compileShaders(const std::string& vertFilePath, const std::string& fragFilePath)
 {
 	m_vtPath = vertFilePath;
 	m_fmPath = fragFilePath;
-	
+
 	glDeleteProgram(m_programID);
 
 	m_programID = glCreateProgram();
@@ -135,7 +127,7 @@ bool Shader::compileShaders(const std::string & vertFilePath, const std::string 
 	return true;
 }
 
-bool Shader::compileShaders(const std::string & vertFilePath, const std::string & fragFilePath, const std::string & geoFilePath)
+bool Shader::compileShaders(const std::string& vertFilePath, const std::string& fragFilePath, const std::string& geoFilePath)
 {
 	m_vtPath = vertFilePath;
 	m_fmPath = fragFilePath;
@@ -159,15 +151,17 @@ bool Shader::compileShaders(const std::string & vertFilePath, const std::string 
 void Shader::linkShaders()
 {
 	glAttachShader(m_programID, m_vertID);
+
 	if(m_geomID)
 		glAttachShader(m_programID, m_geomID);
+
 	glAttachShader(m_programID, m_fragID);
 
 	glLinkProgram(m_programID);
 
 	GLint isLinked = 0;
-	glGetProgramiv(m_programID, GL_LINK_STATUS, (int *)&isLinked);
-	
+	glGetProgramiv(m_programID, GL_LINK_STATUS, (int*)& isLinked);
+
 	if(isLinked == GL_FALSE)
 	{
 		GLint maxLength = 0;
@@ -194,7 +188,7 @@ void Shader::linkShaders()
 		// In this simple program, we'll just leave
 		return;
 	}
-	
+
 	glDetachShader(m_programID, m_vertID);
 	glDetachShader(m_programID, m_fragID);
 	if(m_geomID)
@@ -205,22 +199,29 @@ void Shader::linkShaders()
 	if(m_geomID)
 		glDeleteShader(m_geomID);
 
+
+	m_vertID = m_fragID = 0;
 }
 
-void Shader::addAtribute(const std::string attributeName, short index)
+void Shader::addAtribute(const std::string attributeName, short m_index)
 {
-	glBindAttribLocation(m_programID, index, attributeName.c_str());
+	glBindAttribLocation(m_programID, m_index, attributeName.c_str());
 	linkShaders();
 }
 
 GLint Shader::getAttribLocation(const std::string attributeName)
 {
-	return glGetAttribLocation(m_programID,attributeName.c_str());
+	return glGetAttribLocation(m_programID, attributeName.c_str());
 }
 
-GLint Shader::getUniformLocation(const char * uniform)
+GLint Shader::getUniformLocation(const char* uniform)
 {
 	GLint uni = glGetUniformLocation(m_programID, uniform);
+	if(uni < 0)
+	{
+		printf("uniform could not find %s \nwithin %s or %s shaders\n\n", uniform, m_vtPath.c_str(), m_fmPath.c_str());
+	}
+
 	return uni;
 }
 
@@ -242,16 +243,15 @@ void Shader::sendUniform(const char* uniform, int val)
 	glUniform1i(uni, val);
 }
 
+
 void Shader::enable()
 {
-	glUseProgram (m_programID);
-
-	
+	glUseProgram(m_programID);
 }
 
 void Shader::disable()
 {
-	
+
 	glUseProgram(0);
 
 }
@@ -286,8 +286,8 @@ bool Shader::compileShader(Shaders shadType, const std::string filePath, GLuint 
 		char* errorLog = new char[maxLength];
 		glGetShaderInfoLog(id, maxLength, &maxLength, errorLog);
 
-		printf("error in file: %s\n",filePath.c_str());
-		printf("%s\n\n",errorLog );
+		printf("error in file: %s\n", filePath.c_str());
+		printf("%s\n\n", errorLog);
 
 		createDefault();
 		return false;

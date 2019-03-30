@@ -28,7 +28,7 @@ public:
 	adds atributes to the shader
 	(ONLY USE if in-shader indexes are not specified)
 	*/
-	void addAtribute(const std::string attributeName, short index = 1);
+	void addAtribute(const std::string attributeName, short m_index = 1);
 
 	GLint getAttribLocation(const std::string attributeName);
 	GLint getUniformLocation(const char *uniform);
@@ -56,13 +56,14 @@ private:
 	std::string m_vtsh="",m_vtPath="",m_fmPath="",m_goPath="";
 	int m_attribNum = 0;
 	bool m_enabled = false;
+
 	GLuint
 		m_programID = 0,
 		m_vertID = 0,
 		m_fragID = 0,
 		m_geomID = 0;
 
-	static GLuint *m_programs, *m_attribs, m_num;
+//	static GLuint *m_programs, *m_attribs, m_num;
 
 };
 

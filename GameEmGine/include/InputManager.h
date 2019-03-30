@@ -1,4 +1,5 @@
 #pragma once
+#include "XinputManager.h"
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 #include <functional>
@@ -15,10 +16,10 @@ enum  KeyState
 
 enum ModKey
 {
-	MOD_SHIFT = 1,
-	MOD_CONTROL = 2,
-	MOD_ALT = 4,
-	MOD_SUPER = 8
+	KEY_MOD_SHIFT = 1,
+	KEY_MOD_CONTROL = 2,
+	KEY_MOD_ALT = 4,
+	KEY_MOD_SUPER = 8
 };
 
 enum MouseState
@@ -44,93 +45,8 @@ enum MouseButton
 	LAST_BUTTON = 7
 };
 
-enum XinputButtons
-{
-	A, B, X, Y, LB, RB, SELECT, START, L_STICK_BUTTON, R_STICK_BUTTON, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, DPAD_LEFT
-};
+///***Structs***/
 
-enum XinputSticks
-{
-	LS, RS
-};
-
-enum XinputTriggers
-{
-	LT, RT
-};
-/***Structs***/
-
-struct Xinput
-{
-	//Controller Name
-	const char* name;
-
-	//Values from -1 -> 1
-	struct Sticks
-	{
-		Coord2D& operator[](XinputSticks type)
-		{
-			return stick[type];
-		}
-	private:
-		Coord2D stick[2];
-	}sticks;
-
-	//Values from  0 -> 1
-	float* triggers;
-
-	union
-	{
-		struct
-		{
-			unsigned char A, B, X, Y, LB, RB, SELECT, START, L_STICK_BUTTON, R_STICK_BUTTON, DPAD_UP, DPAD_RIGHT, DPAD_DOWN, DPAD_LEFT;
-		};
-		unsigned char data[14];
-	}buttons;
-
-	//counter variables
-	int numSticks = 0, numTriggers = 0, numButtons = 0;
-
-	//Stick update is taken care of in GameEmGine automatically 
-	void updateSticks(int index)
-	{
-		float* tmp = (float*)glfwGetJoystickAxes(index, &numSticks);
-		
-		for(int a = 0; a < numSticks - 2; a += 2)
-			sticks[XinputSticks(a / 2)] = {tmp[a],tmp[a + 1]};
-	}
-
-	const float getStickDeadZone()
-	{
-		return stickDeadZone;
-	}
-	const float getTriggerDeadZone()
-	{
-		return triggerDeadZone;
-	}
-	void setStickDeadZone(float val)
-	{
-		stickDeadZone = val;
-	}
-
-	void setTriggerDeadZone(float val)
-	{
-		triggerDeadZone = val;
-	}
-
-	static bool buttonPressed(const char button)
-	{
-		return button == GLFW_PRESS;
-	}
-
-	static bool buttonReleased(const char button)
-	{
-		return button == GLFW_RELEASE;
-	}
-
-private:
-	float stickDeadZone = 0, triggerDeadZone = 0;
-};
 
 /***Class***/
 
@@ -188,17 +104,16 @@ public:
 
 	int controllersConnected();
 
-	bool isControllerConnected(unsigned int index);
+	bool isControllerConnected(unsigned int m_index);
 
-	Xinput& getController(unsigned int index);
+	XinputDevice& getController(unsigned int m_index);
 
 	static void controllerUpdate();
 
 	//template<class T> friend void operator=(T[], T*);
 
 private:
-	static Xinput m_controllers[16];
-
+	
 	static void mouseButtonUpdate(GLFWwindow *, int button, int action, int mods);
 	static void keyUpdate(GLFWwindow *, int key, int scancode, int action, int mods);
 	static void xinputConnectionUpdate(int controller, int connected);

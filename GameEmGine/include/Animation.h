@@ -20,6 +20,12 @@ public:
 
 	void update(Shader* shader,Mesh* mesh);
 	
+	int getFrameNumber();
+
+	bool checkEnd();
+
+	bool checkPlay();
+
 	void stop();
 
 	void play();

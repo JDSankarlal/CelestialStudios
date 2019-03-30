@@ -29,8 +29,8 @@ public:
 
 	void unload();
 
-	GLuint getNumFaces(int index)const;
-	GLuint getNumVerticies(int index)const;
+	GLuint getNumFaces(int m_index)const;
+	GLuint getNumVerticies(int m_index)const;
 
 	Coord3D top , bottom , left, right , front, back;
 
@@ -43,7 +43,7 @@ private:
 
 	std::vector< std::pair<std::string, GLuint>>  m_vaoID;
 	std::vector<std::pair<GLuint, GLuint>> m_vboID;
-	std::vector<GLuint>
+	std::vector<unsigned>
 		m_numFaces, m_numVerts;
 
 	std::vector< std::pair<std::string, std::vector<Vertex3D>>> m_unpackedData;

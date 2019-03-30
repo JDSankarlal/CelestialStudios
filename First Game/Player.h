@@ -1,33 +1,86 @@
+#define _USE_MATH_DEFINES 
 #pragma once
+
+#include <GameEmGine.h>
 #include <Model.h>
+#include <EmGineAudioPlayer.h>
+typedef EmGineAudioPlayer AudioPlayer;
+typedef GameEmGine GAME;
+enum PlayerType
+{
+	assault,
+	tank,
+	medic,
+	specialist
+};
 
-
-class Player : public Model
+class Player: public Model
 {
 public:
-	Player();
-	Player(Model & model);
-	Player(const char * path);
+	void init(int index);
+
+	Player(int index = 0);
+	Player(Player& model);
+	Player(const char* path);
+
 	virtual ~Player();
-	virtual int getHealth();
-	virtual void setHealth(int v);
-	virtual int getBulletCount();
-	virtual void setBulletCount(int v);
+	void setPlayerIndex(int index);
+	virtual float getHealth();
+	virtual void setHealth(float v);
 	virtual float getTimeSinceLastMissile();
 	virtual void setTimeSinceLastMissile(float v);
+	void hitByEnemy(Model * mod, float damage = 35.f);
+	int getBulletCount();
+	void setBulletCount(int v);
+	bool bulletCollisions(Model* mod);
+	void onPlayArea(Model* mod);
+	virtual void update(float dt);
+	void setActive(bool active);
+	bool isActive();
 	float getInitialHealth();
 
-	enum PlayerType
-	{
-		assault,
-		tank,
-		medic,
-		specialist
-	} type;
+	//Player Ability Variables
+	float reloadTimer = 0;
+	bool reloading = false;
+	float cooldown = false;
+	bool f = false;
+	PlayerType type;
+
+	float shotBuzzTimer;
+	float shotBuzzDir = .2f;
+	float onHitShakeTimer = 0;
+	float onHitShakeDir = 0.6f;
+
+	bool dead=false;
 protected:
-	float initialHealth = 100.0f;
-private:
-	int health = 100;
-	int bulletCount = 30;
-	float timeSinceLastMissile;
+	float m_initialHealth = 100;
+	int m_index;
+	float angle;
+	float duration = 0;
+	bool m_active=true;
+	Animation* squash;
+	Model* graveStone, //22
+		* bulletCircle,//74
+		* ringID,//26
+		* gun;//54
+
+	static Model* bullet;//48
+
+	std::vector<float> timer;
+	std::vector<Model*> bullets;
+	std::vector<Coord3D> velocity;
+	float move = .1f;
+
+	static Model
+		* redBar, * blueBar, * greenBar, * yellowBar,
+		* baseRedBar, * baseBlueBar, * baseGreenBar, * baseYellowBar;
+
+	Model* m_baseBar, * m_lifeBar;
+
+	bool gunControlLaw = false, dashControl = false;
+	float time;
+
+	float m_health = 100;
+	int m_bulletCount = 30;
+	float m_timeSinceLastMissile;
 };

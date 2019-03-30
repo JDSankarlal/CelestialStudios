@@ -1,4 +1,5 @@
 #pragma once
+#include "InputManager.h"//needs to be up her
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 #include <ctime>
@@ -13,10 +14,11 @@
 #include "WindowCreator.h"
 #include "Camera.h"
 #include "Model.h"
-//#include "ExtraMath.h"
-#include "InputManager.h"
+#include "ExtraMath.h"
 #include "FrameBuffer.h"
 #include "LightSource.h"
+
+
 
 class GameEmGine
 {
@@ -89,7 +91,7 @@ public:
 	void addModelBatch(const char *model);
 
 
-	void removeSprite(int index);
+	void removeSprite(int m_index);
 
 
 	static void addCamera(Camera* camera);
@@ -109,13 +111,17 @@ public:
 
 	static int controllersConnected();
 
-	static bool isControllerConnected(int index);
+	static bool isControllerConnected(int m_index);
 
-	static Xinput& getController(int index);
-
-	static Shader *m_modelShader,*m_grayScalePost,*m_bloomHighPass,*m_blurHorizontal,*m_blurVertical,*m_blurrComposite,*m_deferredRender;
+	static XinputDevice* getController(int m_index);
 
 	static void drawFullScreenQuad();
+
+	static Shader *m_modelShader,*m_postProcess, *m_grayScalePost, *m_bloomHighPass, *m_blurHorizontal, *m_blurVertical, *m_blurrComposite;
+
+	static Texture2D* m_LUT;
+
+	static bool lutActive;
 
 private:
 	static void shaderInit();
@@ -138,7 +144,7 @@ private:
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
-	static FrameBuffer* m_mainFrameBuffer,*m_buffer1,*m_buffer2,*m_greyscaleBuffer,*m_deferredRenderBuffer;
+	static FrameBuffer* m_mainFrameBuffer,*m_postBuffer,*m_buffer1,*m_buffer2,*m_greyscaleBuffer;
 	static std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;
@@ -147,5 +153,8 @@ private:
 	static bool exitGame;
 	static float m_fps;
 	static short m_fpsLimit;
+
+	static GLuint colorCustom;
+	static int LUTsize;
 };
 

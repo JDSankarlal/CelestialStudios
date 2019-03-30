@@ -10,20 +10,20 @@ Turret::~Turret()
 
 void Turret::setLifeTime(float t)
 {
-	lifeTime = t;
+	m_lifeTime = t;
 }
 
 float Turret::getLifeTime()
 {
-	return lifeTime;
+	return m_lifeTime;
 }
 
 void Turret::setHealth(int v)
 {
-	health = v;
+	m_health = v;
 }
 
 int Turret::getHealth()
 {
-	return health;
+	return m_health;
 }

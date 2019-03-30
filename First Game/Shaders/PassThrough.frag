@@ -28,17 +28,23 @@ uniform int LightType[MAX_LIGHTS_SIZE];
 uniform vec3 LightDirection[MAX_LIGHTS_SIZE] ;
 uniform float LightAngleConstraint[MAX_LIGHTS_SIZE];
 
+
+//uniform sampler2D uTex;
 uniform sampler2D uPos;
 uniform sampler2D uNorm;
-uniform sampler2D uAlbedo;
+uniform sampler2D uScene;
+
+
+
 //uniform vec4 colourMod;
 //uniform bool textured;
+//uniform bool darken ;
 
 in vec2 texcoord;
 //in vec3 norm;
 //in vec3 pos;
 
-layout(location = 0) out vec4 outColor;
+out vec4 outColor;
 
 void pointLight(int a);
 
@@ -54,7 +60,7 @@ void spotLight(int a)
 
 void directionalLight(int a)
 {
-    vec3 normal = normalize(texture(uNorm,texcoord).xyz);
+    vec3 normal = normalize(texture(uNorm,texcoord).rgb);
     vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
     float dist = length(lightVec);
     float NdotL = max(dot(normal, LightDirection[a]),0.0);
@@ -80,7 +86,7 @@ void directionalLight(int a)
 
 void pointLight(int a)
 {
-    vec3 normal = normalize(texture(uNorm,texcoord).xyz);
+    vec3 normal = normalize(texture(uNorm,texcoord).rgb);
     vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
     float dist = length(lightVec);
    
@@ -93,7 +99,7 @@ void pointLight(int a)
     outColor.rgb += LightDiffuse[a] * attenuation ;
     
     //Blinn-Phong half vector
-    float NdotHV =  max(dot(normal, normalize(lightVec + texture(uPos,texcoord).xyz)), 0.0); 
+    float NdotHV =  max(dot(normal, normalize(lightVec + normalize(-texture(uPos,texcoord).xyz))), 0.0); 
     
     //Calculate specular contribution
     outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
@@ -109,22 +115,21 @@ void main()
     
     //if(textured)
     //{       
-    //   vec4 textureColor = texture(uTex, texcoord);
-    //   outColor = textureColor;
-    //   outColor.rgb *= textureColor.rgb;
-    //   outColor *= colourMod;
+    //    vec4 textureColor = texture(uTex, texcoord);
+    //    outColor = textureColor;
+    //    outColor.rgb *= !darken ? textureColor.rgb * 1.2 : vec3(1);
+    //    outColor *= colourMod;
     //}
     //else     
-    //{
     //    outColor = colourMod; 
-    //}
-
-    vec4 textureColor = texture(uAlbedo,texcoord);
-    outColor = textureColor;
-    outColor.rgb *= LightAmbient;
+   vec3 colour = texture(uScene, texcoord).rgb; 
+   outColor.rgb =  colour;
+   
+   outColor.rgb *= LightAmbient;
+    
     
     //account for rasterizer interpolating
-    vec3 normal = normalize(texture(uNorm,texcoord).xyz);
+    vec3 normal = normalize(texture(uNorm,texcoord).rgb);
     
     for(int a = 0; a < LightAmount; a++)
     { 
@@ -143,5 +148,7 @@ void main()
             defaultLight(a);
         }
      // outColor.rgb = vec3(NdotL,NdotL,NdotL); 
-    }    
+    } 
+
+    outColor.a = 1;
 }

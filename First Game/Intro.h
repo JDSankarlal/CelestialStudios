@@ -7,15 +7,15 @@ public:
 	// Set splash screen and start update
 	void init()
 	{
-		GAME::m_deferredRender->enable();
-		GAME::m_deferredRender->sendUniform("darker", false);
-		GAME::m_deferredRender->disable();
-		mod.push_back(new Model("Models/Screen/Intro/Background/introBackGround.obj"));
+		GAME::m_modelShader->sendUniform("darken", 0);
+
+		mod.push_back(new Model("Models/Scene/Intro/Background/introBackGround.obj"));
 		mod[0]->getTransformer().setScale(1.0f, 1.5f, 1.0f);
+
 		GameEmGine::addModel(mod.back());
 		LightSource::setSceneAmbient({0,0,0,255});
 
-		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
+		keyPressed = [&](int a, int b) {keyInputPressed(a, b);  };
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 	}
 
@@ -42,6 +42,7 @@ public:
 				LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
 			}
 		}
+
 		if(!fadein)
 		{
 			LightSource::setLightAmount(1);
@@ -51,11 +52,13 @@ public:
 			LightSource::setAttenuationQuadratic(0.04f, 0);
 			LightSource::setDirection({0.0f,0.0f,.0f}, 0);
 		}
+
 		for(int a = 0; a < 4; a++)
-			if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
+			if(GAME::getController(a)->isButtonPressed(CONTROLLER_A))
 			{
 				fadeout = true;
 			}
+
 		if(fadeout)
 		{
 			LightSource::setLightAmount(0);

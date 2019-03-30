@@ -9,7 +9,7 @@ Animation::Animation()
 Animation::~Animation()
 {}
 
-void Animation::addFrame(Mesh * frame, float speed)
+void Animation::addFrame(Mesh* frame, float speed)
 {
 	frame, speed;
 }
@@ -23,13 +23,13 @@ void Animation::addDir(const char * dir)
 {
 	std::string path(dir);
 	//path += fileName;
-	auto filePath = fs::directory_iterator(path);
+	auto filePathData = fs::directory_iterator(path);
 
 	m_unpackedData.clear();
-	for(auto&a : filePath)
+	for(auto&a : filePathData)
 	{
 		std::wstring tmpPath = a.path();
-		int check = tmpPath.find(L".obj");
+		int check = (int)tmpPath.find(L".obj");
 		if(check < 0)continue;
 
 		Mesh tmp;
@@ -39,7 +39,6 @@ void Animation::addDir(const char * dir)
 
 		m_unpackedData.push_back(tmp.loadAni(str));
 	}
-
 }
 
 void Animation::update(Shader* shader, Mesh* mesh)
@@ -64,7 +63,7 @@ void Animation::update(Shader* shader, Mesh* mesh)
 				} else
 				{
 					m_frame = int(time / m_speed);
-					m_frame = m_frame >= m_unpackedData.size() - 1 ? (m_unpackedData.size() - 2) % m_unpackedData.size() : m_frame;
+					m_frame = m_frame >= m_unpackedData.size() - 1 ? unsigned((m_unpackedData.size() - 2) % m_unpackedData.size() ): m_frame;
 
 					if(m_frame < m_unpackedData.size() - 2)
 						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[(m_frame + 1) % m_unpackedData.size()]);
@@ -94,8 +93,24 @@ void Animation::update(Shader* shader, Mesh* mesh)
 	shader->disable();
 }
 
+int Animation::getFrameNumber()
+{
+	return m_frame;
+}
+
+bool Animation::checkEnd()
+{
+	return m_frame == m_frames.size();
+}
+
+bool Animation::checkPlay()
+{
+	return !m_pause;
+}
+
 void Animation::stop()
 {
+	m_frame = 0;
 	m_stop = true;
 }
 
