@@ -505,7 +505,7 @@ public:
 
 		//pause screen
 		mod[126] = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
-		mod[126]->getTransformer().setPosition(-0.5f, 10.0f, -8.0f);
+		mod[126]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
 		mod[126]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
 		GAME::addModel(mod[126]);
 		mod[126]->setToRender(false);
@@ -799,13 +799,21 @@ public:
 					//static bool paused = false;
 					for (int b = 0; b < 4; b++)
 						((Player*)mod[b])->setActive(pause);
-					
+
+					//rn the music gets quieter during the pause screen 
+					if (!pause)
+						EmGineAudioPlayer::setVolume(.5f, 0);
+						
+					else
+						EmGineAudioPlayer::setVolume(1, 0);
+
 					mod[126]->getTransformer().setRotation(GAME::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
 					mod[126]->setToRender(!pause);
 					CandyMan->setActive(pause);
+					//music should slow down in the pause menu!!!!
 					pause = !pause;
-					screenPause = !screenPause; 
-					
+					screenPause = !screenPause;
+
 				}
 				else if (GAME::getController(a)->isButtonReleased(CONTROLLER_START))
 				{
@@ -1236,5 +1244,5 @@ private:
 	Coord2D leftM, rightM;
 	AudioPlayer audio;
 	bool pause = false;
-	bool screenPause = false; 
+	bool screenPause = false;
 };
