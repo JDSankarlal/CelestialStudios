@@ -1,7 +1,0 @@
-Instructions:
-
-After opening the project
-
-1. make sure project is set to win32(x86)
-
-2. set "first game" as startup project
