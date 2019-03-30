@@ -19,9 +19,6 @@ void Transformer::setRotation(Coord3D angles)
 	//glm::vec3 tmp(angles.x, angles.y, angles.z);
 	//tmp = glm::vec4(tmp, 1.0f);
 
-	//m_forward = {cosf(glm::radians(angles.x)),cosf(glm::radians(angles.y)),sinf(glm::radians(angles.x))};
-	//m_up = {cosf(glm::radians(angles.y)),sinf(glm::radians(angles.y)),cosf(glm::radians(angles.z))};
-	//m_right = {sinf(glm::radians(angles.x)),cosf(glm::radians(angles.z)),cosf(glm::radians(angles.z))};
 
 
 
@@ -29,21 +26,26 @@ void Transformer::setRotation(Coord3D angles)
 	m_rotate = glm::mat4(1);
 	if(m_forward.length())
 	{
-		m_rotate *= Quat::quatRotationMat(glm::radians(angles.z),m_forward);
+		m_rotate *= Quat::quatRotationMat(glm::radians(angles.z), 0,0,1);
 		m_rotData.z = angles.z;
 	}
 	if(m_up.length())
 	{
-		m_rotate *= Quat::quatRotationMat(glm::radians(angles.y), m_up);
+		m_rotate *= Quat::quatRotationMat(glm::radians(angles.y), 0,1,0);
 		m_rotData.y = angles.y;
 	}
 	if(m_right.length())
 	{
-		m_rotate *= Quat::quatRotationMat(glm::radians(angles.x), m_right);
+		m_rotate *= Quat::quatRotationMat(glm::radians(angles.x), 1,0,0);
 		m_rotData.x = angles.x;
 	}
 
-
+	if(m_fpsMode)
+	{
+		m_forward = {sinf(glm::radians(angles.x)),sinf(glm::radians(angles.y)),cosf(glm::radians(angles.x))};
+		m_up = {sinf(glm::radians(angles.y)),cosf(glm::radians(angles.y)),sinf(glm::radians(angles.z))};
+		m_right = {cosf(glm::radians(angles.x)),sinf(glm::radians(angles.z)),sinf(glm::radians(angles.z))};
+	}
 }
 
 void Transformer::rotateBy(Coord3D angles)
@@ -141,19 +143,19 @@ Coord3D Transformer::getScale()
 	return m_scaleData;
 }
 
-glm::mat4 & Transformer::getRotationMatrix()
+glm::mat4& Transformer::getRotationMatrix()
 {
 	//	m_updatedRot = false;
 	return m_rotate;
 }
 
-glm::mat4 & Transformer::getScaleMatrix()
+glm::mat4& Transformer::getScaleMatrix()
 {
 	//	m_updatedScale = false;
 	return m_scale;
 }
 
-glm::mat4 & Transformer::getTranslationMatrix()
+glm::mat4& Transformer::getTranslationMatrix()
 {
 	//	m_updatedTrans = false;
 	return m_translate;
@@ -163,13 +165,22 @@ glm::mat4 Transformer::getTransformation()
 {
 	//	m_updatedRot = m_updatedTrans
 	//		= m_updatedScale = false;
-	return   m_translate * m_rotate * m_scale;
+	return   m_translate * m_rotate* m_scale;
 }
 
 void Transformer::resetUpdated()
 {
 	m_updatedRot = m_updatedTrans
 		= m_updatedScale = false;
+}
+
+void Transformer::enableFPSMode(bool enable)
+{
+	m_fpsMode = enable;
+	if(!enable)
+		m_forward = {0,0,1}, m_up = {0,1,0}, m_right = {1,0,0};
+
+
 }
 
 bool Transformer::isUpdated()

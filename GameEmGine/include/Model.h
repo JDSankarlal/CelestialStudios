@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include "Camera.h"
+//#include "Camera.h"
 #include "Shader.h"
 #include "Utilities.h"
 #include "Transformer.h"
@@ -21,7 +21,7 @@ public:
 	Model(const char* path);
 	virtual ~Model();
 
-	void render(Shader & shader, Camera & cam);
+	void render(Shader & shader, glm::mat4 & cam);
 
 	Transformer& getTransformer();
 

@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(Size3D size, CAMERA_TYPE type):m_scale(1), m_projMat(1), m_objMat(1), m_cameraUpdate(true), m_position(new Coord3D{0,0,0})
+Camera::Camera(Size3D size, CAMERA_TYPE type):m_scale(1), m_projMat(1), m_objMat(1), m_cameraUpdate(true), m_position(new Coord3D{0,0,0}),m_models(new std::vector<Model*>)
 {
 	//m_position = new Coord3D{-.25,-.5,0};
 	init(size, type);
@@ -44,9 +44,9 @@ bool Camera::update()
 
 		m_transform.setPosition(*m_position);
 		m_transform.setScale(m_scale);
-		m_objMat =  glm::inverse( m_transform.getTranslationMatrix()  *m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
+		m_objMat =  glm::inverse( m_transform.getTranslationMatrix() * m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
 
-		m_cameraMat = m_projMat  * m_viewMat* m_objMat;
+		m_cameraMat = m_projMat  *  m_objMat * m_viewMat;
 		m_cameraUpdate = false;
 
 		return true;
@@ -102,6 +102,11 @@ void Camera::moveAngleBy(float angle, Coord3D direction)
 	m_cameraUpdate = true;
 }
 
+void Camera::setViewMatrix(glm::mat4 view)
+{
+	m_viewMat = view;
+}
+
 Coord3D Camera::getPosition()
 {
 	return -m_transform.getPosition();
@@ -135,4 +140,20 @@ glm::mat4 Camera::getObjectMatrix()
 Transformer& Camera::getTransformer()
 {
 	return m_transform;
+}
+
+void Camera::addModel(Model *model)
+{
+	m_models->push_back(model);
+}
+
+void Camera::addModels(std::vector<Model*> *models)
+{
+	m_models = models;
+}
+
+void Camera::render(Shader* shader)
+{
+	for(auto &a : *m_models)
+		a->render(*shader, m_cameraMat);
 }

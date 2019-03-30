@@ -61,9 +61,6 @@
     <ClInclude Include="ShaderCombiner.h">
       <Filter>EmGine</Filter>
     </ClInclude>
-    <ClInclude Include="ExtraMath.h">
-      <Filter>EmGine\Game Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Utilities.h">
       <Filter>EmGine\Data Types</Filter>

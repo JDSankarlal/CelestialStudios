@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "Transformer.h"
 #include "Model.h"
+#include "Camera.h"
 
 enum class LIGHT_TYPE
 {	

@@ -151,6 +151,10 @@ public:
 	// Set game screen
 	void init()
 	{
+		GAME::m_deferredRender->enable();
+		GAME::m_deferredRender->sendUniform("darker", true);
+		GAME::m_deferredRender->disable();
+
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
 		GAME::setCameraPosition({0,18.5f,-14});
@@ -298,13 +302,21 @@ public:
 		mod[43]->setToRender(false);
 
 		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({255,0,0});
 		GAME::addModel(mod.back());//44
-		mod.push_back(new Model(*mod[44]));
+
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({0,0,255});
 		GAME::addModel(mod.back());//45
-		mod.push_back(new Model(*mod[44]));
+
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({0,255,0});
 		GAME::addModel(mod.back());//46
-		mod.push_back(new Model(*mod[44]));
+
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({255,255,0});
 		GAME::addModel(mod.back());//47
+
 
 		mod.push_back(new Model("Models/Bullet/bullet.obj"));//48
 
@@ -421,7 +433,7 @@ public:
 		mod.push_back(new Model(*mod.back()));//84
 		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/Train/Head/trainhead.obj"));//85
-		GAME::addModel(mod.back());								 
+		GAME::addModel(mod.back());
 		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
 		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
 		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
@@ -587,7 +599,7 @@ public:
 		mod[77]->setColour({255,255,0,150});
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({0,-90,0});
 
-		
+
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -621,50 +633,54 @@ public:
 		}
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 6);
-		LightSource::setParent(mod[44], 6);
-		LightSource::setDiffuse({255,100,0,100}, 6);
-		LightSource::setAttenuationQuadratic(0.06f, 6);
+		LightSource::setParent(mod[0], 6);
+		LightSource::setPosition({0, -0.75f, 0}, 6);
+		LightSource::setDiffuse({255,0,0,100}, 6);
+		LightSource::setAttenuationQuadratic(.1f, 6);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 7);
-		LightSource::setParent(mod[0], 7);
+		LightSource::setParent(mod[1], 7);
 		LightSource::setPosition({0, -0.75f, 0}, 7);
-		LightSource::setDiffuse({255,0,0,100}, 7);
-		LightSource::setAttenuationQuadratic(1.f, 7);
+		LightSource::setDiffuse({0,0,255,100}, 7);
+		LightSource::setAttenuationQuadratic(.1f, 7);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 8);
-		LightSource::setParent(mod[1], 8);
+		LightSource::setParent(mod[2], 8);
 		LightSource::setPosition({0, -0.75f, 0}, 8);
-		LightSource::setDiffuse({0,0,255,100}, 8);
-		LightSource::setAttenuationQuadratic(1.f, 8);
+		LightSource::setDiffuse({0,255,0,100}, 8);
+		LightSource::setAttenuationQuadratic(.1f, 8);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 9);
-		LightSource::setParent(mod[2], 9);
+		LightSource::setParent(mod[3], 9);
 		LightSource::setPosition({0, -0.75f, 0}, 9);
-		LightSource::setDiffuse({0,255,0,100}, 9);
-		LightSource::setAttenuationQuadratic(1.f, 9);
+		LightSource::setDiffuse({255,255,0,100}, 9);
+		LightSource::setAttenuationQuadratic(.1f, 9);
+
+
+
+
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 10);
-		LightSource::setParent(mod[3], 10);
-		LightSource::setPosition({0, -0.75f, 0}, 10);
-		LightSource::setDiffuse({255,255,0,100}, 10);
-		LightSource::setAttenuationQuadratic(1.f, 10);
+		LightSource::setParent(mod[44], 10);
+		LightSource::setDiffuse({255,0,0}, 10);
+		LightSource::setAttenuationQuadratic(0.06f, 10);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 11);
 		LightSource::setParent(mod[45], 11);
-		LightSource::setDiffuse({255,100,0,100}, 11);
+		LightSource::setDiffuse({0,0,255}, 11);
 		LightSource::setAttenuationQuadratic(0.06f, 11);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 12);
 		LightSource::setParent(mod[46], 12);
-		LightSource::setDiffuse({255,100,0,100}, 12);
+		LightSource::setDiffuse({0,255,0}, 12);
 		LightSource::setAttenuationQuadratic(0.06f, 12);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 13);
 		LightSource::setParent(mod[47], 13);
-		LightSource::setDiffuse({255,100,0,100}, 13);
+		LightSource::setDiffuse({255,255,0}, 13);
 		LightSource::setAttenuationQuadratic(0.06f, 13);
 
-		LightSource::setSceneAmbient({255,255,255,255});
+		LightSource::setSceneAmbient({GLubyte(255 * 1),GLubyte(255 * 1),GLubyte(255 * 1)});
 
 		/// - Set Camera  - ///
 
@@ -1040,10 +1056,10 @@ public:
 							if(dead[a] == true)
 							{
 								GAME::removeModel(mod[a + 64]);
-								GAME::removeModel(mod[a + 68]); 
+								GAME::removeModel(mod[a + 68]);
 
-								GAME::removeModel(mod[a + 26]); 
-								GAME::removeModel(mod[a + 54]); 
+								GAME::removeModel(mod[a + 26]);
+								GAME::removeModel(mod[a + 54]);
 								GAME::removeModel(mod[a + 74]);
 							}
 
@@ -1066,24 +1082,22 @@ public:
 									timer[a].erase(timer[a].begin() + b);
 									break;
 								}
-
 								bool bulletHit = false;
+
 								/// Bullet Collisions with Train
 								for(int t = 0; t < 7; t++)
 								{
 									if(collision(bullets[a][b], mod[79 + t]))
 									{
-										GAME::removeModel(bullets[a][b]);
+										
 										bulletHit = true;
 									}
 								}
 								if(mod[8])
 									if(collision(bullets[a][b], mod[8]))
 									{
-										GAME::removeModel(bullets[a][b]);
-										bullets[a].erase(bullets[a].begin() + b);
-										velocity[a].erase(velocity[a].begin() + b);
-										timer[a].erase(timer[a].begin() + b);
+										
+										bulletHit = true;
 										//Boss a.k.a model 8, is now called "CandyMan" for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if(CandyMan->getHealth() <= 0)
@@ -1102,7 +1116,7 @@ public:
 									if(collision(bullets[a][b], minion))
 									{
 										minion->setHealth(minion->getHealth() - 10);
-										GAME::removeModel(bullets[a][b]);
+										
 										bulletHit = true;
 										if(minion->getHealth() <= 0)
 										{
@@ -1121,8 +1135,14 @@ public:
 									//}
 								}
 
-								if(bulletHit)
+								if (bulletHit)
+								{
+									GAME::removeModel(bullets[a][b]);
 									bullets[a].erase(bullets[a].begin() + b);
+									velocity[a].erase(velocity[a].begin() + b);
+									timer[a].erase(timer[a].begin() + b);
+									b--;
+								}
 
 							}
 
@@ -1197,7 +1217,7 @@ public:
 		for(int a = 0; a < 4; a++)
 		{
 			players = (Player*)mod[a];
-		
+
 			//Train Sits in middle of map
 			if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
 			{
@@ -1211,7 +1231,7 @@ public:
 							players->getTransformer().setPosition(players->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
 					}
 				}
-		
+
 			}
 			//Train Moves off map
 			if(10 <= (time - trainTimer) && 20 > (time - trainTimer))
@@ -1292,9 +1312,10 @@ public:
 		if(!movePlayer)
 			if(GAME::isControllerConnected(0))
 			{
+				//GAME::getMainCamera()->getTransformer().enableFPSMode(true);
 				Xinput p1 = GAME::getController(0);
 				deathCounter = 0;
-				
+
 				//move camera
 				move *= 2;
 
