@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include "Boss.h"
+#include "Assault.h"
 
 typedef GameEmGine GAME;
 
@@ -144,6 +145,7 @@ void Boss::update(float dt)
 	{
 		for (int a = 0; a < 4; a++)
 		{
+			
 			missles[a]->getTransformer().setScale(1.5f); //every missile shot is scaled up a bit since the original is small 
 			pointPosition[a] = getTransformer().getPosition();
 			if (targets[a]->isActive())
@@ -380,4 +382,18 @@ void Boss::setActive(bool active)
 bool Boss::isActive()
 {
 	return m_active;
+}
+
+bool Boss::hitByEnemy(Model* mod, float damage)
+{
+	if (!m_active)
+		return false;
+
+	if (collision2D(this, mod))
+	{
+		setHealth(getHealth() - damage);
+		bossFlash = true;
+		return true;
+	}
+	return false;
 }

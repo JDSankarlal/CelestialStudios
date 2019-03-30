@@ -327,8 +327,8 @@ public:
 private:
 	std::vector<Player*>playerSelections
 	{
-		new Assault("Models/AssaultModel/Idle/ACM1.obj"),new Tank("Models/AssaultModel/Idle/ACM1.obj"),
-		new  Medic("Models/AssaultModel/Idle/ACM1.obj"), new Specialist("Models/AssaultModel/Idle/ACM1.obj")
+		new Assault("Models/Class/Assault/Idle/ASI1.obj"),new Tank("Models/Class/Tank/Idle/TKI1.obj"),
+		new  Medic("Models/Class/Medic/Idle/MCI1.obj"), new Specialist("Models/Class/Specialist/Idle/SCI1.obj")
 	};
 	Model* classes[4]
 	{ new Model("Models/ClassPH/Assault/assaultPH.obj"),new Model("Models/ClassPH/Tank/tankPH.obj"),

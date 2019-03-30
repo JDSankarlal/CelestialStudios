@@ -152,7 +152,7 @@ void Specialist::update(float dt)
 		}
 	}
 
-	if(p1->isButtonPressed(CONTROLLER_Y))
+	if(p1->isButtonStroked(CONTROLLER_Y))
 	{
 		if(time - getTimeSinceLastTurret() >= 8)
 		{
