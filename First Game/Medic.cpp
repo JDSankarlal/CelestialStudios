@@ -1,13 +1,14 @@
 #include "Medic.h"
 
+
 void Medic::init()
 {
 	type = medic;
 	m_initialHealth = 150;
 	setHealth(150);
+	puts("MEDIC CIRCLE SHOULD APPEAR WTF");
 	healingCircle = new Model("Models/MedicCircle/BETTERHealingCircle.obj");
-	GameEmGine::addModel(healingCircle); 
-	healingCircle->setToRender(false);
+	healingCircle->setToRender(true);
 }
 
 Medic::Medic():Player()
@@ -74,24 +75,29 @@ void Medic::update(float dt)
 		{
 			if(time - getTimeSinceLastHeal() >= 5)
 			{
-				healingCircle->getTransformer().setPosition(getTransformer().getPosition() + (Coord3D({0.0f, 0.1f, 0.0f})));
-				healingCircle->getTransformer().setScale(600);
+				healingCircle->getTransformer().setPosition(this->getTransformer().getPosition() + (Coord3D({0.0f, 0.1f, 0.0f})));
+				healingCircle->getTransformer().setScale(3);
 				healingCircle->setToRender(true);
 				circleTime = time;
 				puts("Special Ability MEDIC");
 				isHealing = true;
+				GAME::addModel(healingCircle);
+
 			}
 		}
 
 	///- Medic Secial Ability Active - ///
-	if(isHealing == true)
-		//Makes medics Circle disappear
-		if((time - circleTime) >= 2.5f)
+	if (isHealing == true)
+	{	//Makes medics Circle disappear
+		//healingCircle->setToRender(true);
+		if ((time - circleTime) >= 3)
 		{
 			healingCircle->setToRender(false);
 			setTimeSinceLastHeal(time);
 			isHealing = false;
-		}
+			GAME::removeModel(healingCircle);
 
+		}
+	}
 
 }
