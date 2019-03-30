@@ -777,19 +777,27 @@ public:
 			//static bool pauseScreen[4] = { 0,0,0,0 }; 
 			if (GAME::isControllerConnected(a))
 			{
-				if (GAME::getController(a)->isButtonPressed(CONTROLLER_START)&&!pausedAgain[a])
+				if (GAME::getController(a)->isButtonPressed(CONTROLLER_START) && !pausedAgain[a])
 				{
 					pausedAgain[a] = true;
 					//static bool paused = false;
 					for (int b = 0; b < 4; b++)
 						((Player*)mod[b])->setActive(pause);
-					
+
+					//rn the music gets quieter during the pause screen 
+					if (!pause)
+						EmGineAudioPlayer::setVolume(.5f, 0);
+						
+					else
+						EmGineAudioPlayer::setVolume(1, 0);
+
 					mod[126]->getTransformer().setRotation(GAME::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
 					mod[126]->setToRender(!pause);
 					CandyMan->setActive(pause);
+					//music should slow down in the pause menu!!!!
 					pause = !pause;
-					screenPause = !screenPause; 
-					
+					screenPause = !screenPause;
+
 				}
 				else if (GAME::getController(a)->isButtonReleased(CONTROLLER_START))
 				{
@@ -1201,5 +1209,5 @@ private:
 	Coord2D leftM, rightM;
 	AudioPlayer audio;
 	bool pause = false;
-	bool screenPause = false; 
+	bool screenPause = false;
 };
