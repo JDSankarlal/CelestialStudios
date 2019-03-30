@@ -67,12 +67,12 @@ void Tank::update(float dt)
 
 	/// - Tank Special Ability Inactive - ///
 
-	if(p1->isButtonPressed(CONTROLLER_Y))
+	if(p1->isButtonStroked(CONTROLLER_Y))
 		if(tankShield == false)
 		{
 			if(time - getTimeSinceLastShield() >= 5)
 			{
-				setHealth(getHealth() + 250);
+				setHealth(getHealth() + 100);
 				shieldTime = time;
 				puts("Special Ability TANK");
 				tankShield = true;

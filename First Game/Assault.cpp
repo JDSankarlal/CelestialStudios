@@ -76,7 +76,7 @@ void Assault::update(float dt)
 	XinputController* p1 = (XinputController*)GAME::getController(m_index);
 
 	/// - Assault Special Ability - ///
-	if (p1->isButtonPressed(CONTROLLER_Y))
+	if (p1->isButtonStroked(CONTROLLER_Y))
 		if (time - m_timeSinceLastMissile >= 3)
 		{
 			pMissiles.push_back(new Model(*missile));
@@ -95,7 +95,7 @@ void Assault::update(float dt)
 			missileVelocity.push_back(Coord3D(cosVal * move * 6, 0, sinVal * move * 6));
 			setTimeSinceLastMissile(time);
 
-			timer.push_back(time);
+			timer.push_back(0);
 			AudioPlayer::createAudioStream("pew.wav");
 			AudioPlayer::play();
 			puts("Special Ability ASSAULT\n");
