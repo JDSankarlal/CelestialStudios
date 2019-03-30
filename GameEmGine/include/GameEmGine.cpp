@@ -9,7 +9,7 @@ Camera* GameEmGine::m_mainCamera;
 //GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera*>GameEmGine::m_cameras;
-Shader* GameEmGine::m_modelShader, * GameEmGine::m_postProcess, * GameEmGine::m_grayScalePost, * GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
+Shader* GameEmGine::m_modelShader, * GameEmGine::m_postProcess, *GameEmGine::m_forwardRender,* GameEmGine::m_grayScalePost, * GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
 * GameEmGine::m_blurVertical, * GameEmGine::m_blurrComposite;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager* GameEmGine::m_inputManager;
@@ -273,7 +273,8 @@ void GameEmGine::shaderInit()
 	m_modelShader = ResourceManager::getShader("Shaders/DeferredRender.vtsh", "Shaders/DeferredRender.fmsh");
 
 	m_postProcess = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/PassThrough.frag");
-	//deferred 
+	m_forwardRender = ResourceManager::getShader("Shaders/DeferredRender.vtsh", "Shaders/ForwardRender.fmsh");
+
 	m_bloomHighPass = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/BloomHighPass.fmsh");
 	m_blurHorizontal = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/BlurHorizontal.fmsh");
 	m_blurVertical = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/BlurVertical.fmsh");
@@ -483,6 +484,11 @@ void GameEmGine::update()
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix() * m_mainCamera->getViewMatrix())[0][0]));
 		glUniformMatrix4fv(m_modelShader->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
 		m_modelShader->disable();
+
+		m_forwardRender->enable();
+		glUniformMatrix4fv(m_forwardRender->getUniformLocation("uView"), 1, GL_FALSE, &((m_mainCamera->getObjectMatrix() * m_mainCamera->getViewMatrix())[0][0]));
+		glUniformMatrix4fv(m_forwardRender->getUniformLocation("uProj"), 1, GL_FALSE, &(m_mainCamera->getProjectionMatrix()[0][0]));
+		m_forwardRender->disable();
 	}
 
 	LightSource::setCamera(m_mainCamera);
@@ -509,9 +515,6 @@ void GameEmGine::update()
 		else
 			transparent.push_back(m_models[a]);
 	}
-
-	for(auto& a : transparent)
-		a->render(*m_modelShader, *m_mainCamera);
 
 	m_frameBuffers["Main Buffer"]->disable();
 
@@ -643,6 +646,14 @@ void GameEmGine::update()
 
 	m_grayScalePost->disable();
 
+	m_mainFrameBuffer->moveDepthToBackBuffer(getWindowWidth(), getWindowHeight());
+	LightSource::setShader(m_forwardRender);
+	LightSource::update();
+
+	
+	for(auto& a : transparent)
+		a->render(*m_forwardRender, *m_mainCamera);
+	
 
 
 

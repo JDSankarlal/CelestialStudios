@@ -117,7 +117,7 @@ public:
 
 	static void drawFullScreenQuad();
 
-	static Shader *m_modelShader,*m_postProcess, *m_grayScalePost, *m_bloomHighPass, *m_blurHorizontal, *m_blurVertical, *m_blurrComposite;
+	static Shader *m_modelShader,*m_postProcess, *m_forwardRender, *m_grayScalePost, *m_bloomHighPass, *m_blurHorizontal, *m_blurVertical, *m_blurrComposite;
 
 	static Texture2D* m_LUT;
 

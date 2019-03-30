@@ -182,9 +182,9 @@ void Shader::linkShaders()
 		m_programID = m_vertID = m_fragID = 0;
 
 		// Use the infoLog as you see fit.
-		printf(infoLog + '\n');
-
-		system("pause");
+		printf(infoLog);
+		puts("\n");
+		//system("pause");
 		// In this simple program, we'll just leave
 		return;
 	}

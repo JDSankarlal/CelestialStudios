@@ -501,6 +501,7 @@ public:
 		mod[125]->getTransformer().setPosition(10.2f, 18.2f, 19.2f);
 		mod[125]->getTransformer().setScale(2.0f, 2.0f, 2.0f);
 		mod[125]->getTransformer().setRotation({0, 0, 0});
+		mod[125]->setTransparent(true);
 		GAME::addModel(mod[125]);
 
 
