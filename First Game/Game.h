@@ -152,7 +152,7 @@ public:
 	void init()
 	{
 		GAME::m_modelShader->sendUniform("darken", 1);
-		mod.resize(127);//sets the initial size of the vector (if u add any more models, increase this number)
+		mod.resize(130);//sets the initial size of the vector (if u add any more models, increase this number)
 
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
@@ -510,6 +510,21 @@ public:
 		GAME::addModel(mod[126]);
 		mod[126]->setToRender(false);
 		mod[126]->setTransparent(true);
+
+		//Tutorial Sign
+		mod[127] = (new Model("Models/Sign/tallSign/tallSign.obj"));
+		GAME::addModel(mod[127]);
+		mod[127]->getTransformer().setPosition(-14.0f, 0.0f, 36.0f), mod[127]->getTransformer().setScale(1.5f, 1.5f, 1.5f);
+		mod[127]->setColour({ 0,255,255 });
+
+		mod[128] = (new Model("Models/Sign/shortSign/shortSign.obj"));
+		GAME::addModel(mod[128]);
+		mod[128]->getTransformer().setPosition(-16.9f, 0.0f, 17.0f), mod[128]->getTransformer().setRotation({ 0, 90, 0 }), mod[128]->getTransformer().setScale(0.8f, 1.0f, 1.0f);
+		mod[128]->setColour({ 0,255,255 });
+
+		mod[129] = (new Model("Models/Sign/sideSign/sideSign.obj"));
+		GAME::addModel(mod[129]);
+		mod[129]->getTransformer().setScale(1.0f, 3.0f, 1.0f), mod[129]->getTransformer().setPosition(16.8f, 0.0f, 29.5f), mod[129]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
 
 
 		/// - Set Model Transforms - ///
