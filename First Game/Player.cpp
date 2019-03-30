@@ -46,7 +46,7 @@ void Player::init(int index)
 	ringID->getTransformer().setScale(.75f);
 	gun = new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj");
 
-	Animation* walk = new Animation, * idle = new Animation;
+	Animation *walk = new Animation, *idle = new Animation;
 
 	walk->addDir("Models/AssaultModel/Walk/");
 	idle->addDir("Models/AssaultModel/Idle/");

@@ -92,7 +92,7 @@ private:
 	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back, m_center;
 	float m_width, m_height, m_depth;
 	ColourRGBA m_colour;
-	Shader m_shader, m_shaderBB;
+	Shader* m_shader, *m_shaderBB;
 	Vertex3D *m_vertBBDat = new Vertex3D[12 * 3];
 	glm::mat4 m_transBB;
 	bool m_enableBB = false;

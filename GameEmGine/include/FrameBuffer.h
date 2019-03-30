@@ -35,7 +35,13 @@ public:
 	///~ Helper Functions ~///
 	void setViewport(int x, int y, int width, int height)const;
 
-	void moveToBackBuffer(int windowWidth, int windowHeight);
+	void moveColourToBackBuffer(int windowWidth, int windowHeight);
+
+	void moveColourToBuffer(int windowWidth, int windowHeight, GLuint fboID);
+
+	void moveDepthToBackBuffer(int windowWidth, int windowHeight);
+
+	void moveDepthToBuffer(int windowWidth, int windowHeight, GLuint fboID);
 
 	GLuint getDepthHandle() const;
 	GLuint getColorHandle(unsigned m_index) const;
@@ -44,6 +50,8 @@ public:
 	std::function<void()> getPostProcess();
 
 	unsigned getNumColourAttachments();
+
+	GLuint getFrameBufferID();
 
 
 	std::string getTag();

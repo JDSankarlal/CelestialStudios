@@ -35,7 +35,7 @@ public:
 		}
 
 		srand(clock());
-		gray->create("Shaders/Main Buffer.vtsh", "Shaders/Grayscale.fmsh");
+		gray= ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/Grayscale.fmsh");
 		grayPost->setPostProcess(
 			[&]()->void
 			{
@@ -113,6 +113,7 @@ public:
 	}
 
 private:
+
 	std::vector<Model*> mod;
 	bool fadein = true;
 	bool fadeout = false;
@@ -121,5 +122,3 @@ private:
 	FrameBuffer *grayPost;
 	Shader *gray;
 };
-
-

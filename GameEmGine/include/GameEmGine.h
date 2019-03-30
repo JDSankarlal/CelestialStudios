@@ -115,9 +115,11 @@ public:
 
 	static XinputDevice* getController(int m_index);
 
-	static Shader *m_modelShader,*m_grayScalePost,*m_bloomHighPass,*m_blurHorizontal,*m_blurVertical,*m_blurrComposite;
-
 	static void drawFullScreenQuad();
+
+	static Shader *m_modelShader,*m_postProcess, *m_grayScalePost, *m_bloomHighPass, *m_blurHorizontal, *m_blurVertical, *m_blurrComposite;
+
+	static Texture2D* m_LUT;
 
 	static bool lutActive;
 
@@ -142,7 +144,7 @@ private:
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
-	static FrameBuffer* m_mainFrameBuffer,*m_buffer1,*m_buffer2,*m_greyscaleBuffer;
+	static FrameBuffer* m_mainFrameBuffer,*m_postBuffer,*m_buffer1,*m_buffer2,*m_greyscaleBuffer;
 	static std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;

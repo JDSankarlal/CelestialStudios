@@ -2,11 +2,11 @@
 
 uniform sampler2D uTex;
 
-in vec2 outUV;
+in vec2 texcoord;
 
 out vec4 outColour;
 
 void main()
 {
-    outColour =  texture(uTex, outUV);
+    outColour =  texture(uTex, texcoord);
 }

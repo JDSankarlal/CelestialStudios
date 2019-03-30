@@ -29,6 +29,8 @@ void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 	glGenTextures(1, &m_depthAttachment);
 
 	resizeDepth(width, height);
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+
 }
 
 void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
@@ -39,14 +41,15 @@ void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned hei
 	glGenTextures(1, &m_colorAttachments[index]);
 	
 	resizeColour(index, width, height, internalFormat, filter, wrap);
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 
-	
 }
 
 void FrameBuffer::resizeDepth(unsigned width, unsigned height)
 {
-	if(m_depthAttachment)
-	{
+	//if(m_depthAttachment)
+	//{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 		glDeleteTextures(1, &m_depthAttachment);
 		glGenTextures(1, &m_depthAttachment);
 
@@ -63,15 +66,15 @@ void FrameBuffer::resizeDepth(unsigned width, unsigned height)
 		//Bind texture to the fbo
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+	//}
 }
 
 void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
 {
 	if(m_colorAttachments[index])
 	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 		glDeleteTextures(1, &m_colorAttachments[index]);
 		glGenTextures(1, &m_colorAttachments[index]);
 
@@ -89,7 +92,6 @@ void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, 
 		//Bind texture to the fbo
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index], 0);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 		glBindTexture(GL_TEXTURE_2D,0);
 	}
 }
@@ -98,6 +100,7 @@ void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height)
 {
 	if(m_colorAttachments[index])
 	{		
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 		glBindTexture(GL_TEXTURE_2D, m_colorAttachments[index]);
 		glTexStorage2D(GL_TEXTURE_2D, 1, m_internalFormat, width, height);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filter);
@@ -108,7 +111,6 @@ void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height)
 		//Bind texture to the fbo
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index], 0);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
@@ -191,12 +193,32 @@ void FrameBuffer::setViewport(int x, int y, int width, int height) const
 	glViewport(x, y, width, height);
 }
 
-void FrameBuffer::moveToBackBuffer(int windowWidth, int windowHeight)
+void FrameBuffer::moveColourToBackBuffer(int windowWidth, int windowHeight)
+{
+	moveColourToBuffer(windowWidth, windowHeight, GL_NONE);
+}
+
+void FrameBuffer::moveColourToBuffer(int windowWidth, int windowHeight, GLuint fboID)
 {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, GL_NONE);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
 
 	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+}
+
+void FrameBuffer::moveDepthToBackBuffer(int windowWidth, int windowHeight)
+{
+	moveDepthToBuffer(windowWidth, windowHeight, GL_NONE);
+}
+
+void FrameBuffer::moveDepthToBuffer(int windowWidth, int windowHeight, GLuint fboID)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
+
+	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
@@ -224,6 +246,11 @@ std::function<void()> FrameBuffer::getPostProcess()
 unsigned FrameBuffer::getNumColourAttachments()
 {
 	return m_numColorAttachments;
+}
+
+GLuint FrameBuffer::getFrameBufferID()
+{
+	return m_fboID;
 }
 
 std::string FrameBuffer::getTag()

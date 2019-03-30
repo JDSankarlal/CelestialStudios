@@ -86,8 +86,8 @@ void LightSource::update()
 {
 	char buff[90];
 	m_shader->enable();
-	glUniform1i(m_shader->getUniformLocation("LightAmount"), m_lights.size());
-	glUniform3f(m_shader->getUniformLocation("LightAmbient"), m_ambient[0] / 255.0f, m_ambient[1] / 255.0f, m_ambient[2] / 255.0f);
+	m_shader->sendUniform("LightAmount", (int)m_lights.size());
+	m_shader->sendUniform("LightAmbient", Coord3D{m_ambient[0] / 255.0f, m_ambient[1] / 255.0f, m_ambient[2] / 255.0f});
 
 	for(unsigned a = 0; a < m_lights.size(); a++)
 	{
