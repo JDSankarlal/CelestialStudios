@@ -175,6 +175,7 @@ void Player::setPlayerIndex(int index)
 	m_baseBar->addChild(m_lifeBar);
 	m_baseBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 	m_baseBar->getTransformer().setRotation({ 0, 90.f, 0 });
+	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 
 
 	GAME::addModel(m_baseBar);
@@ -222,7 +223,8 @@ void Player::hitByEnemy(Model* mod, float damage)
 	{
 		//curveroni[a] = 1;
 		//CandyMan->getMissial(a)->getTransformer().setPosition(mod[8]->getCenter());
-		setHealth(getHealth() - damage);
+		float tempHealth = getHealth() - damage;
+		setHealth(tempHealth < 0 ? 0 : tempHealth);
 
 		//Coord3D test = ;
 

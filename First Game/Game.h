@@ -772,7 +772,8 @@ public:
 		{
 
 			player = (Player*)mod[a];
-			player->setPlayerIndex(a);
+			if (!player->dead)
+				player->setPlayerIndex(a);
 			static bool pausedAgain[4] = { 0,0,0,0 };
 			//static bool pauseScreen[4] = { 0,0,0,0 }; 
 			if (GAME::isControllerConnected(a))
@@ -800,6 +801,10 @@ public:
 
 				if (!player->dead)
 					deathCounter = 0;
+			}
+			else
+			{
+				((Player*)mod[a])->setActive(false);
 			}
 			player->update((float)dt);
 
