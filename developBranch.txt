@@ -1,9 +1,0 @@
-This is a text file to indicate the first push to develop branch. For whatever reason the merge was not included 
-in GitKraken so there's no log of it.
-
-This is just to rectify that. Ignore this. 
-
-Thanks,
-
-Josh
-
