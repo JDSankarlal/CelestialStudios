@@ -505,7 +505,7 @@ public:
 
 		//pause screen
 		mod[126] = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
-		mod[126]->getTransformer().setPosition(-0.5f, 10.0f, -8.0f);
+		mod[126]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
 		mod[126]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
 		GAME::addModel(mod[126]);
 		mod[126]->setToRender(false);
