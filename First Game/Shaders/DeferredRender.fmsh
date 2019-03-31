@@ -30,7 +30,7 @@ void main()
     else     
         outColour = colourMod; 
 
-   outColour.a = 1;     
+  // outColour.a = 1;     
    
     
 }

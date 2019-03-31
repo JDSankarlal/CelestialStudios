@@ -43,6 +43,10 @@ public:
 
 	void moveDepthToBuffer(int windowWidth, int windowHeight, GLuint fboID);
 
+	void takeFromBackBufferColour(int windowWidth, int windowHeight);
+
+	void takeFromBackBufferDepth(int windowWidth, int windowHeight);
+
 	GLuint getDepthHandle() const;
 	GLuint getColorHandle(unsigned m_index) const;
 

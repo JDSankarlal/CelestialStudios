@@ -6,7 +6,7 @@ uniform vec2 uPixelSize; //x = 1 / WINDOW_WIDTH, y = 1 / WINDOW_HEIGHT
 
 in vec2 texcoord;
 
-out float outEdge;
+out vec4 outEdge;
 
 float Sobel_Normal_Horizontal(sampler2D texmap, vec2 texcoord)
 {
@@ -72,14 +72,14 @@ float Sobel_Depth_Horizontal(sampler2D texmap, vec2 texcoord)
 
 	//Is this affected by the change from row-major to column-major?***
 	//Top Row
-	sum -= clamp (0.967 - texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y + uPixelSize.y)).r, 0, 1);
-	sum -= clamp (0.967 - texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y)).r * 2.0, 0, 1);
-	sum -= clamp (0.967 - texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y - uPixelSize.y)).r;
+	sum -= texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y + uPixelSize.y)).r;
+	sum -= texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y)).r * 2.0;
+	sum -= texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y - uPixelSize.y)).r;
 
 	//Bottom Row
-	sum += clamp (0.967 - texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y + uPixelSize.y)).r, 0, 1);
-	sum += clamp (0.967 - texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y)).r * 2.0, 0, 1);
-	sum += clamp (0.967 - texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y - uPixelSize.y)).r, 0, 1);
+	sum += texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y + uPixelSize.y)).r;
+	sum += texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y)).r * 2.0;
+	sum += texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y - uPixelSize.y)).r;
 	//The sum should be 0 if there is no contrast ^
 	
 	if (sum < 0.05) //THreshold number depends on the scale of the scene
@@ -98,14 +98,14 @@ float Sobel_Depth_Vertical(sampler2D texmap, vec2 texcoord)
 
 	//Is this affected by the change from row-major to column-major?***
 	//Top Row
-	sum += clamp (0.967 -texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y + uPixelSize.y)).r, 0, 1);
-	sum += clamp (0.967 -texture(texmap, vec2(texcoord.x, texcoord.y + uPixelSize.y)).r * 2.0, 0, 1);
-	sum += clamp (0.967 -texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y + uPixelSize.y)).r, 0, 1);
+	sum += texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y + uPixelSize.y)).r;
+	sum += texture(texmap, vec2(texcoord.x, texcoord.y + uPixelSize.y)).r * 2.0;
+	sum += texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y + uPixelSize.y)).r;
 
 	//Bottom Row
-	sum -= clamp (0.967 -texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y - uPixelSize.y)).r, 0, 1);
-	sum -= clamp (0.967 -texture(texmap, vec2(texcoord.x, texcoord.y - uPixelSize.y)).r * 2.0, 0, 1);
-	sum -= clamp (0.967 -texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y - uPixelSize.y)).r, 0, 1);
+	sum -= texture(texmap, vec2(texcoord.x - uPixelSize.x, texcoord.y - uPixelSize.y)).r;
+	sum -= texture(texmap, vec2(texcoord.x, texcoord.y - uPixelSize.y)).r * 2.0;
+	sum -= texture(texmap, vec2(texcoord.x + uPixelSize.x, texcoord.y - uPixelSize.y)).r;
 	//The sum should be 0 if there is no contrast ^
 	
 	if (sum < 0.05) //Number depends on the scale of the scene
@@ -124,5 +124,7 @@ void main()
 	float depthSobel = Sobel_Depth_Horizontal(uDepthMap, texcoord) * Sobel_Depth_Vertical(uDepthMap, texcoord);
 	float normalSobel = Sobel_Normal_Horizontal(uNormalMap, texcoord) * Sobel_Normal_Vertical(uNormalMap, texcoord);
 
-	outEdge = depthSobel * normalSobel;
+	outEdge = vec4(depthSobel * normalSobel);
+
+	outEdge.a = 1;
 }

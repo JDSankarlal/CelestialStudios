@@ -117,7 +117,7 @@ public:
 
 	static void drawFullScreenQuad();
 
-	static Shader *m_modelShader,*m_postProcess, *m_forwardRender, *m_grayScalePost, *m_bloomHighPass, *m_blurHorizontal, *m_blurVertical, *m_blurrComposite;
+	static Shader *m_modelShader,*m_postProcess, *m_forwardRender, *m_grayScalePost, *m_bloomHighPass, *m_blurHorizontal, *m_blurVertical, *m_blurrComposite,*m_sobel;
 
 	static Texture2D* m_LUT;
 
@@ -144,7 +144,7 @@ private:
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
-	static FrameBuffer* m_mainFrameBuffer,*m_postBuffer,*m_buffer1,*m_buffer2,*m_greyscaleBuffer;
+	static FrameBuffer* m_mainFrameBuffer,*m_postBuffer,*m_buffer1,*m_buffer2,*m_greyscaleBuffer,*m_outline;
 	static std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;

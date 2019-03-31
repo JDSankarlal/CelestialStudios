@@ -223,6 +223,26 @@ void FrameBuffer::moveDepthToBuffer(int windowWidth, int windowHeight, GLuint fb
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
+void FrameBuffer::takeFromBackBufferColour(int windowWidth, int windowHeight)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, GL_NONE);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
+
+	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+}
+
+void FrameBuffer::takeFromBackBufferDepth(int windowWidth, int windowHeight)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, GL_NONE);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
+
+	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+}
+
 GLuint FrameBuffer::getDepthHandle() const
 {
 	return m_depthAttachment;

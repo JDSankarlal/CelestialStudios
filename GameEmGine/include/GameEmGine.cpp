@@ -9,14 +9,18 @@ Camera* GameEmGine::m_mainCamera;
 //GLuint GameEmGine::fsQuadVAO_ID, GameEmGine::fsQuadVBO_ID;
 //GLuint fsQuadVAO_ID, fsQuadVBO_ID;
 std::vector<Camera*>GameEmGine::m_cameras;
-Shader* GameEmGine::m_modelShader, * GameEmGine::m_postProcess, *GameEmGine::m_forwardRender,* GameEmGine::m_grayScalePost, * GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
-* GameEmGine::m_blurVertical, * GameEmGine::m_blurrComposite;
+Shader
+*GameEmGine::m_modelShader, *GameEmGine::m_postProcess,
+*GameEmGine::m_forwardRender, *GameEmGine::m_grayScalePost,
+*GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,
+*GameEmGine::m_blurVertical, *GameEmGine::m_blurrComposite,
+*GameEmGine::m_sobel;
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager* GameEmGine::m_inputManager;
 WindowCreator* GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
 //ModelBatch *GameEmGine::m_modelBatch;
-FrameBuffer* GameEmGine::m_mainFrameBuffer, * GameEmGine::m_postBuffer, * GameEmGine::m_buffer1, * GameEmGine::m_buffer2, * GameEmGine::m_greyscaleBuffer;
+FrameBuffer* GameEmGine::m_mainFrameBuffer, *GameEmGine::m_postBuffer, *GameEmGine::m_buffer1, *GameEmGine::m_buffer2, *GameEmGine::m_greyscaleBuffer, *GameEmGine::m_outline;
 std::unordered_map<std::string, FrameBuffer*> GameEmGine::m_frameBuffers;
 std::vector<Model*> GameEmGine::m_models;
 bool GameEmGine::exitGame = false;
@@ -124,6 +128,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	printf("created the window\n");
 
 	m_mainFrameBuffer = new FrameBuffer("Main Buffer", 3);
+	m_outline = new FrameBuffer("sobel outline", 1);
 	m_postBuffer = new FrameBuffer("Post Process Buffer", 1);
 	m_greyscaleBuffer = new FrameBuffer("Greyscale", 1);
 	m_buffer1 = new FrameBuffer("Test1", 1);
@@ -135,6 +140,15 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_mainFrameBuffer->initColourTexture(2, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 
 	if(!m_mainFrameBuffer->checkFBO())
+	{
+		puts("FBO failed Creation");
+		system("pause");
+		return;
+	}
+
+	m_outline->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+
+	if(!m_outline->checkFBO())
 	{
 		puts("FBO failed Creation");
 		system("pause");
@@ -281,6 +295,7 @@ void GameEmGine::shaderInit()
 	m_blurrComposite = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/BloomComposite.fmsh");
 
 	m_grayScalePost = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/GrayscalePost.fmsh");
+	m_sobel = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "shaders/Sobel.fmsh");
 }
 
 void GameEmGine::calculateFPS()
@@ -497,12 +512,12 @@ void GameEmGine::update()
 
 
 	///~ model sorting ~///
-	//std::sort(m_models.begin(), m_models.end(), [&](Model * a, Model * b)->bool
-	//	{
-	//		return (m_mainCamera->getPosition() - a->getTransformer().getPosition()).distance() >= (m_mainCamera->getPosition() - b->getTransformer().getPosition()).distance();
-	//	}
-	//);
-	
+	std::sort(m_models.begin(), m_models.end(), [&](Model * a, Model * b)->bool
+		{
+			return (m_mainCamera->getPosition() - a->getTransformer().getPosition()).distance() >= (m_mainCamera->getPosition() - b->getTransformer().getPosition()).distance();
+		}
+	);
+
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 
 	///~ 3D-Graphics 1 ~///
@@ -530,7 +545,7 @@ void GameEmGine::update()
 	m_postProcess->sendUniform("uScene", 2);
 
 	drawFullScreenQuad();
-	
+
 	//un-bind textures
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
@@ -542,25 +557,25 @@ void GameEmGine::update()
 	m_postProcess->disable();
 	m_postBuffer->disable();
 
-	
+
 	glViewport(0, 0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO);
 
 
 	//binds the initial bloom affect to buffer 1
 	m_buffer1->enable();
 	m_bloomHighPass->enable();
-	
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_postBuffer->getColorHandle(0));
-	
+
 	m_bloomHighPass->sendUniform("uTex", 0);
 	m_bloomHighPass->sendUniform("uThresh", 0.15f);
 
 	drawFullScreenQuad();
-	
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	
+
 	m_bloomHighPass->disable();
 	m_buffer1->disable();
 
@@ -612,6 +627,30 @@ void GameEmGine::update()
 	m_blurrComposite->disable();
 	m_greyscaleBuffer->disable();
 
+
+	m_outline->enable();
+	m_sobel->enable();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(1));
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getDepthHandle());
+
+	m_sobel->sendUniform("uNormalMap", 0);
+	m_sobel->sendUniform("uDepthMap", 1);
+
+	drawFullScreenQuad();
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+
+	m_sobel->disable();
+	m_outline->enable();
+
+
+
 	// Bind 3D textures
 	/*
 	glActiveTexture(GL_TEXTURE0 + 6);
@@ -645,9 +684,36 @@ void GameEmGine::update()
 	LightSource::setShader(m_forwardRender);
 	LightSource::update();
 
+
+	for(auto& a : transparent)
+		a->render(*m_forwardRender, *m_mainCamera);
+
+
+	m_greyscaleBuffer->clear();
+	m_greyscaleBuffer->takeFromBackBufferColour(getWindowWidth(), getWindowHeight());
+	
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	
 	m_mainCamera->render(m_forwardRender, transparent, true);
 
+	m_blurrComposite->enable();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_greyscaleBuffer->getColorHandle(0));//normal map
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getDepthHandle());
+	
+	m_blurrComposite->sendUniform("uScene", 0);
+	m_blurrComposite->sendUniform("uBloom", 1);
+
+	drawFullScreenQuad();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_3D, GL_NONE);
+
+	m_blurrComposite->enable();
 
 
 	///~ will never be used but I'll keep it here anyways ~///
