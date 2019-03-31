@@ -508,13 +508,8 @@ void GameEmGine::update()
 	///~ 3D-Graphics 1 ~///
 	std::vector<Model*> transparent;
 	m_frameBuffers["Main Buffer"]->enable();
-	for(unsigned a = 0; a < m_models.size(); a++)
-	{
-		if(!m_models[a]->isTransparent())
-			m_models[a]->render(*m_modelShader, *m_mainCamera);
-		else
-			transparent.push_back(m_models[a]);
-	}
+	m_mainCamera->render(m_modelShader, m_models, false);
+	
 
 	m_frameBuffers["Main Buffer"]->disable();
 
@@ -651,9 +646,7 @@ void GameEmGine::update()
 	LightSource::update();
 
 	
-	for(auto& a : transparent)
-		a->render(*m_forwardRender, *m_mainCamera);
-	
+	m_mainCamera->render(m_forwardRender, transparent, true);
 
 
 

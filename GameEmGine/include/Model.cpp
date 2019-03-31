@@ -120,7 +120,7 @@ bool Model::collision3D(Model * l, Model * k)
 }
 
 
-void Model::render(Shader& shader, Camera& cam)
+void Model::render(Shader& shader, glm::mat4& cam)
 {
 	float colour[4]{(float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255};
 
@@ -147,7 +147,7 @@ void Model::render(Shader& shader, Camera& cam)
 		m_animations[m_animation]->update(&shader, &m_mesh);
 
 	// update the position of the object
-	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
+	m_transBB = cam * (m_transform.getTranslationMatrix());
 	boundingBoxUpdate();
 
 	if(m_render)

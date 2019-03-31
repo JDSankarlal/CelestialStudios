@@ -44,9 +44,9 @@ bool Camera::update()
 
 		m_transform.setPosition(*m_position);
 		m_transform.setScale(m_scale);
-		m_objMat =  glm::inverse( m_transform.getTranslationMatrix()  *m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
+		m_objMat = glm::inverse(m_transform.getTranslationMatrix()  *m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
 
-		m_cameraMat = m_projMat  * m_viewMat* m_objMat;
+		m_cameraMat = m_projMat * m_viewMat* m_objMat;
 		m_cameraUpdate = false;
 
 		return true;
@@ -80,7 +80,7 @@ void Camera::setAngle(float angle, Coord3D direction)
 
 	//my rotation
 	//m_rotMat = Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
-	
+
 	direction.y *= -1;
 	m_transform.setRotation(direction*angle);
 
@@ -96,11 +96,19 @@ void Camera::moveAngleBy(float angle, Coord3D direction)
 	//my rotation
 	//if(angle != 0)
 	//	m_rotMat *= Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
-	direction.y *=-1; 
+	direction.y *= -1;
 	m_transform.rotateBy(direction*angle);
 
 	m_cameraUpdate = true;
 }
+
+void Camera::render(Shader* shader, std::vector<Model*>& models, bool trans)
+{
+	for(auto &a : models)
+		if(trans == a->isTransparent())
+			a->render(*shader, this->m_cameraMat);
+}
+
 
 Coord3D Camera::getPosition()
 {

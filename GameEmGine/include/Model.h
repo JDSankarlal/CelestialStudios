@@ -29,7 +29,7 @@ public:
 
 	bool collision3D(Model* l, Model* k);
 
-	void render(Shader & shader, Camera & cam);
+	void render(Shader & shader, glm::mat4& cam);
 
 	Transformer& getTransformer();
 
