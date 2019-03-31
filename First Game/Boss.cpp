@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include "Boss.h"
+#include "Assault.h"
 
 typedef GameEmGine GAME;
 
@@ -144,6 +145,7 @@ void Boss::update(float dt)
 	{
 		for (int a = 0; a < 4; a++)
 		{
+			
 			missles[a]->getTransformer().setScale(1.5f); //every missile shot is scaled up a bit since the original is small 
 			pointPosition[a] = getTransformer().getPosition();
 			if (targets[a]->isActive())
@@ -219,29 +221,27 @@ void Boss::update(float dt)
 						missileRadius[a]->getTransformer().setScale(catmull(-7.f, 1.f, 0.7f, -7.f, curveroni[a]));
 					}
 
+					static bool slam = false;
+					//Player comes near Boss, gets teleported backwards
+					if (collision2D(targets[a]))
+					{
+						getAnimation("missleShoot")->pause();
+						setAnimation("slam");
+						getCurrentAnimation()->setAnimationSpeed(0.2f);
+						getCurrentAnimation()->repeat(true);
+						getCurrentAnimation()->play();
+						slam = true;
 
+						if (getAnimation("slam")->getFrameNumber() == 5)
+						{
+							targets[a]->hitByEnemy(this);
+							//targets[a]->getTransformer().setPosition(targets[a]->getTransformer().getPosition().x, targets[a]->getTransformer().getPosition().y, getTransformer().getPosition().z - 15);
+							//targets[a]->setHealth(targets[a]->getHealth() - 35);
+						}
+					}
 
 
 				}
-
-			static bool slam = false;
-			//Player comes near Boss, gets teleported backwards
-			if (collision2D(targets[a]))
-			{
-				getAnimation("missleShoot")->pause();
-				setAnimation("slam");
-				getCurrentAnimation()->setAnimationSpeed(0.2f);
-				getCurrentAnimation()->repeat(true);
-				getCurrentAnimation()->play();
-				slam = true;
-
-				if (getAnimation("slam")->getFrameNumber() == 5)
-				{
-					targets[a]->hitByEnemy(this);
-					//targets[a]->getTransformer().setPosition(targets[a]->getTransformer().getPosition().x, targets[a]->getTransformer().getPosition().y, getTransformer().getPosition().z - 15);
-					//targets[a]->setHealth(targets[a]->getHealth() - 35);
-				}
-			}
 		}
 
 
@@ -378,4 +378,18 @@ void Boss::setActive(bool active)
 bool Boss::isActive()
 {
 	return m_active;
+}
+
+bool Boss::hitByEnemy(Model* mod, float damage)
+{
+	if (!m_active)
+		return false;
+
+	if (collision2D(this, mod))
+	{
+		setHealth(getHealth() - damage);
+		bossFlash = true;
+		return true;
+	}
+	return false;
 }

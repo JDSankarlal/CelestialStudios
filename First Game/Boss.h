@@ -37,6 +37,8 @@ public:
 	void setActive(bool active);
 	bool isActive();
 
+	bool hitByEnemy(Model * mod, float damage = 10);
+
 	std::vector<Minion*> minions;
 	std::vector<Model* > missles;
 	Model* lazer;

@@ -1,7 +1,8 @@
 #pragma once
 #include <GameEmGine.h>
 #include "Game.h"
-#include "PlayerSelect.h"
+#include "Controls.h"
+
 class Menu:public Scene
 {
 public:
@@ -132,7 +133,7 @@ public:
 				splashAmbient = 255;
 
 				//GamePlayInit();
-				GameEmGine::setScene(new PlayerSelect);
+				GameEmGine::setScene(new Controls);
 			}
 		}
 	}
