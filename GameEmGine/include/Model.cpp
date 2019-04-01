@@ -12,7 +12,7 @@ Model::Model(Model& model):
 	m_transBB(glm::mat4(1)),
 	m_render(model.m_render)
 {
-	m_shaderBB.create("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
+	m_shaderBB= ResourceManager::getShader("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
 	//boundingBoxInit();
 }
 
@@ -21,7 +21,7 @@ Model::Model(const char * path):
 {
 	if(loadModel(path))
 	{
-		m_shaderBB.create("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
+		m_shaderBB= ResourceManager::getShader("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
 		m_left = m_mesh.left;
 		m_right = m_mesh.right;
 		m_top = m_mesh.top;
@@ -120,12 +120,12 @@ bool Model::collision3D(Model * l, Model * k)
 }
 
 
-void Model::render(Shader& shader, Camera& cam)
+void Model::render(Shader& shader, glm::mat4& cam)
 {
 	float colour[4]{(float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255};
 
 	shader.enable();
-	m_shader = shader;
+	m_shader = &shader;
 
 	if(m_parent)
 		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &(([&]()->glm::mat4
@@ -147,7 +147,7 @@ void Model::render(Shader& shader, Camera& cam)
 		m_animations[m_animation]->update(&shader, &m_mesh);
 
 	// update the position of the object
-	m_transBB = cam.getCameraMatrix() * (m_transform.getTranslationMatrix());
+	m_transBB = cam * (m_transform.getTranslationMatrix());
 	boundingBoxUpdate();
 
 	if(m_render)
@@ -169,16 +169,16 @@ void Model::render(Shader& shader, Camera& cam)
 void Model::drawBoundingBox()
 {
 
-	m_shaderBB.enable();
+	m_shaderBB->enable();
 	float colour[4]{(float)m_colour.colorR / 255,(float)m_colour.colorG / 255,(float)m_colour.colorB / 255,(float)m_colour.colorA / 255};
 
-	glUniform4fv(m_shaderBB.getUniformLocation("colourMod"), 1, colour);
+	glUniform4fv(m_shaderBB->getUniformLocation("colourMod"), 1, colour);
 
 	glBindVertexArray(m_BBVaoID);
 	glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
 	glBindVertexArray(0);
 
-	m_shaderBB.disable();
+	m_shaderBB->disable();
 }
 
 Transformer& Model::getTransformer()
@@ -292,9 +292,9 @@ void Model::boundingBoxUpdate()
 
 	if(m_enableBB)
 	{
-		m_shaderBB.enable();
-		glUniformMatrix4fv(m_shaderBB.getUniformLocation("trans"), 1, false, &(m_transBB)[0][0]);
-		m_shaderBB.disable();
+		m_shaderBB->enable();
+		glUniformMatrix4fv(m_shaderBB->getUniformLocation("trans"), 1, false, &(m_transBB)[0][0]);
+		m_shaderBB->disable();
 	}
 	glm::mat4 tmpMat = m_parent ? m_parent->m_transform.getTransformation()*
 		m_transform.getTransformation() : m_transform.getTransformation();
@@ -352,14 +352,14 @@ void Model::setAnimation(const char * tag)
 	m_animation = tag;
 }
 
-Mesh * Model::getMesh()
+Mesh* Model::getMesh()
 {
 	return &m_mesh;
 }
 
-Shader * Model::getShader()
+Shader* Model::getShader()
 {
-	return &m_shader;
+	return m_shader;
 }
 
 void Model::setToRender(bool render)

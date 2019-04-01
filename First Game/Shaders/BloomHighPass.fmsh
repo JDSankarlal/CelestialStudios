@@ -3,13 +3,13 @@
 uniform sampler2D uTex;
 uniform float uThresh;
 
-in vec2 outUV;
+in vec2 texcoord;
 
 out vec4 outColour;
 
 void main()
 {
-    vec3 colour = texture(uTex,outUV).rgb;
+    vec3 colour = texture(uTex,texcoord).rgb;
 
     float lum = (colour.r+colour.g+colour.b)/3.0;
 
