@@ -44,8 +44,8 @@ public:
 				extra = 2;
 			mod.push_back(new Model(*classes[0]));
 
-			//setPosition(float(-42.2 + a * 27.5 + extra) <- ORIGINAL
-			mod[2 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5 + extra), -20.9f, -1);						
+			//setPosition(float(-42.2 + a * 27.5 + extra) -20.9f, -1 <- ORIGINAL
+			mod[2 + a]->getTransformer().setPosition(float(-43.3 + a * 28.3 + extra), -21.9f, -1);						
 			mod[2 + a]->getTransformer().setRotation({ 0,270,0 });
 			mod[2 + a]->getTransformer().setScale(Coord3D{ 1, 15, 7 });
 			mod[2 + a]->setToRender(true);
@@ -155,7 +155,8 @@ public:
 							//GameEmGine::removeModel(mod[2 + a]);
 							mod[2 + a]->setColour({ 255,255,255 });
 							*mod[2 + a] = *classes[option[a]];
-							mod[2 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5 + extra), -20.9f, -1);							mod[2 + a]->getTransformer().setRotation({ 0,270,0 });
+							mod[2 + a]->getTransformer().setPosition(float(-43.3 + a * 28.3 + extra), -21.9f, -1);
+							mod[2 + a]->getTransformer().setRotation({ 0,270,0 });
 							mod[2 + a]->getTransformer().setScale(Coord3D{ 1, 15, 7 });
 							GameEmGine::addModel(mod[2 + a]);
 
