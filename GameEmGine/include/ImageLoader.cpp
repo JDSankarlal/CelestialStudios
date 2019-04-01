@@ -37,7 +37,7 @@ Texture3D ImageLoader::loadImage3D(const char * LUTpath)
 {
 	Texture3D texture;
 	/////////////////////////////////////Bind Custom 3D Texture////////////////////////////////////////////
-	std::vector<ColourRGBA> LUT{};
+	std::vector<Coord3D> LUT{};
 	//std::string LUTpath = "";
 
 	//LUTpath = "Texture/CUSTOM.cube";
@@ -53,7 +53,7 @@ Texture3D ImageLoader::loadImage3D(const char * LUTpath)
 			sscanf_s(LUTline.c_str(), "LUT_3D_SIZE %d", &texture.lutSize);
 		}
 		float r, g, b;
-		if(sscanf_s(LUTline.c_str(), "%f %f %f", &r, &g, &b) == 3) LUT.push_back({GLubyte(r * 255), GLubyte(g * 255), GLubyte(b * 255)});
+		if(sscanf_s(LUTline.c_str(), "%f %f %f", &r, &g, &b) == 3) LUT.push_back({r,g,b});
 	}
 	glEnable(GL_TEXTURE_3D);
 
@@ -66,7 +66,7 @@ Texture3D ImageLoader::loadImage3D(const char * LUTpath)
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 
-	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, texture.lutSize, texture.lutSize, texture.lutSize, 0, GL_RGB, GL_UNSIGNED_BYTE, LUT.data());
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, texture.lutSize, texture.lutSize, texture.lutSize, 0, GL_RGB, GL_FLOAT, LUT.data());
 
 	glBindTexture(GL_TEXTURE_3D, 0);
 	glDisable(GL_TEXTURE_3D);

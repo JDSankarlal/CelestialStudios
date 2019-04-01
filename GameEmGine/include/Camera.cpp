@@ -17,13 +17,13 @@ void Camera::init(Size3D size, CAMERA_TYPE type)
 	size.height /= h;
 	*m_size = size;
 
-	m_viewMat = glm::lookAt(glm::vec3{m_position->x,m_position->y,m_position->z + .1f}, glm::vec3{m_position->x,m_position->y,m_position->z}, glm::vec3{0.0f,1.0f,0.0f});
+	m_viewMat = glm::lookAt(glm::vec3{0,0,0.1f}, glm::vec3{0,0,0}, glm::vec3{0.0f,1.0f,0.0f});
 	setType(type);
 }
 
 void Camera::setType(CAMERA_TYPE type)
 {
-	switch(type)
+	switch(m_type = type)
 	{
 	case ORTHOGRAPHIC:
 		m_projMat = glm::ortho(-m_size->width * 100, m_size->width * 100, -m_size->height * 100, m_size->height * 100, -m_size->depth, m_size->depth);
@@ -37,6 +37,11 @@ void Camera::setType(CAMERA_TYPE type)
 	m_cameraUpdate = true;
 }
 
+CAMERA_TYPE Camera::getType() 
+{
+	return m_type;
+}
+
 bool Camera::update()
 {
 	if(m_cameraUpdate)
@@ -44,9 +49,9 @@ bool Camera::update()
 
 		m_transform.setPosition(*m_position);
 		m_transform.setScale(m_scale);
-		m_objMat = glm::inverse(m_transform.getTranslationMatrix()  *m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
+		m_objMat = glm::inverse(m_transform.getTranslationMatrix() * m_transform.getRotationMatrix())/** m_transform.getScaleMatrix()*/;
 
-		m_cameraMat = m_projMat * m_viewMat* m_objMat;
+		m_cameraMat = m_projMat * m_viewMat * m_objMat;
 		m_cameraUpdate = false;
 
 		return true;
@@ -82,7 +87,7 @@ void Camera::setAngle(float angle, Coord3D direction)
 	//m_rotMat = Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
 
 	direction.y *= -1;
-	m_transform.setRotation(direction*angle);
+	m_transform.setRotation(direction * angle);
 
 	m_cameraUpdate = true;
 }
@@ -97,14 +102,14 @@ void Camera::moveAngleBy(float angle, Coord3D direction)
 	//if(angle != 0)
 	//	m_rotMat *= Quat::quatRotationMat(glm::radians(angle), -direction.x, direction.y, direction.z);
 	direction.y *= -1;
-	m_transform.rotateBy(direction*angle);
+	m_transform.rotateBy(direction * angle);
 
 	m_cameraUpdate = true;
 }
 
-void Camera::render(Shader* shader, std::vector<Model*>& models, bool trans)
+void Camera::render(Shader * shader, std::vector<Model*> & models, bool trans)
 {
-	for(auto &a : models)
+	for(auto& a : models)
 		if(trans == a->isTransparent())
 			a->render(*shader, this->m_cameraMat);
 }

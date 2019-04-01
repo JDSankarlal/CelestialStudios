@@ -875,7 +875,7 @@ public:
 				{
 
 					player->getTransformer().translateBy(((XinputController*)GAME::getController(a))->getSticks()[LS].x * -move * 1.1f, 0,
-						((XinputController*)GAME::getController(a))->getSticks()[LS].y *move *
+						((XinputController*)GAME::getController(a))->getSticks()[LS].y * move *
 						player->getTransformer().getPosition().z < mod[79 + b]->getTransformer().getPosition().z ? -1 : 1 * 1.1f); //move player back
 
 				}
@@ -941,7 +941,35 @@ public:
 		static bool trainInit = false;
 
 		/// - Train Car Movement - ///
-			
+
+		//for(int t = 0; t < 7; t++)
+		//{
+		//	if(time - trainTimer < 10)
+		//	{
+		//		
+		//	}
+		//	else if(time - trainTimer < 13)
+		//	{
+		//		mod[79 + t]->getTransformer().translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
+		//
+		//	}else if(time - trainTimer < 20)
+		//	{
+		//
+		//	}
+		//	else if(time - trainTimer < 23)
+		//	{
+		//		mod[79 + t]->getTransformer().translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
+		//
+		//	}
+		//
+		//	if(collision2D(mod[79 + t], player))
+		//	{
+		//
+		//
+		//	}
+		//}
+
+
 
 		//Train Sits in middle of map
 		if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
@@ -952,10 +980,16 @@ public:
 			{
 				if(collision2D(mod[79 + t], player))
 				{
-					if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
-					if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+
+					player->getTransformer().setPosition(
+						abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						0,
+						abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+
+					//if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
+					//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
+					//if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
+					//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
 				}
 			}
 			trainInit = false;
@@ -973,10 +1007,10 @@ public:
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+						player->getTransformer().setPosition(
+							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+							0,
+							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 					}
 				}
 			}
@@ -1007,10 +1041,10 @@ public:
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
+						player->getTransformer().setPosition(
+							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+							0,
+							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 					}
 				}
 			}
@@ -1032,20 +1066,18 @@ public:
 			for(int t = 0; t < 7; t++)
 			{
 				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-				
-				
+
+
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
-						//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
-						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+						player->getTransformer().setPosition(
+							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+							0,
+							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 					}
 				}
 			}
@@ -1073,19 +1105,17 @@ public:
 			for(int t = 0; t < 7; t++)
 			{
 				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-				
+
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
-						//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
-						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+						player->getTransformer().setPosition(
+							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+							0,
+							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 					}
 				}
 			}
@@ -1097,20 +1127,18 @@ public:
 			for(int t = 0; t < 7; t++)
 			{
 				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-				
-				
+
+
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
-						//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
-						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+						player->getTransformer().setPosition(
+							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+							0,
+							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 					}
 				}
 			}
@@ -1126,12 +1154,10 @@ public:
 				if(collision2D(mod[79 + t], player))
 				{
 					player->setHealth(player->getHealth() - 10);
-					if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-					if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-						player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
-					//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
-					//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+					player->getTransformer().setPosition(
+						abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						0,
+						abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 				}
 			}
 			trainInit = false;
@@ -1143,19 +1169,17 @@ public:
 			for(int t = 0; t < 7; t++)
 			{
 				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-				
+
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
-						//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
-						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+						player->getTransformer().setPosition(
+							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+							0,
+							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 					}
 				}
 			}
@@ -1168,19 +1192,17 @@ public:
 			for(int t = 0; t < 7; t++)
 			{
 				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-				
+
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
 					if(collision2D(mod[79 + t], player))
 					{
 						player->setHealth(player->getHealth() - 10);
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.8f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.8f));
-						//if (player->getTransformer().getPosition().x < mod[85]->getTransformer().getPosition().x)
-						//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.8f, 0.f, 0.0f));
+						player->getTransformer().setPosition(
+							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+							0,
+							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 					}
 				}
 			}
@@ -1190,6 +1212,7 @@ public:
 		//Train stops on map
 		else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
 		{
+			trainTimer = time;
 			for(int t = 0; t < 7; t++)
 			{
 				mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
@@ -1199,10 +1222,10 @@ public:
 					player = (Player*)mod[a];
 					if(collision2D(mod[79 + t], player))
 					{
-						if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
-						if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-							player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+						player->getTransformer().setPosition(
+							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+							0,
+							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
 					}
 					trainTimer += time; //Reset Train timer so it all starts again.
 				}

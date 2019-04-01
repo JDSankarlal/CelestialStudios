@@ -24,6 +24,7 @@ public:
 
 	void init(Size3D = {}, CAMERA_TYPE = PERSPECTIVE);
 	void setType(CAMERA_TYPE type);
+	CAMERA_TYPE getType();
 	bool update();
 
 	void setPosition(Coord3D);
@@ -51,7 +52,8 @@ protected:
 	float m_scale;
 	Size3D *m_size = new Size3D;
 	Coord3D *m_position;
-	
+	CAMERA_TYPE m_type = PERSPECTIVE;
+
 	Transformer m_transform;
 	glm::mat4 m_cameraMat;
 	glm::mat4 m_projMat;

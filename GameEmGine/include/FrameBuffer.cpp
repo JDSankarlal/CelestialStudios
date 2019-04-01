@@ -7,6 +7,7 @@ FrameBuffer::FrameBuffer(std::string tag, unsigned numColorAttachments)
 	m_numColorAttachments = numColorAttachments;
 
 	m_colorAttachments = new GLuint[m_numColorAttachments];
+	memset(m_colorAttachments, 0, sizeof(GLuint)* numColorAttachments);
 
 	//Buffs is required as a parameter for glDrawBuffers()
 	m_buffs = new GLenum[m_numColorAttachments];
@@ -23,32 +24,36 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+	if(!m_depthAttachment)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-	//create depth texture
-	glGenTextures(1, &m_depthAttachment);
+		//create depth texture
+		glGenTextures(1, &m_depthAttachment);
 
-	resizeDepth(width, height);
-	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-
+		resizeDepth(width, height);
+		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+	}
 }
 
 void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+	if(!m_colorAttachments[index])
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-	//create colour texture
-	glGenTextures(1, &m_colorAttachments[index]);
-	
-	resizeColour(index, width, height, internalFormat, filter, wrap);
-	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+		//create colour texture
+		glGenTextures(1, &m_colorAttachments[index]);
 
+		resizeColour(index, width, height, internalFormat, filter, wrap);
+		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+	}
 }
 
 void FrameBuffer::resizeDepth(unsigned width, unsigned height)
 {
-	//if(m_depthAttachment)
-	//{
+	if(m_depthAttachment)
+	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 		glDeleteTextures(1, &m_depthAttachment);
 		glGenTextures(1, &m_depthAttachment);
@@ -67,7 +72,7 @@ void FrameBuffer::resizeDepth(unsigned width, unsigned height)
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
-	//}
+	}
 }
 
 void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
@@ -124,6 +129,8 @@ bool FrameBuffer::checkFBO()
 		unload();
 		return false;
 	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 
 	return true;
 }

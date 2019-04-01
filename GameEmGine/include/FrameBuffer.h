@@ -77,7 +77,6 @@ private:
 	GLenum* m_buffs = nullptr;
 
 	unsigned int m_numColorAttachments = 0;
-
 	std::string m_tag;
 	std::function<void()>m_postProcess;
 	Shader* m_shader;
