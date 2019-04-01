@@ -9,17 +9,17 @@ Camera* GameEmGine::m_mainCamera;
 std::vector<Camera*>GameEmGine::m_cameras;
 
 Shader
-* GameEmGine::m_modelShader, * GameEmGine::m_postProcess,
-* GameEmGine::m_forwardRender, * GameEmGine::m_grayScalePost,
-* GameEmGine::m_bloomHighPass, * GameEmGine::m_blurHorizontal,
-* GameEmGine::m_blurVertical, * GameEmGine::m_blurrComposite,
-* GameEmGine::m_sobel, * GameEmGine::m_shadows;
+* GameEmGine::m_modelShader, *GameEmGine::m_postProcess,
+*GameEmGine::m_forwardRender, *GameEmGine::m_grayScalePost,
+*GameEmGine::m_bloomHighPass, *GameEmGine::m_blurHorizontal,
+*GameEmGine::m_blurVertical, *GameEmGine::m_blurrComposite,
+*GameEmGine::m_sobel, *GameEmGine::m_shadows;
 
 FrameBuffer*
-GameEmGine::m_mainFrameBuffer, * GameEmGine::m_postBuffer,
-* GameEmGine::m_buffer1, * GameEmGine::m_buffer2,
-* GameEmGine::m_greyscaleBuffer, * GameEmGine::m_outline,
-* GameEmGine::m_shadowBuffer;
+GameEmGine::m_mainFrameBuffer, *GameEmGine::m_postBuffer,
+*GameEmGine::m_buffer1, *GameEmGine::m_buffer2,
+*GameEmGine::m_greyscaleBuffer, *GameEmGine::m_outline,
+*GameEmGine::m_shadowBuffer;
 
 
 GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
@@ -625,29 +625,36 @@ void GameEmGine::update()
 
 	m_grayScalePost->disable();
 
+	for(int a = 0; a < LightSource::size(); a++)
+	{
+		std::vector<FrameBuffer*>shadowBuffer = LightSource::shadowBuffers(getWindowWidth(), getWindowHeight(), m_models, 0);
 
-	m_outline->enable();
-	m_sobel->enable();
+		for(auto &b:shadowBuffer)
+		{
+			
+		}
+	}
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(1));
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getDepthHandle());
-
-	m_sobel->sendUniform("uNormalMap", 0);
-	m_sobel->sendUniform("uDepthMap", 1);
-
-	drawFullScreenQuad();
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
-
-	m_sobel->disable();
-	m_outline->disable();
-
-
+	//m_outline->enable();
+	//m_sobel->enable();
+	//
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(1));
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getDepthHandle());
+	//
+	//m_sobel->sendUniform("uNormalMap", 0);
+	//m_sobel->sendUniform("uDepthMap", 1);
+	//
+	//drawFullScreenQuad();
+	//
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//
+	//m_sobel->disable();
+	//m_outline->disable();
 
 
 	m_mainFrameBuffer->moveDepthToBackBuffer(getWindowWidth(), getWindowHeight());
@@ -656,8 +663,8 @@ void GameEmGine::update()
 	m_mainCamera->render(m_forwardRender, m_models, true);
 
 
-	m_greyscaleBuffer->clear();
-	m_greyscaleBuffer->takeFromBackBufferColour(getWindowWidth(), getWindowHeight());
+	//m_greyscaleBuffer->clear();
+	//m_greyscaleBuffer->takeFromBackBufferColour(getWindowWidth(), getWindowHeight());
 
 	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 

@@ -79,16 +79,24 @@ void LightSource::setShader(Shader* shad)
 
 void LightSource::setLightAmount(unsigned size)
 {
-	m_lights.resize(size);
-	m_shadows.resize(size, std::vector<FrameBuffer*>(0, new FrameBuffer("shadow", 0)));
+	m_size = size > 0 ? size : 0;
+	m_lights.resize(m_size);
+	m_shadows.resize(m_size, std::vector<FrameBuffer*>(0, new FrameBuffer("shadow", 0)));
 }
 
-std::vector<FrameBuffer*> LightSource::shadowBuffer(unsigned w, unsigned h, std::vector<Model*>& models, unsigned index)
+unsigned LightSource::size()
+{
+	return m_size;
+}
+
+std::vector<FrameBuffer*> LightSource::shadowBuffers(unsigned w, unsigned h, std::vector<Model*>& models, unsigned index)
 {
 	if(m_lights[index].type == LIGHT_TYPE::POINT)
 	{
 		m_shadows[index].resize(6, new FrameBuffer("shadow", 1));
 
+		glViewport(0, 0, w, h);
+		//initialize buffers
 		for(int a = 0; a < 6; a++)
 		{
 			m_shadows[index][a]->initDepthTexture(w, h);
@@ -100,7 +108,7 @@ std::vector<FrameBuffer*> LightSource::shadowBuffer(unsigned w, unsigned h, std:
 				return m_shadows[index];
 			}
 		}
-
+		Shader* shader;
 		static Camera cam;
 		cam.init({(float)w,(float)h,500}, ORTHOGRAPHIC);
 
@@ -108,8 +116,10 @@ std::vector<FrameBuffer*> LightSource::shadowBuffer(unsigned w, unsigned h, std:
 
 		for(int a = 0; a < 6; a++)
 		{
+			m_shadows[index][a]->resizeDepth(w,h);
 			m_shadows[index][a]->enable();
 			m_shader->enable();
+
 			switch(a)
 			{
 			case 0:
