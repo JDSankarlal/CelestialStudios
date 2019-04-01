@@ -13,7 +13,7 @@
 #include "WindowCreator.h"
 #include "Camera.h"
 #include "Model.h"
-#include "ExtraMath.h"
+//#include "ExtraMath.h"
 #include "InputManager.h"
 #include "FrameBuffer.h"
 #include "LightSource.h"
@@ -58,7 +58,7 @@ public:
 	*/
 	static int getWindowHeight();
 
-	Camera * getMainCamera();
+	static Camera * getMainCamera();
 
 	static void setCameraType(CAMERA_TYPE type);
 
@@ -113,7 +113,7 @@ public:
 
 	static Xinput& getController(int index);
 
-	static Shader *m_modelShader,*m_grayScalePost,*m_bloomHighPass,*m_blurHorizontal,*m_blurVertical,*m_blurrComposite;
+	static Shader *m_modelShader,*m_grayScalePost,*m_bloomHighPass,*m_blurHorizontal,*m_blurVertical,*m_blurrComposite,*m_deferredRender;
 
 	static void drawFullScreenQuad();
 
@@ -138,7 +138,7 @@ private:
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
 	static std::vector<Camera*> m_cameras;
-	static FrameBuffer* m_mainFrameBuffer,*m_buffer1,*m_buffer2,*m_greyscaleBuffer;
+	static FrameBuffer* m_mainFrameBuffer,*m_buffer1,*m_buffer2,*m_greyscaleBuffer,*m_deferredRenderBuffer;
 	static std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
 	static InputManager *m_inputManager;
 	static std::vector<Model*> m_models;

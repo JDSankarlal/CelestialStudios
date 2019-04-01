@@ -122,7 +122,7 @@ void FrameBuffer::clear()
 
 void FrameBuffer::enable()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	glDrawBuffers(m_numColorAttachments, m_buffs);
 }
 

@@ -49,7 +49,7 @@ public:
 
 	void resetUpdated();
 
-	void enableDirCam(bool enable);
+	void enableFPSMode(bool enable);
 
 	bool isUpdated();
 	bool isScaleUpdated();
@@ -65,7 +65,8 @@ private:
 
 	bool  m_updatedRot = true,
 		m_updatedTrans= true,
-		m_updatedScale= true;
+		m_updatedScale= true,
+		m_fpsMode=false;
 
 };
 

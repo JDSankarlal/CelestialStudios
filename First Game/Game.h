@@ -154,6 +154,10 @@ public:
 	// Set game screen
 	void init()
 	{
+		GAME::m_deferredRender->enable();
+		GAME::m_deferredRender->sendUniform("darker", true);
+		GAME::m_deferredRender->disable();
+
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
 		GAME::setCameraPosition({ 0,15.5f,-5 });
@@ -302,13 +306,21 @@ public:
 		mod[43]->setToRender(false);
 
 		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({255,0,0});
 		GAME::addModel(mod.back());//44
-		mod.push_back(new Model(*mod[44]));
+
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({0,0,255});
 		GAME::addModel(mod.back());//45
-		mod.push_back(new Model(*mod[44]));
+
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({0,255,0});
 		GAME::addModel(mod.back());//46
-		mod.push_back(new Model(*mod[44]));
+
+		mod.push_back(new Model("Models/Missile/BossMissile.obj"));
+		mod.back()->setColour({255,255,0});
 		GAME::addModel(mod.back());//47
+
 
 		mod.push_back(new Model("Models/Bullet/bullet.obj"));//48
 
@@ -428,6 +440,13 @@ public:
 		GAME::addModel(mod.back());
 		mod.push_back(new Model("Models/Train/Head/trainhead.obj"));//85
 		GAME::addModel(mod.back());
+		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
+		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
+		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
+		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
+		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
+		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
+		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
 
 		//RAIL
 		mod.push_back(new Model("Models/Rail/rail.obj"));//86
@@ -621,37 +640,7 @@ public:
 		mod[77]->setColour({ 255,255,0,150 });
 		mod[77]->getTransformer().setScale(0.65f), mod[77]->getTransformer().setPosition(0.0f, 0.05f, 0.0f), mod[77]->getTransformer().setRotation({ 0,-90,0 });
 
-		mod[94]->getTransformer().setPosition(-12, 0, -8), mod[94]->getTransformer().setRotation({ 0,90,0 });
-		mod[95]->getTransformer().setPosition(-4, 0, -8), mod[95]->getTransformer().setRotation({ 0,90,0 });
-		mod[96]->getTransformer().setPosition(4, 0, -8), mod[96]->getTransformer().setRotation({ 0,90,0 });
-		mod[97]->getTransformer().setPosition(12, 0, -8), mod[97]->getTransformer().setRotation({ 0,90,0 });
 
-		//Train
-		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
-		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
-		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
-		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
-		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
-		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
-		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
-
-		//Rail
-		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
-
-		//RialLight
-		mod[99]->getTransformer().setScale(0.7f), mod[99]->getTransformer().setPosition(-18.0f, 0.03f, 8.0f), mod[99]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[100]->getTransformer().setScale(0.7f), mod[100]->getTransformer().setPosition(-12.0f, 0.03f, 8.0f), mod[100]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[101]->getTransformer().setScale(0.7f), mod[101]->getTransformer().setPosition(-6.0f, 0.03f, 8.0f), mod[101]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[102]->getTransformer().setScale(0.7f), mod[102]->getTransformer().setPosition(0.0f, 0.03f, 8.0f), mod[102]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[103]->getTransformer().setScale(0.7f), mod[103]->getTransformer().setPosition(6.0f, 0.03f, 8.0f), mod[103]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[104]->getTransformer().setScale(0.7f), mod[104]->getTransformer().setPosition(12.0f, 0.03f, 8.0f), mod[104]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[105]->getTransformer().setScale(0.7f), mod[105]->getTransformer().setPosition(18.0f, 0.03f, 8.0f), mod[105]->getTransformer().setRotation(Coord3D(0, 90, 0));
 
 		/// - Set Model Colour - ///
 		//Players colors and children
@@ -685,50 +674,54 @@ public:
 		}
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 6);
-		LightSource::setParent(mod[44], 6);
-		LightSource::setDiffuse({ 255,100,0,100 }, 6);
-		LightSource::setAttenuationQuadratic(0.06f, 6);
+		LightSource::setParent(mod[0], 6);
+		LightSource::setPosition({0, -0.75f, 0}, 6);
+		LightSource::setDiffuse({255,0,0,100}, 6);
+		LightSource::setAttenuationQuadratic(.1f, 6);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 7);
-		LightSource::setParent(mod[0], 7);
-		LightSource::setPosition({ 0, -0.75f, 0 }, 7);
-		LightSource::setDiffuse({ 255,0,0,100 }, 7);
-		LightSource::setAttenuationQuadratic(1.f, 7);
+		LightSource::setParent(mod[1], 7);
+		LightSource::setPosition({0, -0.75f, 0}, 7);
+		LightSource::setDiffuse({0,0,255,100}, 7);
+		LightSource::setAttenuationQuadratic(.1f, 7);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 8);
-		LightSource::setParent(mod[1], 8);
-		LightSource::setPosition({ 0, -0.75f, 0 }, 8);
-		LightSource::setDiffuse({ 0,0,255,100 }, 8);
-		LightSource::setAttenuationQuadratic(1.f, 8);
+		LightSource::setParent(mod[2], 8);
+		LightSource::setPosition({0, -0.75f, 0}, 8);
+		LightSource::setDiffuse({0,255,0,100}, 8);
+		LightSource::setAttenuationQuadratic(.1f, 8);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 9);
-		LightSource::setParent(mod[2], 9);
-		LightSource::setPosition({ 0, -0.75f, 0 }, 9);
-		LightSource::setDiffuse({ 0,255,0,100 }, 9);
-		LightSource::setAttenuationQuadratic(1.f, 9);
+		LightSource::setParent(mod[3], 9);
+		LightSource::setPosition({0, -0.75f, 0}, 9);
+		LightSource::setDiffuse({255,255,0,100}, 9);
+		LightSource::setAttenuationQuadratic(.1f, 9);
+
+
+
+
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 10);
-		LightSource::setParent(mod[3], 10);
-		LightSource::setPosition({ 0, -0.75f, 0 }, 10);
-		LightSource::setDiffuse({ 255,255,0,100 }, 10);
-		LightSource::setAttenuationQuadratic(1.f, 10);
+		LightSource::setParent(mod[44], 10);
+		LightSource::setDiffuse({255,0,0}, 10);
+		LightSource::setAttenuationQuadratic(0.06f, 10);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 11);
 		LightSource::setParent(mod[45], 11);
-		LightSource::setDiffuse({ 255,100,0,100 }, 11);
+		LightSource::setDiffuse({0,0,255}, 11);
 		LightSource::setAttenuationQuadratic(0.06f, 11);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 12);
 		LightSource::setParent(mod[46], 12);
-		LightSource::setDiffuse({ 255,100,0,100 }, 12);
+		LightSource::setDiffuse({0,255,0}, 12);
 		LightSource::setAttenuationQuadratic(0.06f, 12);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 13);
 		LightSource::setParent(mod[47], 13);
-		LightSource::setDiffuse({ 255,100,0,100 }, 13);
+		LightSource::setDiffuse({255,255,0}, 13);
 		LightSource::setAttenuationQuadratic(0.06f, 13);
 
-		LightSource::setSceneAmbient({ 255,255,255,255 });
+		LightSource::setSceneAmbient({GLubyte(255 * 1),GLubyte(255 * 1),GLubyte(255 * 1)});
 
 		/// - Set Camera  - ///
 
@@ -736,9 +729,9 @@ public:
 		GAME::setCameraAngle(-25, { 1,0,0 });
 
 		/// not needed ///
-		keyPressed = [=](int a, int b) {keyInputPressed(a, b); };
-		keyReleased = [=](int a, int b) {keyInputReleased(a, b); };
-		mouseReleased = [=](int a, int b) {mouseButtonReleased(a, b); };
+		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
+		keyReleased = [&](int a, int b) {keyInputReleased(a, b); };
+		mouseReleased = [&](int a, int b) {mouseButtonReleased(a, b); };
 
 		AudioPlayer::init();
 
@@ -1315,25 +1308,22 @@ public:
 									timer[a].erase(timer[a].begin() + b);
 									break;
 								}
-
 								bool bulletHit = false;
 
-								/// - Bullet Collisions with Train - ///
-								for (int t = 0; t < 7; t++)
+								/// Bullet Collisions with Train
+								for(int t = 0; t < 7; t++)
 								{
 									if (collision(bullets[a][b], mod[79 + t]))
 									{
-										GAME::removeModel(bullets[a][b]);
+										
 										bulletHit = true;
 									}
 								}
 								if (mod[8])
 									if (collision(bullets[a][b], mod[8]))
 									{
-										GAME::removeModel(bullets[a][b]);
-										bullets[a].erase(bullets[a].begin() + b);
-										velocity[a].erase(velocity[a].begin() + b);
-										timer[a].erase(timer[a].begin() + b);
+										
+										bulletHit = true;
 										//Boss a.k.a model 8, is now called "CandyMan" for the purposes of functions.
 										CandyMan->setHealth(CandyMan->getHealth() - 10);// When hit takes damage
 										if (CandyMan->getHealth() <= 0)
@@ -1352,7 +1342,7 @@ public:
 									if (collision(bullets[a][b], minion))
 									{
 										minion->setHealth(minion->getHealth() - 10);
-										GAME::removeModel(bullets[a][b]);
+										
 										bulletHit = true;
 										if (minion->getHealth() <= 0)
 										{
@@ -1372,9 +1362,13 @@ public:
 								}
 
 								if (bulletHit)
-									bullets[a].erase(bullets[a].begin() + b),
-									timer[a].erase(timer[a].begin() + b),
+								{
+									GAME::removeModel(bullets[a][b]);
+									bullets[a].erase(bullets[a].begin() + b);
 									velocity[a].erase(velocity[a].begin() + b);
+									timer[a].erase(timer[a].begin() + b);
+									b--;
+								}
 
 							}
 
@@ -1559,6 +1553,7 @@ public:
 		if (!movePlayer)
 			if (GAME::isControllerConnected(0))
 			{
+				//GAME::getMainCamera()->getTransformer().enableFPSMode(true);
 				Xinput p1 = GAME::getController(0);
 				deathCounter = 0;
 
