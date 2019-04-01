@@ -2,7 +2,6 @@
 #include "Boss.h"
 #include "Assault.h"
 
-typedef GameEmGine GAME;
 
 
 Model* Boss::minion;//78
@@ -43,8 +42,8 @@ void Boss::init()
 	m_lifeBar->getTransformer().setRotation(Coord3D(0, 90, 0));
 	m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.0f);
 
-	GAME::addModel(m_baseBar);
-	GAME::addModel(m_lifeBar);
+	GameEmGine::addModel(m_baseBar);
+	GameEmGine::addModel(m_lifeBar);
 
 
 
@@ -79,6 +78,7 @@ Boss::Boss(const char* path) : Model(path)
 
 Boss::~Boss()
 {
+
 }
 
 void Boss::setPlayers(Player * players[4])
@@ -159,8 +159,8 @@ void Boss::update(float dt)
 					{
 						if (!curveroni[a])
 						{
-							GAME::addModel(missles[a]);
-							GAME::addModel(missileRadius[a]);
+							GameEmGine::addModel(missles[a]);
+							GameEmGine::addModel(missileRadius[a]);
 							bossTarget[a] = targets[a]->getTransformer().getPosition();
 						}
 						curveroni[a] += .01f;
@@ -177,14 +177,15 @@ void Boss::update(float dt)
 					if (curveroni[a] >= 1)
 					{
 						//Missile to Player Collisions
-						targets[a]->hitByEnemy(missles[a], 35);
+						for(int t = 0; t < 4; t++)
+							targets[t]->hitByEnemy(missles[a], 35);
 
 						curveroni[a] = 0;
 						lastDelay[a] = clock();
 						hasTarget[a] = false;
 
-						GAME::removeModel(missles[a]);
-						GAME::removeModel(missileRadius[a]);
+						GameEmGine::removeModel(missles[a]);
+						GameEmGine::removeModel(missileRadius[a]);
 						missles[a]->getTransformer().setPosition(getTransformer().getPosition());
 					}
 
@@ -264,7 +265,7 @@ void Boss::update(float dt)
 			{
 
 				minions.push_back(new Minion(*minion));
-				GAME::addModel(minions.back());
+				GameEmGine::addModel(minions.back());
 
 				minions.back()->setColour({ 200, 50, 50 });
 				minions.back()->getTransformer().setPosition(float(rand() % 15 + rand() % 1000 * .001f) * -(rand() % 2), 0, -float(rand() % 2 + rand() % 100 * .001f)); // Random spawns in bottom right of screen
@@ -295,16 +296,16 @@ void Boss::update(float dt)
 		{
 			m_dead = true;
 			for (auto& a : minions)
-				GAME::removeModel(a);
+				GameEmGine::removeModel(a);
 
 			for (auto& a : missles)
-				GAME::removeModel(a);
+				GameEmGine::removeModel(a);
 
 			for (int a = 0; a < 4; a++)
-				GAME::removeModel(missileRadius[a]);
+				GameEmGine::removeModel(missileRadius[a]);
 
 			minions.clear();
-			GAME::removeModel(this);
+			GameEmGine::removeModel(this);
 		}
 	}
 

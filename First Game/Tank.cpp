@@ -49,7 +49,7 @@ void Tank::update(float dt)
 			getCurrentAnimation()->play();
 
 	Player::update(dt);
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
 	p1->setStickDeadZone(.2f);
 
 	/// - Tank Special Ability Active - ///

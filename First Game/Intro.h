@@ -7,7 +7,7 @@ public:
 	// Set splash screen and start update
 	void init()
 	{
-		GAME::m_modelShader->sendUniform("darken", 0);
+		GameEmGine::m_modelShader->sendUniform("darken", 0);
 
 		mod.push_back(new Model("Models/Scene/Intro/Background/introBackGround.obj"));
 		mod[0]->getTransformer().setScale(1.0f, 1.5f, 1.0f);
@@ -54,7 +54,7 @@ public:
 		}
 
 		for(int a = 0; a < 4; a++)
-			if(GAME::getController(a)->isButtonPressed(CONTROLLER_A))
+			if(GameEmGine::getController(a)->isButtonPressed(CONTROLLER_A))
 			{
 				fadeout = true;
 			}
