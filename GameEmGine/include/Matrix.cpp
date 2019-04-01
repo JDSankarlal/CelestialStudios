@@ -140,7 +140,7 @@ void Matrix::operator=(const std::vector<std::vector<float>>*a_matrix)
 	*m_matrix = *a_matrix;
 }
 
-std::vector<float> Matrix::operator[](int index)
+std::vector<float> Matrix::operator[](int m_index)
 {
-	return m_matrix[0][index];
+	return m_matrix[0][m_index];
 }

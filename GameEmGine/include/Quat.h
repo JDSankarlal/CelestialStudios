@@ -32,7 +32,7 @@ struct Quat
 
 	void print() const;
 
-	float& operator[](int index)const;
+	float& operator[](int m_index)const;
 	Quat operator*(Quat a_quat)	const;
 	Quat operator+(Quat a_quat)const;
 	void operator+=(Quat a_quat)const;

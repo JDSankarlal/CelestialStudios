@@ -3,17 +3,19 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Model.h"
 #include "Transformer.h"
 #include "Utilities.h"
 #include "Quat.h"
+#include "Shader.h"
+#include "Model.h"
+
+class Model;
 
 enum CAMERA_TYPE
 {
 	ORTHOGRAPHIC,
 	PERSPECTIVE
 };
-
 class Camera
 {
 public:
@@ -22,6 +24,7 @@ public:
 
 	void init(Size3D = {}, CAMERA_TYPE = PERSPECTIVE);
 	void setType(CAMERA_TYPE type);
+	CAMERA_TYPE getType();
 	bool update();
 
 	void setPosition(Coord3D);
@@ -31,7 +34,9 @@ public:
 
 	void moveAngleBy(float angle, Coord3D direction);
 
-	void setViewMatrix(glm::mat4 view);
+
+	void render(Shader* shader, std::vector<Model*>& models,bool transparent=false);
+	
 
 	Coord3D getPosition();
 	float& getScale();
@@ -41,22 +46,18 @@ public:
 
 	glm::mat4 getObjectMatrix();
 	Transformer& getTransformer();
-	
-	void addModel(Model* model);
-	void addModels(std::vector<Model*> *models);
-	void render(Shader* shader);
+
 protected:
 	bool m_cameraUpdate;
 	float m_scale;
 	Size3D *m_size = new Size3D;
 	Coord3D *m_position;
 	CAMERA_TYPE m_type = PERSPECTIVE;
+
 	Transformer m_transform;
 	glm::mat4 m_cameraMat;
 	glm::mat4 m_projMat;
 	glm::mat4 m_viewMat;
 	glm::mat4 m_objMat;
-
-	std::vector<Model*>* m_models;
 };
 

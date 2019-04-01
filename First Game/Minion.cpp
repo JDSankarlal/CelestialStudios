@@ -1,18 +1,18 @@
 #include "Minion.h"
+std::vector<Player*> Minion::targets;
 
 
-
-Minion::Minion()
+Minion::Minion():Model()
 {
+
 }
 
 Minion::Minion(Model& model) : Model(model)
-
 {
 
 }
 
-Minion::Minion(const char * path) :Model(path)
+Minion::Minion(const char* path) : Model(path)
 {
 
 }
@@ -22,22 +22,75 @@ Minion::~Minion()
 {
 }
 
-void Minion::setHealth(int v)
+void Minion::setHealth(float v)
 {
-	health = v;
+	m_health = v;
 }
 
 float Minion::getTimeSinceLastSpawn()
 {
-	return timeSinceLastSpawn;
+	return m_timeSinceLastSpawn;
 }
 
 void Minion::setTimeSinceLastSpawn(float v)
 {
-	timeSinceLastSpawn = v;
+	m_timeSinceLastSpawn = v;
 }
 
-int Minion::getHealth()
+void Minion::addTarget(Player* mod)
 {
-	return health;
+	targets.push_back(mod);
+}
+
+bool Minion::hitByEnemy(Model* enemy, float damage)
+{
+	if(enemy)
+	{
+		if(collision2D(enemy))
+		{
+			setHealth(getHealth() - damage);
+			return true;
+		}
+	}
+	return false;
+}
+
+void Minion::update(float dt)
+{
+	dt;
+	/// - Minions Movement Towards Players - ///
+	if(m_move)
+	{
+		float distance, lastDistance = 0;
+		Coord3D moveTo = targets[0]->getTransformer().getPosition();
+
+		if(!targets.empty())
+			lastDistance = (getTransformer().getPosition() - targets[0]->getTransformer().getPosition()).distance();
+
+		for(auto& a : targets)
+		{
+			distance = (getTransformer().getPosition() - a->getTransformer().getPosition()).distance();
+			if(distance < lastDistance)
+				moveTo = a->getTransformer().getPosition() - getTransformer().getPosition(),
+				lastDistance = (getTransformer().getPosition() - a->getTransformer().getPosition()).distance();
+		}
+
+		moveTo.normalize();
+		getTransformer().translateBy(moveTo * m_moveSpeed);
+	}
+}
+
+void Minion::move(bool move)
+{
+	m_move = move;
+}
+
+float Minion::getHealth()
+{
+	return m_health;
+}
+
+bool operator>(Minion a, Minion b)
+{
+	return 1;
 }

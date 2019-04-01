@@ -1,7 +1,6 @@
 #include "InputManager.h"
 
 #pragma region Static Variables
-Xinput InputManager::m_controllers[16];
 std::function<void(int)>
 InputManager::m_controllerConneced,
 InputManager::m_controllerDisconnected;
@@ -21,7 +20,7 @@ InputManager::InputManager()
 	glfwInit();
 	glfwSetKeyCallback(glfwGetCurrentContext(), keyUpdate);
 	glfwSetMouseButtonCallback(glfwGetCurrentContext(), mouseButtonUpdate);
-	glfwSetJoystickCallback(xinputConnectionUpdate);
+	//glfwSetJoystickCallback(xinputConnectionUpdate);
 }
 
 InputManager::~InputManager()
@@ -124,52 +123,23 @@ void InputManager::controllerAllConnectionCallback(std::function<void(int, int)>
 int InputManager::controllersConnected()
 {
 	int count = 0;
-	for(int a = 0; a < GLFW_JOYSTICK_LAST; a++)
-		count += glfwJoystickPresent(a);
+	for(int a = 0; a < 4; a++)
+		count += XinputManager::controllerConnected(a);
 	return count;
 }
 
-bool InputManager::isControllerConnected(unsigned int index)
+bool InputManager::isControllerConnected(unsigned int m_index)
 {
-	return glfwJoystickPresent(index);
+	return XinputManager::controllerConnected(m_index);
 }
 
-Xinput& InputManager::getController(unsigned int index)
+XinputDevice& InputManager::getController(unsigned int m_index)
 {
-	return m_controllers[index];
+	return *XinputManager::getController(m_index);
 }
 
 void InputManager::controllerUpdate()
 {
 
-	for(int a = 0; a < GLFW_JOYSTICK_LAST; a++)
-		if(glfwJoystickPresent(a))
-		{
-			m_controllers[a].name = glfwGetJoystickName(a);
-			unsigned char* tmp = (unsigned char*)glfwGetJoystickButtons(a, &m_controllers[a].numButtons);
-			for(int b = 0; b < m_controllers[a].numButtons; b++)
-				m_controllers[a].buttons.data[b] = tmp[b];
-			m_controllers[a].updateSticks(a);
-			m_controllers[a].triggers = (float*)glfwGetJoystickAxes(a, &m_controllers[a].numSticks) + m_controllers[a].numSticks - 2;
-			m_controllers[a].numSticks -= 2;
-			m_controllers[a].numSticks /= 2;
-			m_controllers[a].numTriggers = 2;
-
-			//Stick Dead Zone application
-			for(int b = 0; b < m_controllers[a].numSticks; b++)
-			{
-				Xinput::Sticks* tmp2 = &m_controllers[a].sticks;
-				XinputSticks val = XinputSticks(b);
-				if(sqrt(tmp2[0][val].x*tmp2[0][val].x + tmp2[0][val].y*tmp2[0][val].y) <= m_controllers[a].getStickDeadZone())
-					(*tmp2)[val] = {0,0};
-			}
-			//modify trigger values
-			m_controllers[a].triggers[0] = (m_controllers[a].triggers[0] + 1) * .5f;//triggers have values from 0 -> 1
-			m_controllers[a].triggers[1] = (m_controllers[a].triggers[1] + 1) * .5f;//triggers have values from 0 -> 1
-
-			//Trigger Dead Zone application
-			for(int b = 0; b < m_controllers[a].numTriggers; b++)
-				if(m_controllers[a].triggers[b] <= m_controllers[a].getTriggerDeadZone())
-					m_controllers[a].triggers[b] = 0;
-		}
+	XinputManager::update();
 }

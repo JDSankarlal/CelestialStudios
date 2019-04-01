@@ -1,20 +1,23 @@
 #pragma once
 #include <GameEmGine.h>
 #include "Game.h"
-#include "PlayerSelect.h"
+#include "Controls.h"
+
 class Menu:public Scene
 {
 public:
 	// Set menu screen
 	void init()
 	{
-		mod.push_back(new Model("Models/Screen/Menu/menu.obj"));
+		GAME::m_modelShader->sendUniform("darken", false);
+
+		mod.push_back(new Model("Models/Scene/Menu/menu.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
-		mod.push_back(new Model("Models/Screen/Menu/Start.obj"));
+		mod.push_back(new Model("Models/Scene/Menu/Start.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 1
-		mod.push_back(new Model("Models/Screen/Menu/Options.obj"));
+		mod.push_back(new Model("Models/Scene/Menu/Options.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 2
-		mod.push_back(new Model("Models/Screen/Menu/Exit.obj"));
+		mod.push_back(new Model("Models/Scene/Menu/Exit.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 3
 
 		mod[0]->addChild(mod[1]);
@@ -24,12 +27,6 @@ public:
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 		LightSource::setSceneAmbient({0,0,0,255}); //255
 
-		//float windowHeight = (float)GameEmGine::getWindowHeight();
-		//float windowWidth = (float)GameEmGine::getWindowWidth();
-		//mod[1]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//mod[2]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//mod[3]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//float tmp= mod[0]->getHeight() / 4 ;
 		for(unsigned int i = 1; i < mod.size(); i++)
 		{
 			mod[i]->getTransformer().setRotation({90,0,0});
@@ -74,12 +71,12 @@ public:
 			if(GameEmGine::isControllerConnected(a))
 			{
 				static int lastOption;
-				if(abs(GameEmGine::getController(a).sticks[LS].y) >= 0.8)
+				if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y) >= 0.8)
 				{
 					if(!menuMoved[a])
 					{
 						lastOption = option;
-						option += GameEmGine::getController(a).sticks[LS].y < 0 ? 1 : -1;
+						option += ((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y < 0 ? 1 : -1;
 
 						option = option > 3 ? 1 : option < 1 ? 3 : option;
 
@@ -91,10 +88,10 @@ public:
 					}
 				}
 
-				if(abs(GameEmGine::getController(a).sticks[LS].y) < .3f)
+				if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y) < .3f)
 					menuMoved[a] = false;
 
-				if(Xinput::buttonPressed(GameEmGine::getController(a).buttons.A))
+				if(GameEmGine::getController(a)->isButtonPressed(CONTROLLER_A))
 				{
 					switch(option)
 					{
@@ -136,7 +133,7 @@ public:
 				splashAmbient = 255;
 
 				//GamePlayInit();
-				GameEmGine::setScene(new PlayerSelect);
+				GameEmGine::setScene(new Controls);
 			}
 		}
 	}

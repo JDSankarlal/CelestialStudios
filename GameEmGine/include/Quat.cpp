@@ -98,10 +98,10 @@ void Quat::print() const
 	printf(")\n\n");
 }
 
-float& Quat::operator[](int index) const
+float& Quat::operator[](int m_index) const
 {
 	float *e = nullptr;
-	switch(index)
+	switch(m_index)
 	{
 	case 0:
 		return const_cast<float&>(x);
