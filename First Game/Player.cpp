@@ -140,32 +140,32 @@ void Player::setPlayerIndex(int index)
 		m_baseBar = baseRedBar;
 		m_lifeBar = redBar;
 		ringID->setColour(1.f, 0, 0);
-		graveStone->setColour({255,50,50,150});
-		bulletCircle->setColour({ 255,50,50,150 });
+		graveStone->setColour({255,50,50});
+		bulletCircle->setColour({ 255,50,50});
 		break;
 	case 1:
 		setColour({ 0,0,255 });
 		m_baseBar = baseBlueBar;
 		m_lifeBar = blueBar;
 		ringID->setColour(0, 0, 1.f);
-		graveStone->setColour({50,50,200,150});
-		bulletCircle->setColour({ 50,50,200,150 });
+		graveStone->setColour({50,50,200});
+		bulletCircle->setColour({ 50,50,200});
 		break;
 	case 2:
 		setColour({ 0,255,0 });
 		m_baseBar = baseGreenBar;
 		m_lifeBar = greenBar;
 		ringID->setColour(0, 1.f, 0);
-		graveStone->setColour({50,200,50,150});
-		bulletCircle->setColour({ 50,200,50,150 });
+		graveStone->setColour({50,200,50});
+		bulletCircle->setColour({ 50,200,50});
 		break;
 	case 3:
 		setColour({ 255,255,0 });
 		m_baseBar = baseYellowBar;
 		m_lifeBar = yellowBar;
 		ringID->setColour(1.f, 1.f, 0.4314f);
-		graveStone->setColour({200,200,50,150});
-		bulletCircle->setColour({ 200,200,50,150 });
+		graveStone->setColour({200,200,50});
+		bulletCircle->setColour({ 200,200,50});
 	}
 
 	ringID->getTransformer().setPosition(Coord3D{ 0, .06f + .02f * index + .01f,0 });
@@ -175,6 +175,7 @@ void Player::setPlayerIndex(int index)
 	m_baseBar->addChild(m_lifeBar);
 	m_baseBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 	m_baseBar->getTransformer().setRotation({ 0, 90.f, 0 });
+	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 
 
 	GAME::addModel(m_baseBar);
@@ -222,7 +223,8 @@ void Player::hitByEnemy(Model* mod, float damage)
 	{
 		//curveroni[a] = 1;
 		//CandyMan->getMissial(a)->getTransformer().setPosition(mod[8]->getCenter());
-		setHealth(getHealth() - damage);
+		float tempHealth = getHealth() - damage;
+		setHealth(tempHealth < 0 ? 0 : tempHealth);
 
 		//Coord3D test = ;
 

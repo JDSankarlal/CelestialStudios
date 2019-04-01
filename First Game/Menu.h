@@ -9,7 +9,7 @@ public:
 	// Set menu screen
 	void init()
 	{
-		GAME::m_modelShader->sendUniform("darken", 0);
+		GAME::m_modelShader->sendUniform("darken", false);
 
 		mod.push_back(new Model("Models/Scene/Menu/menu.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
@@ -27,12 +27,6 @@ public:
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 		LightSource::setSceneAmbient({0,0,0,255}); //255
 
-		//float windowHeight = (float)GameEmGine::getWindowHeight();
-		//float windowWidth = (float)GameEmGine::getWindowWidth();
-		//mod[1]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//mod[2]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//mod[3]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//float tmp= mod[0]->getHeight() / 4 ;
 		for(unsigned int i = 1; i < mod.size(); i++)
 		{
 			mod[i]->getTransformer().setRotation({90,0,0});

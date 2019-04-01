@@ -130,7 +130,7 @@ void Mesh::loadMaterials(const char* path)
 			{
 				char str2[CHAR_BUFF_SIZE];
 				sscanf_s(str, "map_Kd %s", &str2, (unsigned)_countof(str2));
-				//path.resize(path.c_str());
+				//path.resizeDepth(path.c_str());
 				cDir(str2);
 				std::string tmpStr(substr(path, "/") + str2);
 				m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
@@ -141,7 +141,7 @@ void Mesh::loadMaterials(const char* path)
 			{
 				char str2[CHAR_BUFF_SIZE];
 				sscanf_s(str, "map_Ks %s", &str2, (unsigned)_countof(str2));
-				//path.resize(path.c_str());
+				//path.resizeDepth(path.c_str());
 				cDir(str2);
 				std::string tmpStr(substr(path, "/") + str2);
 				m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));

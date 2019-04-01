@@ -177,9 +177,7 @@ void Boss::update(float dt)
 					if (curveroni[a] >= 1)
 					{
 						//Missile to Player Collisions
-						for (int b = 0; b < (int)missles.size(); b++)
-							targets[a]->hitByEnemy(missileRadius[b], 35);
-
+						targets[a]->hitByEnemy(missles[a], 35);
 
 						curveroni[a] = 0;
 						lastDelay[a] = clock();
@@ -223,29 +221,27 @@ void Boss::update(float dt)
 						missileRadius[a]->getTransformer().setScale(catmull(-7.f, 1.f, 0.7f, -7.f, curveroni[a]));
 					}
 
+					static bool slam = false;
+					//Player comes near Boss, gets teleported backwards
+					if (collision2D(targets[a]))
+					{
+						getAnimation("missleShoot")->pause();
+						setAnimation("slam");
+						getCurrentAnimation()->setAnimationSpeed(0.2f);
+						getCurrentAnimation()->repeat(true);
+						getCurrentAnimation()->play();
+						slam = true;
 
+						if (getAnimation("slam")->getFrameNumber() == 5)
+						{
+							targets[a]->hitByEnemy(this);
+							//targets[a]->getTransformer().setPosition(targets[a]->getTransformer().getPosition().x, targets[a]->getTransformer().getPosition().y, getTransformer().getPosition().z - 15);
+							//targets[a]->setHealth(targets[a]->getHealth() - 35);
+						}
+					}
 
 
 				}
-
-			static bool slam = false;
-			//Player comes near Boss, gets teleported backwards
-			if (collision2D(targets[a]))
-			{
-				getAnimation("missleShoot")->pause();
-				setAnimation("slam");
-				getCurrentAnimation()->setAnimationSpeed(0.2f);
-				getCurrentAnimation()->repeat(true);
-				getCurrentAnimation()->play();
-				slam = true;
-
-				if (getAnimation("slam")->getFrameNumber() == 5)
-				{
-					targets[a]->hitByEnemy(this);
-					//targets[a]->getTransformer().setPosition(targets[a]->getTransformer().getPosition().x, targets[a]->getTransformer().getPosition().y, getTransformer().getPosition().z - 15);
-					//targets[a]->setHealth(targets[a]->getHealth() - 35);
-				}
-			}
 		}
 
 

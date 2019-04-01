@@ -7,6 +7,7 @@ FrameBuffer::FrameBuffer(std::string tag, unsigned numColorAttachments)
 	m_numColorAttachments = numColorAttachments;
 
 	m_colorAttachments = new GLuint[m_numColorAttachments];
+	memset(m_colorAttachments, 0, sizeof(GLuint)* numColorAttachments);
 
 	//Buffs is required as a parameter for glDrawBuffers()
 	m_buffs = new GLenum[m_numColorAttachments];
@@ -23,41 +24,102 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+	if(!m_depthAttachment)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-	//create depth texture
-	glGenTextures(1, &m_depthAttachment);
-	glBindTexture(GL_TEXTURE_2D, m_depthAttachment);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		//create depth texture
+		glGenTextures(1, &m_depthAttachment);
 
-	//Bind texture to the fbo
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-
+		resizeDepth(width, height);
+		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+	}
 }
-void FrameBuffer::initColourTexture(unsigned m_index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
+
+void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+	if(!m_colorAttachments[index])
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-	//create depth texture
-	glGenTextures(1, &m_colorAttachments[m_index]);
-	glBindTexture(GL_TEXTURE_2D, m_colorAttachments[m_index]);
-	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
+		//create colour texture
+		glGenTextures(1, &m_colorAttachments[index]);
 
-	//Bind texture to the fbo
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_index, GL_TEXTURE_2D, m_colorAttachments[m_index], 0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+		resizeColour(index, width, height, internalFormat, filter, wrap);
+		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+	}
 }
+
+void FrameBuffer::resizeDepth(unsigned width, unsigned height)
+{
+	if(m_depthAttachment)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+		glDeleteTextures(1, &m_depthAttachment);
+		glGenTextures(1, &m_depthAttachment);
+
+		m_width = width;
+		m_height = height;
+		glBindTexture(GL_TEXTURE_2D, m_depthAttachment);
+
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		//Bind texture to the fbo
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
+void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
+{
+	if(m_colorAttachments[index])
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+		glDeleteTextures(1, &m_colorAttachments[index]);
+		glGenTextures(1, &m_colorAttachments[index]);
+
+		m_internalFormat = internalFormat;
+		m_filter = filter;
+		m_wrap = wrap;
+
+		glBindTexture(GL_TEXTURE_2D, m_colorAttachments[index]);
+		glTexStorage2D(GL_TEXTURE_2D, 1, m_internalFormat, width, height);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap);
+
+		//Bind texture to the fbo
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index], 0);
+
+		glBindTexture(GL_TEXTURE_2D,0);
+	}
+}
+
+void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height)
+{
+	if(m_colorAttachments[index])
+	{		
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+		glBindTexture(GL_TEXTURE_2D, m_colorAttachments[index]);
+		glTexStorage2D(GL_TEXTURE_2D, 1, m_internalFormat, width, height);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap);
+
+		//Bind texture to the fbo
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index], 0);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
 bool FrameBuffer::checkFBO()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
@@ -67,6 +129,8 @@ bool FrameBuffer::checkFBO()
 		unload();
 		return false;
 	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 
 	return true;
 }
@@ -136,12 +200,52 @@ void FrameBuffer::setViewport(int x, int y, int width, int height) const
 	glViewport(x, y, width, height);
 }
 
-void FrameBuffer::moveToBackBuffer(int windowWidth, int windowHeight)
+void FrameBuffer::moveColourToBackBuffer(int windowWidth, int windowHeight)
+{
+	moveColourToBuffer(windowWidth, windowHeight, GL_NONE);
+}
+
+void FrameBuffer::moveColourToBuffer(int windowWidth, int windowHeight, GLuint fboID)
 {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, GL_NONE);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
 
 	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+}
+
+void FrameBuffer::moveDepthToBackBuffer(int windowWidth, int windowHeight)
+{
+	moveDepthToBuffer(windowWidth, windowHeight, GL_NONE);
+}
+
+void FrameBuffer::moveDepthToBuffer(int windowWidth, int windowHeight, GLuint fboID)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
+
+	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+}
+
+void FrameBuffer::takeFromBackBufferColour(int windowWidth, int windowHeight)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, GL_NONE);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
+
+	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+}
+
+void FrameBuffer::takeFromBackBufferDepth(int windowWidth, int windowHeight)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, GL_NONE);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
+
+	glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
@@ -164,6 +268,16 @@ void FrameBuffer::setPostProcess(std::function<void()>post, unsigned layer)
 std::function<void()> FrameBuffer::getPostProcess()
 {
 	return m_postProcess;
+}
+
+unsigned FrameBuffer::getNumColourAttachments()
+{
+	return m_numColorAttachments;
+}
+
+GLuint FrameBuffer::getFrameBufferID()
+{
+	return m_fboID;
 }
 
 std::string FrameBuffer::getTag()
