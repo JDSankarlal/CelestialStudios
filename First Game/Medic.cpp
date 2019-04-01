@@ -9,6 +9,7 @@ void Medic::init()
 	puts("MEDIC CIRCLE SHOULD APPEAR WTF");
 	healingCircle = new Model("Models/MedicCircle/BETTERHealingCircle.obj");
 	healingCircle->setToRender(true);
+	healingCircle->setTransparent(true);
 }
 
 Medic::Medic():Player()
@@ -47,7 +48,7 @@ void Medic::getHealing(Player* player)
 		//Healing
 	if(collision2D(healingCircle,player))
 	{
-		static float healAmount = .02f;
+		static float healAmount = .95f;
 		if(player->getHealth() + healAmount < player->getInitialHealth())
 			player->setHealth(player->getHealth() + healAmount);
 		
@@ -76,13 +77,28 @@ void Medic::update(float dt)
 			if(time - getTimeSinceLastHeal() >= 5)
 			{
 				healingCircle->getTransformer().setPosition(this->getTransformer().getPosition() + (Coord3D({0.0f, 0.1f, 0.0f})));
-				healingCircle->getTransformer().setScale(3);
+				healingCircle->getTransformer().setScale(4);
 				healingCircle->setToRender(true);
 				circleTime = time;
 				puts("Special Ability MEDIC");
 				isHealing = true;
 				GAME::addModel(healingCircle);
-
+				if (m_index == 0)
+				{
+					healingCircle->setColour({ 255,0,0 });
+				}
+				if (m_index == 1)
+				{
+					healingCircle->setColour({ 0,0,255 });
+				}
+				if (m_index == 2)
+				{
+					healingCircle->setColour({ 0,255,0 });
+				}
+				if (m_index == 3)
+				{
+					healingCircle->setColour({ 255,255,0 });
+				}
 			}
 		}
 

@@ -152,7 +152,7 @@ public:
 	void init()
 	{
 		GAME::m_modelShader->sendUniform("darken", 1);
-		mod.resize(126);//sets the initial size of the vector (if u add any more models, increase this number)
+		mod.resize(130);//sets the initial size of the vector (if u add any more models, increase this number)
 
 		/// - Set Camera  - ///
 		GAME::setCameraType(PERSPECTIVE);
@@ -503,6 +503,29 @@ public:
 		mod[125]->getTransformer().setRotation({ 0, 0, 0 });
 		GAME::addModel(mod[125]);
 
+		//pause screen
+		mod[126] = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
+		mod[126]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
+		mod[126]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
+		GAME::addModel(mod[126]);
+		mod[126]->setToRender(false);
+		mod[126]->setTransparent(true);
+
+		//Tutorial Sign
+		mod[127] = (new Model("Models/Sign/tallSign/tallSign.obj"));
+		GAME::addModel(mod[127]);
+		mod[127]->getTransformer().setPosition(-14.0f, 0.0f, 36.0f), mod[127]->getTransformer().setScale(1.5f, 1.5f, 1.5f);
+		mod[127]->setColour({ 0,255,255 });
+
+		mod[128] = (new Model("Models/Sign/shortSign/shortSign.obj"));
+		GAME::addModel(mod[128]);
+		mod[128]->getTransformer().setPosition(-16.9f, 0.0f, 17.0f), mod[128]->getTransformer().setRotation({ 0, 90, 0 }), mod[128]->getTransformer().setScale(0.8f, 1.0f, 1.0f);
+		mod[128]->setColour({ 0,255,255 });
+
+		mod[129] = (new Model("Models/Sign/sideSign/sideSign.obj"));
+		GAME::addModel(mod[129]);
+		mod[129]->getTransformer().setScale(1.0f, 3.0f, 1.0f), mod[129]->getTransformer().setPosition(16.8f, 0.0f, 29.5f), mod[129]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
+
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
@@ -757,12 +780,17 @@ public:
 		CandyMan->setPlayers((Player * *)mod.data());
 		CandyMan->update((float)dt);
 
+		//add mod for pause screen here but set render to false 
+
+
 		for (int a = 0; a < 4; a++)
 		{
 
 			player = (Player*)mod[a];
-			player->setPlayerIndex(a);
+			if (!player->dead)
+				player->setPlayerIndex(a);
 			static bool pausedAgain[4] = { 0,0,0,0 };
+			//static bool pauseScreen[4] = { 0,0,0,0 }; 
 			if (GAME::isControllerConnected(a))
 			{
 				if (GAME::getController(a)->isButtonPressed(CONTROLLER_START) && !pausedAgain[a])
@@ -772,16 +800,34 @@ public:
 					for (int b = 0; b < 4; b++)
 						((Player*)mod[b])->setActive(pause);
 
+					//rn the music gets quieter during the pause screen 
+					if (!pause)
+						EmGineAudioPlayer::setVolume(.5f, 0);
+						
+					else
+						EmGineAudioPlayer::setVolume(1, 0);
+
+					mod[126]->getTransformer().setRotation(GAME::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
+					mod[126]->setToRender(!pause);
 					CandyMan->setActive(pause);
+					//music should slow down in the pause menu!!!!
 					pause = !pause;
+					screenPause = !screenPause;
+
 				}
 				else if (GAME::getController(a)->isButtonReleased(CONTROLLER_START))
 				{
 					pausedAgain[a] = false;
+					//pauseScreen[a] = false; 
+					//mod[126]->setToRender(false);
 				}
 
 				if (!player->dead)
 					deathCounter = 0;
+			}
+			else
+			{
+				((Player*)mod[a])->setActive(false);
 			}
 			player->update((float)dt);
 
@@ -1198,4 +1244,5 @@ private:
 	Coord2D leftM, rightM;
 	AudioPlayer audio;
 	bool pause = false;
+	bool screenPause = false;
 };

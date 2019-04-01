@@ -46,19 +46,63 @@ void Player::init(int index)
 	ringID->getTransformer().setScale(.75f);
 	gun = new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj");
 
-	Animation* walk = new Animation, * idle = new Animation;
+	if (type == PlayerType::assault)
+	{
+		Animation* walk = new Animation, *idle = new Animation;
+		walk->addDir("Models/Class/Assault/Run/");
+		idle->addDir("Models/Class/Assault/Idle/");
+		addAnimation("walk", walk);
+		addAnimation("idle", idle);
+		setAnimation("idle");
+		walk->repeat(true);
+		walk->setAnimationSpeed(0.05f);
+		idle->repeat(true);
+		idle->setAnimationSpeed(.25);
+		idle->play();
+	}
+	else if (type == PlayerType::tank)
+	{
+		Animation* walk = new Animation, *idle = new Animation;
+		walk->addDir("Models/Class/Tank/Run/");
+		idle->addDir("Models/Class/Tank/Idle/");
+		addAnimation("walk", walk);
+		addAnimation("idle", idle);
+		setAnimation("idle");
+		walk->repeat(true);
+		walk->setAnimationSpeed(0.05f);
+		idle->repeat(true);
+		idle->setAnimationSpeed(.25);
+		idle->play();
+	}
+	else if (type == PlayerType::medic)
+	{
+		Animation* walk = new Animation, *idle = new Animation;
+		walk->addDir("Models/Class/Medic/Run/");
+		idle->addDir("Models/Class/Medic/Idle/");
+		addAnimation("walk", walk);
+		addAnimation("idle", idle);
+		setAnimation("idle");
+		walk->repeat(true);
+		walk->setAnimationSpeed(0.05f);
+		idle->repeat(true);
+		idle->setAnimationSpeed(.25);
+		idle->play();
+	}
+	else
+	{
+		Animation* walk = new Animation, *idle = new Animation;
+		walk->addDir("Models/Class/Specialist/Run/");
+		idle->addDir("Models/Class/Specialist/Idle/");
+		addAnimation("walk", walk);
+		addAnimation("idle", idle);
+		setAnimation("idle");
+		walk->repeat(true);
+		walk->setAnimationSpeed(0.05f);
+		idle->repeat(true);
+		idle->setAnimationSpeed(.25);
+		idle->play();
+	}
 
-	walk->addDir("Models/AssaultModel/Walk/");
-	idle->addDir("Models/AssaultModel/Idle/");
-
-
-	addAnimation("walk", walk);
-	addAnimation("idle", idle);
-	setAnimation("idle");
-	walk->repeat(true);
-	idle->repeat(true);
-	idle->setAnimationSpeed(.25);
-	idle->play();
 	dead = false;
 	setPlayerIndex(index);
 }
@@ -92,6 +136,7 @@ void Player::setPlayerIndex(int index)
 	switch (m_index)
 	{
 	case 0:
+		setColour({ 255,0,0 });
 		m_baseBar = baseRedBar;
 		m_lifeBar = redBar;
 		ringID->setColour(1.f, 0, 0);
@@ -99,6 +144,7 @@ void Player::setPlayerIndex(int index)
 		bulletCircle->setColour({ 255,50,50,150 });
 		break;
 	case 1:
+		setColour({ 0,0,255 });
 		m_baseBar = baseBlueBar;
 		m_lifeBar = blueBar;
 		ringID->setColour(0, 0, 1.f);
@@ -106,6 +152,7 @@ void Player::setPlayerIndex(int index)
 		bulletCircle->setColour({ 50,50,200,150 });
 		break;
 	case 2:
+		setColour({ 0,255,0 });
 		m_baseBar = baseGreenBar;
 		m_lifeBar = greenBar;
 		ringID->setColour(0, 1.f, 0);
@@ -113,6 +160,7 @@ void Player::setPlayerIndex(int index)
 		bulletCircle->setColour({ 50,200,50,150 });
 		break;
 	case 3:
+		setColour({ 255,255,0 });
 		m_baseBar = baseYellowBar;
 		m_lifeBar = yellowBar;
 		ringID->setColour(1.f, 1.f, 0.4314f);
@@ -127,6 +175,7 @@ void Player::setPlayerIndex(int index)
 	m_baseBar->addChild(m_lifeBar);
 	m_baseBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
 	m_baseBar->getTransformer().setRotation({ 0, 90.f, 0 });
+	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 
 
 	GAME::addModel(m_baseBar);
@@ -174,7 +223,8 @@ void Player::hitByEnemy(Model* mod, float damage)
 	{
 		//curveroni[a] = 1;
 		//CandyMan->getMissial(a)->getTransformer().setPosition(mod[8]->getCenter());
-		setHealth(getHealth() - damage);
+		float tempHealth = getHealth() - damage;
+		setHealth(tempHealth < 0 ? 0 : tempHealth);
 
 		//Coord3D test = ;
 
@@ -383,16 +433,19 @@ void Player::update(float dt)
 
 
 			//Player Animations
-			if (!speed)
-				getAnimation("walk")->pause();
-			else
+			if (!speed && getAnimation("walk")->checkPlay())
 			{
-				getAnimation("walk")->play();
-				setAnimation("walk");
-				getAnimation("walk")->setAnimationSpeed(.25f / speed);
+				getAnimation("walk")->pause();
+				getAnimation("idle")->play();
+				setAnimation("idle");
 			}
 
-
+			else if (speed && !getAnimation("walk")->checkPlay())
+			{
+				getAnimation("idle")->pause();
+				getAnimation("walk")->play();
+				setAnimation("walk");
+			}
 
 
 			if (dead)
