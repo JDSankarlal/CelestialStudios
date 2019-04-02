@@ -49,7 +49,7 @@ bool Specialist::hitTurret(Model* mod)
 		if(collision2D(mod, pTurret))
 		{
 			hit = true;
-			GAME::removeModel(pTurret);
+			GameEmGine::removeModel(pTurret);
 			pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), pTurret));
 			continue;
 		}
@@ -72,7 +72,7 @@ void Specialist::update(float dt)
 
 	Player::update(dt);
 
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
 	
 	/// - Turret Active - ///
 	if(turretActive == true)
@@ -145,7 +145,7 @@ void Specialist::update(float dt)
 				//If pTurret time runs out
 			if((time - turretTime) >= 5)
 			{
-				GAME::removeModel(pTurret);
+				GameEmGine::removeModel(pTurret);
 				pTurrets.erase(std::find(pTurrets.begin(), pTurrets.end(), pTurret));
 				continue;
 			}
@@ -157,7 +157,7 @@ void Specialist::update(float dt)
 		if(time - getTimeSinceLastTurret() >= 8)
 		{
 			pTurrets.push_back(new Model(*turret));
-			GAME::addModel(pTurrets.back());
+			GameEmGine::addModel(pTurrets.back());
 			pTurrets.back()->getTransformer().reset();
 			//pTurrets.back()->setColour(getColour());
 			Coord3D pos = getTransformer().getPosition();

@@ -67,7 +67,7 @@ void Medic::update(float dt)
 			getCurrentAnimation()->play();
 
 	Player::update(dt);
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
 	p1->setStickDeadZone(.2f);
 
 	///- Medic Special Ability Inactive - ///
@@ -82,7 +82,7 @@ void Medic::update(float dt)
 				circleTime = time;
 				puts("Special Ability MEDIC");
 				isHealing = true;
-				GAME::addModel(healingCircle);
+				GameEmGine::addModel(healingCircle);
 				if (m_index == 0)
 				{
 					healingCircle->setColour({ 255,0,0 });
@@ -111,7 +111,7 @@ void Medic::update(float dt)
 			healingCircle->setToRender(false);
 			setTimeSinceLastHeal(time);
 			isHealing = false;
-			GAME::removeModel(healingCircle);
+			GameEmGine::removeModel(healingCircle);
 
 		}
 	}
