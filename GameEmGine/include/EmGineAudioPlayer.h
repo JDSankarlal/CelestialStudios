@@ -13,7 +13,7 @@ typedef unsigned int uint;
 
 struct Listener
 {
-	FMOD_VEC3 pos = {0,0,0},
+		FMOD_VEC3 pos = {0,0,0},
 		vel = {0,0,0},
 		up = {0,1,0},
 		forward = {1,0,0};
@@ -114,7 +114,7 @@ public:
 	*/
 	static void setVolume(float vol, uint index = (m_controle->size() - 1));
 	static void setVolume(std::string tag ,float vol);	
-	
+	static void SetPosition(FMOD::Channel* thisChannel, FMOD_VEC3 newPos, FMOD_VEC3 newVec = { 0.0f,0.0f,0.0f });
 	
 	/*
 	sets the maximum volume levels for all audio channels ranging from 0 -> 1.

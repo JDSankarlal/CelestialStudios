@@ -1129,7 +1129,7 @@ public:
 				audio.createAudioStream("Audio/RailOff.wav","Rail Off");
 				audio.play("RailOff");
 				trainInit = true;
-			}
+			}	
 			mod[123]->setColour({ 0, 255, 255 });
 			mod[124]->setColour({ 0, 255, 255 });
 			for (int i = 99; i <= 105; i++)

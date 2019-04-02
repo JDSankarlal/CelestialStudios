@@ -214,6 +214,8 @@ uint EmGineAudioPlayer::getPosition( FMOD_TIMEUNIT type, std::string tag)
 	return getPosition(type,index);
 }
 
+
+
 bool EmGineAudioPlayer::isStoped(uint index)
 {
 	bool play;
@@ -263,6 +265,21 @@ void EmGineAudioPlayer::setVolume( std::string tag, float vol)
 		if (m_controle[0][index]->tag == tag)
 			break;
 	setVolume(vol, index);
+}
+
+void EmGineAudioPlayer::SetPosition(FMOD::Channel * thisChannel, FMOD_VEC3 newPos, FMOD_VEC3 newVec)
+{
+	int index = 0;
+	for (;index < (int)m_controle->size();index++)
+		if (m_controle[0][index]->tag == tag)
+			break;
+	static bool isPlay;
+	thisChannel->isPlaying(&isPlay);
+
+	if (isPlay)
+	{
+		thisChannel->set3DAttributes(&newPos, &newVec);
+	}
 }
 
 void EmGineAudioPlayer::setMasterVolume(float vol)
