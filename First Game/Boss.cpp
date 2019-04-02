@@ -294,6 +294,7 @@ void Boss::update(float dt)
 
 		if (m_health <= 0)
 		{
+			//GAME::gameWin = true;
 			m_dead = true;
 			for (auto& a : minions)
 				GameEmGine::removeModel(a);

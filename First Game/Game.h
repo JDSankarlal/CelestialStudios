@@ -528,14 +528,14 @@ public:
 		GameEmGine::addModel(mod[129]);
 		mod[129]->getTransformer().setScale(1.0f, 3.0f, 1.0f), mod[129]->getTransformer().setPosition(16.8f, 0.0f, 29.5f), mod[129]->getTransformer().setRotation({ 0.0f, -90.0f, 0.0f });
 
-		mod[130] = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
+		mod[130] = (new Model("Models/Scene/GameOver/gameOver.obj")); //125
 		mod[130]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
 		mod[130]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
 		GameEmGine::addModel(mod[130]);
 		mod[130]->setToRender(false);
 		mod[130]->setTransparent(true);
 
-		mod[131] = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
+		mod[131] = (new Model("Models/Scene/Win/win.obj")); //125
 		mod[131]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
 		mod[131]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
 		GameEmGine::addModel(mod[131]);
@@ -943,6 +943,11 @@ public:
 				CandyMan->setHealth(CandyMan->getHealth() - 10);
 
 				CandyMan->bossFlash = true;
+				
+			}
+			if (CandyMan->getHealth() <= 0)
+			{
+				gameWin = true;
 			}
 
 			//bullet collision with minions
