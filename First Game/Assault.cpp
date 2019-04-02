@@ -51,7 +51,7 @@ bool Assault::missileCollision(Model* mod)
 		if (collision3D(pMissiles[a], mod))
 		{
 			collision = true;
-			GAME::removeModel(pMissiles[a]);
+			GameEmGine::removeModel(pMissiles[a]);
 			pMissiles.erase(pMissiles.begin() + a);
 			missileVelocity.erase(missileVelocity.begin() + a);
 			timer.erase(timer.begin() + a);
@@ -73,14 +73,14 @@ void Assault::update(float dt)
 
 
 	Player::update(dt);
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
 
 	/// - Assault Special Ability - ///
 	if (p1->isButtonStroked(CONTROLLER_Y))
 		if (time - m_timeSinceLastMissile >= 3)
 		{
 			pMissiles.push_back(new Model(*missile));
-			GAME::addModel(pMissiles.back());
+			GameEmGine::addModel(pMissiles.back());
 			pMissiles.back()->getTransformer().reset();
 			pMissiles.back()->setColour(getColour());
 			Coord3D pos = getTransformer().getPosition();
@@ -110,7 +110,7 @@ void Assault::update(float dt)
 
 			if (timer[a] >= 1)
 			{
-				GAME::removeModel(pMissiles[a]);
+				GameEmGine::removeModel(pMissiles[a]);
 				pMissiles.erase(pMissiles.begin() + a);
 				missileVelocity.erase(missileVelocity.begin() + a);
 				timer.erase(timer.begin() + a);
