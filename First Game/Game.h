@@ -128,6 +128,8 @@ public:
 		}
 		if (key == GLFW_KEY_Q)
 			GameEmGine::lutActive = (GameEmGine::lutActive == false) ? true : false;
+		if (key == GLFW_KEY_T)
+			GameEmGine::toonActive = (GameEmGine::toonActive == false) ? true : false;
 		if (key == 'R')
 			GameEmGine::setCameraAngle(0, { 1,1,1 });
 
