@@ -11,15 +11,12 @@
 #include "Tank.h"
 
 
-
-typedef EmGineAudioPlayer AudioPlayer;
-
-
 using std::vector;
 
 class Game :public Scene
 {
 public:
+	
 	/// - Collision Class - ///
 	bool collision2D(Model* l, Model* k)
 	{
@@ -706,9 +703,9 @@ public:
 		keyReleased = [&](int a, int b) {keyInputReleased(a, b); };
 		mouseReleased = [&](int a, int b) {mouseButtonReleased(a, b); };
 
-		AudioPlayer::init();
+		EmGineAudioPlayer::init();
 
-		audio.createAudioStream("Audio/potential mix (with beat).wav");
+		audio.createAudioStream("Audio/potential mix (with beat).wav","BG Music");
 
 		audio.play(true);
 	}
@@ -1129,8 +1126,8 @@ public:
 		{
 			if (!trainInit)
 			{
-				audio.createAudioStream("Audio/RailOff.wav");
-				audio.play();
+				audio.createAudioStream("Audio/RailOff.wav","Rail Off");
+				audio.play("RailOff");
 				trainInit = true;
 			}
 			mod[123]->setColour({ 0, 255, 255 });
@@ -1198,7 +1195,7 @@ public:
 		{
 			if (!trainInit)
 			{
-				audio.createAudioStream("Audio/RailOff.wav");
+				audio.createAudioStream("Audio/RailOff.wav","Rail Off");
 				audio.play();
 				trainInit = true;
 			}
@@ -1416,7 +1413,7 @@ private:
 		rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0,
 		movePlayer = true;
 	Coord2D leftM, rightM;
-	AudioPlayer audio;
+	EmGineAudioPlayer audio;
 	bool pause = false;
 	bool gameOver = false;
 	bool gameWin = false;

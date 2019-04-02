@@ -31,9 +31,6 @@
     <ClInclude Include="Mesh.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
-    <ClInclude Include="EmGineAudioPlayer.h">
-      <Filter>EmGine\Audio</Filter>
-    </ClInclude>
     <ClInclude Include="InputManager.h">
       <Filter>EmGine\Resource Management</Filter>
     </ClInclude>
@@ -77,6 +74,9 @@
     <ClInclude Include="XinputManager.h">
       <Filter>EmGine\Resource Management</Filter>
     </ClInclude>
+    <ClInclude Include="EmGineAudioPlayer.h">
+      <Filter>EmGine\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
@@ -109,9 +109,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
-    <ClCompile Include="EmGineAudioPlayer.cpp">
-      <Filter>EmGine\Audio</Filter>
-    </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>EmGine\Resource Management</Filter>
     </ClCompile>
@@ -141,6 +138,9 @@
     </ClCompile>
     <ClCompile Include="XinputManager.cpp">
       <Filter>EmGine\Resource Management</Filter>
+    </ClCompile>
+    <ClCompile Include="EmGineAudioPlayer.cpp">
+      <Filter>EmGine\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

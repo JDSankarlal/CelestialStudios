@@ -1,7 +1,6 @@
 #include "Assault.h"
 Model* Assault::missile;
 
-typedef EmGineAudioPlayer AudioPlayer;
 
 void Assault::init()
 {
@@ -96,8 +95,9 @@ void Assault::update(float dt)
 			setTimeSinceLastMissile(time);
 
 			timer.push_back(0);
-			AudioPlayer::createAudioStream("pew.wav");
-			AudioPlayer::play();
+			std::string tag = "Missile Fired " + std::to_string(pMissiles.size());
+			EmGineAudioPlayer::createAudioStream("pew.wav",tag);
+			EmGineAudioPlayer::play();
 			puts("Special Ability ASSAULT\n");
 		}
 

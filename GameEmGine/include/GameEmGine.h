@@ -17,7 +17,7 @@
 #include "ExtraMath.h"
 #include "FrameBuffer.h"
 #include "LightSource.h"
-
+#include "EmGineAudioPlayer.h"
 
 
 class GameEmGine

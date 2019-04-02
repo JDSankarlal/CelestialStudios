@@ -8,6 +8,7 @@ std::vector<std::vector<FrameBuffer*>>LightSource::m_shadows;
 Shader* LightSource::m_shader;
 Camera* LightSource::m_cam;
 LightInfo LightSource::m_info;
+unsigned LightSource::m_size;
 #pragma endregion
 
 
@@ -108,7 +109,6 @@ std::vector<FrameBuffer*> LightSource::shadowBuffers(unsigned w, unsigned h, std
 				return m_shadows[index];
 			}
 		}
-		Shader* shader;
 		static Camera cam;
 		cam.init({(float)w,(float)h,500}, ORTHOGRAPHIC);
 

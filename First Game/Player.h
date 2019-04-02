@@ -3,8 +3,6 @@
 
 #include <GameEmGine.h>
 #include <Model.h>
-#include <EmGineAudioPlayer.h>
-typedef EmGineAudioPlayer AudioPlayer;
 
 enum PlayerType
 {

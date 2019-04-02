@@ -65,6 +65,8 @@ void GameEmGine::init(std::string name, int width, int height, int x, int y, int
 {
 	createNewWindow(name, width, height, x, y, monitor, fullScreen, visable);
 
+	EmGineAudioPlayer::init();
+
 	LUTpath = "Texture/IWLTBAP_Aspen_-_Standard.cube";
 	/////////////////////////////////////Bind Custom 3D Texture////////////////////////////////////////////
 
@@ -184,6 +186,8 @@ void GameEmGine::run()
 
 	while(!glfwWindowShouldClose(m_window->getWindow()) && !exitGame)//update loop
 	{
+		EmGineAudioPlayer::update();
+
 		glClearColor((float)m_colour.colorR / 255, (float)m_colour.colorG / 255, (float)m_colour.colorB / 255, (float)m_colour.colorA / 255);//BG colour
 
 		InputManager::controllerUpdate();
@@ -625,14 +629,11 @@ void GameEmGine::update()
 
 	m_grayScalePost->disable();
 
-	for(int a = 0; a < LightSource::size(); a++)
+	for(unsigned int a = 0; a < LightSource::size(); a++)
 	{
 		std::vector<FrameBuffer*>shadowBuffer = LightSource::shadowBuffers(getWindowWidth(), getWindowHeight(), m_models, 0);
 
-		for(auto &b:shadowBuffer)
-		{
-			
-		}
+		
 	}
 
 	//m_outline->enable();
