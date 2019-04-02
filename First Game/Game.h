@@ -151,7 +151,6 @@ public:
 			mod.push_back(a);
 	}
 
-
 	// Set game screen
 	void init()
 	{
@@ -339,7 +338,7 @@ public:
 		GameEmGine::addModel(mod[59]);
 
 		mod[59]->setToRender(false);
-		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
+		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
 
 		//TRAIN
 		mod[79] = (new Model("Models/Train/Head/trainhead.obj"));//79
@@ -963,7 +962,7 @@ public:
 			}
 			player->update((float)dt);
 
-			player->onPlayArea(mod[9]);
+			player->onPlayArea(mod[59]);
 
 			//bullet collisions with boss
 			if (player->bulletCollisions(CandyMan))

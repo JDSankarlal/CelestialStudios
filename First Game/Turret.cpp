@@ -46,7 +46,6 @@ void Turret::update(float dt)
 		Coord3D pos = this->getTransformer().getPosition();
 		bullets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
 		bullets.back()->getTransformer().setScale(.25f);
-
 		//minions[0]->getTransformer().getPosition();
 		//bullets.back()->getTransformer().setRotation({ 90 , angle ,0 });
 		//bullets.back()->
