@@ -96,7 +96,7 @@ void Assault::update(float dt)
 			setTimeSinceLastMissile(time);
 
 			timer.push_back(0);
-			AudioPlayer::createAudioStream("pew.wav");
+			AudioPlayer::createAudioStream("pew.wav","Missile Fired");
 			AudioPlayer::play();
 			puts("Special Ability ASSAULT\n");
 		}

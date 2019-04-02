@@ -298,7 +298,7 @@ void Player::update(float dt)
 			if (getHealth() <= 0)
 			{
 				dead = true;
-				AudioPlayer::createAudioStream("Audio/dead.wav");
+				AudioPlayer::createAudioStream("Audio/dead.wav","Death Sound");
 				AudioPlayer::play();
 				graveStone->setColour(getColour());
 				graveStone->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->getTransformer().setPosition(getTransformer().getPosition()), graveStone->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
@@ -336,7 +336,8 @@ void Player::update(float dt)
 						velocity.back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
 
 						timer.push_back(0);
-						AudioPlayer::createAudioStream("Audio/pew.wav");
+						std::string tag = "Shots Fired" + std::to_string(bullets.size());
+						AudioPlayer::createAudioStream("Audio/pew.wav",tag);
 						AudioPlayer::play();
 						bulletCircle->setColour(1, 1, 1);//set bullet circle colour to white
 						m_bulletCount--;//subtract from bullet count
@@ -410,7 +411,7 @@ void Player::update(float dt)
 					move = 0.5f;
 					if (time - 0.1f >= duration)
 					{
-						AudioPlayer::createAudioStream("Audio/dash.wav");
+						AudioPlayer::createAudioStream("Audio/dash.wav","Wave Dash");
 						EmGineAudioPlayer::setVolume(2);
 						AudioPlayer::play();
 						move = 0.1f;

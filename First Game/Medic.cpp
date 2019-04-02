@@ -81,7 +81,7 @@ void Medic::update(float dt)
 				healingCircle->setToRender(true);
 				circleTime = time;
 				//puts("Special Ability MEDIC");
-				AudioPlayer::createAudioStream("Audio/medicAbility.wav");
+				AudioPlayer::createAudioStream("Audio/medicAbility.wav","Medic Ability");
 				AudioPlayer::play();
 				isHealing = true;
 				GameEmGine::addModel(healingCircle);

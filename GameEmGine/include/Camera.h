@@ -19,7 +19,7 @@ enum CAMERA_TYPE
 class Camera
 {
 public:
-	Camera(Size3D = {}, CAMERA_TYPE = PERSPECTIVE);
+	Camera(Size3D = {1,1,1}, CAMERA_TYPE = PERSPECTIVE);
 	~Camera();
 
 	void init(Size3D = {}, CAMERA_TYPE = PERSPECTIVE);
@@ -34,9 +34,8 @@ public:
 
 	void moveAngleBy(float angle, Coord3D direction);
 
+	void render(Shader * shader, std::vector<Model*>& models, bool transparent = false);
 
-	void render(Shader* shader, std::vector<Model*>& models,bool transparent=false);
-	
 
 	Coord3D getPosition();
 	float& getScale();

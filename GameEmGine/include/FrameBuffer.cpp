@@ -1,4 +1,5 @@
 #include "FrameBuffer.h"
+GLuint FrameBuffer::m_fsQuadVAO_ID, FrameBuffer::m_fsQuadVBO_ID;
 
 FrameBuffer::FrameBuffer(std::string tag, unsigned numColorAttachments)
 {
@@ -8,6 +9,7 @@ FrameBuffer::FrameBuffer(std::string tag, unsigned numColorAttachments)
 
 	m_colorAttachments = new GLuint[m_numColorAttachments];
 	memset(m_colorAttachments, 0, sizeof(GLuint)* numColorAttachments);
+	m_depthAttachment = 0;
 
 	//Buffs is required as a parameter for glDrawBuffers()
 	m_buffs = new GLenum[m_numColorAttachments];
@@ -15,6 +17,8 @@ FrameBuffer::FrameBuffer(std::string tag, unsigned numColorAttachments)
 	{
 		m_buffs[i] = GL_COLOR_ATTACHMENT0 + i;
 	}
+
+	initFullScreenQuad();
 }
 
 FrameBuffer::~FrameBuffer()
@@ -278,6 +282,59 @@ unsigned FrameBuffer::getNumColourAttachments()
 GLuint FrameBuffer::getFrameBufferID()
 {
 	return m_fboID;
+}
+
+void FrameBuffer::initFullScreenQuad()
+{
+	float vboData[] =
+	{
+		-1.0f,-1.0f,0.0f,
+		 1.0f,-1.0f,0.0f,
+		-1.0f, 1.0f,0.0f,
+
+		 1.0f, 1.0f,0.0f,
+		-1.0f, 1.0f,0.0f,
+		 1.0f,-1.0f,0.0f,
+
+		0.0f,0.0f,
+		1.0f,0.0f,
+		0.0f,1.0f,
+
+		1.0f,1.0f,
+		0.0f,1.0f,
+		1.0f,0.0f
+	};
+
+	if(!m_fsQuadVAO_ID)
+		glGenVertexArrays(1, &m_fsQuadVAO_ID);
+
+	glBindVertexArray(m_fsQuadVAO_ID);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+
+	if(!m_fsQuadVBO_ID)
+		glGenBuffers(1, &m_fsQuadVBO_ID);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_fsQuadVBO_ID);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18 + sizeof(float) * 12, vboData, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 18));
+
+	glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+
+	glBindVertexArray(GL_NONE);
+}
+
+void FrameBuffer::drawFullScreenQuad()
+{
+	glBindVertexArray(m_fsQuadVAO_ID);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(GL_NONE);
+
 }
 
 std::string FrameBuffer::getTag()
