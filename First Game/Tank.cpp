@@ -70,11 +70,15 @@ void Tank::update(float dt)
 	if(p1->isButtonStroked(CONTROLLER_Y))
 		if(tankShield == false)
 		{
-			if(time - getTimeSinceLastShield() >= 5)
+			if(time - getTimeSinceLastShield() >= 8)
 			{
 				setHealth(getHealth() + 100);
 				shieldTime = time;
-				puts("Special Ability TANK");
+				setTimeSinceLastShield(time);
+				//puts("Special Ability TANK");
+				AudioPlayer::createAudioStream("Audio/tankAbility.wav");
+				AudioPlayer::play();
+
 				tankShield = true;
 			}
 		}

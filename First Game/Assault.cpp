@@ -77,7 +77,7 @@ void Assault::update(float dt)
 
 	/// - Assault Special Ability - ///
 	if (p1->isButtonStroked(CONTROLLER_Y))
-		if (time - m_timeSinceLastMissile >= 3)
+		if (time - m_timeSinceLastMissile >= 4)
 		{
 			pMissiles.push_back(new Model(*missile));
 			GameEmGine::addModel(pMissiles.back());

@@ -193,6 +193,11 @@ public:
 							menuMoved[a] = true;
 							isConnected[a] = true;
 						}
+						else
+						{
+							//AudioPlayer::createAudioStream("Audio/playerSelectedAlready.wav");
+							//AudioPlayer::play();
+						}
 						break;
 					case 1:
 						if (tankSelected == false)
@@ -202,6 +207,11 @@ public:
 							mod[2 + a]->setColour(1, 0, 0);
 							menuMoved[a] = true;
 							isConnected[a] = true;
+						}
+						else
+						{
+							//AudioPlayer::createAudioStream("Audio/playerSelectedAlready.wav");
+							//AudioPlayer::play();
 						}
 						break;
 					case 2:
@@ -213,6 +223,11 @@ public:
 							menuMoved[a] = true;
 							isConnected[a] = true;
 						}
+						else
+						{
+							//AudioPlayer::createAudioStream("Audio/playerSelectedAlready.wav");
+							//AudioPlayer::play();
+						}
 						break;
 					case 3:
 						if (specialistSelected == false)
@@ -222,6 +237,11 @@ public:
 							mod[2 + a]->setColour(1, 0, 0);
 							menuMoved[a] = true;
 							isConnected[a] = true;
+						}
+						else
+						{
+							//AudioPlayer::createAudioStream("Audio/playerSelectedAlready.wav");
+							//AudioPlayer::play();
 						}
 						break;
 					default:

@@ -712,8 +712,8 @@ public:
 
 		audio.createAudioStream("Audio/potential mix (with beat).wav");
 
+		audio.setVolume(0.6f);
 		audio.play(true);
-		audio.setVolume(0.75f);
 	}
 
 
@@ -844,10 +844,10 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.4f, 0);
+						EmGineAudioPlayer::setVolume(.3f, 0);
 
 					else
-						EmGineAudioPlayer::setVolume(1, 0);
+						EmGineAudioPlayer::setVolume(0.6f, 0);
 
 					mod[130]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
 					mod[130]->setToRender(!pause);
@@ -889,10 +889,10 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.4f, 0);
+						EmGineAudioPlayer::setVolume(.3f, 0);
 
 					else
-						EmGineAudioPlayer::setVolume(1, 0);
+						EmGineAudioPlayer::setVolume(0.6f, 0);
 
 					mod[131]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
 					mod[131]->setToRender(!pause);
@@ -933,10 +933,10 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.4f, 0);
+						EmGineAudioPlayer::setVolume(.3f, 0);
 
 					else
-						EmGineAudioPlayer::setVolume(1, 0);
+						EmGineAudioPlayer::setVolume(0.6f, 0);
 
 					mod[126]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
 					mod[126]->setToRender(!pause);

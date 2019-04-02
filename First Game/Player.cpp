@@ -410,8 +410,8 @@ void Player::update(float dt)
 					if (time - 0.1f >= duration)
 					{
 						AudioPlayer::createAudioStream("Audio/dash.wav");
+						EmGineAudioPlayer::setVolume(2);
 						AudioPlayer::play();
-						EmGineAudioPlayer::setVolume(2, 0);
 						move = 0.1f;
 						//If getTriggers() up then coolDown = time;
 						cooldown = time;
