@@ -16,7 +16,7 @@ public:
 		//GAME::m_grayScalePost->enable();
 		//glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), 0.f);
 		//GAME::m_grayScalePost->disable();
-		GameEmGine::m_modelShader->sendUniform("darken", 1);
+		GameEmGine::m_modelShader->sendUniform("darken", false);
 
 		gray = new Shader;
 		grayPost = new FrameBuffer("Gray Scale", 1);

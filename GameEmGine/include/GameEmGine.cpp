@@ -500,10 +500,19 @@ void GameEmGine::update()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 
+	
 	m_postProcess->disable();
 	m_postBuffer->disable();
+	
+	
+	m_mainFrameBuffer->moveDepthToBuffer(getWindowWidth(), getWindowHeight(),m_postBuffer->getFrameBufferID());
+	
+	m_postBuffer->enable();
+	LightSource::setShader(m_forwardRender);
+	LightSource::update();
+	m_mainCamera->render(m_forwardRender, m_models, true);
 
-
+	m_postBuffer->disable();
 	//for(int a = 0; a < (int)LightSource::size(); a++)
 	//{
 	//	std::vector<FrameBuffer*>shadowBuffer = LightSource::shadowBuffers(getWindowWidth(), getWindowHeight(), m_models, 0);
@@ -549,7 +558,7 @@ void GameEmGine::update()
 	//	m_shadowBuffer->disable();
 	//
 	//}
-	//
+
 	glViewport(0, 0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO);
 
 	//binds the initial bloom affect to buffer 1
@@ -647,10 +656,7 @@ void GameEmGine::update()
 
 	
 
-	m_mainFrameBuffer->moveDepthToBackBuffer(getWindowWidth(), getWindowHeight());
-	LightSource::setShader(m_forwardRender);
-	LightSource::update();
-	m_mainCamera->render(m_forwardRender, m_models, true);
+	
 
 
 	//m_greyscaleBuffer->clear();
