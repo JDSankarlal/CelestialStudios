@@ -151,6 +151,7 @@ public:
 			mod.push_back(a);
 	}
 
+
 	// Set game screen
 	void init()
 	{
@@ -715,6 +716,28 @@ public:
 		audio.play(true);
 	}
 
+
+	void insertionSort(std::vector<Minion*> & arr, Model * checker)
+	{
+		int i, j;
+		float key;
+		for (i = 1; i < (int)arr.size(); i++) {
+			key = Coord3D::distance(arr[i]->getTransformer().getPosition(), checker->getTransformer().getPosition());
+			Minion* tmp = arr[i];
+			j = i - 1;
+
+			/* Move elements of arr[0..i-1], that are
+			  greater than key, to one position ahead
+			  of their current position */
+			while (j >= 0 && Coord3D::distance(arr[j]->getTransformer().getPosition(), checker->getTransformer().getPosition()) > key) {
+
+				arr[j + 1] = arr[j];
+				j = j - 1;
+			}
+			arr[j + 1] = tmp;
+		}
+	}
+
 	/// - The Update Loop - ///
 	void update(double dt)
 	{
@@ -739,6 +762,8 @@ public:
 
 		// Boss Variables
 		static Boss* CandyMan = (Boss*)mod[8]; //Set model 8 as Boss called "CandyMan"
+		static vector<float>minionSize;
+		static int minionSort;
 
 		//Train Variables
 		static float trainTimer = 0; //Determines when train comes and goes
@@ -945,7 +970,7 @@ public:
 				CandyMan->setHealth(CandyMan->getHealth() - 10);
 
 				CandyMan->bossFlash = true;
-				
+
 			}
 			if (CandyMan->getHealth() <= 0)
 			{
@@ -956,28 +981,20 @@ public:
 			for (auto& minion : CandyMan->minions)
 				if (player->bulletCollisions(minion))
 					minion->setHealth(minion->getHealth() - 10);
+			///for (int i = 1; i < CandyMan->minions.size(); i++)
+			///{
+			///	//Coord3D::distance(((Specialist*)player)->pTurrets[0]->getTransformer().getPosition(), CandyMan->minions[i]->getTransformer().getPosition());
+			///	minionSize.push_back(Coord3D::distance(((Specialist*)player)->pTurrets[0]->getTransformer().getPosition(), CandyMan->minions[i]->getTransformer().getPosition()));
+			///	//((Specialist*)player)->pTurrets[0]->
+			///	//some vector pushback all distances
+			///	//int index = CandyMan->minions.size();
+			///}<hello comment new type thing wtf> but not here lol
+
+			if (player->type == specialist)
+				if (!((Specialist*)player)->pTurrets.empty())
+					insertionSort(CandyMan->minions, ((Specialist*)player)->pTurrets[0]);
 
 
-
-
-			//Old code, make this new
-			/// - Bullet Collisions with Train - /// 
-			//for (int t = 0; t < 7; t++)
-			//{
-			//	if (collision(bullets[a][b], mod[79 + t]))
-			//	{
-			//		GAME::removeModel(bullets[a][b]);
-			//		
-			//		//GAME::removeModel();
-			//		//erase bulletr
-			//		//bullets[a].erase(bullets[a].begin() + b),
-			//		//	timer[a].erase(timer[a].begin() + b),
-			//		//	velocity[a].erase(velocity[a].begin() + b);
-			//	}
-			//}
-
-				//}
-			//}
 
 			for (int b = 0; b < 7; b++)
 			{
@@ -1021,6 +1038,10 @@ public:
 						((Medic*)player)->getHealing((Player*)mod[b]);
 				break;
 			case specialist:
+				for (auto& b : ((Specialist*)player)->pTurrets)
+				{
+					b->setMinions(CandyMan->minions);
+				}
 
 				if (((Specialist*)player)->hitTurret(CandyMan))
 				{
@@ -1323,7 +1344,7 @@ public:
 		//Train stops on map
 		else if (40 <= (time - trainTimer) && 50 > (time - trainTimer))
 		{
-			trainTimer = time;
+
 			for (int t = 0; t < 7; t++)
 			{
 				mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{ 0.00f, 0.f, 0.f });//Stop Train cars on map
@@ -1341,6 +1362,7 @@ public:
 					trainTimer += time; //Reset Train timer so it all starts again.
 				}
 			}
+			trainTimer = time;
 			trainInit = false;
 		}
 

@@ -78,6 +78,11 @@ void Minion::update(float dt)
 		moveTo.normalize();
 		getTransformer().translateBy(moveTo * m_moveSpeed);
 	}
+	if (m_health <= 0)
+	{
+		//for (auto& a : minions)
+		//GameEmGine::removeModel(a);
+	}
 }
 
 void Minion::move(bool move)

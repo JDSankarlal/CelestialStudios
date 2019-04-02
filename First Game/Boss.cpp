@@ -58,7 +58,7 @@ void Boss::init()
 	//addChild(m_lifeBar);
 
 
-	m_initialHealth = m_health = 1000.f;
+	m_initialHealth = m_health = 10000.f;
 }
 
 Boss::Boss() : Model()
@@ -78,7 +78,18 @@ Boss::Boss(const char* path) : Model(path)
 
 Boss::~Boss()
 {
+	//boss's blood bar
+	//GameEmGine::removeModel;
+	//Model* m_lifeBar;
+	//Model* m_baseBar;
+	//float 	m_time = 0, m_bossFlashTime = 0;
+	//bool m_active = true, m_dead = false;
+	//float m_initialHealth, m_health;
 
+	//static Model* minion;
+	//int attackDamage;
+	//float attackCooldown;
+	//Player** targets;
 }
 
 void Boss::setPlayers(Player * players[4])
@@ -307,6 +318,11 @@ void Boss::update(float dt)
 
 			minions.clear();
 			GameEmGine::removeModel(this);
+		}
+		for (auto& a : minions)
+		{
+			if (a->getHealth() <= 0)
+				GameEmGine::removeModel(a);
 		}
 	}
 

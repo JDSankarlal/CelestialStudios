@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.h"
+#include "Turret.h"
 class Specialist :
 	public Player
 {
@@ -16,10 +17,10 @@ public:
 	bool hitTurret(Model* mod);
 
 	void update(float dt);
+	std::vector<Turret*> pTurrets;
 private:
 	//Turret
-	static Model* turret ;//98
-	std::vector<Model*> pTurrets;
+	static Turret* turret ;//98
 	bool turretActive = false;
 	float turretTime;
 	float timeSinceLastTurret;

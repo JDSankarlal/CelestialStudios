@@ -1,5 +1,5 @@
 #include "Specialist.h"
-Model* Specialist::turret;
+Turret* Specialist::turret;
 
 void Specialist::init()
 {
@@ -7,7 +7,7 @@ void Specialist::init()
 	m_initialHealth = 75;
 	setHealth(75);
 	if(!turret)
-		turret = new Model("Models/Turret/turret.obj");
+		turret = new Turret("Models/Turret/turret.obj");
 }
 
 Specialist::Specialist():Player()
@@ -80,7 +80,7 @@ void Specialist::update(float dt)
 
 		for(auto& pTurret : pTurrets)
 		{
-
+			pTurret->update(dt);
 			///// - Turret targeting and shooting logic - ///
 			////Get pTurret position
 			////Coord3D ;
@@ -156,7 +156,7 @@ void Specialist::update(float dt)
 	{
 		if(time - getTimeSinceLastTurret() >= 8)
 		{
-			pTurrets.push_back(new Model(*turret));
+			pTurrets.push_back(new Turret(*turret));
 			GameEmGine::addModel(pTurrets.back());
 			pTurrets.back()->getTransformer().reset();
 			//pTurrets.back()->setColour(getColour());
