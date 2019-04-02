@@ -45,6 +45,30 @@ struct Texture2D
 struct Texture3D
 {
 	GLuint id;
-	int width, height, depth;
+	int lutSize;
+
+	void deleteTexture()
+	{
+		if(id)
+		{
+			glDeleteTextures(1, &id);
+			id = 0;
+		}
+	}
+
+	void bindTexture()
+	{
+		glBindTexture(GL_TEXTURE_3D, id);
+	}
+
+	static void unbindTexture()
+	{
+		glBindTexture(GL_TEXTURE_3D, GL_NONE);
+	}
+
+	bool operator==(Texture3D arg)
+	{
+		return id == arg.id;
+	}
 };
 

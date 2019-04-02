@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "Transformer.h"
 #include "Model.h"
+#include "Camera.h"
 
 enum class LIGHT_TYPE
 {	
@@ -51,7 +52,7 @@ public:
 
 	static void setAttenuationQuadratic(float attenQuad, unsigned m_index);
 
-	static void setParent(Model* parent, unsigned m_index);
+	static void setParent(Model* parent, unsigned index);
 
 	static void setCamera(Camera* cam);
 
@@ -59,11 +60,14 @@ public:
 
 	static void setLightAmount( unsigned size);
 
+	static std::vector<FrameBuffer*> shadowBuffer(unsigned w, unsigned h, std::vector<Model*>&, unsigned index);
+
 	static void update();
 private:
 	//Coord3D m_coord, m_spec;
 	static ColourRGBA m_ambient;
 	static std::vector<LightInfo >m_lights;
+	static std::vector<std::vector<FrameBuffer*>>m_shadows;
 
 	static Shader *m_shader;
 	static Camera* m_cam;

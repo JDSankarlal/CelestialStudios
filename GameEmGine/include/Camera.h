@@ -6,6 +6,10 @@
 #include "Transformer.h"
 #include "Utilities.h"
 #include "Quat.h"
+#include "Shader.h"
+#include "Model.h"
+
+class Model;
 
 enum CAMERA_TYPE
 {
@@ -20,6 +24,7 @@ public:
 
 	void init(Size3D = {}, CAMERA_TYPE = PERSPECTIVE);
 	void setType(CAMERA_TYPE type);
+	CAMERA_TYPE getType();
 	bool update();
 
 	void setPosition(Coord3D);
@@ -29,6 +34,10 @@ public:
 
 	void moveAngleBy(float angle, Coord3D direction);
 
+
+	void render(Shader* shader, std::vector<Model*>& models,bool transparent=false);
+	
+
 	Coord3D getPosition();
 	float& getScale();
 	glm::mat4 getProjectionMatrix();
@@ -37,12 +46,14 @@ public:
 
 	glm::mat4 getObjectMatrix();
 	Transformer& getTransformer();
+
 protected:
 	bool m_cameraUpdate;
 	float m_scale;
 	Size3D *m_size = new Size3D;
 	Coord3D *m_position;
-	
+	CAMERA_TYPE m_type = PERSPECTIVE;
+
 	Transformer m_transform;
 	glm::mat4 m_cameraMat;
 	glm::mat4 m_projMat;

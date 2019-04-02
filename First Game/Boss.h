@@ -4,7 +4,7 @@
 #include <GameEmGine.h>
 
 
-class Boss : public Model
+class Boss: public Model
 {
 public:
 	void init();
@@ -14,6 +14,20 @@ public:
 	~Boss();
 
 	void setPlayers(Player* players[4]);
+
+	template<class T>
+	void insertionSort(std::vector<T> vec)
+	{
+		for(int a = 1; a < vec.size(); a++)
+			for(int b = a - 1; b >= 0; b--)
+			{
+				if(vec[b] > vec[a])
+				{
+					vec.insert(vec.begin() + b, vec[a]);
+					break;
+				}
+			}
+	}
 
 	bool randAttacks();
 	float getHealth();
@@ -34,7 +48,7 @@ private:
 	//boss's blood bar
 	Model* m_lifeBar;
 	Model* m_baseBar;
-	float 	m_time , m_bossFlashTime;
+	float 	m_time, m_bossFlashTime;
 	bool m_active = true, m_dead = false;
 	float m_initialHealth, m_health;
 
@@ -43,4 +57,3 @@ private:
 	float attackCooldown;
 	Player** targets;
 };
-

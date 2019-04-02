@@ -1,14 +1,37 @@
 #pragma once
 #include <GameEmGine.h>
 #include "Game.h"
-#include "PlayerSelect.h"
+#include "Controls.h"
+
 class Menu:public Scene
 {
 public:
+
+	~Menu()
+	{
+		mod.clear();
+		 fadein = true;
+		 fadeout = false;
+		 splashT = 0;
+		 splashAmbient = 0;
+		 lerpParam = 1;
+		 option = 1;
+	}
+
 	// Set menu screen
 	void init()
 	{
-		GAME::m_modelShader->sendUniform("darken", 0);
+		mod.clear();
+		fadein = true;
+		fadeout = false;
+		splashT = 0;
+		splashAmbient = 0;
+		lerpParam = 1;
+		option = 1;
+
+
+
+		GameEmGine::m_modelShader->sendUniform("darken", false);
 
 		mod.push_back(new Model("Models/Scene/Menu/menu.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
@@ -26,12 +49,6 @@ public:
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 		LightSource::setSceneAmbient({0,0,0,255}); //255
 
-		//float windowHeight = (float)GameEmGine::getWindowHeight();
-		//float windowWidth = (float)GameEmGine::getWindowWidth();
-		//mod[1]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//mod[2]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//mod[3]->getTransformer().setPosition({windowWidth / 2,windowHeight /2,0});
-		//float tmp= mod[0]->getHeight() / 4 ;
 		for(unsigned int i = 1; i < mod.size(); i++)
 		{
 			mod[i]->getTransformer().setRotation({90,0,0});
@@ -40,6 +57,12 @@ public:
 
 		}
 		LightSource::setSceneAmbient({0,0,0,255});
+		LightSource::setLightAmount(0);
+
+		GameEmGine::setCameraType(ORTHOGRAPHIC);
+		GameEmGine::setCameraPosition({ 0,0,-100 });
+		GameEmGine::setCameraAngle(0,{ 1,1,1 });
+
 
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
 	}
@@ -107,7 +130,7 @@ public:
 
 						break;
 					case 3:
-						GAME::exit();
+						GameEmGine::exit();
 						break;
 					default:
 						break;
@@ -138,7 +161,7 @@ public:
 				splashAmbient = 255;
 
 				//GamePlayInit();
-				GameEmGine::setScene(new PlayerSelect);
+				GameEmGine::setScene(new Controls);
 			}
 		}
 	}

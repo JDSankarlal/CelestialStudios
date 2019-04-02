@@ -16,7 +16,7 @@ public:
 		//GAME::m_grayScalePost->enable();
 		//glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), 0.f);
 		//GAME::m_grayScalePost->disable();
-		GAME::m_modelShader->sendUniform("darken", 1);
+		GameEmGine::m_modelShader->sendUniform("darken", 1);
 
 		gray = new Shader;
 		grayPost = new FrameBuffer("Gray Scale", 1);
@@ -35,7 +35,7 @@ public:
 		}
 
 		srand(clock());
-		gray->create("Shaders/Main Buffer.vtsh", "Shaders/Grayscale.fmsh");
+		gray= ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/Grayscale.fmsh");
 		grayPost->setPostProcess(
 			[&]()->void
 			{
@@ -113,6 +113,7 @@ public:
 	}
 
 private:
+
 	std::vector<Model*> mod;
 	bool fadein = true;
 	bool fadeout = false;
@@ -121,5 +122,3 @@ private:
 	FrameBuffer *grayPost;
 	Shader *gray;
 };
-
-
