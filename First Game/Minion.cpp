@@ -58,7 +58,6 @@ bool Minion::hitByEnemy(Model* enemy, float damage)
 void Minion::update(float dt)
 {
 	dt;
-
 	/// - Minions Movement Towards Players - ///
 	if(m_move)
 	{
@@ -72,15 +71,13 @@ void Minion::update(float dt)
 		{
 			distance = (getTransformer().getPosition() - a->getTransformer().getPosition()).distance();
 			if(distance < lastDistance)
-				moveTo = a->getTransformer().getPosition() - getTransformer().getPosition();
+				moveTo = a->getTransformer().getPosition() - getTransformer().getPosition(),
+				lastDistance = (getTransformer().getPosition() - a->getTransformer().getPosition()).distance();
 		}
 
 		moveTo.normalize();
 		getTransformer().translateBy(moveTo * m_moveSpeed);
 	}
-
-
-
 }
 
 void Minion::move(bool move)
@@ -91,4 +88,9 @@ void Minion::move(bool move)
 float Minion::getHealth()
 {
 	return m_health;
+}
+
+bool operator>(Minion a, Minion b)
+{
+	return 1;
 }

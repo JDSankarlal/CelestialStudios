@@ -7,13 +7,13 @@ layout(binding = 6) uniform sampler3D customTexure;
 uniform int lutSize;
 uniform int lutActive;
 
-in vec2 outUV;
+in vec2 texcoord;
 
 out vec4 outColour;
 
 void main()
 {
-    vec4 source  = texture(uTex, outUV);
+    vec4 source  = texture(uTex, texcoord);
 
     float luminance = 
     0.2989 * source.r + 

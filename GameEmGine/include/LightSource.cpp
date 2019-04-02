@@ -3,6 +3,7 @@
 #pragma region Static Variables
 ColourRGBA LightSource::m_ambient;
 std::vector<LightInfo >LightSource::m_lights;
+std::vector<std::vector<FrameBuffer*>>LightSource::m_shadows;
 
 Shader* LightSource::m_shader;
 Camera* LightSource::m_cam;
@@ -79,6 +80,67 @@ void LightSource::setShader(Shader* shad)
 void LightSource::setLightAmount(unsigned size)
 {
 	m_lights.resize(size);
+	m_shadows.resize(size, std::vector<FrameBuffer*>(0, new FrameBuffer("shadow", 0)));
+}
+
+std::vector<FrameBuffer*> LightSource::shadowBuffer(unsigned w, unsigned h, std::vector<Model*>& models, unsigned index)
+{
+	if(m_lights[index].type == LIGHT_TYPE::POINT)
+	{
+		m_shadows[index].resize(6, new FrameBuffer("shadow", 1));
+
+		for(int a = 0; a < 6; a++)
+		{
+			m_shadows[index][a]->initDepthTexture(w, h);
+
+			if(!m_shadows[index][a]->checkFBO())
+			{
+				puts("Shadow FBO failed Creation");
+				system("pause");
+				return m_shadows[index];
+			}
+		}
+
+		static Camera cam;
+		cam.init({(float)w,(float)h,500}, ORTHOGRAPHIC);
+
+		cam.setPosition(m_lights[index].transform->getPosition());
+
+		for(int a = 0; a < 6; a++)
+		{
+			m_shadows[index][a]->enable();
+			m_shader->enable();
+			switch(a)
+			{
+			case 0:
+				cam.setAngle(90, {1,0,0});
+				break;
+			case 1:
+				cam.setAngle(90, {-1,0,0});
+				break;
+			case 2:
+				cam.setAngle(90, {0,1,0});
+				break;
+			case 3:
+				cam.setAngle(90, {0,-1,0});
+				break;
+			case 4:
+				cam.setAngle(0, {0,1, 0});
+				break;
+			case 5:
+				cam.setAngle(180, {0,-1,0});
+				break;
+			default:
+				break;
+			}
+
+			cam.render(m_shader, models);
+		}
+
+		m_shader->disable();
+		FrameBuffer::disable();
+	}
+	return m_shadows[index];
 }
 
 
@@ -86,8 +148,8 @@ void LightSource::update()
 {
 	char buff[90];
 	m_shader->enable();
-	glUniform1i(m_shader->getUniformLocation("LightAmount"), m_lights.size());
-	glUniform3f(m_shader->getUniformLocation("LightAmbient"), m_ambient[0] / 255.0f, m_ambient[1] / 255.0f, m_ambient[2] / 255.0f);
+	m_shader->sendUniform("LightAmount", (int)m_lights.size());
+	m_shader->sendUniform("LightAmbient", Coord3D{m_ambient[0] / 255.0f, m_ambient[1] / 255.0f, m_ambient[2] / 255.0f});
 
 	for(unsigned a = 0; a < m_lights.size(); a++)
 	{
