@@ -958,24 +958,7 @@ public:
 
 
 
-			//Old code, make this new
-			/// - Bullet Collisions with Train - /// 
-			//for (int t = 0; t < 7; t++)
-			//{
-			//	if (collision(bullets[a][b], mod[79 + t]))
-			//	{
-			//		GAME::removeModel(bullets[a][b]);
-			//		
-			//		//GAME::removeModel();
-			//		//erase bulletr
-			//		//bullets[a].erase(bullets[a].begin() + b),
-			//		//	timer[a].erase(timer[a].begin() + b),
-			//		//	velocity[a].erase(velocity[a].begin() + b);
-			//	}
-			//}
-
-				//}
-			//}
+			
 
 			for (int b = 0; b < 7; b++)
 			{
