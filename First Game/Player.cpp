@@ -306,6 +306,7 @@ void Player::update(float dt)
 				graveStone->addAnimation("squash", squash);
 
 				graveStone->setAnimation("squash");
+				p1->resetVibration();
 				GameEmGine::removeModel(this);
 				dead = true;
 				//GAME::removeModel(mod[44] + a);
