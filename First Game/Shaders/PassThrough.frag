@@ -33,16 +33,11 @@ uniform float LightAngleConstraint[MAX_LIGHTS_SIZE];
 uniform sampler2D uPos;
 uniform sampler2D uNorm;
 uniform sampler2D uScene;
-uniform sampler2D shadowMap;
+uniform sampler2D uRamp;
 
-
-//uniform vec4 colourMod;
-//uniform bool textured;
-//uniform bool darken ;
+uniform bool toonActive;
 
 in vec2 texcoord;
-//in vec3 norm;
-//in vec3 pos;
 
 out vec4 outColor;
 
@@ -60,48 +55,74 @@ void spotLight(int a)
 
 void directionalLight(int a)
 {
+    vec3 colour = texture(uScene, texcoord).rgb; 
+
     vec3 normal = normalize(texture(uNorm,texcoord).rgb);
     vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
     float dist = length(lightVec);
-    float NdotL = max(dot(normal, LightDirection[a]),0.0);
+	vec3 direc = LightDirection[a];
+	vec3 reflection = reflect(-direc,normal);
+	vec3 eye = normalize(- texture(uPos,texcoord).xyz);
+	float viewToRe = max(dot(eye,reflection),0.0);
 
-    //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
-    if(NdotL > 0.0)
-    {
-        //The light contributes to this surface
-        //Calculate attenuation (falloff)
-        float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) + (Attenuation_Quadratic[a] * dist * dist));
-       
-        //Calculate diffuse contribution
-        outColor.rgb += LightDiffuse[a] * NdotL * attenuation;
-        
-        //Blinn-Phong half vector
-        float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
-        
-        //Calculate specular contribution
-        outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
-    }
-}
+    float NdotL = max(dot(normal, lightVec),0.0);
 
-void pointLight(int a)
-{
-    vec3 normal = normalize(texture(uNorm,texcoord).rgb);
-    vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
-    float dist = length(lightVec);
-   
    
     //The light contributes to this surface
     //Calculate attenuation (falloff)
     float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) + (Attenuation_Quadratic[a] * dist * dist));
       
     //Calculate diffuse contribution
-    outColor.rgb += LightDiffuse[a] * attenuation ;
+	outColor.rgb +=  max(NdotL, 0.0) *  LightDiffuse[a] * attenuation * colour;
+	//NdotL = NdotL * 0.5 + 0.5;
+    //outColor.rgb += LightDiffuse[a] * attenuation * texture(uRamp, vec2(NdotL, 0.5)).rgb;
     
     //Blinn-Phong half vector
-    float NdotHV =  max(dot(normal, normalize(lightVec + normalize(-texture(uPos,texcoord).xyz))), 0.0); 
-    
+    float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
+        
     //Calculate specular contribution
-    outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
+	float spec = pow(max(viewToRe, 0.0), 16);
+	outColor.rgb +=  LightSpecular[a] * spec * attenuation * colour * LightSpecularExponent[a];
+    //outColor.rgb += LightSpecular[a] * texture(uRamp, vec2(viewToRe, 0.5)).rgb * attenuation;
+}
+
+void pointLight(int a)
+{
+	vec3 colour = texture(uScene, texcoord).rgb; 
+
+    vec3 normal = normalize(texture(uNorm,texcoord).rgb);
+    vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
+    float dist = length(lightVec);
+	vec3 direc = lightVec / dist;
+	vec3 reflection = reflect(-direc,normal);
+	vec3 eye = normalize(- texture(uPos,texcoord).xyz);
+	float viewToRe =  max(dot(eye,reflection),0.0);
+
+    float NdotL = max(dot(normal, lightVec),0.0);
+
+   
+    //The light contributes to this surface
+    //Calculate attenuation (falloff)
+    float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) + (Attenuation_Quadratic[a] * dist * dist));
+      
+    //Calculate diffuse contribution
+	outColor.rgb +=  max(NdotL, 0.0) *  LightDiffuse[a] * attenuation * colour;
+	//NdotL = NdotL * 0.5 + 0.5;
+    //outColor.rgb += LightDiffuse[a] * attenuation * texture(uRamp, vec2(NdotL, 0.5)).rgb;
+    
+    //Blinn-Phong half vector
+    float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
+        
+    //Calculate specular contribution
+	if(toonActive)
+	{
+		outColor.rgb += LightSpecular[a] * texture(uRamp, vec2(viewToRe, 0.5)).rgb * attenuation;
+	}
+	else
+	{
+		float spec = pow(max(viewToRe, 0.0), 16);
+		outColor.rgb +=  LightSpecular[a] * spec * attenuation * colour;
+	}
 }
 
 
@@ -125,27 +146,12 @@ uniform mat4 lightSpaceMatrix;
 
 void main()
 {
-    
-    //outColor = vec4(normal, 1.0f);
-    //outColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
-    
-    //if(textured)
-    //{       
-    //    vec4 textureColor = texture(uTex, texcoord);
-    //    outColor = textureColor;
-    //    outColor.rgb *= !darken ? textureColor.rgb * 1.2 : vec3(1);
-    //    outColor *= colourMod;
-    //}
-    //else     
-    //    outColor = colourMod; 
+
    vec3 colour = texture(uScene, texcoord).rgb; 
-   outColor.rgb =  colour;
    
-   outColor.rgb *= LightAmbient;
-    
-    
-    //account for rasterizer interpolating
-    vec3 normal = normalize(texture(uNorm,texcoord).rgb);
+   //Ambient Light
+   float ambientStrength = 1.0;
+   outColor.rgb = colour * LightAmbient * ambientStrength;
     
     for(int a = 0; a < LightAmount; a++)
     { 
@@ -163,10 +169,7 @@ void main()
         default:
             defaultLight(a);
         }
-     // outColor.rgb = vec3(NdotL,NdotL,NdotL); 
     } 
-
-    float shadow = ShadowCalculation( vec4(lightSpaceMatrix * vec4(texture(uPos,texcoord))));
-    outColor.rgb *= 1.0 - shadow;
+    
     outColor.a = 1;
 }

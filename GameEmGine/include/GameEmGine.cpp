@@ -38,6 +38,7 @@ Scene* GameEmGine::m_mainScene;
 //int GameEmGine::LUTsize = 0;
 
 bool GameEmGine::lutActive = false;
+bool GameEmGine::toonActive = false;
 
 #define SCREEN_RATIO 2
 #pragma endregion
@@ -58,6 +59,7 @@ GameEmGine::MessageCallback(GLenum source,
 }
 
 Texture3D tmpLUT;
+Texture2D tmpRamp;
 std::string LUTpath;
 
 void GameEmGine::init(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
@@ -70,6 +72,14 @@ void GameEmGine::init(std::string name, int width, int height, int x, int y, int
 	tmpLUT = ResourceManager::getTexture3D(LUTpath.c_str());
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////Bind Custom 2D Texture////////////////////////////////////////////
+
+	tmpRamp = ResourceManager::getTexture2D("Texture/pinkRamp.png");
+	
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
 
 void GameEmGine::createNewWindow(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
@@ -469,14 +479,20 @@ void GameEmGine::update()
 	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(1));
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(2));
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D,tmpRamp.id);
 
 	m_postProcess->sendUniform("uPos", 0);
 	m_postProcess->sendUniform("uNorm", 1);
 	m_postProcess->sendUniform("uScene", 2);
+	m_postProcess->sendUniform("uRamp", 3);
+	m_postProcess->sendUniform("toonActive", toonActive);
 
 	FrameBuffer::drawFullScreenQuad();
 
 	//un-bind textures
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
 	glActiveTexture(GL_TEXTURE1);
@@ -611,7 +627,7 @@ void GameEmGine::update()
 
 	m_grayScalePost->sendUniform("uTex", 0);
 	m_grayScalePost->sendUniform("customTexure", 6);
-	m_grayScalePost->sendUniform("lutSize", (int)ResourceManager::getTexture3D(LUTpath.c_str()).lutSize);
+	m_grayScalePost->sendUniform("lutSize", tmpLUT.lutSize);
 	m_grayScalePost->sendUniform("lutActive", lutActive);
 
 

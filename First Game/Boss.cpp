@@ -2,7 +2,6 @@
 #include "Boss.h"
 #include "Assault.h"
 
-typedef GameEmGine GAME;
 
 
 Model* Boss::minion;//78
@@ -43,8 +42,8 @@ void Boss::init()
 	m_lifeBar->getTransformer().setRotation(Coord3D(0, 90, 0));
 	m_lifeBar->getTransformer().setScale(0.8f, 0.8f, 2.0f);
 
-	GAME::addModel(m_baseBar);
-	GAME::addModel(m_lifeBar);
+	GameEmGine::addModel(m_baseBar);
+	GameEmGine::addModel(m_lifeBar);
 
 
 
@@ -59,7 +58,7 @@ void Boss::init()
 	//addChild(m_lifeBar);
 
 
-	m_initialHealth = m_health = 1000.f;
+	m_initialHealth = m_health = 10000.f;
 }
 
 Boss::Boss() : Model()
@@ -79,6 +78,18 @@ Boss::Boss(const char* path) : Model(path)
 
 Boss::~Boss()
 {
+	//boss's blood bar
+	//GameEmGine::removeModel;
+	//Model* m_lifeBar;
+	//Model* m_baseBar;
+	//float 	m_time = 0, m_bossFlashTime = 0;
+	//bool m_active = true, m_dead = false;
+	//float m_initialHealth, m_health;
+
+	//static Model* minion;
+	//int attackDamage;
+	//float attackCooldown;
+	//Player** targets;
 }
 
 void Boss::setPlayers(Player * players[4])
@@ -159,8 +170,8 @@ void Boss::update(float dt)
 					{
 						if (!curveroni[a])
 						{
-							GAME::addModel(missles[a]);
-							GAME::addModel(missileRadius[a]);
+							GameEmGine::addModel(missles[a]);
+							GameEmGine::addModel(missileRadius[a]);
 							bossTarget[a] = targets[a]->getTransformer().getPosition();
 						}
 						curveroni[a] += .01f;
@@ -177,14 +188,15 @@ void Boss::update(float dt)
 					if (curveroni[a] >= 1)
 					{
 						//Missile to Player Collisions
-						targets[a]->hitByEnemy(missles[a], 35);
+						for(int t = 0; t < 4; t++)
+							targets[t]->hitByEnemy(missles[a], 35);
 
 						curveroni[a] = 0;
 						lastDelay[a] = clock();
 						hasTarget[a] = false;
 
-						GAME::removeModel(missles[a]);
-						GAME::removeModel(missileRadius[a]);
+						GameEmGine::removeModel(missles[a]);
+						GameEmGine::removeModel(missileRadius[a]);
 						missles[a]->getTransformer().setPosition(getTransformer().getPosition());
 					}
 
@@ -264,7 +276,7 @@ void Boss::update(float dt)
 			{
 
 				minions.push_back(new Minion(*minion));
-				GAME::addModel(minions.back());
+				GameEmGine::addModel(minions.back());
 
 				minions.back()->setColour({ 200, 50, 50 });
 				minions.back()->getTransformer().setPosition(float(rand() % 15 + rand() % 1000 * .001f) * -(rand() % 2), 0, -float(rand() % 2 + rand() % 100 * .001f)); // Random spawns in bottom right of screen
@@ -293,18 +305,24 @@ void Boss::update(float dt)
 
 		if (m_health <= 0)
 		{
+			//GAME::gameWin = true;
 			m_dead = true;
 			for (auto& a : minions)
-				GAME::removeModel(a);
+				GameEmGine::removeModel(a);
 
 			for (auto& a : missles)
-				GAME::removeModel(a);
+				GameEmGine::removeModel(a);
 
 			for (int a = 0; a < 4; a++)
-				GAME::removeModel(missileRadius[a]);
+				GameEmGine::removeModel(missileRadius[a]);
 
 			minions.clear();
-			GAME::removeModel(this);
+			GameEmGine::removeModel(this);
+		}
+		for (auto& a : minions)
+		{
+			if (a->getHealth() <= 0)
+				GameEmGine::removeModel(a);
 		}
 	}
 
@@ -387,6 +405,8 @@ bool Boss::hitByEnemy(Model* mod, float damage)
 
 	if (collision2D(this, mod))
 	{
+		AudioPlayer::createAudioStream("Audio/bossHit.wav");
+		AudioPlayer::play();
 		setHealth(getHealth() - damage);
 		bossFlash = true;
 		return true;

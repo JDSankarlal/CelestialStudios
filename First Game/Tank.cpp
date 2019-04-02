@@ -49,7 +49,7 @@ void Tank::update(float dt)
 			getCurrentAnimation()->play();
 
 	Player::update(dt);
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
 	p1->setStickDeadZone(.2f);
 
 	/// - Tank Special Ability Active - ///
@@ -70,11 +70,15 @@ void Tank::update(float dt)
 	if(p1->isButtonStroked(CONTROLLER_Y))
 		if(tankShield == false)
 		{
-			if(time - getTimeSinceLastShield() >= 5)
+			if(time - getTimeSinceLastShield() >= 8)
 			{
 				setHealth(getHealth() + 100);
 				shieldTime = time;
-				puts("Special Ability TANK");
+				setTimeSinceLastShield(time);
+				//puts("Special Ability TANK");
+				AudioPlayer::createAudioStream("Audio/tankAbility.wav");
+				AudioPlayer::play();
+
 				tankShield = true;
 			}
 		}

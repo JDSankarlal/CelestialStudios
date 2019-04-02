@@ -10,7 +10,18 @@ public:
 	//time = (float)dt;
 	void init()
 	{
-		GAME::m_modelShader->sendUniform("darken", 0);
+		mod.clear();
+		 fadein = true;
+		 fadeout = false;
+		 splashT = 0;
+		 splashAmbient = 0;
+		 lerpParam = 1;
+		 option[0] = 0;
+		 option[1] = 0;
+		 option[2] = 0;
+		 option[3] = 0;
+
+		GameEmGine::m_modelShader->sendUniform("darken", 0);
 
 		mod.push_back(new Model("Models/Scene/PlayerSelect/PlayerSelect.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
@@ -18,7 +29,10 @@ public:
 		GameEmGine::addModel(mod.back()); //Mod 1
 		mod[1]->setToRender(false);
 
+		LightSource::setLightAmount(0);
 
+		GameEmGine::setCameraType(ORTHOGRAPHIC);
+		GameEmGine::setCameraPosition({ 0,0,-100 });
 
 				//TODO: Add back button and more flashy start button and "Press A to ready" buttons
 		float extra = 0;
@@ -30,12 +44,12 @@ public:
 				extra = 2;
 			mod.push_back(new Model(*classes[0]));
 
-			//setPosition(float(-42.2 + a * 27.5 + extra) <- ORIGINAL
-			mod[2 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5 + extra), -20.9f, -1);						
+			//setPosition(float(-42.2 + a * 27.5 + extra) -20.9f, -1 <- ORIGINAL
+			mod[2 + a]->getTransformer().setPosition(float(-43.3 + a * 28.3 + extra), -21.9f, -1);						
 			mod[2 + a]->getTransformer().setRotation({ 0,270,0 });
 			mod[2 + a]->getTransformer().setScale(Coord3D{ 1, 15, 7 });
 			mod[2 + a]->setToRender(true);
-			GAME::addModel(mod.back()); 
+			GameEmGine::addModel(mod.back()); 
 		}
 
 		for (int a = 0; a < 4; a++)
@@ -50,7 +64,7 @@ public:
 			mod[6 + a]->getTransformer().setScale(Coord3D{ 10, 20, 10 });
 			mod[6 + a]->getTransformer().setRotation({ 0, 270, 0 });
 			mod[6 + a]->setToRender(true);
-			GAME::addModel(mod.back()); //6, 7, 8, 9
+			GameEmGine::addModel(mod.back()); //6, 7, 8, 9
 		}
 
 		//start adding in character descriptions OH MY GOT WHY ISNT IT SHOWING UPFD;OIFOIHFDUISSDFJJSDK
@@ -90,14 +104,15 @@ public:
 
 		static float flipTime;
 
-		static bool assaultSelected;
-		static bool medicSelected;
-		static bool specialistSelected;
-		static bool tankSelected;
+		//static bool assaultSelected;
+		//static bool medicSelected;
+		//static bool specialistSelected;
+		//static bool tankSelected;
 
 		static bool isConnected[4] = { false,false,false,false };
 
 		static bool menuMoved[] = { false,false,false,false };
+
 		players.resize(4);
 		if (fadein)
 		{
@@ -140,7 +155,8 @@ public:
 							//GameEmGine::removeModel(mod[2 + a]);
 							mod[2 + a]->setColour({ 255,255,255 });
 							*mod[2 + a] = *classes[option[a]];
-							mod[2 + a]->getTransformer().setPosition(float(-42.2 + a * 27.5 + extra), -20.9f, -1);							mod[2 + a]->getTransformer().setRotation({ 0,270,0 });
+							mod[2 + a]->getTransformer().setPosition(float(-43.3 + a * 28.3 + extra), -21.9f, -1);
+							mod[2 + a]->getTransformer().setRotation({ 0,270,0 });
 							mod[2 + a]->getTransformer().setScale(Coord3D{ 1, 15, 7 });
 							GameEmGine::addModel(mod[2 + a]);
 
@@ -155,7 +171,7 @@ public:
 							mod[6 + a]->getTransformer().setScale(Coord3D{10, 20, 10});
 							mod[6 + a]->getTransformer().setRotation({ 0, 270, 0 });
 							mod[6 + a]->setToRender(true);
-							GAME::addModel(mod[6 + a]); //6, 7, 8, 9
+							GameEmGine::addModel(mod[6 + a]); //6, 7, 8, 9
 
 							//tmp = mod[option]->getTransformer().getScale();
 						}
@@ -177,6 +193,11 @@ public:
 							menuMoved[a] = true;
 							isConnected[a] = true;
 						}
+						else
+						{
+							//AudioPlayer::createAudioStream("Audio/playerSelectedAlready.wav");
+							//AudioPlayer::play();
+						}
 						break;
 					case 1:
 						if (tankSelected == false)
@@ -186,6 +207,11 @@ public:
 							mod[2 + a]->setColour(1, 0, 0);
 							menuMoved[a] = true;
 							isConnected[a] = true;
+						}
+						else
+						{
+							//AudioPlayer::createAudioStream("Audio/playerSelectedAlready.wav");
+							//AudioPlayer::play();
 						}
 						break;
 					case 2:
@@ -197,6 +223,11 @@ public:
 							menuMoved[a] = true;
 							isConnected[a] = true;
 						}
+						else
+						{
+							//AudioPlayer::createAudioStream("Audio/playerSelectedAlready.wav");
+							//AudioPlayer::play();
+						}
 						break;
 					case 3:
 						if (specialistSelected == false)
@@ -206,6 +237,11 @@ public:
 							mod[2 + a]->setColour(1, 0, 0);
 							menuMoved[a] = true;
 							isConnected[a] = true;
+						}
+						else
+						{
+							//AudioPlayer::createAudioStream("Audio/playerSelectedAlready.wav");
+							//AudioPlayer::play();
 						}
 						break;
 					default:
@@ -222,8 +258,8 @@ public:
 						{
 							assaultSelected = false;
 							isConnected[a] = false;
-							mod[6 + a]->setColour(1, 1, 1);
 							menuMoved[a] = false;
+							mod[6 + a]->setColour(1, 1, 1);
 						}
 						break;
 					case 1:
@@ -302,16 +338,27 @@ public:
 			splashT = splashT > 1 ? 1 : splashT;
 			splashAmbient = (GLubyte)lerp(255, 0, splashT);
 			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+
 			if (splashAmbient <= 5)
 			{
 				fadein = true;
 				fadeout = false;
 				splashT = 0;
 				splashAmbient = 255;
-
+				
+				for (int a = 0; a < 4; a++)
+				{
+					isConnected[a] = false;
+					menuMoved[a] = false;
+				}
+				
 				//GamePlayInit();
 				Game* game = new Game;
 				game->playerTypes(players);
+				tankSelected = false;
+				medicSelected = false;
+				assaultSelected = false;
+				specialistSelected = false;
 				GameEmGine::setScene(game);
 			}
 		}
@@ -344,4 +391,8 @@ private:
 	GLubyte splashAmbient = 0;
 	float lerpParam = 1;
 	int option[4] = { 0,0,0,0 };
+	bool assaultSelected;
+	bool medicSelected;
+	bool specialistSelected;
+	bool tankSelected;
 };

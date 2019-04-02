@@ -121,6 +121,7 @@ public:
 
 	static bool lutActive;
 
+	static bool toonActive;
 
 private:
 	static void shaderInit();

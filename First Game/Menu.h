@@ -6,10 +6,32 @@
 class Menu:public Scene
 {
 public:
+
+	~Menu()
+	{
+		mod.clear();
+		 fadein = true;
+		 fadeout = false;
+		 splashT = 0;
+		 splashAmbient = 0;
+		 lerpParam = 1;
+		 option = 1;
+	}
+
 	// Set menu screen
 	void init()
 	{
-		GAME::m_modelShader->sendUniform("darken", false);
+		mod.clear();
+		fadein = true;
+		fadeout = false;
+		splashT = 0;
+		splashAmbient = 0;
+		lerpParam = 1;
+		option = 1;
+
+
+
+		GameEmGine::m_modelShader->sendUniform("darken", false);
 
 		mod.push_back(new Model("Models/Scene/Menu/menu.obj"));
 		GameEmGine::addModel(mod.back()); //Mod 0 
@@ -35,6 +57,12 @@ public:
 
 		}
 		LightSource::setSceneAmbient({0,0,0,255});
+		LightSource::setLightAmount(0);
+
+		GameEmGine::setCameraType(ORTHOGRAPHIC);
+		GameEmGine::setCameraPosition({ 0,0,-100 });
+		GameEmGine::setCameraAngle(0,{ 1,1,1 });
+
 
 		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
 	}
@@ -102,7 +130,7 @@ public:
 
 						break;
 					case 3:
-						GAME::exit();
+						GameEmGine::exit();
 						break;
 					default:
 						break;

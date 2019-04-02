@@ -7,13 +7,25 @@ public:
 	// Set splash screen and start update
 	void init()
 	{
-		GAME::m_modelShader->sendUniform("darken", 0);
+		mod.clear();
+		fadein = true;
+		fadeout = false;
+		splashT = 0;
+		splashAmbient = 0;
+		
+
+		
+		GameEmGine::m_modelShader->sendUniform("darken", 0);
 
 		mod.push_back(new Model("Models/Scene/Controls/controller.obj"));
 		mod[0]->getTransformer().setScale(1.0f, 1.5f, 1.0f);
 
 		GameEmGine::addModel(mod.back());
 		LightSource::setSceneAmbient({ 0,0,0,255 });
+		LightSource::setLightAmount(0);
+
+		GameEmGine::setCameraType(ORTHOGRAPHIC);
+		GameEmGine::setCameraPosition({ 0,0,-100 });
 
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b);  };
 		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
@@ -45,23 +57,16 @@ public:
 
 		if (!fadein)
 		{
-			LightSource::setLightAmount(1);
-			LightSource::setLightType(LIGHT_TYPE::POINT, 0);
-			LightSource::setPosition({ 0.0f,45.0f,-1000.0f }, 0);
-			LightSource::setDiffuse({ 10,10,10,10 }, 0);
-			LightSource::setAttenuationQuadratic(0.04f, 0);
-			LightSource::setDirection({ 0.0f,0.0f,.0f }, 0);
 		}
 
 		for (int a = 0; a < 4; a++)
-			if (GAME::getController(a)->isButtonPressed(CONTROLLER_A))
+			if (GameEmGine::getController(a)->isButtonPressed(CONTROLLER_A))
 			{
 				fadeout = true;
 			}
 
 		if (fadeout)
 		{
-			LightSource::setLightAmount(0);
 			splashT += 0.01f;
 			splashAmbient = (GLubyte)lerp(255, 0, splashT);
 			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });

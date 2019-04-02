@@ -5,7 +5,7 @@
 #include <Model.h>
 #include <EmGineAudioPlayer.h>
 typedef EmGineAudioPlayer AudioPlayer;
-typedef GameEmGine GAME;
+
 enum PlayerType
 {
 	assault,

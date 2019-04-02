@@ -1,7 +1,6 @@
 #include "Player.h"
 #include <algorithm>
 
-typedef GameEmGine GAME;
 
 Model
 * Player::bullet,
@@ -130,7 +129,7 @@ Player::~Player()
 void Player::setPlayerIndex(int index)
 {
 	m_index = index;
-	GAME::removeModel(m_baseBar);
+	GameEmGine::removeModel(m_baseBar);
 
 	m_baseBar->removeChild(m_lifeBar);
 	switch (m_index)
@@ -178,7 +177,7 @@ void Player::setPlayerIndex(int index)
 	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{ 0.35f,1.6f,0.0f });
 
 
-	GAME::addModel(m_baseBar);
+	GameEmGine::addModel(m_baseBar);
 
 
 }
@@ -218,7 +217,7 @@ void Player::hitByEnemy(Model* mod, float damage)
 	if (!m_active)
 		return;
 
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
 	if (collision2D(ringID, mod))
 	{
 		//curveroni[a] = 1;
@@ -257,7 +256,7 @@ bool Player::bulletCollisions(Model * mod)
 
 			if (bulletHit)
 			{
-				GAME::removeModel(bullets[b]);
+				GameEmGine::removeModel(bullets[b]);
 				bullets.erase(bullets.begin() + b);
 				timer.erase(timer.begin() + b);
 				velocity.erase(velocity.begin() + b);
@@ -277,10 +276,10 @@ void Player::update(float dt)
 	}
 	time += dt;
 
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
 	p1->setStickDeadZone(.2f);
 
-	if (GAME::isControllerConnected(m_index))
+	if (GameEmGine::isControllerConnected(m_index))
 	{
 		if (!dead)
 		{
@@ -299,13 +298,16 @@ void Player::update(float dt)
 			if (getHealth() <= 0)
 			{
 				dead = true;
+				AudioPlayer::createAudioStream("Audio/dead.wav");
+				AudioPlayer::play();
 				graveStone->setColour(getColour());
 				graveStone->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->getTransformer().setPosition(getTransformer().getPosition()), graveStone->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
-				GAME::addModel(graveStone);
+				GameEmGine::addModel(graveStone);
 				graveStone->addAnimation("squash", squash);
 
 				graveStone->setAnimation("squash");
-				GAME::removeModel(this);
+				p1->resetVibration();
+				GameEmGine::removeModel(this);
 				dead = true;
 				//GAME::removeModel(mod[44] + a);
 			}
@@ -320,7 +322,7 @@ void Player::update(float dt)
 						gunControlLaw = true; //gun Control Law makes it so the guns function "manualy" instead of "fully automatic"
 
 						bullets.push_back(new Model(*bullet));
-						GAME::addModel(bullets.back());
+						GameEmGine::addModel(bullets.back());
 						bullets.back()->setColour(getColour());//bullet color = players color
 						Coord3D pos = getTransformer().getPosition();
 						bullets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
@@ -409,6 +411,9 @@ void Player::update(float dt)
 					move = 0.5f;
 					if (time - 0.1f >= duration)
 					{
+						AudioPlayer::createAudioStream("Audio/dash.wav");
+						EmGineAudioPlayer::setVolume(2);
+						AudioPlayer::play();
 						move = 0.1f;
 						//If getTriggers() up then coolDown = time;
 						cooldown = time;
@@ -451,17 +456,17 @@ void Player::update(float dt)
 
 			if (dead)
 			{
-				GAME::removeModel(this);
-				GAME::removeModel(m_lifeBar);
-				GAME::removeModel(m_baseBar);
+				GameEmGine::removeModel(this);
+				GameEmGine::removeModel(m_lifeBar);
+				GameEmGine::removeModel(m_baseBar);
 
-				GAME::removeModel(ringID);
-				GAME::removeModel(gun);
-				GAME::removeModel(bulletCircle);
+				GameEmGine::removeModel(ringID);
+				GameEmGine::removeModel(gun);
+				GameEmGine::removeModel(bulletCircle);
 
 				for (int a = 0; a < (int)bullets.size(); a++)
 				{
-					GAME::removeModel(bullets[a]);
+					GameEmGine::removeModel(bullets[a]);
 					bullets.erase(bullets.begin());
 					velocity.erase(velocity.begin());
 					timer.erase(timer.begin());
@@ -481,7 +486,7 @@ void Player::update(float dt)
 
 					if (timer[b] >= 1)
 					{
-						GAME::removeModel(bullets[b]);
+						GameEmGine::removeModel(bullets[b]);
 						bullets.erase(bullets.begin() + b);
 						velocity.erase(velocity.begin() + b);
 						timer.erase(timer.begin() + b);

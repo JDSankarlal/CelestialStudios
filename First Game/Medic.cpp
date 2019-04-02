@@ -6,7 +6,7 @@ void Medic::init()
 	type = medic;
 	m_initialHealth = 150;
 	setHealth(150);
-	puts("MEDIC CIRCLE SHOULD APPEAR WTF");
+	//puts("MEDIC CIRCLE SHOULD APPEAR WTF");
 	healingCircle = new Model("Models/MedicCircle/BETTERHealingCircle.obj");
 	healingCircle->setToRender(true);
 	healingCircle->setTransparent(true);
@@ -67,22 +67,24 @@ void Medic::update(float dt)
 			getCurrentAnimation()->play();
 
 	Player::update(dt);
-	XinputController* p1 = (XinputController*)GAME::getController(m_index);
+	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
 	p1->setStickDeadZone(.2f);
 
 	///- Medic Special Ability Inactive - ///
 	if(p1->isButtonStroked(CONTROLLER_Y))
 		if(isHealing == false)
 		{
-			if(time - getTimeSinceLastHeal() >= 5)
+			if(time - getTimeSinceLastHeal() >= 8)
 			{
 				healingCircle->getTransformer().setPosition(this->getTransformer().getPosition() + (Coord3D({0.0f, 0.1f, 0.0f})));
 				healingCircle->getTransformer().setScale(4);
 				healingCircle->setToRender(true);
 				circleTime = time;
-				puts("Special Ability MEDIC");
+				//puts("Special Ability MEDIC");
+				AudioPlayer::createAudioStream("Audio/medicAbility.wav");
+				AudioPlayer::play();
 				isHealing = true;
-				GAME::addModel(healingCircle);
+				GameEmGine::addModel(healingCircle);
 				if (m_index == 0)
 				{
 					healingCircle->setColour({ 255,0,0 });
@@ -111,7 +113,7 @@ void Medic::update(float dt)
 			healingCircle->setToRender(false);
 			setTimeSinceLastHeal(time);
 			isHealing = false;
-			GAME::removeModel(healingCircle);
+			GameEmGine::removeModel(healingCircle);
 
 		}
 	}
