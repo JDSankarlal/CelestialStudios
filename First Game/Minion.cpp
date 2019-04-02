@@ -62,7 +62,7 @@ void Minion::update(float dt)
 	if(m_move)
 	{
 		float distance, lastDistance = 0;
-		Coord3D moveTo = targets[0]->getTransformer().getPosition();
+		moveTo = targets[0]->getTransformer().getPosition();
 
 		if(!targets.empty())
 			lastDistance = (getTransformer().getPosition() - targets[0]->getTransformer().getPosition()).distance();
