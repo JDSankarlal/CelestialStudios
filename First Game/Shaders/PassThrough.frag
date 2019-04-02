@@ -60,7 +60,7 @@ void directionalLight(int a)
     vec3 normal = normalize(texture(uNorm,texcoord).rgb);
     vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
     float dist = length(lightVec);
-	vec3 direc = lightVec / dist;
+	vec3 direc = LightDirection[a];
 	vec3 reflection = reflect(-direc,normal);
 	vec3 eye = normalize(- texture(uPos,texcoord).xyz);
 	float viewToRe = max(dot(eye,reflection),0.0);
@@ -78,11 +78,11 @@ void directionalLight(int a)
     //outColor.rgb += LightDiffuse[a] * attenuation * texture(uRamp, vec2(NdotL, 0.5)).rgb;
     
     //Blinn-Phong half vector
-    //float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
+    float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
         
     //Calculate specular contribution
 	float spec = pow(max(viewToRe, 0.0), 16);
-	outColor.rgb +=  LightSpecular[a] * spec * attenuation * colour;
+	outColor.rgb +=  LightSpecular[a] * spec * attenuation * colour * LightSpecularExponent[a];
     //outColor.rgb += LightSpecular[a] * texture(uRamp, vec2(viewToRe, 0.5)).rgb * attenuation;
 }
 
@@ -111,7 +111,7 @@ void pointLight(int a)
     //outColor.rgb += LightDiffuse[a] * attenuation * texture(uRamp, vec2(NdotL, 0.5)).rgb;
     
     //Blinn-Phong half vector
-    //float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
+    float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
         
     //Calculate specular contribution
 	if(toonActive)
