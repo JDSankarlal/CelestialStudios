@@ -712,6 +712,7 @@ public:
 		audio.createAudioStream("Audio/potential mix (with beat).wav");
 
 		audio.play(true);
+		audio.setVolume(0.75f);
 	}
 
 
@@ -842,7 +843,7 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.5f, 0);
+						EmGineAudioPlayer::setVolume(.4f, 0);
 
 					else
 						EmGineAudioPlayer::setVolume(1, 0);
@@ -887,7 +888,7 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.5f, 0);
+						EmGineAudioPlayer::setVolume(.4f, 0);
 
 					else
 						EmGineAudioPlayer::setVolume(1, 0);
@@ -931,7 +932,7 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.5f, 0);
+						EmGineAudioPlayer::setVolume(.4f, 0);
 
 					else
 						EmGineAudioPlayer::setVolume(1, 0);
