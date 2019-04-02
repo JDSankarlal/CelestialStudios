@@ -151,7 +151,6 @@ public:
 			mod.push_back(a);
 	}
 
-
 	// Set game screen
 	void init()
 	{
@@ -339,7 +338,7 @@ public:
 		GameEmGine::addModel(mod[59]);
 
 		mod[59]->setToRender(false);
-		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.5f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
+		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
 
 		//TRAIN
 		mod[79] = (new Model("Models/Train/Head/trainhead.obj"));//79
@@ -713,6 +712,7 @@ public:
 
 		audio.createAudioStream("Audio/potential mix (with beat).wav");
 
+		audio.setVolume(0.6f);
 		audio.play(true);
 	}
 
@@ -844,10 +844,10 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.5f, 0);
+						EmGineAudioPlayer::setVolume(.3f, 0);
 
 					else
-						EmGineAudioPlayer::setVolume(1, 0);
+						EmGineAudioPlayer::setVolume(0.6f, 0);
 
 					mod[130]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
 					mod[130]->setToRender(!pause);
@@ -889,10 +889,10 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.5f, 0);
+						EmGineAudioPlayer::setVolume(.3f, 0);
 
 					else
-						EmGineAudioPlayer::setVolume(1, 0);
+						EmGineAudioPlayer::setVolume(0.6f, 0);
 
 					mod[131]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
 					mod[131]->setToRender(!pause);
@@ -933,10 +933,10 @@ public:
 
 					//rn the music gets quieter during the pause screen 
 					if (!pause)
-						EmGineAudioPlayer::setVolume(.5f, 0);
+						EmGineAudioPlayer::setVolume(.3f, 0);
 
 					else
-						EmGineAudioPlayer::setVolume(1, 0);
+						EmGineAudioPlayer::setVolume(0.6f, 0);
 
 					mod[126]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
 					mod[126]->setToRender(!pause);
@@ -962,7 +962,7 @@ public:
 			}
 			player->update((float)dt);
 
-			player->onPlayArea(mod[9]);
+			player->onPlayArea(mod[59]);
 
 			//bullet collisions with boss
 			if (player->bulletCollisions(CandyMan))

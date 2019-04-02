@@ -298,6 +298,8 @@ void Player::update(float dt)
 			if (getHealth() <= 0)
 			{
 				dead = true;
+				AudioPlayer::createAudioStream("Audio/dead.wav");
+				AudioPlayer::play();
 				graveStone->setColour(getColour());
 				graveStone->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->getTransformer().setPosition(getTransformer().getPosition()), graveStone->getTransformer().setRotation({ 0.0f,270.0f,0.0f });
 				GameEmGine::addModel(graveStone);
@@ -408,6 +410,9 @@ void Player::update(float dt)
 					move = 0.5f;
 					if (time - 0.1f >= duration)
 					{
+						AudioPlayer::createAudioStream("Audio/dash.wav");
+						EmGineAudioPlayer::setVolume(2);
+						AudioPlayer::play();
 						move = 0.1f;
 						//If getTriggers() up then coolDown = time;
 						cooldown = time;
