@@ -64,6 +64,8 @@ public:
 
 	static std::vector<FrameBuffer*> shadowBuffers(unsigned w, unsigned h, std::vector<Model*>&, unsigned index);
 
+	static LightInfo getLightInfo(unsigned index);
+
 	static void update();
 private:
 	//Coord3D m_coord, m_spec;

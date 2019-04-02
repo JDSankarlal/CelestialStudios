@@ -42,7 +42,7 @@ public:
 				gray->enable();
 				glUniform1i(gray->getUniformLocation("uTex"), 0);
 				glBindTexture(GL_TEXTURE_2D, grayPost->getColorHandle(0));
-				GameEmGine::drawFullScreenQuad();
+				FrameBuffer::drawFullScreenQuad();
 				glBindTexture(GL_TEXTURE_2D, GL_NONE);
 				gray->disable();
 			});

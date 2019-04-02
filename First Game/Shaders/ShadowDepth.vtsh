@@ -3,9 +3,10 @@
 layout(location =0) in vec3 vert; 
 layout(location =1) in vec2 UV;
 
-uniform mat4 uView;
+uniform mat4 lightSpaceMatrix;
+uniform mat4 uModel;
 
 void main()
 {
-   gl_Position =  vec4(vert, 1.0);
+   gl_Position = lightSpaceMatrix * uModel * vec4(vert, 1.0);
 }

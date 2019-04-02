@@ -111,7 +111,9 @@ void Camera::render(Shader * shader, std::vector<Model*> & models, bool trans)
 {
 	for(auto& a : models)
 		if(trans == a->isTransparent())
+		{
 			a->render(*shader, this->m_cameraMat);
+		}
 }
 
 

@@ -22,7 +22,6 @@ GameEmGine::m_mainFrameBuffer, *GameEmGine::m_postBuffer,
 *GameEmGine::m_shadowBuffer;
 
 
-GLuint GameEmGine::m_fsQuadVAO_ID, GameEmGine::m_fsQuadVBO_ID;
 InputManager* GameEmGine::m_inputManager;
 WindowCreator* GameEmGine::m_window;	//must be init in the constructor
 ColourRGBA GameEmGine::m_colour{123,123,123};
@@ -100,6 +99,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	printf("created the window\n");
 
 	m_mainFrameBuffer = new FrameBuffer("Main Buffer", 3);
+	m_shadowBuffer = new FrameBuffer("Shadow Buffer", 1);
 	m_outline = new FrameBuffer("Sobel Outline", 1);
 	m_postBuffer = new FrameBuffer("Post Process Buffer", 1);
 	m_greyscaleBuffer = new FrameBuffer("Greyscale", 1);
@@ -111,6 +111,15 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_mainFrameBuffer->initColourTexture(1, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_mainFrameBuffer->initColourTexture(2, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	if(!m_mainFrameBuffer->checkFBO())
+	{
+		puts("FBO failed Creation");
+		system("pause");
+		return;
+	}
+
+	m_shadowBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_shadowBuffer->initDepthTexture( getWindowWidth(), getWindowHeight());
+	if(!m_shadowBuffer->checkFBO())
 	{
 		puts("FBO failed Creation");
 		system("pause");
@@ -156,8 +165,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 		system("pause");
 		return;
 	}
-	initFullScreenQuad();
-
+	
 	//// During init, enable debug output
 	//glEnable(GL_DEBUG_OUTPUT);
 	//glDebugMessageCallback(MessageCallback, 0);
@@ -266,6 +274,8 @@ void GameEmGine::shaderInit()
 
 	m_grayScalePost = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/GrayscalePost.fmsh");
 	m_sobel = ResourceManager::getShader("Shaders/Main Buffer.vtsh", "shaders/Sobel.fmsh");
+
+	
 }
 
 void GameEmGine::calculateFPS()
@@ -308,58 +318,7 @@ void GameEmGine::fpsLimiter()
 	enter = true;
 }
 
-void GameEmGine::initFullScreenQuad()
-{
-	float vboData[] =
-	{
-		-1.0f,-1.0f,0.0f,
-		 1.0f,-1.0f,0.0f,
-		-1.0f, 1.0f,0.0f,
 
-		 1.0f, 1.0f,0.0f,
-		-1.0f, 1.0f,0.0f,
-		 1.0f,-1.0f,0.0f,
-
-		0.0f,0.0f,
-		1.0f,0.0f,
-		0.0f,1.0f,
-
-		1.0f,1.0f,
-		0.0f,1.0f,
-		1.0f,0.0f
-	};
-
-	if(!m_fsQuadVAO_ID)
-		glGenVertexArrays(1, &m_fsQuadVAO_ID);
-
-	glBindVertexArray(m_fsQuadVAO_ID);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-
-	if(!m_fsQuadVBO_ID)
-		glGenBuffers(1, &m_fsQuadVBO_ID);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_fsQuadVBO_ID);
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18 + sizeof(float) * 12, vboData, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 18));
-
-	glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
-
-	glBindVertexArray(GL_NONE);
-}
-
-void GameEmGine::drawFullScreenQuad()
-{
-	glBindVertexArray(m_fsQuadVAO_ID);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(GL_NONE);
-
-}
 
 void GameEmGine::setScene(Scene * scene)
 {
@@ -515,7 +474,7 @@ void GameEmGine::update()
 	m_postProcess->sendUniform("uNorm", 1);
 	m_postProcess->sendUniform("uScene", 2);
 
-	drawFullScreenQuad();
+	FrameBuffer::drawFullScreenQuad();
 
 	//un-bind textures
 	glActiveTexture(GL_TEXTURE2);
@@ -529,8 +488,53 @@ void GameEmGine::update()
 	m_postBuffer->disable();
 
 
+	//for(int a = 0; a < (int)LightSource::size(); a++)
+	//{
+	//	std::vector<FrameBuffer*>shadowBuffer = LightSource::shadowBuffers(getWindowWidth(), getWindowHeight(), m_models, 0);
+	//
+	//	m_shadowBuffer->enable();
+	//	m_postProcess->enable();
+	//	for(auto &b : shadowBuffer)
+	//	{
+	//
+	//		//bind textures
+	//		glActiveTexture(GL_TEXTURE0);
+	//		glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0));
+	//		glActiveTexture(GL_TEXTURE1);
+	//		glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(1));
+	//		glActiveTexture(GL_TEXTURE2);
+	//		glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(2));
+	//		glActiveTexture(GL_TEXTURE3);
+	//		glBindTexture(GL_TEXTURE_2D, b->getDepthHandle());
+	//
+	//		m_postProcess->sendUniform("uPos", 0);
+	//		m_postProcess->sendUniform("uNorm", 1);
+	//		m_postProcess->sendUniform("uScene", 2);
+	//		m_postProcess->sendUniform("shadowMap", 3);
+	//		glm::mat4 tmpMat = m_mainCamera->getProjectionMatrix() *  glm::lookAt(LightSource::getLightInfo(a).position.toVec3(),
+	//			glm::vec3(0.0f, 0.0f, 0.0f),
+	//			glm::vec3(0.0f, 1.0f, 0.0f));
+	//		m_postProcess->sendUniform("lightSpaceMatrix", tmpMat);
+	//
+	//		FrameBuffer::drawFullScreenQuad();
+	//
+	//		//un-bind textures
+	//		glActiveTexture(GL_TEXTURE3);
+	//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//		glActiveTexture(GL_TEXTURE2);
+	//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//		glActiveTexture(GL_TEXTURE1);
+	//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//		glActiveTexture(GL_TEXTURE0);
+	//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	//
+	//	}
+	//	m_postProcess->disable();
+	//	m_shadowBuffer->disable();
+	//
+	//}
+	//
 	glViewport(0, 0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO);
-
 
 	//binds the initial bloom affect to buffer 1
 	m_buffer1->enable();
@@ -542,7 +546,7 @@ void GameEmGine::update()
 	m_bloomHighPass->sendUniform("uTex", 0);
 	m_bloomHighPass->sendUniform("uThresh", 0.15f);
 
-	drawFullScreenQuad();
+	FrameBuffer::drawFullScreenQuad();
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
@@ -552,14 +556,14 @@ void GameEmGine::update()
 
 	//Takes the high pass and blurs it
 	glViewport(0, 0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO);
-	for(int a = 0; a < 4; a++)
+	for(int a = 0; a < SCREEN_RATIO; a++)
 	{
 		m_buffer2->enable();
 		m_blurHorizontal->enable();
 		m_blurHorizontal->sendUniform("uTex", 0);
 		m_blurHorizontal->sendUniform("uPixleSize", 1.0f / getWindowHeight());
 		glBindTexture(GL_TEXTURE_2D, m_buffer1->getColorHandle(0));
-		drawFullScreenQuad();
+		FrameBuffer::drawFullScreenQuad();
 
 		glBindTexture(GL_TEXTURE_2D, GL_NONE);
 		m_blurHorizontal->disable();
@@ -570,7 +574,7 @@ void GameEmGine::update()
 		m_blurHorizontal->sendUniform("uTex", 0);
 		m_blurHorizontal->sendUniform("uPixleSize", 1.0f / getWindowWidth());
 		glBindTexture(GL_TEXTURE_2D, m_buffer2->getColorHandle(0));
-		drawFullScreenQuad();
+		FrameBuffer::drawFullScreenQuad();
 
 		glBindTexture(GL_TEXTURE_2D, GL_NONE);
 		m_blurVertical->disable();
@@ -590,7 +594,7 @@ void GameEmGine::update()
 	glActiveTexture(GL_TEXTURE1);
 	m_blurrComposite->sendUniform("uBloom", 1);
 	glBindTexture(GL_TEXTURE_2D, m_buffer1->getColorHandle(0));
-	drawFullScreenQuad();
+	FrameBuffer::drawFullScreenQuad();
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
@@ -612,11 +616,11 @@ void GameEmGine::update()
 
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_postBuffer->getColorHandle(0));
+	glBindTexture(GL_TEXTURE_2D, m_greyscaleBuffer->getColorHandle(0));
 	glActiveTexture(GL_TEXTURE6);
 	glBindTexture(GL_TEXTURE_3D, ResourceManager::getTexture3D(LUTpath.c_str()).id);
 
-	drawFullScreenQuad();
+	FrameBuffer::drawFullScreenQuad();
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, GL_NONE);
@@ -625,37 +629,7 @@ void GameEmGine::update()
 
 	m_grayScalePost->disable();
 
-	for(int a = 0; a < LightSource::size(); a++)
-	{
-		std::vector<FrameBuffer*>shadowBuffer = LightSource::shadowBuffers(getWindowWidth(), getWindowHeight(), m_models, 0);
-
-		for(auto &b:shadowBuffer)
-		{
-			
-		}
-	}
-
-	//m_outline->enable();
-	//m_sobel->enable();
-	//
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(1));
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getDepthHandle());
-	//
-	//m_sobel->sendUniform("uNormalMap", 0);
-	//m_sobel->sendUniform("uDepthMap", 1);
-	//
-	//drawFullScreenQuad();
-	//
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	//
-	//m_sobel->disable();
-	//m_outline->disable();
-
+	
 
 	m_mainFrameBuffer->moveDepthToBackBuffer(getWindowWidth(), getWindowHeight());
 	LightSource::setShader(m_forwardRender);

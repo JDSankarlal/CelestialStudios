@@ -272,7 +272,7 @@ void EmGineAudioPlayer::cleanup()
 
 void EmGineAudioPlayer::printError(FMOD_RESULT error, const char* where)
 {
-
+	error, where;
 #if _DEBUG
 	if(error)
 	{

@@ -33,7 +33,7 @@ uniform float LightAngleConstraint[MAX_LIGHTS_SIZE];
 uniform sampler2D uPos;
 uniform sampler2D uNorm;
 uniform sampler2D uScene;
-
+uniform sampler2D shadowMap;
 
 
 //uniform vec4 colourMod;
@@ -104,6 +104,25 @@ void pointLight(int a)
     outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
 }
 
+
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}  
+
+uniform mat4 lightSpaceMatrix;
+
 void main()
 {
     
@@ -147,5 +166,7 @@ void main()
      // outColor.rgb = vec3(NdotL,NdotL,NdotL); 
     } 
 
+    float shadow = ShadowCalculation( vec4(lightSpaceMatrix * vec4(texture(uPos,texcoord))));
+    outColor.rgb *= 1.0 - shadow;
     outColor.a = 1;
 }

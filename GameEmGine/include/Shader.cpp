@@ -225,6 +225,12 @@ GLint Shader::getUniformLocation(const char* uniform)
 	return uni;
 }
 
+void Shader::sendUniform(const char * uniform, glm::mat4 val)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniformMatrix4fv(uni,1,false, &val[0][0]);
+}
+
 void Shader::sendUniform(const char* uniform, Coord3D val)
 {
 	GLint uni = getUniformLocation(uniform);

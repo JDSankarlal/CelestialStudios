@@ -334,7 +334,8 @@ void Player::update(float dt)
 						velocity.back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
 
 						timer.push_back(0);
-						AudioPlayer::createAudioStream("Audio/pew.wav");
+						std::string tag = "Shots Fired" + std::to_string(bullets.size());
+						AudioPlayer::createAudioStream("Audio/pew.wav",tag);
 						AudioPlayer::play();
 						bulletCircle->setColour(1, 1, 1);//set bullet circle colour to white
 						m_bulletCount--;//subtract from bullet count

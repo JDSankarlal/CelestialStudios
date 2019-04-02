@@ -58,10 +58,16 @@ public:
 	GLuint getFrameBufferID();
 
 
+	static void drawFullScreenQuad();
+
 	std::string getTag();
 	unsigned getLayer();
 
 private:
+	static void initFullScreenQuad();
+	
+	static GLuint m_fsQuadVAO_ID, m_fsQuadVBO_ID;
+
 	GLuint
 		m_layer = GL_NONE,
 		m_fboID = GL_NONE,

@@ -694,7 +694,7 @@ public:
 
 		AudioPlayer::init();
 
-		audio.createAudioStream("Audio/potential mix (with beat).wav");
+		audio.createAudioStream("Audio/potential mix (with beat).wav","BG Music");
 
 		audio.play(true);
 	}
@@ -1020,7 +1020,7 @@ public:
 		{
 			if(!trainInit)
 			{
-				audio.createAudioStream("Audio/RailOff.wav");
+				audio.createAudioStream("Audio/RailOff.wav","Train Off");
 				audio.play();
 				trainInit = true;
 			}
@@ -1089,7 +1089,7 @@ public:
 		{
 			if(!trainInit)
 			{
-				audio.createAudioStream("Audio/RailOff.wav");
+				audio.createAudioStream("Audio/RailOff.wav","Train Off");
 				audio.play();
 				trainInit = true;
 			}
