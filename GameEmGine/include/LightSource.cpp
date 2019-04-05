@@ -8,13 +8,34 @@ std::vector<std::vector<FrameBuffer*>>LightSource::m_shadows;
 Shader* LightSource::m_shader;
 Camera* LightSource::m_cam;
 LightInfo LightSource::m_info;
+unsigned LightSource::m_size;
 #pragma endregion
 
 
 
-void LightSource::setLightType(LIGHT_TYPE type, unsigned m_index)
+void LightSource::setLightType(LIGHT_TYPE type, unsigned index)
 {
-	m_lights[m_index].type = type;
+	m_lights[index].type = type;
+
+	if(type == LIGHT_TYPE::POINT)
+	{
+		m_shadows[index].resize(6, new FrameBuffer("Shadow", 0));
+		for(int a = 0; a < 6; a++)
+		{
+			
+			m_shadows[index][a]->initDepthTexture(500, 500);
+
+			if(!m_shadows[index][a]->checkFBO())
+			{
+				printf("%s FBO failed Creation", m_shadows[index][a]->getTag().c_str());
+				system("pause");
+			}
+		}
+	}
+	else
+		m_shadows[index].resize(0);
+
+
 }
 
 void LightSource::setPosition(Coord3D pos, unsigned m_index)
@@ -79,27 +100,24 @@ void LightSource::setShader(Shader* shad)
 
 void LightSource::setLightAmount(unsigned size)
 {
-	m_lights.resize(size);
-	m_shadows.resize(size, std::vector<FrameBuffer*>(0, new FrameBuffer("shadow", 0)));
+	m_size = size > 0 ? size : 0;
+	m_lights.resize(m_size);
+	m_shadows.resize(m_size, std::vector<FrameBuffer*>(0, new FrameBuffer("shadow", 0)));
 }
 
-std::vector<FrameBuffer*> LightSource::shadowBuffer(unsigned w, unsigned h, std::vector<Model*>& models, unsigned index)
+unsigned LightSource::size()
 {
+	return m_size;
+}
+
+std::vector<FrameBuffer*> LightSource::shadowBuffers(unsigned w, unsigned h, std::vector<Model*>& models, unsigned index)
+{
+	models;
 	if(m_lights[index].type == LIGHT_TYPE::POINT)
 	{
-		m_shadows[index].resize(6, new FrameBuffer("shadow", 1));
 
-		for(int a = 0; a < 6; a++)
-		{
-			m_shadows[index][a]->initDepthTexture(w, h);
-
-			if(!m_shadows[index][a]->checkFBO())
-			{
-				puts("Shadow FBO failed Creation");
-				system("pause");
-				return m_shadows[index];
-			}
-		}
+		glViewport(0, 0, w, h);
+		
 
 		static Camera cam;
 		cam.init({(float)w,(float)h,500}, ORTHOGRAPHIC);
@@ -108,8 +126,19 @@ std::vector<FrameBuffer*> LightSource::shadowBuffer(unsigned w, unsigned h, std:
 
 		for(int a = 0; a < 6; a++)
 		{
+		//	m_shadows[index][a]->resizeColour(0, w, h);
+			m_shadows[index][a]->resizeDepth(w, h);
+
 			m_shadows[index][a]->enable();
-			m_shader->enable();
+			//m_shader->enable();
+			Shader* shad = ResourceManager::getShader("Shaders/ShadowDepth.vtsh","Shaders/ShadowDepth.fmsh");
+			shad->enable();
+			shad->sendUniform("lightSpaceMatrix", m_cam->getProjectionMatrix() *  glm::lookAt(m_lights[index].position.toVec3(),
+				glm::vec3(0.0f, 0.0f, 0.0f),
+				glm::vec3(0.0f, 1.0f, 0.0f)));
+
+
+
 			switch(a)
 			{
 			case 0:
@@ -129,18 +158,33 @@ std::vector<FrameBuffer*> LightSource::shadowBuffer(unsigned w, unsigned h, std:
 				break;
 			case 5:
 				cam.setAngle(180, {0,-1,0});
+
 				break;
 			default:
 				break;
 			}
 
-			cam.render(m_shader, models);
+			cam.render(shad, models);
+			
+			//Shader* shad = ResourceManager::getShader("Shaders/ShadowShader.vtsh", "Shaders/ShadowShader.frag");
+			//shad->enable();
+			//shad->sendUniform("depthMap", 0);
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, m_shadows[index][a]->getDepthHandle());
+			//FrameBuffer::drawFullScreenQuad();
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, GL_NONE);
+		FrameBuffer::disable();
 		}
 
-		m_shader->disable();
-		FrameBuffer::disable();
+		//m_shader->disable();
 	}
 	return m_shadows[index];
+}
+
+LightInfo LightSource::getLightInfo(unsigned index)
+{
+	return m_lights[index];
 }
 
 

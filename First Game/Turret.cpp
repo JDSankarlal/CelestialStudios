@@ -52,7 +52,8 @@ void Turret::update(float dt)
 		velocity.back().y = 0;
 		bulletTime = Time;
 		//timer.push_back(0);
-		AudioPlayer::createAudioStream("Audio/pew.wav");
+		std::string tag = "Turret Shots Fired" + std::to_string(bullets.size());
+		AudioPlayer::createAudioStream("Audio/pew.wav",tag);
 		AudioPlayer::play();
 	}
 

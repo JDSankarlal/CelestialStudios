@@ -76,7 +76,7 @@ void Tank::update(float dt)
 				shieldTime = time;
 				setTimeSinceLastShield(time);
 				//puts("Special Ability TANK");
-				AudioPlayer::createAudioStream("Audio/tankAbility.wav");
+				AudioPlayer::createAudioStream("Audio/tankAbility.wav","Tank Ability");
 				AudioPlayer::play();
 
 				tankShield = true;

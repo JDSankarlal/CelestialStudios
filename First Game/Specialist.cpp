@@ -166,7 +166,7 @@ void Specialist::update(float dt)
 			//pTurrets.back()->getTransformer().setScale(0.4f);
 			pTurrets.back()->setToRender(true);
 			//puts("Special Ability SPECIALIST");
-			AudioPlayer::createAudioStream("Audio/specialistAbility.wav");
+			AudioPlayer::createAudioStream("Audio/specialistAbility.wav","Specialist Ability");
 			EmGineAudioPlayer::setVolume(2);
 			AudioPlayer::play();
 			setTimeSinceLastTurret(time);

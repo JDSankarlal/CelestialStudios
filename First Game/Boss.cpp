@@ -405,7 +405,7 @@ bool Boss::hitByEnemy(Model* mod, float damage)
 
 	if (collision2D(this, mod))
 	{
-		AudioPlayer::createAudioStream("Audio/bossHit.wav");
+		AudioPlayer::createAudioStream("Audio/bossHit.wav","Boss Hit");
 		AudioPlayer::play();
 		setHealth(getHealth() - damage);
 		bossFlash = true;

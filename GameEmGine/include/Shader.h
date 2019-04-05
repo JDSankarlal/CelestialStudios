@@ -1,5 +1,6 @@
 #pragma once
 #include <GL\glew.h>
+#include <glm/glm.hpp>
 #include <string>
 #include <fstream>
 #include "Utilities.h"
@@ -33,6 +34,7 @@ public:
 	GLint getAttribLocation(const std::string attributeName);
 	GLint getUniformLocation(const char *uniform);
 
+	void sendUniform(const char*uniform, glm::mat4 val);
 	void sendUniform(const char*uniform, Coord3D val);
 	void sendUniform(const char*uniform,   float val);
 	void sendUniform(const char*uniform,     int val);

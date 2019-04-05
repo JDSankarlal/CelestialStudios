@@ -115,8 +115,6 @@ public:
 
 	static XinputDevice* getController(int m_index);
 
-	static void drawFullScreenQuad();
-
 	static Shader *m_modelShader,*m_postProcess, *m_forwardRender, *m_grayScalePost, *m_bloomHighPass, *m_blurHorizontal, *m_blurVertical, *m_blurrComposite,*m_sobel,*m_shadows;
 
 	static Texture2D* m_LUT;
@@ -129,7 +127,7 @@ private:
 	static void shaderInit();
 	static void calculateFPS();
 	static void fpsLimiter();
-	static void initFullScreenQuad();
+	
 
 	/*
 	static void InitOpenGlCallback ();
@@ -141,7 +139,6 @@ private:
 	static void(*m_compileShaders)();
 	static std::function<void()>m_buffer;
 	static std::function<void(double)> m_gameLoop;
-	static GLuint m_fsQuadVAO_ID, m_fsQuadVBO_ID;
 	static WindowCreator *m_window;
 	static ColourRGBA m_colour;
 	static Camera *m_mainCamera;
