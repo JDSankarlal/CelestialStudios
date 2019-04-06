@@ -56,7 +56,6 @@ void spotLight(int a)
 void directionalLight(int a)
 {
     vec3 colour = texture(uScene, texcoord).rgb; 
-
     vec3 normal = normalize(texture(uNorm,texcoord).rgb);
     vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
     float dist = length(lightVec);
@@ -64,7 +63,6 @@ void directionalLight(int a)
 	vec3 reflection = reflect(-direc,normal);
 	vec3 eye = normalize(- texture(uPos,texcoord).xyz);
 	float viewToRe = max(dot(eye,reflection),0.0);
-
     float NdotL = max(dot(normal, lightVec),0.0);
 
    
@@ -74,8 +72,6 @@ void directionalLight(int a)
       
     //Calculate diffuse contribution
 	outColor.rgb +=  max(NdotL, 0.0) *  LightDiffuse[a] * attenuation * colour;
-	//NdotL = NdotL * 0.5 + 0.5;
-    //outColor.rgb += LightDiffuse[a] * attenuation * texture(uRamp, vec2(NdotL, 0.5)).rgb;
     
     //Blinn-Phong half vector
     float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
@@ -83,13 +79,11 @@ void directionalLight(int a)
     //Calculate specular contribution
 	float spec = pow(max(viewToRe, 0.0), 16);
 	outColor.rgb +=  LightSpecular[a] * spec * attenuation * colour * LightSpecularExponent[a];
-    //outColor.rgb += LightSpecular[a] * texture(uRamp, vec2(viewToRe, 0.5)).rgb * attenuation;
 }
 
 void pointLight(int a)
 {
 	vec3 colour = texture(uScene, texcoord).rgb; 
-
     vec3 normal = normalize(texture(uNorm,texcoord).rgb);
     vec3 lightVec = LightPosition[a].xyz - texture(uPos,texcoord).xyz;
     float dist = length(lightVec);
@@ -97,18 +91,15 @@ void pointLight(int a)
 	vec3 reflection = reflect(-direc,normal);
 	vec3 eye = normalize(- texture(uPos,texcoord).xyz);
 	float viewToRe =  max(dot(eye,reflection),0.0);
-
     float NdotL = max(dot(normal, lightVec),0.0);
-
    
     //The light contributes to this surface
     //Calculate attenuation (falloff)
-    float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) + (Attenuation_Quadratic[a] * dist * dist));
+    float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) 
+								+ (Attenuation_Quadratic[a] * dist * dist));
       
     //Calculate diffuse contribution
 	outColor.rgb +=  max(NdotL, 0.0) *  LightDiffuse[a] * attenuation * colour;
-	//NdotL = NdotL * 0.5 + 0.5;
-    //outColor.rgb += LightDiffuse[a] * attenuation * texture(uRamp, vec2(NdotL, 0.5)).rgb;
     
     //Blinn-Phong half vector
     float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 

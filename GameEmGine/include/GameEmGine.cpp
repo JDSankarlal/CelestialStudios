@@ -60,16 +60,14 @@ GameEmGine::MessageCallback(GLenum source,
 
 Texture3D tmpLUT;
 Texture2D tmpRamp;
-std::string LUTpath;
 
 void GameEmGine::init(std::string name, int width, int height, int x, int y, int monitor, bool fullScreen, bool visable)
 {
 	createNewWindow(name, width, height, x, y, monitor, fullScreen, visable);
 
-	LUTpath = "Texture/IWLTBAP_Aspen_-_Standard.cube";
 	/////////////////////////////////////Bind Custom 3D Texture////////////////////////////////////////////
 
-	tmpLUT = ResourceManager::getTexture3D(LUTpath.c_str());
+	tmpLUT = ResourceManager::getTexture3D("Texture/IWLTBAP_Aspen_-_Standard.cube");
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -643,7 +641,7 @@ void GameEmGine::update()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_greyscaleBuffer->getColorHandle(0));
 	glActiveTexture(GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_3D, ResourceManager::getTexture3D(LUTpath.c_str()).id);
+	glBindTexture(GL_TEXTURE_3D, tmpLUT.id);
 
 	FrameBuffer::drawFullScreenQuad();
 

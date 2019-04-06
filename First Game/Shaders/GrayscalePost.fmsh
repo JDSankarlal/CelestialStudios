@@ -5,7 +5,7 @@ uniform float uTime=0;
 //3D texture
 layout(binding = 6) uniform sampler3D customTexure;
 uniform int lutSize;
-uniform int lutActive;
+uniform bool lutActive;
 
 in vec2 texcoord;
 
@@ -22,7 +22,7 @@ void main()
 
 	outColour = source;
 
-	if(lutActive == 1)
+	if(lutActive)
 	{
 		outColour = vec4(mix(source.rgb,vec3(luminance, luminance, luminance),uTime), 1);
 		vec3 scale = vec3((lutSize - 1.0) / lutSize);
