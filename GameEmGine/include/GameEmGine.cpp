@@ -430,9 +430,6 @@ void GameEmGine::update()
 	m_mainCamera->update();
 
 
-	//if(m_render != nullptr)
-	//	m_render();
-
 	if(m_mainCamera->getTransformer().isUpdated())
 	{
 		m_modelShader->enable();
@@ -451,22 +448,13 @@ void GameEmGine::update()
 	LightSource::update();
 
 
-	///~ model sorting ~///
-	//std::sort(m_models.begin(), m_models.end(), [&](Model * a, Model * b)->bool
-	//	{
-	//		return (m_mainCamera->getPosition() - a->getTransformer().getPosition()).distance() >= (m_mainCamera->getPosition() - b->getTransformer().getPosition()).distance();
-	//	}
-	//);
-
 	glViewport(0, 0, getWindowWidth(), getWindowHeight());
 
-	///~ 3D-Graphics 1 ~///
-	std::vector<Model*> transparent;
-	m_frameBuffers["Main Buffer"]->enable();
+	m_mainFrameBuffer->enable();
 	m_mainCamera->render(m_modelShader, m_models, false);
 
 
-	m_frameBuffers["Main Buffer"]->disable();
+	m_mainFrameBuffer->disable();
 
 	//store data for post process
 	m_postBuffer->enable();
@@ -505,63 +493,18 @@ void GameEmGine::update()
 	m_postBuffer->disable();
 	
 	
-	m_mainFrameBuffer->moveDepthToBuffer(getWindowWidth(), getWindowHeight(),m_postBuffer->getFrameBufferID());
-	
+	m_mainFrameBuffer->moveDepthToBuffer(getWindowWidth(), getWindowHeight(),m_postBuffer->getFrameBufferID());	
 	m_postBuffer->enable();
+
 	LightSource::setShader(m_forwardRender);
 	LightSource::update();
 	m_mainCamera->render(m_forwardRender, m_models, true);
 
 	m_postBuffer->disable();
-	//for(int a = 0; a < (int)LightSource::size(); a++)
-	//{
-	//	std::vector<FrameBuffer*>shadowBuffer = LightSource::shadowBuffers(getWindowWidth(), getWindowHeight(), m_models, 0);
-	//
-	//	m_shadowBuffer->enable();
-	//	m_postProcess->enable();
-	//	for(auto &b : shadowBuffer)
-	//	{
-	//
-	//		//bind textures
-	//		glActiveTexture(GL_TEXTURE0);
-	//		glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(0));
-	//		glActiveTexture(GL_TEXTURE1);
-	//		glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(1));
-	//		glActiveTexture(GL_TEXTURE2);
-	//		glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getColorHandle(2));
-	//		glActiveTexture(GL_TEXTURE3);
-	//		glBindTexture(GL_TEXTURE_2D, b->getDepthHandle());
-	//
-	//		m_postProcess->sendUniform("uPos", 0);
-	//		m_postProcess->sendUniform("uNorm", 1);
-	//		m_postProcess->sendUniform("uScene", 2);
-	//		m_postProcess->sendUniform("shadowMap", 3);
-	//		glm::mat4 tmpMat = m_mainCamera->getProjectionMatrix() *  glm::lookAt(LightSource::getLightInfo(a).position.toVec3(),
-	//			glm::vec3(0.0f, 0.0f, 0.0f),
-	//			glm::vec3(0.0f, 1.0f, 0.0f));
-	//		m_postProcess->sendUniform("lightSpaceMatrix", tmpMat);
-	//
-	//		FrameBuffer::drawFullScreenQuad();
-	//
-	//		//un-bind textures
-	//		glActiveTexture(GL_TEXTURE3);
-	//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	//		glActiveTexture(GL_TEXTURE2);
-	//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	//		glActiveTexture(GL_TEXTURE1);
-	//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	//		glActiveTexture(GL_TEXTURE0);
-	//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	//
-	//	}
-	//	m_postProcess->disable();
-	//	m_shadowBuffer->disable();
-	//
-	//}
-
+	
 	glViewport(0, 0, getWindowWidth() / SCREEN_RATIO, getWindowHeight() / SCREEN_RATIO);
 
-	//binds the initial bloom affect to buffer 1
+	//binds the initial high pass to buffer 1
 	m_buffer1->enable();
 	m_bloomHighPass->enable();
 
@@ -596,8 +539,8 @@ void GameEmGine::update()
 
 		m_buffer1->enable();
 		m_blurVertical->enable();
-		m_blurHorizontal->sendUniform("uTex", 0);
-		m_blurHorizontal->sendUniform("uPixleSize", 1.0f / getWindowWidth());
+		m_blurVertical->sendUniform("uTex", 0);
+		m_blurVertical->sendUniform("uPixleSize", 1.0f / getWindowWidth());
 		glBindTexture(GL_TEXTURE_2D, m_buffer2->getColorHandle(0));
 		FrameBuffer::drawFullScreenQuad();
 
@@ -629,8 +572,6 @@ void GameEmGine::update()
 	m_greyscaleBuffer->disable();
 
 
-
-
 	//3D look up table being applied
 	m_grayScalePost->enable();
 
@@ -653,36 +594,6 @@ void GameEmGine::update()
 	glBindTexture(GL_TEXTURE_3D, GL_NONE);
 
 	m_grayScalePost->disable();
-
-	
-
-	
-
-
-	//m_greyscaleBuffer->clear();
-	//m_greyscaleBuffer->takeFromBackBufferColour(getWindowWidth(), getWindowHeight());
-
-	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-
-	//m_blurrComposite->enable();
-	//
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, m_greyscaleBuffer->getColorHandle(0));//normal map
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, m_mainFrameBuffer->getDepthHandle());
-	//
-	//m_blurrComposite->sendUniform("uScene", 0);
-	//m_blurrComposite->sendUniform("uBloom", 1);
-	//
-	//drawFullScreenQuad();
-	//
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, GL_NONE);
-	//glActiveTexture(GL_TEXTURE6);
-	//glBindTexture(GL_TEXTURE_3D, GL_NONE);
-	//
-	//m_blurrComposite->enable();
 
 
 	if(m_gameLoop != nullptr)
@@ -711,17 +622,17 @@ void GameEmGine::changeViewport(GLFWwindow*, int w, int h)
 	glfwGetFramebufferSize(m_window->getWindow(), &w, &h);
 	m_mainCamera->init({(float)w,(float)h,500.f}, m_mainCamera->getType());
 
-	//m_frameBuffers["Main Buffer"]->resizeDepth(w2, h2);
-	//m_frameBuffers["Main Buffer"]->resizeColour(0, w2, h2);
-	//
-	//m_postBuffer->resizeColour(0, w2, h2);
-	//m_greyscaleBuffer->resizeColour(0, w2, h2);
-	//
-	////m_buffer1->resizeDepth(w / SCREEN_RATIO, h / SCREEN_RATIO);
-	//m_buffer1->resizeColour(0, unsigned(w2 / SCREEN_RATIO), unsigned(h2 / SCREEN_RATIO));
-	//
-	////m_buffer2->resizeDepth(w / SCREEN_RATIO, h / SCREEN_RATIO);
-	//m_buffer2->resizeColour(0, unsigned(w2 / SCREEN_RATIO), unsigned(h2 / SCREEN_RATIO));
+	m_mainFrameBuffer->resizeDepth(w, h);
+	m_mainFrameBuffer->resizeColour(0, w, h);
+	
+	m_postBuffer->resizeColour(0, w, h);
+	m_greyscaleBuffer->resizeColour(0, w, h);
+	
+	//m_buffer1->resizeDepth(w / SCREEN_RATIO, h / SCREEN_RATIO);
+	m_buffer1->resizeColour(0, unsigned((float)w / SCREEN_RATIO), unsigned((float)h / SCREEN_RATIO));
+	
+	//m_buffer2->resizeDepth(w / SCREEN_RATIO, h / SCREEN_RATIO);
+	m_buffer2->resizeColour(0, unsigned((float)w / SCREEN_RATIO), unsigned((float)h / SCREEN_RATIO));
 
 
 	//glFrustum(0, w, 0, h, 0, h);//eye view

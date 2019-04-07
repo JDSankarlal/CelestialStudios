@@ -24,10 +24,10 @@ void main()
 
 	if(lutActive == 1)
 	{
-		outColour = vec4(mix(source.rgb,vec3(luminance, luminance, luminance),uTime), 1);
 		vec3 scale = vec3((lutSize - 1.0) / lutSize);
 		vec3 offset = vec3(1.0/2.0*lutSize);
-		outColour.rgb = texture(customTexure, outColour.rgb * scale + offset).rgb;
+		source.rgb = texture(customTexure, outColour.rgb * scale + offset).rgb;
 	}
+	outColour = vec4(mix(source.rgb,vec3(luminance, luminance, luminance),uTime), 1);
 
 }

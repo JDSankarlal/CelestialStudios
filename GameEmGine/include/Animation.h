@@ -15,14 +15,14 @@ public:
 	void addFrame(Mesh* frame, float speed = 1);
 	void addDir(const char * dir );
 	
-	//gets a speed in seconds
+	//setts the delay between the animations
 	void setAnimationSpeed(float speed);
 
 	void update(Shader* shader,Mesh* mesh);
 	
 	int getFrameNumber();
 
-	bool checkEnd();
+	bool hasEnded();
 
 	bool checkPlay();
 
@@ -40,6 +40,6 @@ private:
 	std::vector<std::vector< std::pair<std::string, std::vector<Vertex3D>>>> m_unpackedData;
 	bool init=false;
 	float m_speed,m_lastTime,m_time;
-	unsigned m_frame=0;
+	unsigned m_frame = 0, m_frameNext;
 };
 

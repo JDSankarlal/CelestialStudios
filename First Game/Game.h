@@ -191,18 +191,7 @@ public:
 		mod[8] = new Boss("Models/BOSS/missleShoot/BMS1.obj");
 		GameEmGine::addModel(mod[8]); //8
 
-		//Boss Animation
-		static Animation missleShoot, laserPoint, slam;
-		missleShoot.addDir("Models/BOSS/missleShoot/");
-		laserPoint.addDir("Models/BOSS/laserPoint/");
-		slam.addDir("Models/BOSS/slam/");
-		mod[8]->addAnimation("missleShoot", &missleShoot);
-		mod[8]->addAnimation("laserPoint", &laserPoint);
-		mod[8]->addAnimation("slam", &slam);
-		mod[8]->setAnimation("missleShoot");
-		missleShoot.setAnimationSpeed(0.3f);
-		missleShoot.repeat(true);
-		mod[8]->getAnimation("missleShoot")->play();
+
 
 		//Floor
 		mod[9] = (new Model("Models/Floor/Floor.obj"));
@@ -699,7 +688,7 @@ public:
 		LightSource::setSceneAmbient({255,255,255,255});
 
 		/// - Set Camera  - ///
-
+	//	mod[130]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
 		GameEmGine::setCameraPosition({0,15.5f,-17.5});
 		GameEmGine::setCameraAngle(-25, {1,0,0});
 
@@ -749,33 +738,19 @@ public:
 		LightSource::setParent(((Boss*)mod[8])->getMissials()[3], 13);
 
 
-		//Time
-		static float  time = 0;
-		time += (float)dt; //Add Delta Time to Time
-		static float deathCounter;
 
-		//static float coolDown = 0;
-		static bool f = true;
+
+		time += (float)dt; //Add Delta Time to Time
 
 		float move = .1f;
-
-		static float pointSize = 50.0f;
-		static Player* player;
+		Player* player;
 
 		// Boss Variables
-		static Boss* CandyMan = (Boss*)mod[8]; //Set model 8 as Boss called "CandyMan"
-		static vector<float>minionSize;
-		static int minionSort;
+		Boss* CandyMan = (Boss*)mod[8]; //Set model 8 as Boss called "CandyMan"
 
-		//Train Variables
-		static float trainTimer = 0; //Determines when train comes and goes
-		static vector<float> timer[4];
-		static bool countdown = true;
 
 		Model* count;
-		static Model* nums[3]{new Model("Models/COUNTDOWN/3cd.obj"),new Model("Models/COUNTDOWN/2cd.obj"),new Model("Models/COUNTDOWN/1cd.obj")};
-		static float countdownTimer;
-		static int countdownCounter;
+
 
 		///~ countdown stuff ~///
 		if(countdown)
@@ -786,17 +761,16 @@ public:
 				player = (Player*)mod[a];
 				player->setActive(false);
 			}
-			static bool init;
 
 			count = nums[countdownCounter];
 
-			if(!init)
+			if(!m_init)
 			{
 				countdownTimer = time;
 				count->getTransformer().setRotation({-25, 0, 0});
 				count->setTransparent(true);
 				GameEmGine::addModel(count);
-				init = true;
+				m_init = true;
 			}
 
 			count->getTransformer().setPosition(lerp(-GameEmGine::getMainCamera()->getPosition() + Coord3D{0,-5,7}, -GameEmGine::getMainCamera()->getPosition() - Coord3D{0,1,0}, (time - countdownTimer) / 3.5f));
@@ -804,7 +778,7 @@ public:
 			if(int((time - countdownTimer) / 2))
 			{
 				GameEmGine::removeModel(count);
-				init = false;
+				m_init = false;
 				countdownCounter++;
 				if(countdownCounter == 3)
 				{
@@ -824,23 +798,20 @@ public:
 		CandyMan->update((float)dt);
 
 		//add mod for pause screen here but set render to false 
-
-
 		for(int a = 0; a < 4; a++)
 		{
 
 			player = (Player*)mod[a];
-			if(!player->dead)
-				player->setPlayerIndex(a);
+			player->setPlayerIndex(a);
+
 			static bool pausedAgain[4] = {0,0,0,0};
-			//static bool pauseScreen[4] = { 0,0,0,0 }; 
+
 			if(GameEmGine::isControllerConnected(a))
 			{
 				/// - Game Over - ///
 				if(gameOver)
 				{
 					//pausedAgain[a] = true;
-					//static bool paused = false;
 					for(int b = 0; b < 4; b++)
 						((Player*)mod[b])->setActive(pause);
 
@@ -852,6 +823,8 @@ public:
 						EmGineAudioPlayer::setVolume(0.6f, 0);
 
 					mod[130]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
+					mod[130]->getTransformer().setPosition(GameEmGine::getMainCamera()->getTransformer().getPosition() + Coord3D{-0.8f, -5.5f, 8.5f}); //should be parallel to camera hopefully 
+
 					mod[130]->setToRender(!pause);
 					CandyMan->setActive(pause);
 
@@ -885,7 +858,6 @@ public:
 				if(gameWin)
 				{
 					//pausedAgain[a] = true;
-					//static bool paused = false;
 					for(int b = 0; b < 4; b++)
 						((Player*)mod[b])->setActive(pause);
 
@@ -924,12 +896,9 @@ public:
 				}
 
 				//music should slow down in the pause menu!!!!
-				//pause = !pause;
-				//screenPause = !screenPause;
 				if(GameEmGine::getController(a)->isButtonPressed(CONTROLLER_START) && !pausedAgain[a])
 				{
 					pausedAgain[a] = true;
-					//static bool paused = false;
 					for(int b = 0; b < 4; b++)
 						((Player*)mod[b])->setActive(pause);
 
@@ -986,18 +955,10 @@ public:
 					minion->setHealth(minion->getHealth() - 10);
 				if(player->collision2D(minion))
 				{
-					player->hitByEnemy(minion,5);
+					player->hitByEnemy(minion, 5);
 					player->getTransformer().translateBy(minion->moveTo * 3);
 				}
 			}
-			///for (int i = 1; i < CandyMan->minions.size(); i++)
-			///{
-			///	//Coord3D::distance(((Specialist*)player)->pTurrets[0]->getTransformer().getPosition(), CandyMan->minions[i]->getTransformer().getPosition());
-			///	minionSize.push_back(Coord3D::distance(((Specialist*)player)->pTurrets[0]->getTransformer().getPosition(), CandyMan->minions[i]->getTransformer().getPosition()));
-			///	//((Specialist*)player)->pTurrets[0]->
-			///	//some vector pushback all distances
-			///	//int index = CandyMan->minions.size();
-			///}<hello comment new type thing wtf> but not here lol
 
 			if(player->type == specialist)
 				if(!((Specialist*)player)->pTurrets.empty())
@@ -1079,39 +1040,9 @@ public:
 		}
 
 
-		static bool trainInit = false;
+
 
 		/// - Train Car Movement - ///
-
-		//for(int t = 0; t < 7; t++)
-		//{
-		//	if(time - trainTimer < 10)
-		//	{
-		//		
-		//	}
-		//	else if(time - trainTimer < 13)
-		//	{
-		//		mod[79 + t]->getTransformer().translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
-		//
-		//	}else if(time - trainTimer < 20)
-		//	{
-		//
-		//	}
-		//	else if(time - trainTimer < 23)
-		//	{
-		//		mod[79 + t]->getTransformer().translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
-		//
-		//	}
-		//
-		//	if(collision2D(mod[79 + t], player))
-		//	{
-		//
-		//
-		//	}
-		//}
-
-
-
 		//Train Sits in middle of map
 		if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
 		{
@@ -1135,7 +1066,6 @@ public:
 			}
 			trainInit = false;
 		}
-
 		//Train Moves off map
 		else if(10 <= (time - trainTimer) && 13 > (time - trainTimer))
 		{
@@ -1200,7 +1130,6 @@ public:
 			}
 			trainInit = false;
 		}
-
 		//Train moves back onto map
 		else if(30 <= (time - trainTimer) && 37 > (time - trainTimer))
 		{
@@ -1224,7 +1153,6 @@ public:
 			}
 			trainInit = false;
 		}
-
 		// Tunnel starts blinking 
 		else if(37 <= (time - trainTimer) && 37.5f > (time - trainTimer))
 		{
@@ -1349,7 +1277,6 @@ public:
 			}
 			trainInit = false;
 		}
-
 		//Train stops on map
 		else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
 		{
@@ -1376,28 +1303,6 @@ public:
 		}
 
 
-		////Check if Train close to map
-		//if((mod[79]->getTransformer().getPosition().x - mod[99]->getTransformer().getPosition().x) > 60.0f)
-		//{
-		//	for(int i = 99; i <= 105; i++)
-		//	{
-		//		mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
-		//		audio.createAudioStream("Audio/RailOff.wav");
-		//		audio.play();
-		//	}
-		//}
-		//else
-		//{
-		//	for(int i = 99; i <= 105; i++)
-		//	{
-		//		audio.createAudioStream("Audio/RailOn.wav");
-		//		audio.play();
-		//		mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
-		//	}
-		//}
-
-
-		/// - If game not m_active and Camera is m_active (Move camera mode) - ///
 		if(!pause)
 		{
 			CandyMan->setActive(true);
@@ -1405,16 +1310,19 @@ public:
 				((Player*)mod[a])->setActive(true);
 		}
 
+		/// - If game not m_active and Camera is m_active (Move camera mode) - ///
 		if(!movePlayer)
+		{
+			for(int a = 0; a < 4; a++)
+				((Player*)mod[a])->setActive(false);
+
+			CandyMan->setActive(false);
+			deathCounter = 0;
+
 			if(GameEmGine::isControllerConnected(0))
 			{
-				for(int a = 0; a < 4; a++)
-					((Player*)mod[a])->setActive(false);
 
-				CandyMan->setActive(false);
-
-				XinputController * p1 = (XinputController*)GameEmGine::getController(0);
-				deathCounter = 0;
+				XinputController* p1 = (XinputController*)GameEmGine::getController(0);
 
 				//move camera
 				move *= 2;
@@ -1426,10 +1334,11 @@ public:
 				GameEmGine::moveCameraPositionBy({0 ,p1->getTriggers().RT * move,0});//move out
 				move /= 2;
 			}
-
+		}
 		GameEmGine::m_grayScalePost->enable();
 		glUniform1f(GameEmGine::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
 		GameEmGine::m_grayScalePost->disable();
+
 		if(deathCounter)
 			gameOver = true;
 		deathCounter += .01f;
@@ -1437,6 +1346,9 @@ public:
 	}
 
 private:
+	bool m_init = false;
+
+
 	std::vector<Model*> mod;
 	bool fadein = true;
 	bool fadeout = false;
@@ -1454,4 +1366,20 @@ private:
 	bool gameOver = false;
 	bool gameWin = false;
 	bool screenPause = false;
+
+	//Time
+	float  time = 0;
+	float deathCounter = 0;
+
+	//Train Variables
+	float trainTimer = 0; //Determines when train comes and goes
+	vector<float> timer[4];
+
+	//Countdown Variables
+	Model* nums[3]{new Model("Models/COUNTDOWN/3cd.obj"),new Model("Models/COUNTDOWN/2cd.obj"),new Model("Models/COUNTDOWN/1cd.obj")};
+	float countdownTimer = 0;
+	int countdownCounter = 0;
+	bool countdown = true;
+
+	bool trainInit = false;
 };

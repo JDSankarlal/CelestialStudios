@@ -57,7 +57,7 @@ void cDir(char* dir)
 std::string substr(const char* str, const char* find)
 {
 	char tmp[CHAR_BUFF_SIZE];
-	unsigned count = strlen(str);
+	unsigned count = (unsigned)strlen(str);
 	for(; count >= 0; --count)
 		if(strstr(str + count, find))
 			break;

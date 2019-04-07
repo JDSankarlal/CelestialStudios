@@ -36,10 +36,8 @@ Texture2D ImageLoader::loadImage2D(const char * path)
 Texture3D ImageLoader::loadImage3D(const char * LUTpath)
 {
 	Texture3D texture;
-	/////////////////////////////////////Bind Custom 3D Texture////////////////////////////////////////////
 	std::vector<Coord3D> LUT{};
-	//std::string LUTpath = "";
-
+	
 	//LUTpath = "Texture/CUSTOM.cube";
 	std::ifstream LUTfile2(LUTpath);
 

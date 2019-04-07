@@ -55,6 +55,8 @@ public:
 	bool isScaleUpdated();
 	bool isRotationUpdated();
 	bool isTranslatinUpdated();
+
+	void addChild(Transformer* child);
 private:
 	Coord3D m_posData, m_rotData, m_scaleData;
 	glm::vec3 m_forward = {0,0,1}, m_up{0,1,0}, m_right{1,0,0};
@@ -63,9 +65,11 @@ private:
 		m_rotate,
 		m_scale;
 
+	std::vector<Transformer* >m_child;
+	Transformer* m_parent;
 	bool  m_updatedRot = true,
-		m_updatedTrans= true,
-		m_updatedScale= true;
+		m_updatedTrans = true,
+		m_updatedScale = true;
 
 };
 

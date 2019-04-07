@@ -131,7 +131,8 @@ void Model::render(Shader& shader, glm::mat4& cam)
 		glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &(([&]()->glm::mat4
 			{
 				glm::mat4 tmp(1);
-				Model* parent = m_parent; while(parent)
+				Model* parent = m_parent; 
+				while(parent)
 				{
 					tmp = parent->getTransformer().getTransformation() * tmp;
 					parent = parent->m_parent;
@@ -200,6 +201,7 @@ void Model::addChild(Model * child)
 {
 	m_children.push_back(child);
 	m_children.back()->m_parent = this;
+	//m_transform.addChild(&child->m_transform);
 }
 
 void Model::setColour(float r, float g, float b, float a)

@@ -43,7 +43,9 @@ void Animation::addDir(const char * dir)
 
 void Animation::update(Shader* shader, Mesh* mesh)
 {
-	float time = (float)clock() / CLOCKS_PER_SEC;
+	float time;
+	
+	time = (float)clock() / CLOCKS_PER_SEC;
 
 	if(!init)
 	{
@@ -59,16 +61,16 @@ void Animation::update(Shader* shader, Mesh* mesh)
 				if(m_repeat)
 				{
 					m_frame = int(time / m_speed) % m_unpackedData.size();
-					mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[(m_frame + 1) % m_unpackedData.size()]);
+					mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frameNext = (m_frame + 1) % m_unpackedData.size()]);
 				} else
 				{
 					m_frame = int(time / m_speed);
 					m_frame = m_frame >= m_unpackedData.size() - 1 ? unsigned((m_unpackedData.size() - 2) % m_unpackedData.size() ): m_frame;
 
 					if(m_frame < m_unpackedData.size() - 2)
-						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[(m_frame + 1) % m_unpackedData.size()]);
+						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frameNext = (m_frame + 1) % m_unpackedData.size()]);
 					else
-						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frame]);
+						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frameNext = m_frame]);
 				}
 
 			}
@@ -78,8 +80,12 @@ void Animation::update(Shader* shader, Mesh* mesh)
 			if((time = (time - m_lastTime)) >= m_speed)
 			{
 				if(m_pause)
+				{
 					mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frame]);
+					m_lastTime = time;
+				}
 				else
+					if(m_stop)
 				{
 					mesh->editVerts(m_unpackedData[0], m_unpackedData[0]);
 					m_lastTime = time;
@@ -98,9 +104,9 @@ int Animation::getFrameNumber()
 	return m_frame;
 }
 
-bool Animation::checkEnd()
+bool Animation::hasEnded()
 {
-	return m_frame == m_frames.size();
+	return m_frame == m_frames.size()&& !m_repeat;
 }
 
 bool Animation::checkPlay()

@@ -114,14 +114,15 @@ void pointLight(int a)
     float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
         
     //Calculate specular contribution
-	if(toonActive)
+	float spec = pow(max(viewToRe, 0.0), 16);
+	
+    if(toonActive)
 	{
-		outColor.rgb += LightSpecular[a] * texture(uRamp, vec2(viewToRe, 0.5)).rgb * attenuation;
+		outColor.rgb += LightSpecular[a] * spec * attenuation * texture(uRamp, vec2(viewToRe, 0.5)).rgb ;
 	}
 	else
 	{
-		float spec = pow(max(viewToRe, 0.0), 16);
-		outColor.rgb +=  LightSpecular[a] * spec * attenuation * colour;
+		outColor.rgb += LightSpecular[a] * spec * colour * attenuation ;
 	}
 }
 

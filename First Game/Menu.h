@@ -29,7 +29,7 @@ public:
 		lerpParam = 1;
 		option = 1;
 
-
+	
 
 		GameEmGine::m_modelShader->sendUniform("darken", false);
 
@@ -77,6 +77,10 @@ public:
 	// doing the update for menu screenb
 	void updateMenu()
 	{
+		GameEmGine::m_grayScalePost->enable();
+		GameEmGine::m_grayScalePost->sendUniform("uTime", 0);
+		GameEmGine::m_grayScalePost->disable();
+
 		static bool menuMoved[] = {false,false,false,false};
 
 		if(fadein)

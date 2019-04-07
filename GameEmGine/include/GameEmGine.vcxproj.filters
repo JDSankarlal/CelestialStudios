@@ -58,13 +58,9 @@
     <ClInclude Include="Physics3D.h">
       <Filter>EmGine</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderCombiner.h">
-      <Filter>EmGine</Filter>
-    </ClInclude>
     <ClInclude Include="ExtraMath.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="Utilities.h">
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
@@ -76,6 +72,12 @@
     </ClInclude>
     <ClInclude Include="XinputManager.h">
       <Filter>EmGine\Resource Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderCombiner.h">
+      <Filter>EmGine\Shader Stuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -133,14 +135,14 @@
     <ClCompile Include="Physics3D.cpp">
       <Filter>EmGine</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderCombiner.cpp">
-      <Filter>EmGine</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
     <ClCompile Include="XinputManager.cpp">
       <Filter>EmGine\Resource Management</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderCombiner.cpp">
+      <Filter>EmGine\Shader Stuff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

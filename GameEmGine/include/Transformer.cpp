@@ -27,6 +27,8 @@ void Transformer::setRotation(Coord3D angles)
 
 	m_updatedRot = true;
 	m_rotate = glm::mat4(1);
+	if(m_parent)
+		m_rotate = m_parent->m_rotate;
 	if(m_forward.length())
 	{
 		m_rotate *= Quat::quatRotationMat(glm::radians(angles.z),m_forward);
@@ -190,4 +192,10 @@ bool Transformer::isRotationUpdated()
 bool Transformer::isTranslatinUpdated()
 {
 	return m_updatedTrans;
+}
+
+void Transformer::addChild(Transformer* child)
+{
+	m_child.push_back(child);
+	child->m_parent = this;
 }
