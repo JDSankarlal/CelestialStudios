@@ -1,123 +1,169 @@
 #include "InputManager.h"
 
 #pragma region Static Variables
-std::function<void(int)>
-InputManager::m_controllerConneced,
-InputManager::m_controllerDisconnected;
+//std::function<void(int)>
+//InputManager::m_controllerConneced,
+//InputManager::m_controllerDisconnected;
+
+std::unordered_map<int, bool> InputManager::m_keyStroke, InputManager::m_keyState;
+std::unordered_map<MouseButton, bool> InputManager::m_mouseStroke, InputManager::m_mouseState;
+
+Coord2D<float> InputManager::m_mousePos;
+
 std::function<void(int, int)>
-InputManager::_keyUp,
-InputManager::_keyInitDown,
-InputManager::_mouseButtonPress,
-InputManager::_mouseButtonRelease,
-InputManager::m_controllerConnection;
+InputManager::m_keyUp,
+InputManager::m_keyInitDown,
+InputManager::m_keyHeldDown,
+InputManager::m_mouseButtonPress,
+InputManager::m_mouseButtonRelease;
+
+std::function<void(double, double)>
+InputManager::m_mousePosition;
+
 std::function<void(int, int, int)>
-InputManager::_keyAll,
-InputManager::_mouseButtonAll;
+InputManager::m_keyAll,
+InputManager::m_mouseButtonAll;
 #pragma endregion
 
-InputManager::InputManager()
+void InputManager::init()
 {
 	glfwInit();
 	glfwSetKeyCallback(glfwGetCurrentContext(), keyUpdate);
 	glfwSetMouseButtonCallback(glfwGetCurrentContext(), mouseButtonUpdate);
+	glfwSetCursorPosCallback(glfwGetCurrentContext(), mousePositionUpdate);
 	//glfwSetJoystickCallback(xinputConnectionUpdate);
 }
 
-InputManager::~InputManager()
-{}
-
-void InputManager::mouseButtonPressCallback(std::function<void(int, int)>mouseButton)
+void InputManager::mouseButtonPressedCallback(std::function<void(int, int)>mouseButton)
 {
-	_mouseButtonPress = mouseButton;
+	m_mouseButtonPress = mouseButton;
 }
 
-void InputManager::mouseButtonReleaseCallback(std::function<void(int, int)>mouseButton)
+void InputManager::mouseButtonReleasedCallback(std::function<void(int, int)>mouseButton)
 {
-	_mouseButtonRelease = mouseButton;
+	m_mouseButtonRelease = mouseButton;
 }
 
-void InputManager::mouseButtonUpdate(GLFWwindow *, int button, int state, int mods)
+void InputManager::mouseButtonUpdate(GLFWwindow*, int button, int state, int mods)
 {
-	if(_mouseButtonAll != nullptr)
-		_mouseButtonAll(state, button, mods);
+	if(m_mouseButtonAll != nullptr)
+		m_mouseButtonAll(state, button, mods);
 
 	if(state == MOUSE_PRESSED)
-		if(_mouseButtonPress != nullptr)
-			_mouseButtonPress(button, mods);
+	{
+		if(m_mouseButtonPress != nullptr)
+			m_mouseButtonPress(button, mods);
+
+		m_mouseState[MouseButton(button)] = true;
+	}
 	if(state == MOUSE_RELEASED)
-		if(_mouseButtonRelease != nullptr)
-			_mouseButtonRelease(button, mods);
+	{
+		if(m_mouseButtonRelease != nullptr)
+			m_mouseButtonRelease(button, mods);
+
+		m_mouseState[MouseButton(button)] = !(m_mouseStroke[MouseButton(button)] = true);
+	}
 }
 
-void InputManager::keyUpdate(GLFWwindow *, int key, int scancode, int state, int mods)
+void InputManager::mousePositionUpdate(GLFWwindow*, double x, double y)
+{
+	x, y;
+}
+
+void InputManager::keyUpdate(GLFWwindow*, int key, int scancode, int state, int mods)
 {
 	scancode;
-	if(_keyAll != nullptr)
-		_keyAll(state, key, mods);
+	if(m_keyAll != nullptr)
+		m_keyAll(state, key, mods);
 
 	if(state == KEY_PRESSED)  //Key has been pressed initially
-		if(_keyInitDown != nullptr)
-			_keyInitDown(key, mods);
+	{
+		if(m_keyInitDown != nullptr)
+			m_keyInitDown(key, mods);
+
+		m_keyState[key] = true;
+	}
+	if(state == KEY_HELD)
+		if(m_keyHeldDown != nullptr)
+			m_keyHeldDown(key, mods);
+
 	if(state == KEY_RELEASED) //more of a stroke since release is only called if a key is pressed then released
-		if(_keyUp != nullptr)
-			_keyUp(key, mods);
+	{
+		if(m_keyUp != nullptr)
+			m_keyUp(key, mods);
+
+		m_keyState[key] = !(m_keyStroke[key] = true);
+	}
 }
 
-void InputManager::xinputConnectionUpdate(int controller, int connected)
-{
-	controllerUpdate();
-	if(m_controllerConnection != nullptr)
-		m_controllerConnection(controller, connected);
-
-	if(m_controllerConneced != nullptr)
-		if(connected == GLFW_CONNECTED)
-			m_controllerConneced(controller);
-
-	if(m_controllerDisconnected != nullptr)
-		if(connected == GLFW_DISCONNECTED)
-			m_controllerDisconnected(controller);
-}
+//void InputManager::xinputConnectionUpdate(int controller, int connected)
+//{
+//	controllerUpdate();
+//	if(m_controllerConnection != nullptr)
+//		m_controllerConnection(controller, connected);
+//
+//	if(m_controllerConneced != nullptr)
+//		if(connected == GLFW_CONNECTED)
+//			m_controllerConneced(controller);
+//
+//	if(m_controllerDisconnected != nullptr)
+//		if(connected == GLFW_DISCONNECTED)
+//			m_controllerDisconnected(controller);
+//}
 
 void InputManager::mouseButtonAllCallback(std::function<void(int, int, int)>mouseButton)
 {
-	_mouseButtonAll = mouseButton;
+	m_mouseButtonAll = mouseButton;
 }
 
-Coord2D InputManager::getMouseCursorPosition()
+bool InputManager::mouseDown(MouseButton button)
 {
-	double x, y;
-	glfwGetCursorPos(glfwGetCurrentContext(), &x, &y);
-	return {(float)x,(float)y};
+	return m_mouseState[button];
 }
 
-void InputManager::keyPressedCallback(std::function<void(int, int)>key)
+bool InputManager::mouseUp(MouseButton button)
 {
-	_keyInitDown = key;
+	return	!m_mouseState[button];
 }
 
-void InputManager::keyReleasedCallback(std::function<void(int, int)>key)
+bool InputManager::mouseStroke(MouseButton button)
 {
-	_keyUp = key;
+	return m_mouseStroke[button];
 }
 
-void InputManager::keyAllCallback(std::function<void(int, int, int)>key)
+Coord2D<float> InputManager::getMousePosition()
 {
-	_keyAll = key;
+	return m_mousePos;
 }
 
-void InputManager::controllerConnectedCallback(std::function<void(int)>controllerConnection)
+void InputManager::setKeyPressedCallback(std::function<void(int, int)>key)
 {
-	m_controllerConneced = controllerConnection;
+	m_keyInitDown = key;
 }
 
-void InputManager::controllerDisconnectedCallback(std::function<void(int)>controllerConnection)
+void InputManager::setKeyReleasedCallback(std::function<void(int, int)>key)
 {
-	m_controllerDisconnected = controllerConnection;
+	m_keyUp = key;
 }
 
-void InputManager::controllerAllConnectionCallback(std::function<void(int, int)>connected)
+void InputManager::setKeyAllCallback(std::function<void(int, int, int)>key)
 {
-	m_controllerConnection = connected;
+	m_keyAll = key;
+}
+
+bool InputManager::keyDown(int key)
+{
+	return m_keyState[key];
+}
+
+bool InputManager::keyUp(int key)
+{
+	return !m_keyState[key];
+}
+
+bool InputManager::keyStroke(int key)
+{
+	return m_keyStroke[key];
 }
 
 int InputManager::controllersConnected()
@@ -133,13 +179,26 @@ bool InputManager::isControllerConnected(unsigned int m_index)
 	return XinputManager::controllerConnected(m_index);
 }
 
-XinputDevice& InputManager::getController(unsigned int m_index)
+XinputDevice* InputManager::getController(unsigned int m_index)
 {
-	return *XinputManager::getController(m_index);
+	return XinputManager::getController(m_index);
 }
 
 void InputManager::controllerUpdate()
 {
-
 	XinputManager::update();
+}
+
+void InputManager::update()
+{
+	controllerUpdate();
+	static double x, y;
+	glfwGetCursorPos(glfwGetCurrentContext(), &x, &y);
+	m_mousePos = {(float)x,(float)y};
+
+	for(auto& a : m_mouseStroke)
+		a.second = false;
+	for(auto& a : m_keyStroke)
+		a.second = false;
+
 }

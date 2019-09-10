@@ -81,18 +81,18 @@ void Assault::update(float dt)
 		{
 			pMissiles.push_back(new Model(*missile));
 			GameEmGine::addModel(pMissiles.back());
-			pMissiles.back()->getTransformer().reset();
+			pMissiles.back()->reset();
 			pMissiles.back()->setColour(getColour());
-			Coord3D pos = getTransformer().getPosition();
+			Coord3D pos = getPosition();
 
-			pMissiles.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-			pMissiles.back()->getTransformer().setScale(0.4f);
-			pMissiles.back()->getTransformer().setRotation({ 0 , angle ,0 });
+			pMissiles.back()->translate(pos.x, pos.y + .1f, pos.z);
+			pMissiles.back()->setScale(0.4f);
+			pMissiles.back()->rotate({ 0 , angle ,0 });
 
 			float cosVal = cos((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 			float sinVal = sin((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 
-			missileVelocity.push_back(Coord3D(cosVal * move * 6, 0, sinVal * move * 6));
+			missileVelocity.push_back(Coord3D<>(cosVal * move * 6, 0, sinVal * move * 6));
 			setTimeSinceLastMissile(time);
 
 			timer.push_back(0);
@@ -106,7 +106,7 @@ void Assault::update(float dt)
 		if (pMissiles[a])
 		{
 			timer[a] += dt;
-			pMissiles[a]->getTransformer().translateBy(missileVelocity[a].x, missileVelocity[a].y, missileVelocity[a].z);
+			pMissiles[a]->translateBy(missileVelocity[a].x, missileVelocity[a].y, missileVelocity[a].z);
 
 			if (timer[a] >= 1)
 			{

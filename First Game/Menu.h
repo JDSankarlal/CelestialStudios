@@ -10,12 +10,12 @@ public:
 	~Menu()
 	{
 		mod.clear();
-		 fadein = true;
-		 fadeout = false;
-		 splashT = 0;
-		 splashAmbient = 0;
-		 lerpParam = 1;
-		 option = 1;
+		fadein = true;
+		fadeout = false;
+		splashT = 0;
+		splashAmbient = 0;
+		lerpParam = 1;
+		option = 1;
 	}
 
 	// Set menu screen
@@ -29,7 +29,7 @@ public:
 		lerpParam = 1;
 		option = 1;
 
-	
+
 
 		GameEmGine::m_modelShader->sendUniform("darken", false);
 
@@ -46,25 +46,25 @@ public:
 		mod[0]->addChild(mod[2]);
 		mod[0]->addChild(mod[3]);
 
-		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+		mod[0]->setScale(16);
 		LightSource::setSceneAmbient({0,0,0,255}); //255
 
 		for(unsigned int i = 1; i < mod.size(); i++)
 		{
-			mod[i]->getTransformer().setRotation({90,0,0});
-			mod[i]->getTransformer().setScale(10.0f);
-			mod[i]->getTransformer().setPosition({mod[0]->getWidth() - mod[i]->getWidth() - 200, -9.f * i + 15,0});
-
+			mod[i]->rotate({90,0,0});
+			mod[i]->setScale(10.0f);
+			mod[i]->translate({mod[0]->getWidth() / 2 - mod[i]->getWidth() / 2 , -mod[i]->getHeight() * i ,0});
 		}
+
 		LightSource::setSceneAmbient({0,0,0,255});
 		LightSource::setLightAmount(0);
 
 		GameEmGine::setCameraType(ORTHOGRAPHIC);
-		GameEmGine::setCameraPosition({ 0,0,-100 });
-		GameEmGine::setCameraAngle(0,{ 1,1,1 });
+		GameEmGine::setCameraPosition({0,0,-100});
+		GameEmGine::setCameraRotation({0,0,0});
 
 
-		keyPressed = [=](int a, int b) {keyInputPressed(a, b);  };
+		keyPressed = [&](int a, int b) {keyInputPressed(a, b);  };
 	}
 
 	void keyInputPressed(int key, int modfier)
@@ -72,9 +72,10 @@ public:
 		modfier;
 		if(key == 'B')
 			fadeout = true;
+
 	}
 
-	// doing the update for menu screenb
+	// doing the update for menu screen
 	void updateMenu()
 	{
 		GameEmGine::m_grayScalePost->enable();
@@ -82,6 +83,14 @@ public:
 		GameEmGine::m_grayScalePost->disable();
 
 		static bool menuMoved[] = {false,false,false,false};
+
+
+
+		if(GetAsyncKeyState(VK_LEFT))
+			mod[1]->translateBy(-100.f,0,0); 
+		if(GetAsyncKeyState(VK_RIGHT))
+			mod[1]->translateBy(100.f, 0, 0);
+
 
 		if(fadein)
 		{
@@ -113,9 +122,9 @@ public:
 						option = option > 3 ? 1 : option < 1 ? 3 : option;
 
 						lerpParam = 0;
-						mod[lastOption]->getTransformer().setScale(10);
+						mod[lastOption]->setScale(10);
 						mod[lastOption]->setColour({255,255,255});
-						tmp = mod[option]->getTransformer().getScale();
+						tmp = mod[option]->getScale();
 						menuMoved[a] = true;
 					}
 				}
@@ -142,7 +151,7 @@ public:
 				}
 			}
 
-		mod[option]->getTransformer().setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
+		mod[option]->setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
 		mod[option]->setColour(lerp(ColourRGBA{255,255,255}, ColourRGBA{0,255,255}, lerpParam));
 		lerpParam += .1f;
 

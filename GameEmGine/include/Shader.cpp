@@ -1,5 +1,6 @@
 #include "Shader.h"
 
+std::unordered_map<GLuint, Shader*> Shader::m_shaders;
 //GLuint *Shader::m_programs = new GLuint[0], *Shader::m_attribs = new GLuint[0], Shader::m_num;
 
 Shader::Shader():m_vtsh(""), m_vtPath(""), m_fmPath(""), m_attribNum(0),
@@ -18,19 +19,22 @@ Shader::~Shader()
 
 void Shader::refresh()
 {
-	create(m_vtPath, m_fmPath);
+	for(auto& a : m_shaders)
+		a.second->create(a.second->m_vtPath, a.second->m_fmPath);
 }
 
-void Shader::create(const std::string& vertFilePath, const std::string& fragFilePath)
+bool Shader::create(const std::string& vertFilePath, const std::string& fragFilePath)
 {
 	if(compileShaders(vertFilePath, fragFilePath))
-		linkShaders();
+		return	linkShaders();
+	return false;
 }
 
-void Shader::create(const std::string& vertFilePath, const std::string& fragFilePath, const std::string& geoFilePath)
+bool Shader::create(const std::string& vertFilePath, const std::string& fragFilePath, const std::string& geoFilePath)
 {
 	if(compileShaders(vertFilePath, fragFilePath, geoFilePath))
-		linkShaders();
+		return	linkShaders();
+	return false;
 }
 
 void Shader::createDefault()
@@ -115,6 +119,9 @@ bool Shader::compileShaders(const std::string& vertFilePath, const std::string& 
 	m_vtPath = vertFilePath;
 	m_fmPath = fragFilePath;
 
+	cDir((char*)m_vtPath.c_str());
+	cDir((char*)m_fmPath.c_str());
+
 	glDeleteProgram(m_programID);
 
 	m_programID = glCreateProgram();
@@ -148,7 +155,7 @@ bool Shader::compileShaders(const std::string& vertFilePath, const std::string& 
 	return true;
 }
 
-void Shader::linkShaders()
+bool Shader::linkShaders()
 {
 	glAttachShader(m_programID, m_vertID);
 
@@ -184,9 +191,10 @@ void Shader::linkShaders()
 		// Use the infoLog as you see fit.
 		printf(infoLog);
 		puts("\n");
+		delete[] infoLog;
 		//system("pause");
 		// In this simple program, we'll just leave
-		return;
+		return false;
 	}
 
 	glDetachShader(m_programID, m_vertID);
@@ -201,6 +209,10 @@ void Shader::linkShaders()
 
 
 	m_vertID = m_fragID = 0;
+
+	m_shaders[m_programID] = this;
+
+	return true;
 }
 
 void Shader::addAtribute(const std::string attributeName, short m_index)
@@ -219,22 +231,41 @@ GLint Shader::getUniformLocation(const char* uniform)
 	GLint uni = glGetUniformLocation(m_programID, uniform);
 	if(uni < 0)
 	{
-		printf("uniform could not find %s \nwithin %s or %s shaders\n\n", uniform, m_vtPath.c_str(), m_fmPath.c_str());
+		printf("could not find uniform variable \"%s\" \n"
+			"within \"%s\" or \"%s\" shaders\n\n", uniform, m_vtPath.substr(m_vtPath.find_last_of('/') + 1).c_str(), m_fmPath.substr(m_fmPath.find_last_of('/') + 1).c_str());
 	}
 
 	return uni;
 }
 
-void Shader::sendUniform(const char * uniform, glm::mat4 val)
+void Shader::sendUniform(const char* uniform, glm::mat4 val)
 {
 	GLint uni = getUniformLocation(uniform);
-	glUniformMatrix4fv(uni,1,false, &val[0][0]);
+	glUniformMatrix4fv(uni, 1, false, &val[0][0]);
 }
 
-void Shader::sendUniform(const char* uniform, Coord3D val)
+void Shader::sendUniform(const char* uniform, glm::vec4 val)
 {
 	GLint uni = getUniformLocation(uniform);
-	glUniform3f(uni, val.x, val.y, val.z);
+	glUniform4fv(uni, 1, &val[0]);
+}
+
+void Shader::sendUniform(const char* uniform, Coord3D<> val)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform3fv(uni, 1, &val.x);
+}
+
+void Shader::sendUniform(const char* uniform, float x, float y, float z)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform3f(uni, x, y, z);
+}
+
+void Shader::sendUniform(const char* uniform, float x, float y, float z, float w)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform4f(uni, x, y, z, w);
 }
 
 void Shader::sendUniform(const char* uniform, float val)
@@ -295,6 +326,7 @@ bool Shader::compileShader(Shaders shadType, const std::string filePath, GLuint 
 		printf("error in file: %s\n", filePath.c_str());
 		printf("%s\n\n", errorLog);
 
+		delete[] errorLog;
 		createDefault();
 		return false;
 	}

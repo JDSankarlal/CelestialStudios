@@ -1,6 +1,6 @@
 #pragma once
-#include <GameEmGine.h>
 #include "PlayerSelect.h"
+#include <GameEmGine.h>
 class Controls :public Scene
 {
 public:
@@ -18,7 +18,7 @@ public:
 		GameEmGine::m_modelShader->sendUniform("darken", 0);
 
 		mod.push_back(new Model("Models/Scene/Controls/controller.obj"));
-		mod[0]->getTransformer().setScale(1.0f, 1.5f, 1.0f);
+		mod[0]->setScale(16);
 
 		GameEmGine::addModel(mod.back());
 		LightSource::setSceneAmbient({ 0,0,0,255 });
@@ -28,7 +28,6 @@ public:
 		GameEmGine::setCameraPosition({ 0,0,-100 });
 
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b);  };
-		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
 	}
 
 	void keyInputPressed(int key, int modfier)

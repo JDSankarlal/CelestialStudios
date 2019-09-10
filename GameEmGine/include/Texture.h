@@ -46,7 +46,7 @@ struct Texture3D
 {
 	GLuint id;
 	int lutSize;
-
+	Texture3D() = default;
 	void deleteTexture()
 	{
 		if(id)

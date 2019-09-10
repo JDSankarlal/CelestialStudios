@@ -20,7 +20,7 @@ public:
 
 	//Assault
 	std::vector<Model*> pMissiles;
-	std::vector<Coord3D> missileVelocity;
+	std::vector<Coord3D<>> missileVelocity;
 
 
 private:

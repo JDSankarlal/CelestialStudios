@@ -41,8 +41,8 @@ void Player::init(int index)
 	ringID->addChild(bulletCircle);
 	this->addChild(ringID);
 
-	ringID->getTransformer().setRotation({0,-90.f, 0});
-	ringID->getTransformer().setScale(.75f);
+	ringID->rotate({0,-90.f, 0});
+	ringID->setScale(.75f);
 	gun = new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj");
 
 	if(type == PlayerType::assault)
@@ -131,7 +131,9 @@ void Player::setPlayerIndex(int index)
 	m_index = index;
 	GameEmGine::removeModel(m_baseBar);
 
-	m_baseBar->removeChild(m_lifeBar);
+	if(m_baseBar)
+		m_baseBar->removeChild(m_lifeBar);
+
 	switch(m_index)
 	{
 	case 0:
@@ -167,14 +169,14 @@ void Player::setPlayerIndex(int index)
 		bulletCircle->setColour({200,200,50});
 	}
 
-	ringID->getTransformer().setPosition(Coord3D{0, .06f + .02f * index + .01f,0});
+	ringID->translate(Coord3D<>{0, .06f + .02f * index + .01f, 0});
 
-	//m_lifeBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
-	//m_lifeBar->getTransformer().setPosition(0.35f, 1.6f, 0.0f);
+	//m_lifeBar->setScale(0.08f, 0.08f, 0.065f);
+	//m_lifeBar->translate(0.35f, 1.6f, 0.0f);
 	m_baseBar->addChild(m_lifeBar);
-	m_baseBar->getTransformer().setScale(0.08f, 0.08f, 0.065f);
-	m_baseBar->getTransformer().setRotation({0, 90.f, 0});
-	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
+	m_baseBar->setScale(0.08f, 0.08f, 0.065f);
+	m_baseBar->rotate({0, 90.f, 0});
+	m_baseBar->translate(getPosition() + Coord3D{0.35f,1.6f,0.0f});
 
 
 	GameEmGine::addModel(m_baseBar);
@@ -212,16 +214,16 @@ void Player::setTimeSinceLastMissile(float v)
 	m_timeSinceLastMissile = v;
 }
 
-void Player::hitByEnemy(Model * mod, float damage)
+void Player::hitByEnemy(Model* mod, float damage)
 {
 	if(!m_active)
 		return;
 
 	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
-	if(collision2D(ringID, mod))
+	if(collision2D(ringID, mod, {0,0,1}))
 	{
 		//curveroni[a] = 1;
-		//CandyMan->getMissial(a)->getTransformer().setPosition(mod[8]->getCenter());
+		//CandyMan->getMissial(a)->translate(mod[8]->getCenter());
 		float tempHealth = getHealth() - damage;
 		setHealth(tempHealth < 0 ? 0 : tempHealth);
 
@@ -234,23 +236,23 @@ void Player::hitByEnemy(Model * mod, float damage)
 	}
 }
 
-void Player::onPlayArea(Model * mod)
+void Player::onPlayArea(Model* mod)
 {
-	if(!collision2D(mod))
-		getTransformer().setPosition(
-			abs(getTransformer().getPosition().x) > mod->getWidth() / 2 ? getTransformer().getPosition().x < 0 ? -mod->getWidth() / 2 : mod->getWidth() / 2 : getTransformer().getPosition().x,
+	if(!collision2D(mod, {false,true,false}))
+		translate(
+			abs(getPosition().x) > mod->getWidth() / 2 ? getPosition().x < 0 ? -mod->getWidth() / 2 : mod->getWidth() / 2 : getPosition().x,
 			0,
-			abs(getTransformer().getPosition().z) > mod->getDepth() / 2 ? getTransformer().getPosition().z < 0 ? -mod->getDepth() / 2 : mod->getDepth() / 2 : getTransformer().getPosition().z);
+			abs(getPosition().z) > mod->getDepth() / 2 ? getPosition().z < 0 ? -mod->getDepth() / 2 : mod->getDepth() / 2 : getPosition().z);
 }
 
-bool Player::bulletCollisions(Model * mod)
+bool Player::bulletCollisions(Model* mod)
 {
 	///- Bullet Collisions -///
 	bool bulletHit = false;
 	for(unsigned b = 0; b < bullets.size(); b++)
 		if(bullets[b])
 		{
-			if(collision2D(bullets[b], mod))
+			if(collision2D(bullets[b], mod, {0,0,1}))
 				bulletHit = true;
 
 
@@ -301,7 +303,7 @@ void Player::update(float dt)
 				AudioPlayer::createAudioStream("Audio/dead.wav", "Death Sound");
 				AudioPlayer::play();
 				graveStone->setColour(getColour());
-				graveStone->getTransformer().setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->getTransformer().setPosition(getTransformer().getPosition()), graveStone->getTransformer().setRotation({0.0f,270.0f,0.0f});
+				graveStone->setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->translate(getPosition()), graveStone->rotate({0.0f,270.0f,0.0f});
 				GameEmGine::addModel(graveStone);
 				graveStone->addAnimation("squash", squash);
 
@@ -324,16 +326,16 @@ void Player::update(float dt)
 						bullets.push_back(new Model(*bullet));
 						GameEmGine::addModel(bullets.back());
 						bullets.back()->setColour(getColour());//bullet color = players color
-						Coord3D pos = getTransformer().getPosition();
-						bullets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-						bullets.back()->getTransformer().setScale(.25f);
-						bullets.back()->getTransformer().setRotation({90 , angle ,0});
+						Coord3D pos = getPosition();
+						bullets.back()->translate(pos.x, pos.y + .1f, pos.z);
+						bullets.back()->setScale(.25f);
+						bullets.back()->rotate({90 , angle ,0});
 
 						float cosVal = cos((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 						float sinVal = sin((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 
 						velocity.push_back(Coord3D());
-						velocity.back() = Coord3D(cosVal * move * 3, 0, sinVal * move * 3);
+						velocity.back() = Coord3D<>(cosVal * move * 3, 0, sinVal * move * 3);
 
 						timer.push_back(0);
 						std::string tag = "Shots Fired" + std::to_string(bullets.size());
@@ -429,8 +431,8 @@ void Player::update(float dt)
 				dashControl = false;
 			}
 
-			getTransformer().setRotation({0,angle, 0});
-			getTransformer().translateBy(p1->getSticks()[LS].x * move, 0, p1->getSticks()[LS].y * move); //move player
+			rotate({0,angle, 0});
+			translateBy(p1->getSticks()[LS].x * move, 0, p1->getSticks()[LS].y * move); //move player
 			float speed = p1->getSticks()[LS].x * p1->getSticks()[LS].x + p1->getSticks()[LS].y * p1->getSticks()[LS].y;
 
 
@@ -472,14 +474,14 @@ void Player::update(float dt)
 			}
 
 			//Update each player's Bullet Circle
-			bulletCircle->getTransformer().setScale((getBulletCount() / 30.0f) * 0.9f);
+			bulletCircle->setScale((getBulletCount() / 30.0f) * 0.9f);
 
 			//checks if bullet timer is up
 			for(unsigned b = 0; b < bullets.size(); b++)
 				if(bullets[b])
 				{
 					timer[b] += dt;
-					bullets[b]->getTransformer().translateBy(velocity[b].x, velocity[b].y, velocity[b].z);
+					bullets[b]->translateBy(velocity[b].x, velocity[b].y, velocity[b].z);
 
 					if(timer[b] >= 1)
 					{
@@ -500,8 +502,8 @@ void Player::update(float dt)
 			p1->resetVibration();
 
 	//Update each player's Blood Bar
-	m_lifeBar->getTransformer().setScale(1.f, 1.f, ((float)getHealth() / (float)getInitialHealth()));
-	m_baseBar->getTransformer().setPosition(getTransformer().getPosition() + Coord3D{0.35f,1.6f,0.0f});
+	m_lifeBar->setScale(1.f, 1.f, ((float)getHealth() / (float)getInitialHealth()));
+	m_baseBar->translate(getPosition() + Coord3D{0.35f,1.6f,0.0f});
 }
 
 void Player::setActive(bool active)

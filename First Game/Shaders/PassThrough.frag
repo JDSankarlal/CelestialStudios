@@ -24,6 +24,7 @@ uniform float Attenuation_Quadratic[MAX_LIGHTS_SIZE];
 //amount of lights
 uniform int LightAmount;
 
+uniform bool LightEnable[MAX_LIGHTS_SIZE];
 uniform int LightType[MAX_LIGHTS_SIZE];
 uniform vec3 LightDirection[MAX_LIGHTS_SIZE] ;
 uniform float LightAngleConstraint[MAX_LIGHTS_SIZE];
@@ -154,20 +155,21 @@ void main()
     
     for(int a = 0; a < LightAmount; a++)
     { 
-        switch(LightType[a])
-        {        
-        case POINT:
-            pointLight(a);
-            break;
-        case DIRECTIONAL:
-            directionalLight(a);
-            break;
-        case SPOTLIGHT:
-            spotLight(a);
-            break;
-        default:
-            defaultLight(a);
-        }
+        if(LightEnable[a])
+            switch(LightType[a])
+            {        
+            case POINT:
+                pointLight(a);
+                break;
+            case DIRECTIONAL:
+                directionalLight(a);
+                break;
+            case SPOTLIGHT:
+                spotLight(a);
+                break;
+            default:
+                defaultLight(a);
+            }
     } 
     
     outColor.a = 1;

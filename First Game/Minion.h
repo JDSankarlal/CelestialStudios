@@ -21,7 +21,7 @@ public:
 	void move(bool move);
 
 	friend bool operator>(Minion a, Minion b);
-	Coord3D moveTo;
+	Coord3D<> moveTo;
 private:
 	bool m_move = true;
 	static std::vector<Player*> targets;

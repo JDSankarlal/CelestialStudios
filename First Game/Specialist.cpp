@@ -46,7 +46,7 @@ bool Specialist::hitTurret(Model* mod)
 	for(auto& pTurret : pTurrets)
 	{
 		//If pTurret touched by minion
-		if(collision2D(mod, pTurret))
+		if(collision2D(mod, pTurret, {0,0,1}))
 		{
 			hit = true;
 			GameEmGine::removeModel(pTurret);
@@ -84,17 +84,17 @@ void Specialist::update(float dt)
 			///// - Turret targeting and shooting logic - ///
 			////Get pTurret position
 			////Coord3D ;
-			//turretPos = pTurret->getTransformer().getPosition().x + pTurret->getTransformer().getPosition().y;
-			//float lowestDistance = (turretPos - minions[0]->getTransformer().getPosition()).distance();
+			//turretPos = pTurret->getPosition().x + pTurret->getPosition().y;
+			//float lowestDistance = (turretPos - minions[0]->getPosition()).distance();
 			//
 			//for (unsigned int m = 0; m < minions.size(); m++)
 			//{
 			//	//get minion positions
 			//	
-			//	if((turretPos - minions[m]->getTransformer().getPosition()).distance() < lowestDistance)
+			//	if((turretPos - minions[m]->getPosition()).distance() < lowestDistance)
 			//	{
-			//		lowestDistance = (turretPos - minions[m]->getTransformer().getPosition()).distance();
-			//		minionPos =  minions[m]->getTransformer().getPosition();
+			//		lowestDistance = (turretPos - minions[m]->getPosition()).distance();
+			//		minionPos =  minions[m]->getPosition();
 			//
 			//	}
 			//
@@ -111,9 +111,9 @@ void Specialist::update(float dt)
 			//bullets.push_back(new Model(*mod[48]));
 			//GAME::addModel(bullets.back());
 			//
-			//Coord3D pos = pTurret->getTransformer().getPosition();
-			//bullets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-			//bullets.back()->getTransformer().setScale(.25f);
+			//Coord3D pos = pTurret->getPosition();
+			//bullets.back()->setPosition(pos.x, pos.y + .1f, pos.z);
+			//bullets.back()->setScale(.25f);
 			//
 			////Insert code for finding angle between pTurret and minion
 			//
@@ -132,11 +132,11 @@ void Specialist::update(float dt)
 
 			/// - Turret targeting and shooting logic - ///
 				//Get pTurret position
-				//turretPos = pTurret->getTransformer().getPosition().x + pTurret->getTransformer().getPosition().y;
+				//turretPos = pTurret->getPosition().x + pTurret->getPosition().y;
 				//for (int m = 0; m < minions.size(); m++)
 				//{
 				//	//get minion positions
-				//	minionPos = minions[m]->getTransformer().getPosition().x + minions[m]->getTransformer().getPosition().y;
+				//	minionPos = minions[m]->getPosition().x + minions[m]->getPosition().y;
 				//	
 				//}
 
@@ -158,12 +158,12 @@ void Specialist::update(float dt)
 		{
 			pTurrets.push_back(new Turret(*turret));
 			GameEmGine::addModel(pTurrets.back());
-			pTurrets.back()->getTransformer().reset();
+			pTurrets.back()->reset();
 			//pTurrets.back()->setColour(getColour());
-			Coord3D pos = getTransformer().getPosition();
-			pTurrets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-			pTurrets.back()->getTransformer().setRotation({0.0f, 90.0f, 0.0f});
-			//pTurrets.back()->getTransformer().setScale(0.4f);
+			Coord3D pos = getPosition();
+			pTurrets.back()->translate(pos.x, pos.y + .1f, pos.z);
+			pTurrets.back()->rotate({0.0f, 90.0f, 0.0f});
+			//pTurrets.back()->setScale(0.4f);
 			pTurrets.back()->setToRender(true);
 			//puts("Special Ability SPECIALIST");
 			AudioPlayer::createAudioStream("Audio/specialistAbility.wav","Specialist Ability");

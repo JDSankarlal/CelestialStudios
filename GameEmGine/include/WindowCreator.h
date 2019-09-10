@@ -14,10 +14,10 @@ public:
 	};
 
 	WindowCreator();
-	WindowCreator(std::string name, Size3D, Coord2D = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
+	WindowCreator(std::string name, Coord3D<int>, Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
 	~WindowCreator();
 
-	int	createWindow(std::string name, Size3D, Coord2D = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
+	int	createWindow(std::string name, Coord3D<int>, Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
 
 	void setVisable(bool);
 
@@ -26,7 +26,7 @@ public:
 	GLFWwindow* getWindow();
 
 	std::string& getTitle();
-	Size3D& getScreenSize();
+	Coord3D<int>& getScreenSize();
 	int getScreenWidth();
 	int getScreenHeight();
 

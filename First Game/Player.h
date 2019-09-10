@@ -68,7 +68,7 @@ protected:
 
 	std::vector<float> timer;
 	std::vector<Model*> bullets;
-	std::vector<Coord3D> velocity;
+	std::vector<Coord3D<>> velocity;
 	float move = .1f;
 
 	static Model

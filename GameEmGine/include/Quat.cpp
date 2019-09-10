@@ -14,7 +14,7 @@ Quat::Quat(float w, float x, float y, float z) : w(w), x(x), y(y), z(z)
 Quat Quat::normal()
 {
 	Quat q = *this;
-	float unit = sqrt(q.x*q.x + q.y*q.y + q.z*q.z + q.w*q.w);
+	float unit = sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
 	q.x *= unit, q.y *= unit, q.z *= unit, q.w *= unit;
 	return q;
 }
@@ -24,25 +24,30 @@ void Quat::normalize()
 	*this = normal();
 }
 
-Quat & Quat::rotation(float a_ang, float a_dirX, float a_dirY, float a_dirZ)
+Quat& Quat::rotation(float a_ang, float a_dirX, float a_dirY, float a_dirZ)
 {
-
+	a_ang = glm::radians(a_ang);
 	float
-		unit(sqrt(pow(a_dirX, 2) + pow(a_dirY, 2) + pow(a_dirZ, 2)));
+		unit(sqrt(a_dirX * a_dirX + a_dirY * a_dirY + a_dirZ * a_dirZ));
 	/*rotX = cos(a_ang / 2),
 	rotY = sin(a_ang / 2)*  (a_dirX / unit),
 	rotZ = sin(a_ang / 2)*  (a_dirY / unit),
 	rotW = sin(a_ang / 2)*  (a_dirZ / unit);*/
 
 	Quat
-		q{cos(a_ang / 2),sin(a_ang / 2)*  (a_dirX / unit),sin(a_ang / 2)*  (a_dirY / unit),sin(a_ang / 2)*  (a_dirY / unit)},//rotation quaternion
-		qc{cos(a_ang / 2),sin(a_ang / 2)* -(a_dirX / unit),sin(a_ang / 2)* -(a_dirY / unit),sin(a_ang / 2)* -(a_dirZ / unit)},//rotation quatenion conjugate
+		q{cos(a_ang / 2),sin(a_ang / 2) * (a_dirX / unit),sin(a_ang / 2) * (a_dirY / unit),sin(a_ang / 2) * (a_dirZ / unit)},//rotation quaternion
+		qc{cos(a_ang / 2),sin(a_ang / 2) * -(a_dirX / unit),sin(a_ang / 2) * -(a_dirY / unit),sin(a_ang / 2) * -(a_dirZ / unit)},//rotation quatenion conjugate
 		p{0, x,y,z};//pure quaternion
 	static Quat rot; rot = q * p * qc;
 	return rot;
 }
 
-Quat & Quat::rotation(Quat p, Quat q, Quat qc)
+Quat& Quat::rotation(float a_ang, Coord3D<> a_dir)
+{
+	return rotation(a_ang, a_dir.x, a_dir.y, a_dir.z);
+}
+
+Quat& Quat::rotation(Quat p, Quat q, Quat qc)
 {
 	static Quat rot; rot = q * p * qc;
 	return rot;
@@ -51,6 +56,11 @@ Quat & Quat::rotation(Quat p, Quat q, Quat qc)
 void Quat::rotate(float a_ang, float a_dirX, float a_dirY, float a_dirZ)
 {
 	*this = rotation(a_ang, a_dirX, a_dirY, a_dirZ);
+}
+
+void Quat::rotate(float a_ang, Coord3D<> a_dir)
+{
+	rotate(a_ang, a_dir.x, a_dir.y, a_dir.z);
 }
 
 
@@ -63,9 +73,9 @@ glm::mat4 Quat::quatRotationMat(float a_ang, float a_dirX, float a_dirY, float a
 	//rotation quaternion
 	Quat
 		q{cos(a_ang / 2),
-		sin(a_ang / 2)*  (a_dirX / unit),
-		sin(a_ang / 2)*  (a_dirY / unit),
-		sin(a_ang / 2)*  (a_dirZ / unit)};
+		sin(a_ang / 2) * (a_dirX / unit),
+		sin(a_ang / 2) * (a_dirY / unit),
+		sin(a_ang / 2) * (a_dirZ / unit)};
 
 	//pre determined matrix multiplication
 	return
@@ -80,12 +90,12 @@ glm::mat4 Quat::quatRotationMat(float a_ang, float a_dirX, float a_dirY, float a
 			q.x, q.y, q.z, q.w);
 }
 
-glm::mat4 Quat::quatRotationMat(float a_ang, Coord3D a_dir)
+glm::mat4 Quat::quatRotationMat(float a_ang, const Coord3D<> a_dir)
 {
 	return quatRotationMat(a_ang, a_dir.x, a_dir.y, a_dir.z);
 }
 
-glm::mat4 Quat::quatRotationMat(float a_ang, glm::vec3 a_dir)
+glm::mat4 Quat::quatRotationMat(float a_ang, const  glm::vec3 a_dir)
 {
 	return quatRotationMat(a_ang, a_dir.x, a_dir.y, a_dir.z);
 }
@@ -95,12 +105,12 @@ void Quat::print() const
 	printf("Quat: (");
 	for(int a = 0; a < 4; a++)
 		printf(std::string("%f" + std::string(a != 3 ? ", " : "")).c_str(), this[0][a]);
-	printf(")\n\n");
+	puts(")\n");
 }
 
 float& Quat::operator[](int m_index) const
 {
-	float *e = nullptr;
+	float* e = nullptr;
 	switch(m_index)
 	{
 	case 0:
@@ -150,7 +160,7 @@ Quat Quat::operator-(Quat a_quat) const
 
 Quat Quat::operator-() const
 {
-	return Quat(-w,-x,-y,-z);
+	return Quat(-w, -x, -y, -z);
 }
 
 void Quat::operator-=(Quat a_quat) const

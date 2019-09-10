@@ -35,11 +35,17 @@ Texture2D ImageLoader::loadImage2D(const char * path)
 #include <fstream>
 Texture3D ImageLoader::loadImage3D(const char * LUTpath)
 {
-	Texture3D texture;
-	std::vector<Coord3D> LUT{};
+	Texture3D texture=Texture3D();
+	std::vector<Coord3D<>> LUT{};
 	
 	//LUTpath = "Texture/CUSTOM.cube";
 	std::ifstream LUTfile2(LUTpath);
+
+	if(!LUTfile2.is_open())
+	{
+		printf("Image \"%s\", returned with null pointer\n", LUTpath);
+		return texture;
+	}
 
 	while(!LUTfile2.eof())
 	{

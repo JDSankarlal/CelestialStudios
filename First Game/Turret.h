@@ -26,6 +26,6 @@ private:
 	std::vector<Model*> bullets;
 	float move = .1f;
 	std::vector<Minion*> m_minions;
-	std::vector<Coord3D> velocity;
+	std::vector<Coord3D<>> velocity;
 };
 

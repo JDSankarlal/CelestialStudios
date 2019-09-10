@@ -6,6 +6,13 @@
 #include "Quat.h"
 #include "Utilities.h"
 
+enum CLASS_TYPE
+{
+	TRANSFORMER,
+	MODEL,
+	TEXT
+};
+
 class Transformer
 {
 public:
@@ -14,62 +21,78 @@ public:
 	~Transformer();
 
 	void reset();
+	void enableFPSMode(bool enable = true);
+	static void applyAspect(bool enable = true);
 
 	/*SET ROTATION*/
 
-	void setRotation(Coord3D direction);
-	void rotateBy(Coord3D direction);
+	virtual void rotate(Coord3D<> angles);
+	virtual void rotate(float x,float y ,float z);
+	virtual void rotateBy(Coord3D<> angles);
+	virtual void rotateBy(float x, float y, float z);
 
 	/*SET POSITION*/
 
-	void setPosition(float x, float y, float z);
-	void setPosition(Coord3D pos);
-	void translateBy(float x, float y, float z);
-	void translateBy(Coord3D pos);
+	virtual void translate(float x, float y, float z);
+	virtual void translate(Coord3D<> pos);
+	virtual void translateBy(float x, float y, float z);
+	virtual void translateBy(Coord3D<> pos);
 
 
 	/*SET SCALE*/
 
-	void setScale(float scale);
-	void scaleBy(float scale);
-	void setScale(Coord3D);
-	void setScale(float x, float y, float z);
-	void scaleBy(float x, float y, float z);
+	virtual void scaleBy(float scale);
+	virtual void scaleBy(float x, float y, float z);
+	virtual void setScale(Coord3D<> scale);
+	virtual void setScale(float scale);
+	virtual void setScale(float x, float y, float z);
 
-	/*GETERS*/
-	Coord3D getPosition();
-	Coord3D getRotation();
-	Coord3D getScale();
-	glm::mat4& getRotationMatrix();
-	glm::mat4& getScaleMatrix();
-	glm::mat4& getTranslationMatrix();
+	/*GETTERS*/
+	virtual Coord3D<> getPosition();
+	virtual Coord3D<> getRotation();
+	virtual Coord3D<> getScale();
+	Coord3D<> getForward();
+	Coord3D<> getUp();
+	Coord3D<> getRight();
+
+	glm::mat4 getRotationMatrix();
+	glm::mat4 getScaleMatrix();
+	glm::mat4 getTranslationMatrix();
 
 	/*Gets a combination of the rotation, scale, and translation matricies*/
 	glm::mat4 getTransformation();
 
-	void resetUpdated();
+	virtual void resetUpdated();
+	virtual bool isUpdated();
+	virtual bool isScaleUpdated();
+	virtual bool isRotationUpdated();
+	virtual bool isTranslatinUpdated();
 
-	void enableDirCam(bool enable);
+	virtual void addChild(Transformer* child);
+	virtual void removeChild(Transformer* child);
+	virtual Transformer* getChild(unsigned int index);
+	virtual std::vector<Transformer*>& getChildren();
 
-	bool isUpdated();
-	bool isScaleUpdated();
-	bool isRotationUpdated();
-	bool isTranslatinUpdated();
-
-	void addChild(Transformer* child);
+	CLASS_TYPE getType();
 private:
-	Coord3D m_posData, m_rotData, m_scaleData;
-	glm::vec3 m_forward = {0,0,1}, m_up{0,1,0}, m_right{1,0,0};
+
+	Coord3D<> m_posDat, m_rotDat, m_scaleDat;
+	Coord3D<> m_forward = {0,0,1}, m_up = {0,1,0}, m_right = {1,0,0};
 	glm::mat4
 		m_translate,
 		m_rotate,
 		m_scale;
 
-	std::vector<Transformer* >m_child;
+	std::vector<Transformer* >m_children;
 	Transformer* m_parent;
 	bool  m_updatedRot = true,
 		m_updatedTrans = true,
-		m_updatedScale = true;
+		m_updatedScale = true,
+		m_fps;
+	static bool
+		m_aspect;
 
+protected:
+	CLASS_TYPE m_type;
 };
 

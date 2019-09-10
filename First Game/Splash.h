@@ -16,41 +16,41 @@ public:
 		//GAME::m_grayScalePost->enable();
 		//glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), 0.f);
 		//GAME::m_grayScalePost->disable();
+
+		//gray = new Shader;
+		//grayPost = new FrameBuffer( 1, "Gray Scale");
+		//
+		//int width = GameEmGine::getWindowWidth(), 
+		//	height = GameEmGine::getWindowHeight();
+		//
+		//grayPost->initDepthTexture(width, height);
+		//grayPost->initColourTexture(0, width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+		//
+		//if(!grayPost->checkFBO())
+		//{
+		//	puts("FBO failed Creation");
+		//	system("pause");
+		//	return;
+		//}
+		//
+		//srand(clock());
+		//gray= ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/Grayscale.fmsh");
+		//grayPost->setPostProcess(
+		//	[&]()->void
+		//	{
+		//		gray->enable();
+		//		glUniform1i(gray->getUniformLocation("uTex"), 0);
+		//		glBindTexture(GL_TEXTURE_2D, grayPost->getColorHandle(0));
+		//		FrameBuffer::drawFullScreenQuad();
+		//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
+		//		gray->disable();
+		//	});
+
 		GameEmGine::m_modelShader->sendUniform("darken", false);
-
-		gray = new Shader;
-		grayPost = new FrameBuffer("Gray Scale", 1);
-		
-		int width = GameEmGine::getWindowWidth(), 
-			height = GameEmGine::getWindowHeight();
-
-		grayPost->initDepthTexture(width, height);
-		grayPost->initColourTexture(0, width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
-
-		if(!grayPost->checkFBO())
-		{
-			puts("FBO failed Creation");
-			system("pause");
-			return;
-		}
-
-		srand(clock());
-		gray= ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/Grayscale.fmsh");
-		grayPost->setPostProcess(
-			[&]()->void
-			{
-				gray->enable();
-				glUniform1i(gray->getUniformLocation("uTex"), 0);
-				glBindTexture(GL_TEXTURE_2D, grayPost->getColorHandle(0));
-				FrameBuffer::drawFullScreenQuad();
-				glBindTexture(GL_TEXTURE_2D, GL_NONE);
-				gray->disable();
-			});
-
 
 		mod.push_back(new Model("Models/Scene/Splash/splashScreen.obj"));
 		GameEmGine::addModel(mod.back());
-		mod[0]->getTransformer().setScale(0.85f, 1.5f, 1.0f);
+		mod[0]->setScale(16);
 		//mod[0]->addFrameBuffer(grayPost);
 
 		LightSource::setSceneAmbient({0,0,0,255});

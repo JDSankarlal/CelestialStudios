@@ -11,31 +11,30 @@
 #include "Physics3D.h"
 #include "Mesh.h"
 #include "Animation.h"
-#include "FrameBuffer.h"
+//#include "FrameBuffer.h"
 
-class Model
+class Camera;
+
+class Model: public Transformer
 {
 public:
 	Model();
-	Model(Model & model);
-	Model(const char* path);
+	Model(Model& model, const char* tag = "");
+	Model(primitiveMesh* model, const char* tag = "");
+	Model(const char* path, const char* tag = "");
 	virtual ~Model();
 
-	bool collision2D(Model* k);
+	bool collision2D(Model* k, Coord3D<float> ignore);
 
-	bool collision2D(Model* l, Model* k);
+	static bool collision2D(Model* l, Model* k, Coord3D<float> ignore);
 
 	bool collision3D(Model* k);
 
-	bool collision3D(Model* l, Model* k);
+	static bool collision3D(Model* l, Model* k);
 
-	void render(Shader & shader, glm::mat4& cam);
-
-	Transformer& getTransformer();
-
-	void removeChild(Model * child);
-
-	void addChild(Model* child);
+	static bool getSeparatingPlane(const Coord3D<>& RPos, const Coord3D<>& Plane, Model& box1, Model& box2);
+	
+	virtual void render(Shader& shader, Camera* cam);
 
 	void setColour(float r, float g, float b, float a);
 
@@ -49,57 +48,78 @@ public:
 
 	void enableBoundingBox(bool enable);
 
-	void addAnimation(std::string tag, Animation *animation);
+	void addAnimation(std::string tag, Animation* animation);
 
-//	void addFrameBuffer(FrameBuffer* buffer);
-//
-//	void removeFrameBuffer(std::string tag);
-//
-//	std::unordered_map<std::string, FrameBuffer*>& getFrameBuffers();
+	//	void addFrameBuffer(FrameBuffer* buffer);
+	//
+	//	void removeFrameBuffer(std::string tag);
+	//
+	//	std::unordered_map<std::string, FrameBuffer*>& getFrameBuffers();
 
 	float getWidth();
 	float getHeight();
 	float getDepth();
 
-	Coord3D getCenter();
+	Coord3D<> getSize();
+
+	Coord3D<> getCenter();
 
 	void boundingBoxUpdate();
 
-	Animation* getAnimation(const char* tag );
+	Animation* getAnimation(const char* tag);
 	Animation* getCurrentAnimation();
 	void  setAnimation(const char* tag);
 
 	Mesh* getMesh();
 	Shader* getShader();
 
+	void replaceTexture(int mesh,int index,GLuint tex);
+
 	void setToRender(bool render);
 	void setTransparent(bool trans);
 	bool isTransparent();
-private:
-	bool m_render = true;
-	bool m_transparent = false;
-	std::unordered_map< std::string, Animation *>m_animations;
-	std::string m_animation;
-	Mesh m_mesh;
+	void print();
 
+protected:
+	ColourRGBA m_colour;
+
+private:
 	void boundingBoxInit();
 	void drawBoundingBox();
 
+	bool m_render = true;
+	bool m_transparent = false;
+	const char* m_tag;
+
+	std::unordered_map< std::string, Animation*>m_animations;
+	std::string m_animation;
+	Mesh* m_mesh;
+
+	Camera* m_camera;
 
 	GLuint m_BBVaoID = 0, m_BBVboID = 0;
-	Transformer m_transform;
-	//Physics3D *physics;
-	Coord3D m_left, m_right, m_top, m_bottom, m_front, m_back, m_center;
+	//Transformer m_transform;
+
+	Coord3D<>
+		m_topLeftBack,
+		m_topRightBack,
+		m_topLeftFront,
+		m_topRightFront,
+		m_bottomLeftBack,
+		m_bottomRightBack,
+		m_bottomLeftFront,
+		m_bottomRightFront,
+		m_center;
+
 	float m_width, m_height, m_depth;
-	ColourRGBA m_colour;
-	Shader* m_shader, *m_shaderBB;
-	Vertex3D *m_vertBBDat = new Vertex3D[12 * 3];
+	Shader* m_shader, * m_shaderBB;
+	Vertex3D m_vertBBDat[12 * 3];
 	glm::mat4 m_transBB;
-	bool m_enableBB = false;
+	bool m_enableBB = false,m_copy=false;
 
 	//std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
-	std::vector<Model*> m_children;
-	Model* m_parent;
+	//std::vector<Model*> m_children;
+	//Model* m_parent;
 	//std::vector <Texture2D> loadedTextures;
 	//std::string dir;
 

@@ -20,15 +20,17 @@ struct Quat
 	Quat normal();
 	void normalize();
 
-	Quat & rotation(float a_ang, float a_dirX, float a_dirY, float a_dirZ);
+	 Quat& rotation(float a_ang, float a_dirX, float a_dirY, float a_dirZ);
+	 Quat& rotation(float a_ang, Coord3D<> a_dir);
 
-	Quat & rotation(Quat p, Quat q, Quat qc);
+	Quat& rotation(Quat p, Quat q, Quat qc);
 
 	void rotate(float a_ang, float a_dirX, float a_dirY, float a_dirZ);
+	void rotate(float a_ang, Coord3D<> a_dir);
 
 	static glm::mat4 quatRotationMat(float a_ang, float a_dirX, float a_dirY, float a_dirZ);
-	static glm::mat4 quatRotationMat(float a_ang, Coord3D a_dir);
-	static glm::mat4 quatRotationMat(float a_ang, glm::vec3 a_dir);
+	static glm::mat4 quatRotationMat(float a_ang, const Coord3D<> a_dir);
+	static glm::mat4 quatRotationMat(float a_ang, const glm::vec3 a_dir);
 
 	void print() const;
 

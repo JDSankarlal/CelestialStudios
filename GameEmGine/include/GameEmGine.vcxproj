@@ -23,13 +23,13 @@
     <ProjectGuid>{2FC26ABC-5439-4299-B268-5F7806CF3172}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GameEmGine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -37,18 +37,18 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -72,27 +72,31 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Externals\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Externals\lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)GameEmGine/include/;$(SolutionDir)Externals\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Externals\lib\win32\;$(SolutionDir)Externals\lib\;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)..\lib\</OutDir>
     <IntDir>$(ProjectDir)..\junck\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Externals\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Externals\lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)GameEmGine/include/;$(SolutionDir)Externals\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Externals\lib\win64\;$(SolutionDir)Externals\lib\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)..\lib\</OutDir>
+    <IntDir>$(ProjectDir)..\junck\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Externals\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Externals\lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)GameEmGine/include/;$(SolutionDir)Externals\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Externals\lib\win32\;$(SolutionDir)Externals\lib\;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)..\lib\</OutDir>
     <IntDir>$(ProjectDir)..\junck\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Externals\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Externals\lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)GameEmGine/include/;$(SolutionDir)Externals\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Externals\lib\win64\;$(SolutionDir)Externals\lib\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)..\lib\</OutDir>
+    <IntDir>$(ProjectDir)..\junck\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -105,27 +109,27 @@
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <DisableSpecificWarnings>4201;4505;4002</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4505;4002;4238;4706</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;soil2-debug.lib;fmod_vc.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;glfw3.lib;fmod_vc.lib;soil2-debug.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4201;4505;4002</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4505;4002;4238;4706</DisableSpecificWarnings>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
@@ -133,7 +137,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;soil2-debug.lib;fmod_vc.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;glfw3.lib;fmod_vc.lib;soil2-debug.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,7 +152,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4201;4505;4002</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4505;4002;4238</DisableSpecificWarnings>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
@@ -158,14 +162,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;soil2-debug.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;glfw3.lib;fmod_vc.lib;soil2-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -173,7 +177,8 @@
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <DisableSpecificWarnings>4201;4505;4002</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4505;4002;4238</DisableSpecificWarnings>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,11 +187,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;soil2-debug.lib;fmod_vc.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;glfw3.lib;fmod_vc.lib;soil2-debug.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="EmGineAudioPlayer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ExtraMath.h" />
@@ -207,6 +213,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderCombiner.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformer.h" />
@@ -215,6 +222,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="EmGineAudioPlayer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="fileIO.cpp" />
@@ -232,6 +240,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ShaderCombiner.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Transformer.cpp" />
     <ClCompile Include="WindowCreator.cpp" />
     <ClCompile Include="XinputManager.cpp" />

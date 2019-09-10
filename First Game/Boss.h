@@ -40,7 +40,7 @@ public:
 	bool hitByEnemy(Model * mod, float damage = 10);
 
 	std::vector<Minion*> minions;
-	std::vector<Model* > missles;
+	std::vector<Model* > missiles;
 	Model* lazer;
 	bool 	bossFlash;
 private:

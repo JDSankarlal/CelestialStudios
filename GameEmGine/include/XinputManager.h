@@ -68,12 +68,12 @@ enum DRUM_INPUT_BUTTONS
 	DRUM_START = XINPUT_GAMEPAD_START
 };
 
+//Easier way to reference sticks :>
 enum STICK_NAME
 {
 	LS,
 	RS
 };
-
 
 struct Stick
 {
@@ -84,6 +84,7 @@ struct Triggers {
 	float LT, RT;
 };
 
+//All devices
 struct XinputDevice
 {
 	virtual ~XinputDevice() {};
@@ -98,7 +99,7 @@ struct XinputDevice
 	}
 
 	//sets the vibration to left and right channels (values range from 0 -> 1)
-	void setVibration(float L, float R) 
+	void setVibration(float L, float R)
 	{
 		XINPUT_VIBRATION vibration;
 		memset(&vibration, 0, sizeof(XINPUT_VIBRATION));
@@ -124,7 +125,7 @@ struct XinputDevice
 	}
 
 	//resets vibration in left and right channels
-	void resetVibration() 
+	void resetVibration()
 	{
 		setVibration(0, 0);
 	}
@@ -154,15 +155,16 @@ struct XinputDevice
 		return false;
 	}
 
-	CONTROLLER_TYPE type=CONTROLLER_TYPE::XINPUT_UNKNOWN;
+	CONTROLLER_TYPE type = CONTROLLER_TYPE::XINPUT_UNKNOWN;
 	int m_index;
 
 protected:
 	XINPUT_STATE info;
-	float deadZoneStick = .03f, deadZoneTrigger;
+	float deadZoneStick = 0.03f, deadZoneTrigger = 0.0f;
 	std::unordered_map<int, bool> stroke;
 };
 
+//Guitar Controller
 struct XinputGuitar:public XinputDevice
 {
 	XinputGuitar():XinputDevice() { type = XINPUT_GUITAR; }
@@ -194,15 +196,16 @@ private:
 	float whammyBar;
 };
 
+//Drum controller
 struct XinputDrum:public XinputDevice
 {
 	XinputDrum():XinputDevice() { type = XINPUT_DRUM; };
-	//	XinputDrum(XinputDevice div) :XinputDevice(div) {};
 	~XinputDrum() {};
 
 private:
 };
 
+//A normal controller
 struct XinputController:public XinputDevice
 {
 	XinputController():XinputDevice() { type = XINPUT_CONTROLLER; };
@@ -210,7 +213,7 @@ struct XinputController:public XinputDevice
 
 	Stick* getSticks()
 	{
-		
+
 		return sticks;
 	}
 
@@ -244,12 +247,17 @@ struct XinputController:public XinputDevice
 	}
 
 private:
+	//values from 0 -> 1
 	Triggers triggers;
+
+	//values from -1 -> 1
 	Stick sticks[2];
+
+	//a bitmask
 	DWORD buttons;
-	float LT, RT;
 };
 
+//Manages all controllers
 class XinputManager
 {
 public:
@@ -264,6 +272,7 @@ public:
 
 	//gets the controller from m_index 0 -> 3 (inclusive)
 	static XinputDevice* getController(int m_index);
+
 private:
-	static	XinputDevice* controllers[4];
+	static	XinputDevice* m_controllers[4];
 };

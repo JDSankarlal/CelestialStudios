@@ -15,12 +15,12 @@ public:
 	Sprite(VboInfo2D, const char* path);
 	~Sprite();
 	void draw();
-	void setPosition(float, float);
+	void translate(float, float);
 	void setSize(float width, float height);
-	void setRotation(float);
+	void rotate(float);
 	void rotateBy(float);
 
-	Size2D& getSize();
+	Coord2D<>& getSize();
 
 private:
 	void init();

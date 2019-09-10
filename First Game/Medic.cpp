@@ -46,7 +46,7 @@ void Medic::getHealing(Player* player)
 {
 	//if(time - getTimeSinceLastMissile() >= 3)
 		//Healing
-	if(collision2D(healingCircle,player))
+	if(collision2D(healingCircle,player, {0,0,1}))
 	{
 		static float healAmount = .95f;
 		if(player->getHealth() + healAmount < player->getInitialHealth())
@@ -76,8 +76,8 @@ void Medic::update(float dt)
 		{
 			if(time - getTimeSinceLastHeal() >= 8)
 			{
-				healingCircle->getTransformer().setPosition(this->getTransformer().getPosition() + (Coord3D({0.0f, 0.1f, 0.0f})));
-				healingCircle->getTransformer().setScale(4);
+				healingCircle->translate(this->getPosition() + (Coord3D<>({0.0f, 0.1f, 0.0f})));
+				healingCircle->setScale(4);
 				healingCircle->setToRender(true);
 				circleTime = time;
 				//puts("Special Ability MEDIC");

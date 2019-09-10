@@ -19,6 +19,7 @@ int  fileIO::readFileToBuffer(const char * path, unsigned char * buffer)
 				printf("%c",buffer[a]);
 			}
 		fclose(file);
+		delete[] buffer;
 		return size;
 	}
 

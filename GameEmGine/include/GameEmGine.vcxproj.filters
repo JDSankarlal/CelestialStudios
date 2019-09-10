@@ -2,10 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="fileIO.h">
-      <Filter>EmGine\FileIO</Filter>
+      <Filter>EmGine\File I/O</Filter>
     </ClInclude>
     <ClInclude Include="ImageLoader.h">
-      <Filter>EmGine\FileIO</Filter>
+      <Filter>EmGine\File I/O</Filter>
     </ClInclude>
     <ClInclude Include="Matrix.h">
       <Filter>EmGine\Data Types</Filter>
@@ -52,9 +52,6 @@
     <ClInclude Include="Shader.h">
       <Filter>EmGine\Shader Stuff</Filter>
     </ClInclude>
-    <ClInclude Include="LightSource.h">
-      <Filter>EmGine</Filter>
-    </ClInclude>
     <ClInclude Include="Physics3D.h">
       <Filter>EmGine</Filter>
     </ClInclude>
@@ -79,13 +76,22 @@
     <ClInclude Include="ShaderCombiner.h">
       <Filter>EmGine\Shader Stuff</Filter>
     </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>EmGine\Text Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>EmGine\Text Render</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSource.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fileIO.cpp">
-      <Filter>EmGine\FileIO</Filter>
+      <Filter>EmGine\File I/O</Filter>
     </ClCompile>
     <ClCompile Include="ImageLoader.cpp">
-      <Filter>EmGine\FileIO</Filter>
+      <Filter>EmGine\File I/O</Filter>
     </ClCompile>
     <ClCompile Include="Matrix.cpp">
       <Filter>EmGine\Data Types</Filter>
@@ -129,9 +135,6 @@
     <ClCompile Include="Shader.cpp">
       <Filter>EmGine\Shader Stuff</Filter>
     </ClCompile>
-    <ClCompile Include="LightSource.cpp">
-      <Filter>EmGine</Filter>
-    </ClCompile>
     <ClCompile Include="Physics3D.cpp">
       <Filter>EmGine</Filter>
     </ClCompile>
@@ -144,6 +147,15 @@
     <ClCompile Include="ShaderCombiner.cpp">
       <Filter>EmGine\Shader Stuff</Filter>
     </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>EmGine\Text Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>EmGine\Text Render</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSource.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EmGine">
@@ -151,9 +163,6 @@
     </Filter>
     <Filter Include="EmGine\Data Types">
       <UniqueIdentifier>{b1b8bd2d-c9ef-4312-be31-a4f627fc7025}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="EmGine\FileIO">
-      <UniqueIdentifier>{c6e045cb-8f5d-4965-b695-f33b33e3bbac}</UniqueIdentifier>
     </Filter>
     <Filter Include="EmGine\Game Engine">
       <UniqueIdentifier>{e37a305d-43c9-4ff3-9f29-417020fa4b78}</UniqueIdentifier>
@@ -166,6 +175,12 @@
     </Filter>
     <Filter Include="EmGine\Resource Management">
       <UniqueIdentifier>{9ede1b93-f3f0-450f-b7f3-8c78f40241af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EmGine\Text Render">
+      <UniqueIdentifier>{17b1cc08-3d7b-489d-9ee6-b842a0aa4a47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EmGine\File I/O">
+      <UniqueIdentifier>{c6e045cb-8f5d-4965-b695-f33b33e3bbac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

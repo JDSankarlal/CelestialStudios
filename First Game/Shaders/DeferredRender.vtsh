@@ -1,5 +1,6 @@
 #version 420
 
+uniform bool flip = false;
 uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProj;
@@ -20,19 +21,18 @@ out vec3 pos;
 
 void main()
 {
-     
+    
     texcoord = in_uv;
-    texcoord.y = 1 - texcoord.y;
+    texcoord.y = abs(float(!flip) - texcoord.y);
 
-   vec3 normal = mix(in_normal1, in_normal2, uTime);
-   vec3 vert = mix(in_vert1, in_vert2, uTime);
-
+    vec3 normal = mix(in_normal1, in_normal2, uTime);
+    vec3 vert = mix(in_vert1, in_vert2, uTime);
 
     norm =  mat3(uModel) * mat3(uView) * normal;
-    
+
     vec4 viewSpace =  uView * uModel * vec4(vert, 1.0f); 
-    
-    gl_Position =  uProj * viewSpace;
-    
+
+    gl_Position =  uProj * viewSpace / viewSpace.w;
+
     pos = gl_Position.xyz;
 }

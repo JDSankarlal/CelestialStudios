@@ -126,7 +126,7 @@ void Sprite::draw()
 	_textureShader->disable();
 }
 
-void Sprite::setPosition(float x, float y)
+void Sprite::translate(float x, float y)
 {
 	position = {x,y};
 
@@ -141,7 +141,7 @@ void Sprite::setSize(float width, float height)
 	init();
 }
 
-void Sprite::setRotation(float deg)
+void Sprite::rotate(float deg)
 {
 
 	static Quat quat[6];
@@ -187,7 +187,7 @@ void Sprite::rotateBy(float deg)
 	deg;
 }
 
-Size2D & Sprite::getSize()
+Coord2D<>& Sprite::getSize()
 {
 	return size;
 }

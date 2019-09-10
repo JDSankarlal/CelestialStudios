@@ -1,7 +1,7 @@
 #include "FrameBuffer.h"
 GLuint FrameBuffer::m_fsQuadVAO_ID, FrameBuffer::m_fsQuadVBO_ID;
 
-FrameBuffer::FrameBuffer(std::string tag, unsigned numColorAttachments)
+FrameBuffer::FrameBuffer( unsigned numColorAttachments, std::string tag)
 {
 	m_tag = tag;
 	glGenFramebuffers(1, &m_fboID);
@@ -26,6 +26,19 @@ FrameBuffer::~FrameBuffer()
 	unload();
 }
 
+void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
+{
+	if(!m_colorAttachments[index])
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+		//create colour texture
+		glGenTextures(1, &m_colorAttachments[index]);
+		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+
+		resizeColour(index, width, height, internalFormat, filter, wrap);
+	}
+}
+
 void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 {
 	if(!m_depthAttachment)
@@ -40,51 +53,14 @@ void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 	}
 }
 
-void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
-{
-	if(!m_colorAttachments[index])
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-
-		//create colour texture
-		glGenTextures(1, &m_colorAttachments[index]);
-
-		resizeColour(index, width, height, internalFormat, filter, wrap);
-		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-	}
-}
-
-void FrameBuffer::resizeDepth(unsigned width, unsigned height)
-{
-	if(m_depthAttachment)
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-		glDeleteTextures(1, &m_depthAttachment);
-		glGenTextures(1, &m_depthAttachment);
-
-		m_width = width;
-		m_height = height;
-		glBindTexture(GL_TEXTURE_2D, m_depthAttachment);
-
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		//Bind texture to the fbo
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-}
-
 void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
 {
 	if(m_colorAttachments[index])
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-		glDeleteTextures(1, &m_colorAttachments[index]);
+
+		static GLuint tmpAttachment; tmpAttachment = m_colorAttachments[index];
+
 		glGenTextures(1, &m_colorAttachments[index]);
 
 		m_internalFormat = internalFormat;
@@ -102,25 +78,34 @@ void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index], 0);
 
 		glBindTexture(GL_TEXTURE_2D,0);
+		glDeleteTextures(1, &tmpAttachment);
 	}
 }
 
-void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height)
+void FrameBuffer::resizeDepth(unsigned width, unsigned height)
 {
-	if(m_colorAttachments[index])
-	{		
+	if(m_depthAttachment)
+	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-		glBindTexture(GL_TEXTURE_2D, m_colorAttachments[index]);
-		glTexStorage2D(GL_TEXTURE_2D, 1, m_internalFormat, width, height);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap);
+
+		static GLuint tmpAttachment; tmpAttachment = m_depthAttachment;
+		glGenTextures(1, &m_depthAttachment);
+
+		m_width = width;
+		m_height = height;
+		glBindTexture(GL_TEXTURE_2D, m_depthAttachment);
+
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		//Bind texture to the fbo
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
+		glDeleteTextures(1, &tmpAttachment);
 	}
 }
 
@@ -135,7 +120,6 @@ bool FrameBuffer::checkFBO()
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-
 	return true;
 }
 
@@ -258,6 +242,7 @@ GLuint FrameBuffer::getDepthHandle() const
 {
 	return m_depthAttachment;
 }
+
 GLuint FrameBuffer::getColorHandle(unsigned m_index) const
 {
 	return m_colorAttachments[m_index];

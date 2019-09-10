@@ -43,12 +43,12 @@ void Turret::update(float dt)
 		bullets.push_back(new Model(*bullet));
 		GameEmGine::addModel(bullets.back());
 		bullets.back()->setColour(1, 1, 1);//bullet color = players color
-		Coord3D pos = this->getTransformer().getPosition();
-		bullets.back()->getTransformer().setPosition(pos.x, pos.y + .1f, pos.z);
-		bullets.back()->getTransformer().setScale(.25f);
+		Coord3D pos = this->getPosition();
+		bullets.back()->translate(pos.x, pos.y + .1f, pos.z);
+		bullets.back()->setScale(.25f);
 
 		velocity.push_back(Coord3D());
-		velocity.back() = (m_minions[0]->getTransformer().getPosition() - getTransformer().getPosition()).normal();
+		velocity.back() = (m_minions[0]->getPosition() - getPosition()).normal();
 		velocity.back().y = 0;
 		bulletTime = Time;
 		//timer.push_back(0);
@@ -59,7 +59,7 @@ void Turret::update(float dt)
 
 	for (int a = 0; a < (int)bullets.size(); a++)
 	{
-		bullets[a]->getTransformer().translateBy(velocity[a]);
+		bullets[a]->translateBy(velocity[a]);
 		//if(collision bullets[a], minion)
 	}
 

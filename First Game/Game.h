@@ -11,56 +11,12 @@
 #include "Tank.h"
 
 
-
-typedef EmGineAudioPlayer AudioPlayer;
-
-
 using std::vector;
 
 class Game:public Scene
 {
 public:
-	/// - Collision Class - ///
-	bool collision2D(Model* l, Model* k)
-	{
-		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
-		Coord3D thing = l->getCenter() - k->getCenter();
 
-		float distanceX = abs(thing.x);
-		float distanceZ = abs(thing.z);
-
-		float capW = (l->getWidth() + k->getWidth()) / 2;
-		float capD = (l->getDepth() + k->getDepth()) / 2;
-
-		if(std::abs(distanceX) <= capW)
-			if(std::abs(distanceZ) <= capD)
-				return true;
-
-		return false;
-	}
-
-
-	///~ 3D Collision Function ~///
-	bool collision3D(Model * l, Model * k)
-	{
-		//if distance between mod in the x OR z is less than half of both widths combined then collide and don't allow any more movement in that direction.
-		Coord3D thing = l->getCenter() - k->getCenter();
-
-		float distanceX = abs(thing.x);
-		float distanceY = abs(thing.y);
-		float distanceZ = abs(thing.z);
-
-		float capW = (l->getWidth() + k->getWidth()) / 2;
-		float capH = (l->getHeight() + k->getHeight()) / 2;
-		float capD = (l->getDepth() + k->getDepth()) / 2;
-
-		if(std::abs(distanceX) <= abs(capW))
-			if(std::abs(distanceZ) <= abs(capD))
-				if(std::abs(distanceY) <= abs(capH))
-					return true;
-
-		return false;
-	}
 
 	//instance key is pressed
 	void keyInputPressed(int key, int modifier)
@@ -112,8 +68,8 @@ public:
 
 		if(key == GLFW_KEY_SPACE) //changes the model that is being moved
 		{
-			static CAMERA_TYPE type = PERSPECTIVE;
-			GameEmGine::setCameraType(type = type == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC);
+			static CAMERA_TYPE type = FRUSTUM;
+			GameEmGine::setCameraType(type = type == ORTHOGRAPHIC ? FRUSTUM : ORTHOGRAPHIC);
 		}
 
 		if(key == GLFW_KEY_TAB)
@@ -131,7 +87,7 @@ public:
 		if(key == GLFW_KEY_T)
 			GameEmGine::toonActive = (GameEmGine::toonActive == false) ? true : false;
 		if(key == 'R')
-			GameEmGine::setCameraAngle(0, {1,1,1});
+			GameEmGine::setCameraRotation({0,0,0});
 
 		printf("key RELEASED code: %d\n\n", key);
 	}
@@ -139,13 +95,13 @@ public:
 	void mouseButtonReleased(int button, int _mod)
 	{
 		_mod;
-		if(button == LEFT_BUTTON)
-			leftM = InputManager::getMouseCursorPosition();
-		if(button == RIGHT_BUTTON)
-			rightM = InputManager::getMouseCursorPosition();
+		if(button == MOUSE_LEFT_BUTTON)
+			leftM = InputManager::getMousePosition();
+		if(button == MOUSE_RIGHT_BUTTON)
+			rightM = InputManager::getMousePosition();
 	}
 
-	void playerTypes(vector<Player*> & playerType)
+	void playerTypes(vector<Player*>& playerType)
 	{
 		for(Player* a : playerType)
 			mod.push_back(a);
@@ -154,13 +110,14 @@ public:
 	// Set game screen
 	void init()
 	{
+		
 		GameEmGine::m_modelShader->sendUniform("darken", 1);
-		mod.resize(130);//sets the initial size of the vector (if u add any more models, increase this number)
+		mod.resize(132);//sets the initial size of the vector (if u add any more models, increase this number)
 
 		/// - Set Camera  - ///
-		GameEmGine::setCameraType(PERSPECTIVE);
+		GameEmGine::setCameraType(FRUSTUM);
 		GameEmGine::setCameraPosition({0,15.5f,-5});
-		GameEmGine::setCameraAngle(-45, {1,0,0});
+		GameEmGine::setCameraRotation({-45,0,0});
 
 
 		//GAME::setFPSLimit(60);
@@ -327,7 +284,7 @@ public:
 		GameEmGine::addModel(mod[59]);
 
 		mod[59]->setToRender(false);
-		mod[59]->getTransformer().setScale(1.f, 1.0f, 1.f), mod[59]->getTransformer().setPosition(0.0f, 0.15f, 5.0f);
+		mod[59]->setScale(1.f, 1.0f, 1.f), mod[59]->translate(0.0f, 0.15f, 5.0f);
 
 		//TRAIN
 		mod[79] = (new Model("Models/Train/Head/trainhead.obj"));//79
@@ -344,13 +301,13 @@ public:
 		GameEmGine::addModel(mod[84]);
 		mod[85] = (new Model("Models/Train/Head/trainhead.obj"));//85
 		GameEmGine::addModel(mod[85]);
-		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
-		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
-		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
-		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
-		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
-		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
-		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
+		mod[79]->translate(-14.45f, 0.3f, 8.0f);
+		mod[80]->translate(-9.2f, 0.3f, 8.0f);
+		mod[81]->translate(-4.6f, 0.3f, 8.0f);
+		mod[82]->translate(0.0f, 0.3f, 8.0f);
+		mod[83]->translate(4.6f, 0.3f, 8.0f);
+		mod[84]->translate(9.2f, 0.3f, 8.0f);
+		mod[85]->translate(14.45f, 0.3f, 8.0f), mod[85]->rotate(Coord3D<>(0, 180, 0));
 
 		//Rail
 		mod[86] = (new Model("Models/Rail/rail.obj"));//86
@@ -368,13 +325,13 @@ public:
 		mod[92] = (new Model(*mod[91]));//92
 		GameEmGine::addModel(mod[92]);
 
-		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[86]->setScale(0.7f), mod[86]->translate(-18.0f, 0.0f, 8.0f), mod[86]->rotate(Coord3D<>(0, 90, 0));
+		mod[87]->setScale(0.7f), mod[87]->translate(-12.0f, 0.0f, 8.0f), mod[87]->rotate(Coord3D<>(0, 90, 0));
+		mod[88]->setScale(0.7f), mod[88]->translate(-6.0f, 0.0f, 8.0f), mod[88]->rotate(Coord3D<>(0, 90, 0));
+		mod[89]->setScale(0.7f), mod[89]->translate(0.0f, 0.0f, 8.0f), mod[89]->rotate(Coord3D<>(0, 90, 0));
+		mod[90]->setScale(0.7f), mod[90]->translate(6.0f, 0.0f, 8.0f), mod[90]->rotate(Coord3D<>(0, 90, 0));
+		mod[91]->setScale(0.7f), mod[91]->translate(12.0f, 0.0f, 8.0f), mod[91]->rotate(Coord3D<>(0, 90, 0));
+		mod[92]->setScale(0.7f), mod[92]->translate(18.0f, 0.0f, 8.0f), mod[92]->rotate(Coord3D<>(0, 90, 0));
 
 
 		//Escape pods
@@ -412,73 +369,73 @@ public:
 		//Background
 		mod[106] = (new Model("Models/BackgroundSky/sky.obj"));//106
 		GameEmGine::addModel(mod[106]);
-		mod[106]->getTransformer().setScale(8.0f, 8.0f, 5.0f), mod[106]->getTransformer().setPosition(1.0f, 4.0f, 40.0f), mod[106]->getTransformer().setRotation({90.0f,0.0f,0.0f});
+		mod[106]->setScale(8.0f, 8.0f, 5.0f), mod[106]->translate(1.0f, 4.0f, 40.0f), mod[106]->rotate({90.0f,0.0f,0.0f});
 
 		//Add more buildings in the back
 		mod[107] = (new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//107
 		GameEmGine::addModel(mod[107]);
 
-		mod[107]->getTransformer().setScale(1.5f, 1.5f, 1.0f), mod[107]->getTransformer().setPosition(2.5f, 0.0f, 30.0f);
+		mod[107]->setScale(1.5f, 1.5f, 1.0f), mod[107]->translate(2.5f, 0.0f, 30.0f);
 
 		mod[108] = (new Model("Models/Buildings/Building1/building1.obj"));//108
 		GameEmGine::addModel(mod[108]);
 		mod[109] = (new Model(*mod[108]));//109
 		GameEmGine::addModel(mod[109]);
 
-		mod[108]->getTransformer().setScale(2.0f, 3.5f, 2.5f), mod[108]->getTransformer().setPosition(-6.0f, 0.0f, 37.0f), mod[108]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
-		mod[109]->getTransformer().setScale(2.0f, 3.5f, 2.5f), mod[109]->getTransformer().setPosition(25.2f, 0.0f, 18.0f), mod[109]->getTransformer().setRotation({0.0f, 180.0f, 0.0f});
+		mod[108]->setScale(2.0f, 3.5f, 2.5f), mod[108]->translate(-6.0f, 0.0f, 37.0f), mod[108]->rotate({0.0f, -90.0f, 0.0f});
+		mod[109]->setScale(2.0f, 3.5f, 2.5f), mod[109]->translate(25.2f, 0.0f, 18.0f), mod[109]->rotate({0.0f, 180.0f, 0.0f});
 
 		mod[110] = (new Model("Models/Buildings/Building2/building2.obj"));//110
 		GameEmGine::addModel(mod[110]);
 		mod[111] = (new Model(*mod[110]));//111
 		GameEmGine::addModel(mod[111]);
 
-		mod[110]->getTransformer().setScale(2.0f, 3.5f, 2.5f), mod[110]->getTransformer().setPosition(-22.0f, 0.0f, 15.0f), mod[110]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
-		mod[111]->getTransformer().setScale(1.0f, 3.5f, 2.5f), mod[111]->getTransformer().setPosition(5.0f, 0.0f, 37.0f), mod[111]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+		mod[110]->setScale(2.0f, 3.5f, 2.5f), mod[110]->translate(-22.0f, 0.0f, 15.0f), mod[110]->rotate({0.0f, 0.0f, 0.0f});
+		mod[111]->setScale(1.0f, 3.5f, 2.5f), mod[111]->translate(5.0f, 0.0f, 37.0f), mod[111]->rotate({0.0f, -90.0f, 0.0f});
 
 		mod[112] = (new Model("Models/Buildings/Building8/Pharmacure_Model.obj"));//112
 		GameEmGine::addModel(mod[112]);
 		mod[113] = (new Model(*mod[112]));//113
 		GameEmGine::addModel(mod[113]);
 
-		mod[112]->getTransformer().setScale(1.0f, 1.0f, 1.0f), mod[112]->getTransformer().setPosition(17.0f, 0.0f, 22.0f), mod[112]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
-		mod[113]->getTransformer().setScale(2.0f, 2.0f, 2.0f), mod[113]->getTransformer().setPosition(-25.0f, 0.0f, 25.0f), mod[113]->getTransformer().setRotation({0.0f, 90.0f, 0.0f});
+		mod[112]->setScale(1.0f, 1.0f, 1.0f), mod[112]->translate(17.0f, 0.0f, 22.0f), mod[112]->rotate({0.0f, -90.0f, 0.0f});
+		mod[113]->setScale(2.0f, 2.0f, 2.0f), mod[113]->translate(-25.0f, 0.0f, 25.0f), mod[113]->rotate({0.0f, 90.0f, 0.0f});
 
 		mod[114] = (new Model("Models/Buildings/Building3/House.obj"));//114
 		GameEmGine::addModel(mod[114]);
 
-		mod[114]->getTransformer().setScale(2.0f, 2.0f, 2.0f), mod[114]->getTransformer().setPosition(25.0f, 0.0f, 10.0f), mod[114]->getTransformer().setRotation({0.0f, 90.0f, -90.0f});
+		mod[114]->setScale(2.0f, 2.0f, 2.0f), mod[114]->translate(25.0f, 0.0f, 10.0f), mod[114]->rotate({0.0f, 90.0f, -90.0f});
 
 		mod[115] = (new Model("Models/Buildings/Building9/cyber1.obj"));//115
 		GameEmGine::addModel(mod[115]);
 		mod[116] = (new Model(*mod[115]));//116
 		GameEmGine::addModel(mod[116]);
 
-		mod[115]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[115]->getTransformer().setPosition(-22.0f, 0.0f, 35.0f), mod[115]->getTransformer().setRotation({0.0f, 45.0f, 0.0f});
-		mod[116]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[116]->getTransformer().setPosition(13.5f, 0.0f, 35.0f), mod[116]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
+		mod[115]->setScale(3.0f, 3.0f, 3.0f), mod[115]->translate(-22.0f, 0.0f, 35.0f), mod[115]->rotate({0.0f, 45.0f, 0.0f});
+		mod[116]->setScale(3.0f, 3.0f, 3.0f), mod[116]->translate(13.5f, 0.0f, 35.0f), mod[116]->rotate({0.0f, 0.0f, 0.0f});
 
 		mod[117] = (new Model("Models/Buildings/Building10/cyber2.obj"));//117
 		GameEmGine::addModel(mod[117]);
 		mod[118] = (new Model(*mod[117]));//118
 		GameEmGine::addModel(mod[118]);
 
-		mod[117]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[117]->getTransformer().setPosition(21.0f, 0.0f, 27.0f), mod[117]->getTransformer().setRotation({0.0f, 90.0f, 0.0f});
-		mod[118]->getTransformer().setScale(3.0f, 3.0f, 3.0f), mod[118]->getTransformer().setPosition(-0.5f, 2.0f, 36.0f), mod[118]->getTransformer().setRotation({0.0f, 90.0f, 0.0f});
+		mod[117]->setScale(3.0f, 3.0f, 3.0f), mod[117]->translate(21.0f, 0.0f, 27.0f), mod[117]->rotate({0.0f, 90.0f, 0.0f});
+		mod[118]->setScale(3.0f, 3.0f, 3.0f), mod[118]->translate(-0.5f, 2.0f, 36.0f), mod[118]->rotate({0.0f, 90.0f, 0.0f});
 
 		mod[119] = (new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//119
 		GameEmGine::addModel(mod[119]);
-		mod[119]->getTransformer().setScale(1.0f, 3.0f, 1.0f), mod[119]->getTransformer().setPosition(17.f, 0.0f, 30.0f), mod[119]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+		mod[119]->setScale(1.0f, 3.0f, 1.0f), mod[119]->translate(17.f, 0.0f, 30.0f), mod[119]->rotate({0.0f, -90.0f, 0.0f});
 
 		mod[120] = (new Model("Models/Buildings/Building11/cyber3.obj"));//120
 		GameEmGine::addModel(mod[120]);
 		mod[121] = (new Model(*mod[120]));//121
 		GameEmGine::addModel(mod[121]);
-		mod[120]->getTransformer().setScale(2.0f, 3.0f, 3.0f), mod[120]->getTransformer().setPosition(-17.f, -5.0f, 24.0f), mod[120]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
-		mod[121]->getTransformer().setScale(2.0f, 2.0f, 2.0f), mod[121]->getTransformer().setPosition(-4.2f, -5.0f, 29.7f), mod[121]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+		mod[120]->setScale(2.0f, 3.0f, 3.0f), mod[120]->translate(-17.f, -5.0f, 24.0f), mod[120]->rotate({0.0f, 0.0f, 0.0f});
+		mod[121]->setScale(2.0f, 2.0f, 2.0f), mod[121]->translate(-4.2f, -5.0f, 29.7f), mod[121]->rotate({0.0f, -90.0f, 0.0f});
 
 		mod[122] = (new Model("Models/Buildings/Building5/smallShop.obj"));//122
 		GameEmGine::addModel(mod[122]);
-		mod[122]->getTransformer().setScale(1.2f, 1.2f, 1.2f), mod[122]->getTransformer().setPosition(-8.0f, 0.0f, 27.0f), mod[122]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+		mod[122]->setScale(1.2f, 1.2f, 1.2f), mod[122]->translate(-8.0f, 0.0f, 27.0f), mod[122]->rotate({0.0f, -90.0f, 0.0f});
 
 		//Building 2s
 		mod[123] = (new Model("Models/Buildings/Tunnel/Tunnel_Front_Blue.obj")); //123
@@ -490,16 +447,16 @@ public:
 
 		//boss portrait beside its health bar 
 		mod[125] = (new Model("Models/BOSS/bossPORTRAIT.obj")); //125
-		mod[125]->getTransformer().setPosition(10.2f, 18.2f, 19.2f);
-		mod[125]->getTransformer().setScale(2.0f, 2.0f, 2.0f);
-		mod[125]->getTransformer().setRotation({0, 0, 0});
+		mod[125]->translate(10.2f, 18.2f, 19.2f);
+		mod[125]->setScale(2.0f, 2.0f, 2.0f);
+		mod[125]->rotate({0, 0, 0});
 		mod[125]->setTransparent(true);
 		GameEmGine::addModel(mod[125]);
 
 		//pause screen
 		mod[126] = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
-		mod[126]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
-		mod[126]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
+		mod[126]->translate(-0.8f, 10.0f, -8.0f);
+		mod[126]->setScale(0.25f, 0.45f, 0.25f);
 		GameEmGine::addModel(mod[126]);
 		mod[126]->setToRender(false);
 		mod[126]->setTransparent(true);
@@ -507,127 +464,127 @@ public:
 		//Tutorial Sign
 		mod[127] = (new Model("Models/Sign/tallSign/tallSign.obj"));
 		GameEmGine::addModel(mod[127]);
-		mod[127]->getTransformer().setPosition(-14.0f, 0.0f, 36.0f), mod[127]->getTransformer().setScale(1.5f, 1.5f, 1.5f);
+		mod[127]->translate(-14.0f, 0.0f, 36.0f), mod[127]->setScale(1.5f, 1.5f, 1.5f);
 		mod[127]->setColour({0,255,255});
 
 		mod[128] = (new Model("Models/Sign/shortSign/shortSign.obj"));
 		GameEmGine::addModel(mod[128]);
-		mod[128]->getTransformer().setPosition(-16.9f, 0.0f, 17.0f), mod[128]->getTransformer().setRotation({0, 90, 0}), mod[128]->getTransformer().setScale(0.8f, 1.0f, 1.0f);
+		mod[128]->translate(-16.9f, 0.0f, 17.0f), mod[128]->rotate({0, 90, 0}), mod[128]->setScale(0.8f, 1.0f, 1.0f);
 		mod[128]->setColour({0,255,255});
 
 		mod[129] = (new Model("Models/Sign/sideSign/sideSign.obj"));
 		GameEmGine::addModel(mod[129]);
-		mod[129]->getTransformer().setScale(1.0f, 3.0f, 1.0f), mod[129]->getTransformer().setPosition(16.8f, 0.0f, 29.5f), mod[129]->getTransformer().setRotation({0.0f, -90.0f, 0.0f});
+		mod[129]->setScale(1.0f, 3.0f, 1.0f), mod[129]->translate(16.8f, 0.0f, 29.5f), mod[129]->rotate({0.0f, -90.0f, 0.0f});
 
 		mod[130] = (new Model("Models/Scene/GameOver/gameOver.obj")); //125
-		mod[130]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
-		mod[130]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
+		mod[130]->translate(-0.8f, 10.0f, -8.0f);
+		mod[130]->setScale(0.25f, 0.45f, 0.25f);
 		GameEmGine::addModel(mod[130]);
 		mod[130]->setToRender(false);
 		mod[130]->setTransparent(true);
 
 		mod[131] = (new Model("Models/Scene/Win/win.obj")); //125
-		mod[131]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
-		mod[131]->getTransformer().setScale(0.25f, 0.45f, 0.25f);
+		mod[131]->translate(-0.8f, 10.0f, -8.0f);
+		mod[131]->setScale(0.25f, 0.45f, 0.25f);
 		GameEmGine::addModel(mod[131]);
 		mod[131]->setToRender(false);
 		mod[131]->setTransparent(true);
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
-		mod[0]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[0]->getTransformer().setPosition(1.0f, 0.0f, -5.0f);
-		mod[1]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[1]->getTransformer().setPosition(-1.0f, 0.0f, -5.0f);
-		mod[2]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[2]->getTransformer().setPosition(2.0f, 0.0f, -5.0f);
-		mod[3]->getTransformer().setScale(1.2f, 1.4f, 1.2f), mod[3]->getTransformer().setPosition(-2.0f, 0.0f, -5.0f);
-		mod[0]->getTransformer().setRotation(Coord3D(0, 180, 0));
-		mod[1]->getTransformer().setRotation(Coord3D(0, 180, 0));
-		mod[2]->getTransformer().setRotation(Coord3D(0, 180, 0));
-		mod[3]->getTransformer().setRotation(Coord3D(0, 180, 0));
+		mod[0]->setScale(1.2f, 1.4f, 1.2f), mod[0]->translate(1.0f, 0.0f, -5.0f);
+		mod[1]->setScale(1.2f, 1.4f, 1.2f), mod[1]->translate(-1.0f, 0.0f, -5.0f);
+		mod[2]->setScale(1.2f, 1.4f, 1.2f), mod[2]->translate(2.0f, 0.0f, -5.0f);
+		mod[3]->setScale(1.2f, 1.4f, 1.2f), mod[3]->translate(-2.0f, 0.0f, -5.0f);
+		mod[0]->rotate(Coord3D<>(0, 180, 0));
+		mod[1]->rotate(Coord3D<>(0, 180, 0));
+		mod[2]->rotate(Coord3D<>(0, 180, 0));
+		mod[3]->rotate(Coord3D<>(0, 180, 0));
 
 		mod[19]->addChild(mod[123]);
 		mod[20]->addChild(mod[124]);
 
 		//Building Transforms
 		//Building 1s
-		mod[4]->getTransformer().setScale(1), mod[4]->getTransformer().setPosition(-15.175f, 0.0f, -2.0f), mod[4]->getTransformer().setRotation({0.0f,90.0f,0.0f});;
-		mod[5]->getTransformer().setScale(1), mod[5]->getTransformer().setPosition(6.0f, 0.0f, 29.0f), mod[5]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
-		//mod[6]->getTransformer().setScale(2), mod[6]->getTransformer().setPosition(-4.0f, 0.0f, 22.75f), mod[6]->getTransformer().setRotation({0.0f,-90.0f,0.0f});
+		mod[4]->setScale(1), mod[4]->translate(-15.175f, 0.0f, -2.0f), mod[4]->rotate({0.0f,90.0f,0.0f});;
+		mod[5]->setScale(1), mod[5]->translate(6.0f, 0.0f, 29.0f), mod[5]->rotate({0.0f,-90.0f,0.0f});
+		//mod[6]->setScale(2), mod[6]->translate(-4.0f, 0.0f, 22.75f), mod[6]->rotate({0.0f,-90.0f,0.0f});
 
 		//Building 2s
-		mod[19]->getTransformer().setScale(0.85f), mod[19]->getTransformer().setPosition(-18.0f, 0.0f, 6.4f), mod[19]->getTransformer().setRotation({0.0f, 90.0f,0.0f}); //left 
-		mod[20]->getTransformer().setScale(0.85f), mod[20]->getTransformer().setPosition(18.0f, 0.0f, 9.5f), mod[20]->getTransformer().setRotation({0.0f, -90.0f, 0.0f}); //right 
+		mod[19]->setScale(0.85f), mod[19]->translate(-18.0f, 0.0f, 6.4f), mod[19]->rotate({0.0f, 90.0f,0.0f}); //left 
+		mod[20]->setScale(0.85f), mod[20]->translate(18.0f, 0.0f, 9.5f), mod[20]->rotate({0.0f, -90.0f, 0.0f}); //right 
 
 		//Buildings 3s
-		mod[30]->getTransformer().setPosition(10.5f, 0.0f, 23.6f);
-		mod[31]->getTransformer().setPosition(19.5f, 0.0f, 3.75f), mod[31]->getTransformer().setRotation({0,180,0});
-		mod[32]->getTransformer().setPosition(-12.0f, 0.0f, 25.35f), mod[32]->getTransformer().setRotation({0,-90,0});
+		mod[30]->translate(10.5f, 0.0f, 23.6f);
+		mod[31]->translate(19.5f, 0.0f, 3.75f), mod[31]->rotate({0,180,0});
+		mod[32]->translate(-12.0f, 0.0f, 25.35f), mod[32]->rotate({0,-90,0});
 		//Building 4s //Lillian's building, moved back
-		mod[33]->getTransformer().setPosition(27.0f, 0.0f, 26.0f), mod[33]->getTransformer().setRotation({0,45,0}); //right
-		mod[34]->getTransformer().setPosition(-14.0f, 0.0f, 36.0f), mod[34]->getTransformer().setScale(1.5f, 1.5f, 1.5f), mod[34]->getTransformer().setRotation({0,180,0}); //left
+		mod[33]->translate(27.0f, 0.0f, 26.0f), mod[33]->rotate({0,45,0}); //right
+		mod[34]->translate(-14.0f, 0.0f, 36.0f), mod[34]->setScale(1.5f, 1.5f, 1.5f), mod[34]->rotate({0,180,0}); //left
 		//Building 5s
-		mod[39]->getTransformer().setScale(1.0f, 1.0f, 1.05f), mod[39]->getTransformer().setPosition(19.6f, 0.0f, 16.5f), mod[39]->getTransformer().setRotation({0,180,0});
-		mod[40]->getTransformer().setScale(1.25f, 1.0f, 1.0f), mod[40]->getTransformer().setPosition(-16.9f, 0.0f, 16.35f), mod[40]->getTransformer().setRotation({0,90,0});
+		mod[39]->setScale(1.0f, 1.0f, 1.05f), mod[39]->translate(19.6f, 0.0f, 16.5f), mod[39]->rotate({0,180,0});
+		mod[40]->setScale(1.25f, 1.0f, 1.0f), mod[40]->translate(-16.9f, 0.0f, 16.35f), mod[40]->rotate({0,90,0});
 
 		//Project Nebula Sign Transforms
-		mod[7]->getTransformer().setScale(3), mod[7]->getTransformer().setPosition(9.5f, 5.34f, 22.5f);
+		mod[7]->setScale(3), mod[7]->translate(9.5f, 5.34f, 22.5f);
 
 		//Boss Trarrnsforms
-		mod[8]->getTransformer().setScale(2.0f), mod[8]->getTransformer().setPosition(0.0f, 0.0f, 23.0f), mod[8]->getTransformer().setRotation({0.0f, 0.0f, 0.0f});
+		mod[8]->setScale(2.0f), mod[8]->translate(0.0f, 0.0f, 23.0f), mod[8]->rotate({0.0f, 0.0f, 0.0f});
 
 		//Floor Transforms
-		mod[9]->getTransformer().setScale(2.25f, 1.0f, 5.0f), mod[9]->getTransformer().setPosition(0.0f, 0.0f, 5.0f);
+		mod[9]->setScale(2.25f, 1.0f, 5.0f), mod[9]->translate(0.0f, 0.0f, 5.0f);
 
 		//Street Light Transforms
-		mod[10]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[10]->getTransformer().setPosition(13.0f, 0.0f, -1.0f);
-		mod[11]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[11]->getTransformer().setPosition(13.0f, 0.0f, 6.0f);
-		mod[12]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[12]->getTransformer().setPosition(13.0f, 0.0f, 15.0f);
-		mod[13]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[13]->getTransformer().setPosition(-13.0f, 0.0f, -1.0f), mod[13]->getTransformer().setRotation({0.0f,180.0f,0.0f});
-		mod[14]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[14]->getTransformer().setPosition(-13.0f, 0.0f, 6.0f), mod[14]->getTransformer().setRotation({0.0f,180.0f,0.0f});
-		mod[15]->getTransformer().setScale(0.5f, 0.8f, 0.5f), mod[15]->getTransformer().setPosition(-13.0f, 0.0f, 15.0f), mod[15]->getTransformer().setRotation({0.0f,180.0f,0.0f});
+		mod[10]->setScale(0.5f, 0.8f, 0.5f), mod[10]->translate(13.0f, 0.0f, -1.0f);
+		mod[11]->setScale(0.5f, 0.8f, 0.5f), mod[11]->translate(13.0f, 0.0f, 6.0f);
+		mod[12]->setScale(0.5f, 0.8f, 0.5f), mod[12]->translate(13.0f, 0.0f, 15.0f);
+		mod[13]->setScale(0.5f, 0.8f, 0.5f), mod[13]->translate(-13.0f, 0.0f, -1.0f), mod[13]->rotate({0.0f,180.0f,0.0f});
+		mod[14]->setScale(0.5f, 0.8f, 0.5f), mod[14]->translate(-13.0f, 0.0f, 6.0f), mod[14]->rotate({0.0f,180.0f,0.0f});
+		mod[15]->setScale(0.5f, 0.8f, 0.5f), mod[15]->translate(-13.0f, 0.0f, 15.0f), mod[15]->rotate({0.0f,180.0f,0.0f});
 
 		//Bench Transforms
-		mod[16]->getTransformer().setPosition(-13.0f, 0.0f, 3.0f);
-		mod[17]->getTransformer().setPosition(13.0f, 0.0f, 3.0f), mod[17]->getTransformer().setRotation({0.0f,180.0f,0.0f});
+		mod[16]->translate(-13.0f, 0.0f, 3.0f);
+		mod[17]->translate(13.0f, 0.0f, 3.0f), mod[17]->rotate({0.0f,180.0f,0.0f});
 
 		//Planet Transforms
-		mod[18]->getTransformer().setPosition(9.0f, 17.0f, 36.0f);
-		//mod[58]->getTransformer().setPosition(-10.0f, 11.0f, 25.0f);
+		mod[18]->translate(9.0f, 17.0f, 36.0f);
+		//mod[58]->translate(-10.0f, 11.0f, 25.0f);
 
 		//Trees
-		mod[35]->getTransformer().setScale(0.3f), mod[35]->getTransformer().setPosition(13.0f, 0.0f, -3.0f), mod[35]->getTransformer().setRotation({0,-0,0});
-		mod[36]->getTransformer().setScale(0.3f), mod[36]->getTransformer().setPosition(-13.0f, 0.0f, -3.0f), mod[36]->getTransformer().setRotation({0,-0,0});
-		mod[37]->getTransformer().setScale(0.3f), mod[37]->getTransformer().setPosition(13.0f, 0.0f, 11.0f), mod[37]->getTransformer().setRotation({0,-0,0});
-		mod[38]->getTransformer().setScale(0.3f), mod[38]->getTransformer().setPosition(-13.0f, 0.0f, 11.0f), mod[38]->getTransformer().setRotation({0,-0,0});
+		mod[35]->setScale(0.3f), mod[35]->translate(13.0f, 0.0f, -3.0f), mod[35]->rotate({0,-0,0});
+		mod[36]->setScale(0.3f), mod[36]->translate(-13.0f, 0.0f, -3.0f), mod[36]->rotate({0,-0,0});
+		mod[37]->setScale(0.3f), mod[37]->translate(13.0f, 0.0f, 11.0f), mod[37]->rotate({0,-0,0});
+		mod[38]->setScale(0.3f), mod[38]->translate(-13.0f, 0.0f, 11.0f), mod[38]->rotate({0,-0,0});
 
 		//Pizza Sign
-		mod[53]->getTransformer().setScale(1.5f), mod[53]->getTransformer().setPosition(-13.0f, 5.4f, 22.3f);
+		mod[53]->setScale(1.5f), mod[53]->translate(-13.0f, 5.4f, 22.3f);
 
 		//Train
-		mod[79]->getTransformer().setPosition(-14.45f, 0.3f, 8.0f);
-		mod[80]->getTransformer().setPosition(-9.2f, 0.3f, 8.0f);
-		mod[81]->getTransformer().setPosition(-4.6f, 0.3f, 8.0f);
-		mod[82]->getTransformer().setPosition(0.0f, 0.3f, 8.0f);
-		mod[83]->getTransformer().setPosition(4.6f, 0.3f, 8.0f);
-		mod[84]->getTransformer().setPosition(9.2f, 0.3f, 8.0f);
-		mod[85]->getTransformer().setPosition(14.45f, 0.3f, 8.0f), mod[85]->getTransformer().setRotation(Coord3D(0, 180, 0));
+		mod[79]->translate(-14.45f, 0.3f, 8.0f);
+		mod[80]->translate(-9.2f, 0.3f, 8.0f);
+		mod[81]->translate(-4.6f, 0.3f, 8.0f);
+		mod[82]->translate(0.0f, 0.3f, 8.0f);
+		mod[83]->translate(4.6f, 0.3f, 8.0f);
+		mod[84]->translate(9.2f, 0.3f, 8.0f);
+		mod[85]->translate(14.45f, 0.3f, 8.0f), mod[85]->rotate(Coord3D<>(0, 180, 0));
 
 		//Rail
-		mod[86]->getTransformer().setScale(0.7f), mod[86]->getTransformer().setPosition(-18.0f, 0.0f, 8.0f), mod[86]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[87]->getTransformer().setScale(0.7f), mod[87]->getTransformer().setPosition(-12.0f, 0.0f, 8.0f), mod[87]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[88]->getTransformer().setScale(0.7f), mod[88]->getTransformer().setPosition(-6.0f, 0.0f, 8.0f), mod[88]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[89]->getTransformer().setScale(0.7f), mod[89]->getTransformer().setPosition(0.0f, 0.0f, 8.0f), mod[89]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[90]->getTransformer().setScale(0.7f), mod[90]->getTransformer().setPosition(6.0f, 0.0f, 8.0f), mod[90]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[91]->getTransformer().setScale(0.7f), mod[91]->getTransformer().setPosition(12.0f, 0.0f, 8.0f), mod[91]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[92]->getTransformer().setScale(0.7f), mod[92]->getTransformer().setPosition(18.0f, 0.0f, 8.0f), mod[92]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[86]->setScale(0.7f), mod[86]->translate(-18.0f, 0.0f, 8.0f), mod[86]->rotate(Coord3D<>(0, 90, 0));
+		mod[87]->setScale(0.7f), mod[87]->translate(-12.0f, 0.0f, 8.0f), mod[87]->rotate(Coord3D<>(0, 90, 0));
+		mod[88]->setScale(0.7f), mod[88]->translate(-6.0f, 0.0f, 8.0f), mod[88]->rotate(Coord3D<>(0, 90, 0));
+		mod[89]->setScale(0.7f), mod[89]->translate(0.0f, 0.0f, 8.0f), mod[89]->rotate(Coord3D<>(0, 90, 0));
+		mod[90]->setScale(0.7f), mod[90]->translate(6.0f, 0.0f, 8.0f), mod[90]->rotate(Coord3D<>(0, 90, 0));
+		mod[91]->setScale(0.7f), mod[91]->translate(12.0f, 0.0f, 8.0f), mod[91]->rotate(Coord3D<>(0, 90, 0));
+		mod[92]->setScale(0.7f), mod[92]->translate(18.0f, 0.0f, 8.0f), mod[92]->rotate(Coord3D<>(0, 90, 0));
 
 		//RialLight
-		mod[99]->getTransformer().setScale(0.7f), mod[99]->getTransformer().setPosition(-18.0f, 0.03f, 8.0f), mod[99]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[100]->getTransformer().setScale(0.7f), mod[100]->getTransformer().setPosition(-12.0f, 0.03f, 8.0f), mod[100]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[101]->getTransformer().setScale(0.7f), mod[101]->getTransformer().setPosition(-6.0f, 0.03f, 8.0f), mod[101]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[102]->getTransformer().setScale(0.7f), mod[102]->getTransformer().setPosition(0.0f, 0.03f, 8.0f), mod[102]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[103]->getTransformer().setScale(0.7f), mod[103]->getTransformer().setPosition(6.0f, 0.03f, 8.0f), mod[103]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[104]->getTransformer().setScale(0.7f), mod[104]->getTransformer().setPosition(12.0f, 0.03f, 8.0f), mod[104]->getTransformer().setRotation(Coord3D(0, 90, 0));
-		mod[105]->getTransformer().setScale(0.7f), mod[105]->getTransformer().setPosition(18.0f, 0.03f, 8.0f), mod[105]->getTransformer().setRotation(Coord3D(0, 90, 0));
+		mod[99]->setScale(0.7f), mod[99]->translate(-18.0f, 0.03f, 8.0f), mod[99]->rotate(Coord3D<>(0, 90, 0));
+		mod[100]->setScale(0.7f), mod[100]->translate(-12.0f, 0.03f, 8.0f), mod[100]->rotate(Coord3D<>(0, 90, 0));
+		mod[101]->setScale(0.7f), mod[101]->translate(-6.0f, 0.03f, 8.0f), mod[101]->rotate(Coord3D<>(0, 90, 0));
+		mod[102]->setScale(0.7f), mod[102]->translate(0.0f, 0.03f, 8.0f), mod[102]->rotate(Coord3D<>(0, 90, 0));
+		mod[103]->setScale(0.7f), mod[103]->translate(6.0f, 0.03f, 8.0f), mod[103]->rotate(Coord3D<>(0, 90, 0));
+		mod[104]->setScale(0.7f), mod[104]->translate(12.0f, 0.03f, 8.0f), mod[104]->rotate(Coord3D<>(0, 90, 0));
+		mod[105]->setScale(0.7f), mod[105]->translate(18.0f, 0.03f, 8.0f), mod[105]->rotate(Coord3D<>(0, 90, 0));
 
 		LightSource::setLightAmount(14);
 		for(int a = 0; a < 6; a++)
@@ -635,7 +592,7 @@ public:
 			//mod[10 + a]->boundingBoxUpdate();
 			LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
 			LightSource::setParent(mod[10 + a], a);
-			LightSource::setPosition({-5.0f,4.5,0.0f}, a);
+			LightSource::translate({-5.0f,4.5,0.0f}, a);
 			LightSource::setDirection({0.0f,-1.0f,0.0f}, a);
 			//LightSource::setDiffuse({ 255,100,0,100 }, 6);
 			//LightSource::setAttenuationQuadratic(0.06f, 6);
@@ -643,25 +600,25 @@ public:
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 6);
 		LightSource::setParent(mod[0], 6);
-		LightSource::setPosition({0, -0.75f, 0}, 6);
+		LightSource::translate({0, -0.75f, 0}, 6);
 		LightSource::setDiffuse({255,0,0,100}, 6);
 		LightSource::setAttenuationQuadratic(1.f, 6);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 7);
 		LightSource::setParent(mod[1], 7);
-		LightSource::setPosition({0, -0.75f, 0}, 7);
+		LightSource::translate({0, -0.75f, 0}, 7);
 		LightSource::setDiffuse({0,0,255,100}, 7);
 		LightSource::setAttenuationQuadratic(1.f, 7);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 8);
 		LightSource::setParent(mod[2], 8);
-		LightSource::setPosition({0, -0.75f, 0}, 8);
+		LightSource::translate({0, -0.75f, 0}, 8);
 		LightSource::setDiffuse({0,255,0,100}, 8);
 		LightSource::setAttenuationQuadratic(1.f, 8);
 
 		LightSource::setLightType(LIGHT_TYPE::POINT, 9);
 		LightSource::setParent(mod[3], 9);
-		LightSource::setPosition({0, -0.75f, 0}, 9);
+		LightSource::translate({0, -0.75f, 0}, 9);
 		LightSource::setDiffuse({255,255,0,100}, 9);
 		LightSource::setAttenuationQuadratic(1.f, 9);
 
@@ -688,9 +645,9 @@ public:
 		LightSource::setSceneAmbient({255,255,255,255});
 
 		/// - Set Camera  - ///
-	//	mod[130]->getTransformer().setPosition(-0.8f, 10.0f, -8.0f);
+	//	mod[130]->translate(-0.8f, 10.0f, -8.0f);
 		GameEmGine::setCameraPosition({0,15.5f,-17.5});
-		GameEmGine::setCameraAngle(-25, {1,0,0});
+		GameEmGine::setCameraRotation({-25,0,0});
 
 		/// key/mouse input ///
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
@@ -706,20 +663,20 @@ public:
 	}
 
 
-	void insertionSort(std::vector<Minion*> & arr, Model * checker)
+	void insertionSort(std::vector<Minion*>& arr, Model* checker)
 	{
 		int i, j;
 		float key;
 		for(i = 1; i < (int)arr.size(); i++)
 		{
-			key = Coord3D::distance(arr[i]->getTransformer().getPosition(), checker->getTransformer().getPosition());
+			key = Coord3D<>::distance(arr[i]->getPosition(), checker->getPosition());
 			Minion* tmp = arr[i];
 			j = i - 1;
 
 			/* Move elements of arr[0..i-1], that are
 			  greater than key, to one position ahead
 			  of their current position */
-			while(j >= 0 && Coord3D::distance(arr[j]->getTransformer().getPosition(), checker->getTransformer().getPosition()) > key)
+			while(j >= 0 && Coord3D<>::distance(arr[j]->getPosition(), checker->getPosition()) > key)
 			{
 
 				arr[j + 1] = arr[j];
@@ -767,13 +724,13 @@ public:
 			if(!m_init)
 			{
 				countdownTimer = time;
-				count->getTransformer().setRotation({-25, 0, 0});
+				count->rotate({-25, 0, 0});
 				count->setTransparent(true);
 				GameEmGine::addModel(count);
 				m_init = true;
 			}
 
-			count->getTransformer().setPosition(lerp(-GameEmGine::getMainCamera()->getPosition() + Coord3D{0,-5,7}, -GameEmGine::getMainCamera()->getPosition() - Coord3D{0,1,0}, (time - countdownTimer) / 3.5f));
+			count->translate(lerp(-GameEmGine::getMainCamera()->getPosition() + Coord3D<>{0, -5, 7}, -GameEmGine::getMainCamera()->getPosition() - Coord3D<>{0, 1, 0}, (time - countdownTimer) / 3.5f));
 
 			if(int((time - countdownTimer) / 2))
 			{
@@ -822,8 +779,8 @@ public:
 					else
 						EmGineAudioPlayer::setVolume(0.6f, 0);
 
-					mod[130]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
-					mod[130]->getTransformer().setPosition(GameEmGine::getMainCamera()->getTransformer().getPosition() + Coord3D{-0.8f, -5.5f, 8.5f}); //should be parallel to camera hopefully 
+					mod[130]->rotate(GameEmGine::getMainCamera()->getRotation()); //should be parallel to camera hopefully 
+					mod[130]->translate(GameEmGine::getMainCamera()->getPosition() + Coord3D{-0.8f, -5.5f, 8.5f}); //should be parallel to camera hopefully 
 
 					mod[130]->setToRender(!pause);
 					CandyMan->setActive(pause);
@@ -868,7 +825,7 @@ public:
 					else
 						EmGineAudioPlayer::setVolume(0.6f, 0);
 
-					mod[131]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
+					mod[131]->rotate(GameEmGine::getMainCamera()->getRotation()); //should be parallel to camera hopefully 
 					mod[131]->setToRender(!pause);
 					CandyMan->setActive(pause);
 
@@ -909,7 +866,7 @@ public:
 					else
 						EmGineAudioPlayer::setVolume(0.6f, 0);
 
-					mod[126]->getTransformer().setRotation(GameEmGine::getMainCamera()->getTransformer().getRotation()); //should be parallel to camera hopefully 
+					mod[126]->rotate(GameEmGine::getMainCamera()->getRotation()); //should be parallel to camera hopefully 
 					mod[126]->setToRender(!pause);
 					CandyMan->setActive(pause);
 					//music should slow down in the pause menu!!!!
@@ -953,10 +910,10 @@ public:
 			{
 				if(player->bulletCollisions(minion))
 					minion->setHealth(minion->getHealth() - 10);
-				if(player->collision2D(minion))
+				if(player->collision2D(minion, {false,true,false}))
 				{
 					player->hitByEnemy(minion, 5);
-					player->getTransformer().translateBy(minion->moveTo * 3);
+					player->translateBy(minion->moveTo * 3);
 				}
 			}
 
@@ -969,12 +926,12 @@ public:
 			for(int b = 0; b < 7; b++)
 			{
 				player->bulletCollisions(mod[79 + b]);
-				if(player->collision2D(mod[79 + b]))
+				if(player->collision2D(mod[79 + b], {false,true,false}))
 				{
 
-					player->getTransformer().translateBy(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x * -move * 1.1f, 0,
+					player->translateBy(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x * -move * 1.1f, 0,
 						((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y * move *
-						player->getTransformer().getPosition().z < mod[79 + b]->getTransformer().getPosition().z ? -1 : 1 * 1.1f); //move player back
+						player->getPosition().z < mod[79 + b]->getPosition().z ? -1 : 1 * 1.1f); //move player back
 
 				}
 
@@ -1050,18 +1007,18 @@ public:
 			mod[124]->setColour({255, 0, 0});
 			for(int t = 0; t < 7; t++)
 			{
-				if(collision2D(mod[79 + t], player))
+				if(Model::Model::collision2D(mod[79 + t], player, {false,true,false}))
 				{
 
-					player->getTransformer().setPosition(
-						abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+					player->translate(
+						abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 						0,
-						abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+						abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 
-					//if(player->getTransformer().getPosition().z < mod[79 + t]->getTransformer().getPosition().z)
-					//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, -0.1f));
-					//if(player->getTransformer().getPosition().z > mod[79 + t]->getTransformer().getPosition().z)
-					//	player->getTransformer().setPosition(player->getTransformer().getPosition() + Coord3D(0.0f, 0.f, 0.1f));
+					//if(player->getPosition().z < mod[79 + t]->getPosition().z)
+					//	player->translate(player->getPosition() + Coord3D<>(0.0f, 0.f, -0.1f));
+					//if(player->getPosition().z > mod[79 + t]->getPosition().z)
+					//	player->translate(player->getPosition() + Coord3D<>(0.0f, 0.f, 0.1f));
 				}
 			}
 			trainInit = false;
@@ -1071,17 +1028,17 @@ public:
 		{
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
+				mod[79 + t]->translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
-					if(collision2D(mod[79 + t], player))
+					if(Model::Model::collision2D(mod[79 + t], player, {false,true,false}))
 					{
 						player->setHealth(player->getHealth() - 10);
-						player->getTransformer().setPosition(
-							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						player->translate(
+							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 							0,
-							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 					}
 				}
 			}
@@ -1100,22 +1057,22 @@ public:
 			for(int i = 99; i <= 105; i++)
 			{
 
-				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, -1.0f, mod[i]->getTransformer().getPosition().z);
+				mod[i]->translate(mod[i]->getPosition().x, -1.0f, mod[i]->getPosition().z);
 			}
 
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
+				mod[79 + t]->translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
-					if(collision2D(mod[79 + t], player))
+					if(Model::collision2D(mod[79 + t], player, {false,true,false}))
 					{
 						player->setHealth(player->getHealth() - 10);
-						player->getTransformer().setPosition(
-							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						player->translate(
+							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 							0,
-							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 					}
 				}
 			}
@@ -1126,7 +1083,7 @@ public:
 		{
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
+				mod[79 + t]->translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
 			}
 			trainInit = false;
 		}
@@ -1135,19 +1092,19 @@ public:
 		{
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
-					if(collision2D(mod[79 + t], player))
+					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
-						player->getTransformer().setPosition(
-							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						player->translate(
+							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 							0,
-							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 					}
 				}
 			}
@@ -1167,24 +1124,24 @@ public:
 			mod[124]->setColour({255, 0, 0});
 			for(int i = 99; i <= 105; i++)
 			{
-				mod[i]->getTransformer().setPosition(mod[i]->getTransformer().getPosition().x, 0.03f, mod[i]->getTransformer().getPosition().z);
+				mod[i]->translate(mod[i]->getPosition().x, 0.03f, mod[i]->getPosition().z);
 
 			}
 
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
-					if(collision2D(mod[79 + t], player))
+					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
-						player->getTransformer().setPosition(
-							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						player->translate(
+							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 							0,
-							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 					}
 				}
 			}
@@ -1195,19 +1152,19 @@ public:
 			mod[124]->setColour({0, 255, 255});
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
-					if(collision2D(mod[79 + t], player))
+					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
-						player->getTransformer().setPosition(
-							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						player->translate(
+							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 							0,
-							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 					}
 				}
 			}
@@ -1219,14 +1176,14 @@ public:
 			mod[124]->setColour({255, 0, 0});
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-				if(collision2D(mod[79 + t], player))
+				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				if(Model::collision2D(mod[79 + t], player, {0,1,0}))
 				{
 					player->setHealth(player->getHealth() - 10);
-					player->getTransformer().setPosition(
-						abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+					player->translate(
+						abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 						0,
-						abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+						abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 				}
 			}
 			trainInit = false;
@@ -1237,18 +1194,18 @@ public:
 			mod[124]->setColour({0, 255, 255});
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
-					if(collision2D(mod[79 + t], player))
+					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
-						player->getTransformer().setPosition(
-							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						player->translate(
+							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 							0,
-							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 					}
 				}
 			}
@@ -1260,18 +1217,18 @@ public:
 			mod[124]->setColour({255, 0, 0});
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
-					if(collision2D(mod[79 + t], player))
+					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
-						player->getTransformer().setPosition(
-							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						player->translate(
+							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 							0,
-							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 					}
 				}
 			}
@@ -1283,17 +1240,17 @@ public:
 
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->getTransformer().setPosition(mod[79 + t]->getTransformer().getPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
+				mod[79 + t]->translate(mod[79 + t]->getPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
 
 				for(int a = 0; a < 4; a++)
 				{
 					player = (Player*)mod[a];
-					if(collision2D(mod[79 + t], player))
+					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
 					{
-						player->getTransformer().setPosition(
-							abs(player->getTransformer().getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getTransformer().getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getTransformer().getPosition().x,
+						player->translate(
+							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
 							0,
-							abs(player->getTransformer().getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getTransformer().getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getTransformer().getPosition().z);
+							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
 					}
 					trainTimer += time; //Reset Train timer so it all starts again.
 				}
@@ -1327,11 +1284,12 @@ public:
 				//move camera
 				move *= 2;
 
-				GameEmGine::moveCameraPositionBy({p1->getSticks()[LS].x * move , 0 * move, p1->getSticks()[LS].y * move});//move camera
-				GameEmGine::moveCameraAngleBy(ang * (abs(p1->getSticks()[RS].x) + abs(p1->getSticks()[RS].y)), {p1->getSticks()[RS].y  ,p1->getSticks()[RS].x, 0});//rotate camera
-				//GAME::getMainCamera()->getTransformer().rotateBy({ ang *p1->getSticks()[RS].y ,ang *p1->getSticks()[RS].x ,0}, { p1->getSticks()[RS].y  ,p1->getSticks()[RS].x, 0 });
-				GameEmGine::moveCameraPositionBy({0 ,p1->getTriggers().LT * -move,0});//move out
-				GameEmGine::moveCameraPositionBy({0 ,p1->getTriggers().RT * move,0});//move out
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::translateCameraBy({p1->getSticks()[LS].x * move , 0 * move, p1->getSticks()[LS].y * move});//move camera
+				GameEmGine::rotateCameraBy(ang * (abs(p1->getSticks()[RS].x) + abs(p1->getSticks()[RS].y)) * Coord3D<>{p1->getSticks()[RS].y, p1->getSticks()[RS].x, 0});//rotate camera
+				//GAME::getMainCamera()->rotateBy({ ang *p1->getSticks()[RS].y ,ang *p1->getSticks()[RS].x ,0}, { p1->getSticks()[RS].y  ,p1->getSticks()[RS].x, 0 });
+				GameEmGine::translateCameraBy({0 ,p1->getTriggers().LT * -move,0});//move out
+				GameEmGine::translateCameraBy({0 ,p1->getTriggers().RT * move,0});//move out
 				move /= 2;
 			}
 		}
@@ -1360,7 +1318,7 @@ private:
 	bool m_left = 0, m_right = 0, m_in = 0, m_out = 0, m_up = 0, m_down = 0,
 		rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0,
 		movePlayer = true;
-	Coord2D leftM, rightM;
+	Coord2D<> leftM, rightM;
 	AudioPlayer audio;
 	bool pause = false;
 	bool gameOver = false;

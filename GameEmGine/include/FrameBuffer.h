@@ -9,14 +9,14 @@ class FrameBuffer
 {
 public:
 	FrameBuffer() = delete;
-	FrameBuffer(std::string tag, unsigned numColorAttachments);
+	FrameBuffer(unsigned numColorAttachments, std::string tag="");
 	~FrameBuffer();
 
+	void initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat = GL_RGBA8, GLint filter = GL_LINEAR, GLint wrap = GL_CLAMP_TO_EDGE);
 	void initDepthTexture(unsigned width, unsigned height);
+	void resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat = GL_RGBA8, GLint filter = GL_LINEAR, GLint wrap = GL_CLAMP_TO_EDGE);
 	void resizeDepth(unsigned width, unsigned height);
-	void resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap);
-	void resizeColour(unsigned index, unsigned width, unsigned height);
-	void initColourTexture(unsigned m_index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap);
+	
 	bool checkFBO();
 
 	// Clears all OpenGL memory
