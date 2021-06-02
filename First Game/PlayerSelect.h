@@ -2,87 +2,111 @@
 #include <GameEmGine.h>
 #include "Game.h"
 
-class PlayerSelect :public Scene
+class PlayerSelect:public Scene
 {
 public:
-	// Set menu screen
-	//const float time = 0;
-	//time = (float)dt;
+	void onSceneExit() {}
+
+	~PlayerSelect() { /*delete game;*/ }
+
 	void init()
 	{
+		LightManager::enableShadows(false);
+
 		mod.clear();
-		 fadein = true;
-		 fadeout = false;
-		 splashT = 0;
-		 splashAmbient = 0;
-		 lerpParam = 1;
-		 option[0] = 0;
-		 option[1] = 0;
-		 option[2] = 0;
-		 option[3] = 0;
+		fadein = true;
+		fadeout = false;
+		splashT = 0;
+		splashAmbient = 0;
+		lerpParam = 1;
+		option[0] =
+			option[1] =
+			option[2] =
+			option[3] = 0;
 
-		GameEmGine::m_modelShader->sendUniform("darken", 0);
+		LightManager::addLight(&sceneLight);
+		sceneLight.setLightType(Light::DIRECTIONAL);
+		sceneLight.rotate({-45,0,0});
+		sceneLight.setAmbient({0,0,0,255});
+		sceneLight.setDiffuse({0,0,0,255});
+		sceneLight.setSpecular({0,0,0,255});
 
-		mod.push_back(new Model("Models/Scene/PlayerSelect/PlayerSelect.obj"));
-		GameEmGine::addModel(mod.back()); //Mod 0 
-		mod.push_back(new Model("Models/Scene/Menu/Start.obj"));
-		GameEmGine::addModel(mod.back()); //Mod 1
-		mod[1]->setToRender(false);
+		//GameEmGine::m_modelShader->sendUniform("darken", 0);
 
-		LightSource::setLightAmount(0);
+		Model tmp(new PrimitivePlane(115, 63), "Player Select Scene");
+		tmp.replaceTexture(0, 0, ResourceManager::getTexture2D("texture/scenes/playerselect/playerselect.png"));
+		mod.push_back(tmp);
+		mod.back().scale(16);
+		mod.back().setTransparent(true);
+		mod.back().setColour(1, 1, 1, 0);
 
-		GameEmGine::setCameraType(ORTHOGRAPHIC);
-		GameEmGine::setCameraPosition({ 0,0,-100 });
 
-				//TODO: Add back button and more flashy start button and "Press A to ready" buttons
+		mod.push_back(Model("Models/Scene/Menu/Start.obj"));
+		(*std::next(mod.begin(), 1)).setToRender(false);
+
+		playerSelections.push_back(new Assault("Models/Class/Assault/Idle/ASI1.obj"));
+		playerSelections.push_back(new Tank("Models/Class/Tank/Idle/TKI1.obj"));
+		playerSelections.push_back(new Medic("Models/Class/Medic/Idle/MCI1.obj"));
+		playerSelections.push_back(new Specialist("Models/Class/Specialist/Idle/SCI1.obj"));
+
+		GameEmGine::setCameraType(Camera::ORTHOGRAPHIC);
+		GameEmGine::getMainCamera()->translate({0,0,-100});
+
+		//TODO: Add back button and more flashy start button and "Press A to ready" buttons
 		float extra = 0;
-		for (int a = 0; a < 4; a++)
+		for(int a = 0; a < 4; a++)
 		{
-			if (a == 2)
-				extra = .7f;
-			else if (a == 3)
-				extra = 2;
-			mod.push_back(new Model(*classes[0]));
+			if(a == 1)
+				extra = .75f;
+			else if(a == 2)
+				extra = .6f;
+			else if(a == 3)
+				extra = 0;
+
+			Model tmp2(new PrimitivePlane(16, 28), "Class Icon");
+			tmp2.setTransparent(true);
+			tmp2.replaceTexture(0, 0, classes[0]);
+			mod.push_back(tmp2);
+			mod.back().setParent(&*mod.begin());
 
 			//translate(float(-42.2 + a * 27.5 + extra) -20.9f, -1 <- ORIGINAL
-			mod[2 + a]->translate(float(-43.3 + a * 28.3 + extra), -21.9f, -1);						
-			mod[2 + a]->rotate({ 0,270,0 });
-			mod[2 + a]->setScale(Coord3D<>{ 1, 15, 7 });
-			mod[2 + a]->setToRender(true);
-			GameEmGine::addModel(mod.back()); 
+			(*std::next(mod.begin(), 2 + a)).translate(-43.5f + a * 16 + a * 13.05f - extra, 2, 0);
+			(*std::next(mod.begin(), 2 + a)).setToRender(true);
 		}
 
-		for (int a = 0; a < 4; a++)
+		for(int a = 0; a < 4; a++)
 		{
-			if (a == 2)
-				extra = .7f;
-			else if (a == 3)
-				extra = 2;
-			mod.push_back(new Model(*classDescription[0]));
+			if(a == 1)
+				extra = .75f;
+			else if(a == 2)
+				extra = .6f;
+			else if(a == 3)
+				extra = 0;
 
-			mod[6 + a]->translate(float(-51 + a * 27.5 + extra), -47, -4);
-			mod[6 + a]->setScale(Coord3D<>{ 10, 20, 10 });
-			mod[6 + a]->rotate({ 0, 270, 0 });
-			mod[6 + a]->setToRender(true);
-			GameEmGine::addModel(mod.back()); //6, 7, 8, 9
+			Model tmp2(new PrimitivePlane(16, 10), "Class Description");
+			tmp2.replaceTexture(0, 0, classDescription[0]);
+			tmp2.setTransparent(true);
+			mod.push_back(tmp2); mod.back().setParent(&*mod.begin());
+
+			(*std::next(mod.begin(), 6 + a)).translate(-43.5f + a * 16 + a * 13.05f - extra, -7, 0);
+			(*std::next(mod.begin(), 6 + a)).setToRender(true);
 		}
+
+		for(auto& a : mod)
+			GameEmGine::addModel(&a);
 
 		//start adding in character descriptions OH MY GOT WHY ISNT IT SHOWING UPFD;OIFOIHFDUISSDFJJSDK
-		
+
 
 
 		//See GDD for general layout of this screen.
 
-		mod[0]->addChild(mod[1]);
+		(*std::next(mod.begin(), 0)).addChild(&(*std::next(mod.begin(), 1)));
+		(*std::next(mod.begin(), 0)).scale(16);
+		(*std::next(mod.begin(), 1)).rotate({90,0,0});
+		(*std::next(mod.begin(), 1)).scale(15.0f);
+		(*std::next(mod.begin(), 1)).translate({(*std::next(mod.begin(),0)).getWidth() - (*std::next(mod.begin(),1)).getWidth() - 200, -9.f * 1 + 15,0});
 
-		LightSource::setSceneAmbient({ 0,0,0,255 });
-
-		mod[0]->setScale(16);
-		mod[1]->rotate({ 90,0,0 });
-		mod[1]->setScale(15.0f);
-		mod[1]->translate({ mod[0]->getWidth() - mod[1]->getWidth() - 200, -9.f * 1 + 15,0 });
-
-		LightSource::setSceneAmbient({ 0,0,0,255 });
 
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
 	}
@@ -90,7 +114,7 @@ public:
 	void keyInputPressed(int key, int modfier)
 	{
 		modfier;
-		if (key == 'B')
+		if(key == 'B')
 		{
 			fadeout = true;
 		}
@@ -109,87 +133,88 @@ public:
 		//static bool specialistSelected;
 		//static bool tankSelected;
 
-		static bool isConnected[4] = { false,false,false,false };
+		static bool isConnected[4] = {false,false,false,false};
 
-		static bool menuMoved[] = { false,false,false,false };
+		static bool menuMoved[] = {false,false,false,false};
 
 		players.resize(4);
-		if (fadein)
+
+		GLubyte maxi = GLubyte(255 * .3f);
+		GLubyte mini = 0;
+		if(fadein)
 		{
 			splashT += 0.01f;
-			splashAmbient = (GLubyte)lerp(0, 255, splashT);
-			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
-			if (splashAmbient >= 250)
+			splashAmbient = (GLubyte)lerp(mini, maxi, splashT);
+			sceneLight.setAmbient({splashAmbient,splashAmbient,splashAmbient,255});
+
+			if(splashT >= 1)
 			{
 				fadein = false;
-				splashT = 0;
-				splashAmbient = 255;
-				LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+
+				splashAmbient = maxi;
 			}
+			for(auto& a : mod)
+				a.setColour(1, 1, 1, splashT);
 		}
+
 
 		static Coord3D tmp = Coord3D(20.0f);
 		float extra = 0;
 
-		for (int a = 0; a < 4; a++)
+		for(int a = 0; a < 4; a++)
 		{
-			if (GameEmGine::isControllerConnected(a))
+			if(GameEmGine::isControllerConnected(a))
 			{
-				if (abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x) >= 0.8)
+				if(abs(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x) >= 0.8)
 				{
-					if ((time - flipTime) >= 0.2f)
+					if((time - flipTime) >= 0.2f)
 					{
-						if (menuMoved[a] == false)
+						if(menuMoved[a] == false)
 						{
 							flipTime = time;
 							option[a] += ((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x < 0 ? 1 : -1;
 							option[a] = option[a] > 3 ? 0 : option[a] < 0 ? 3 : option[a];
 
-							*mod[6 + a] = *classes[option[a]];
+							(*std::next(mod.begin(), 6 + a)).replaceTexture(0, 0, classes[option[a]]);
 							lerpParam = 0;
-							if (a == 2)
+							if(a == 2)
 								extra = .7f;
-							else if (a == 3)
+							else if(a == 3)
 								extra = 2;
 
-							//GameEmGine::removeModel(mod[2 + a]);
-							mod[2 + a]->setColour({ 255,255,255 });
-							*mod[2 + a] = *classes[option[a]];
-							mod[2 + a]->translate(float(-43.3 + a * 28.3 + extra), -21.9f, -1);
-							mod[2 + a]->rotate({ 0,270,0 });
-							mod[2 + a]->setScale(Coord3D<>{ 1, 15, 7 });
-							GameEmGine::addModel(mod[2 + a]);
+							//GameEmGine::removeModel((*std::next(mod.begin(),2 + a]);
+							(*std::next(mod.begin(), 2 + a)).setColour({255,255,255});
+							(*std::next(mod.begin(), 2 + a)).replaceTexture(0, 0, classes[option[a]]);
+
+							GameEmGine::addModel(&(*std::next(mod.begin(), 2 + a)));
 
 
 							//translate(float(-42.2 + a * 27.5 + extra) <- ORIGINAL
-		//mod[6 + a]->translate(float(-42.2 + a * 27.5 + extra), -20.9f, 0), mod[6 + a]->rotate({ 0,270,0 }), mod[6 + a]->setScale(1, 15, 7);
-						//	GameEmGine::removeModel(mod[6 + a]);
-							*mod[6 + a] = *classDescription[option[a]];
-							mod[6 + a]->setColour({ 255,255,255 });
+		//(*std::next(mod.begin(),6 + a]->translate(float(-42.2 + a * 27.5 + extra), -20.9f, 0), (*std::next(mod.begin(),6 + a]->rotate({ 0,270,0 }), (*std::next(mod.begin(),6 + a]->setScale(1, 15, 7);
+						//	GameEmGine::removeModel((*std::next(mod.begin(),6 + a]);
+							(*std::next(mod.begin(), 6 + a)).replaceTexture(0, 0, classDescription[option[a]]);
+							(*std::next(mod.begin(), 6 + a)).setColour({255,255,255});
 
-							mod[6 + a]->translate(float(-51 + a * 27.5 + extra), -47, -4);
-							mod[6 + a]->setScale(Coord3D<>{10, 20, 10});
-							mod[6 + a]->rotate({ 0, 270, 0 });
-							mod[6 + a]->setToRender(true);
-							GameEmGine::addModel(mod[6 + a]); //6, 7, 8, 9
+							(*std::next(mod.begin(), 6 + a)).setToRender(true);
+							GameEmGine::addModel(&(*std::next(mod.begin(), 6 + a))); //6, 7, 8, 9
 
-							//tmp = mod[option]->getScale();
+							//tmp = (*std::next(mod.begin(),option]->getScale();
 						}
 					}
 				}
 
 				//else
-				if (((XinputController*)GameEmGine::getController(a))->isButtonPressed(CONTROLLER_A))
+				if(((XinputController*)GameEmGine::getController(a))->isButtonPressed(CONTROLLER_A))
 				{
 					//fixthisnow = false;
-					switch (option[a])
+					switch(option[a])
 					{
 					case 0:
-						if (assaultSelected == false)
+						if(assaultSelected == false)
 						{
 							assaultSelected = true;
 							players[a] = playerSelections[0];
-							mod[2 + a]->setColour(1, 0, 0);
+							(*std::next(mod.begin(), 2 + a)).setColour(1, 0, 0);
 							menuMoved[a] = true;
 							isConnected[a] = true;
 						}
@@ -200,11 +225,11 @@ public:
 						}
 						break;
 					case 1:
-						if (tankSelected == false)
+						if(tankSelected == false)
 						{
 							tankSelected = true;
 							players[a] = playerSelections[1];
-							mod[2 + a]->setColour(1, 0, 0);
+							(*std::next(mod.begin(), 2 + a)).setColour(1, 0, 0);
 							menuMoved[a] = true;
 							isConnected[a] = true;
 						}
@@ -215,11 +240,11 @@ public:
 						}
 						break;
 					case 2:
-						if (medicSelected == false)
+						if(medicSelected == false)
 						{
 							medicSelected = true;
 							players[a] = playerSelections[2];
-							mod[2 + a]->setColour(1, 0, 0);
+							(*std::next(mod.begin(), 2 + a)).setColour(1, 0, 0);
 							menuMoved[a] = true;
 							isConnected[a] = true;
 						}
@@ -230,11 +255,11 @@ public:
 						}
 						break;
 					case 3:
-						if (specialistSelected == false)
+						if(specialistSelected == false)
 						{
 							specialistSelected = true;
 							players[a] = playerSelections[3];
-							mod[2 + a]->setColour(1, 0, 0);
+							(*std::next(mod.begin(), 2 + a)).setColour(1, 0, 0);
 							menuMoved[a] = true;
 							isConnected[a] = true;
 						}
@@ -248,44 +273,44 @@ public:
 						break;
 					}
 				}
-				if (((XinputController*)GameEmGine::getController(a))->isButtonPressed(CONTROLLER_B))
+				if(((XinputController*)GameEmGine::getController(a))->isButtonPressed(CONTROLLER_B))
 				{
 					//fixthisnow = true;
-					switch (option[a])
+					switch(option[a])
 					{
 					case 0:
-						if (assaultSelected == true)
+						if(assaultSelected == true)
 						{
 							assaultSelected = false;
 							isConnected[a] = false;
 							menuMoved[a] = false;
-							mod[6 + a]->setColour(1, 1, 1);
+							(*std::next(mod.begin(), 6 + a)).setColour(1, 1, 1);
 						}
 						break;
 					case 1:
-						if (tankSelected == true)
+						if(tankSelected == true)
 						{
 							tankSelected = false;
 							isConnected[a] = false;
-							mod[6 + a]->setColour(1, 1, 1);
+							(*std::next(mod.begin(), 6 + a)).setColour(1, 1, 1);
 							menuMoved[a] = false;
 						}
 						break;
 					case 2:
-						if (medicSelected == true)
+						if(medicSelected == true)
 						{
 							medicSelected = false;
 							isConnected[a] = false;
-							mod[6 + a]->setColour(1, 1, 1);
+							(*std::next(mod.begin(), 6 + a)).setColour(1, 1, 1);
 							menuMoved[a] = false;
 						}
 						break;
 					case 3:
-						if (specialistSelected == true)
+						if(specialistSelected == true)
 						{
 							specialistSelected = false;
 							isConnected[a] = false;
-							mod[6 + a]->setColour(1, 1, 1);
+							(*std::next(mod.begin(), 6 + a)).setColour(1, 1, 1);
 							menuMoved[a] = false;
 						}
 						break;
@@ -305,61 +330,60 @@ public:
 
 
 
-				for (int b = 0; b < 4; b++)
-					if (b != a)
-						if (players[b])
+				for(int b = 0; b < 4; b++)
+					if(b != a)
+						if(players[b])
 						{
-							if (players[a]->type == players[b]->type)
+							if(players[a]->type == players[b]->type)
 								players[a] = playerSelections[++count];
 						}
 			}
 			bool next = true;
-			for (int j = 0; j < 4; j++)
-				if (isConnected[j] != true)
+			for(int j = 0; j < 4; j++)
+				if(isConnected[j] != true)
 					next = false;
-			if (next == true)
+			if(next == true)
 			{
 				fadeout = true;
 			}
 		}
 		//TODO: Set this to change a picture instead of this
-		//mod[option]->setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
-		//mod[option]->setColour(lerp(ColourRGBA{ 255,255,255 }, ColourRGBA{ 0,255,255 }, lerpParam));
+		//(*std::next(mod.begin(),option]->setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
+		//(*std::next(mod.begin(),option]->setColour(lerp(ColourRGBA{ 255,255,255 }, ColourRGBA{ 0,255,255 }, lerpParam));
 		//lerpParam += .1f;
 
-		if (lerpParam >= 1)
+		if(lerpParam >= 1)
 		{
 			lerpParam = 1;
 		}
 
-		if (fadeout)
+		if(fadeout)
 		{
 			splashT += 0.01f;
-			splashT = splashT > 1 ? 1 : splashT;
-			splashAmbient = (GLubyte)lerp(255, 0, splashT);
-			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+			splashAmbient = (GLubyte)lerp(maxi, mini, splashT);
+			sceneLight.setAmbient({splashAmbient,splashAmbient,splashAmbient,255});
 
-			if (splashAmbient <= 5)
+			if(splashT >= 1)
 			{
 				fadein = true;
 				fadeout = false;
 				splashT = 0;
-				splashAmbient = 255;
-				
-				for (int a = 0; a < 4; a++)
+				splashAmbient = mini;
+
+				for(int a = 0; a < 4; a++)
 				{
 					isConnected[a] = false;
 					menuMoved[a] = false;
 				}
-				
+
 				//GamePlayInit();
-				Game* game = new Game;
-				game->playerTypes(players);
+				static Game game;
+				game.playerTypes(players);
 				tankSelected = false;
 				medicSelected = false;
 				assaultSelected = false;
 				specialistSelected = false;
-				GameEmGine::setScene(game);
+				GameEmGine::setScene(&game);
 			}
 		}
 	}
@@ -370,29 +394,31 @@ public:
 		dt;
 		updateMenu(dt);
 	}
-	
+
 private:
-	std::vector<Player*>playerSelections
-	{
-		new Assault("Models/Class/Assault/Idle/ASI1.obj"),new Tank("Models/Class/Tank/Idle/TKI1.obj"),
-		new  Medic("Models/Class/Medic/Idle/MCI1.obj"), new Specialist("Models/Class/Specialist/Idle/SCI1.obj")
-	};
-	Model* classes[4]
-	{ new Model("Models/ClassPH/Assault/assaultPH.obj"),new Model("Models/ClassPH/Tank/tankPH.obj"),
-		new  Model("Models/ClassPH/Medic/medicPH.obj"),new Model("Models/ClassPH/Specialist/specPH.obj") };
-	Model* classDescription[4]
-	{ new Model("Models/Scene/PlayerSelect/assaultDes.obj"), new Model("Models/Scene/PlayerSelect/tankDes.obj"),
-		new  Model("Models/Scene/PlayerSelect/medicDes.obj"), new Model("Models/Scene/PlayerSelect/specialistDes.obj") };
+	std::vector<Player*>playerSelections;
+
+
+	Texture2D classes[4]
+	{ResourceManager::getTexture2D("texture/scenes/playerselect/Assault/assaultClassArt.png"), ResourceManager::getTexture2D("texture/scenes/playerselect/Tank/tankClassArt.png"),
+		  ResourceManager::getTexture2D("texture/scenes/playerselect/Medic/medicClassArt.png"), ResourceManager::getTexture2D("texture/scenes/playerselect/Specialist/SpecialistClassArt.png")};
+
+	Texture2D classDescription[4]
+	{ResourceManager::getTexture2D("texture/scenes/playerselect/Assault/assaultDescription.png"),  ResourceManager::getTexture2D("texture/scenes/playerselect/Tank/tankDescription.png"),
+		  ResourceManager::getTexture2D("texture/scenes/playerselect/Medic/medicDescription.png"),  ResourceManager::getTexture2D("texture/scenes/playerselect/Specialist/specialistDescription.png")};
+
 	std::vector<Player*>players;
-	std::vector<Model*> mod;
+	std::list<Model> mod;
+	Light sceneLight;
 	bool fadein = true;
 	bool fadeout = false;
 	float splashT = 0;
 	GLubyte splashAmbient = 0;
 	float lerpParam = 1;
-	int option[4] = { 0,0,0,0 };
+	int option[4] = {0,0,0,0};
 	bool assaultSelected;
 	bool medicSelected;
 	bool specialistSelected;
 	bool tankSelected;
+
 };

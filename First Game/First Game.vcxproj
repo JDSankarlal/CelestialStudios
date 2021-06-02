@@ -85,12 +85,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)GameEmGine\include;$(solutionDir)Externals\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEmGine\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)</OutDir>
+    <IntDir>$(ProjectDir)junck\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)GameEmGine\include;$(solutionDir)Externals\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)GameEmGine\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)</OutDir>
+    <IntDir>$(ProjectDir)junck\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -99,8 +101,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4201;4505;4002</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>4201;4505;4002;4238</DisableSpecificWarnings>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>GameEmGine.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -113,8 +115,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <DisableSpecificWarnings>4201;4505;4002</DisableSpecificWarnings>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableSpecificWarnings>4201;4505;4002;4238</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>GameEmGine.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -129,8 +131,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4201;4505;4002</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>4201;4505;4002;4238</DisableSpecificWarnings>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -146,8 +148,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <DisableSpecificWarnings>4201;4505;4002</DisableSpecificWarnings>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableSpecificWarnings>4201;4505;4002;4238</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>

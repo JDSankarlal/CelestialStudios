@@ -64,17 +64,13 @@ protected:
 		* ringID,//26
 		* gun;//54
 
-	static Model* bullet;//48
-
+	
 	std::vector<float> timer;
 	std::vector<Model*> bullets;
 	std::vector<Coord3D<>> velocity;
 	float move = .1f;
 
-	static Model
-		* redBar, * blueBar, * greenBar, * yellowBar,
-		* baseRedBar, * baseBlueBar, * baseGreenBar, * baseYellowBar;
-
+	
 	Model* m_baseBar, * m_lifeBar;
 
 	bool gunControlLaw = false, dashControl = false;

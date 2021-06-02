@@ -3,30 +3,30 @@
 
 
 Model
-* Player::bullet,
-* Player::redBar, * Player::blueBar, * Player::greenBar, * Player::yellowBar,
-* Player::baseRedBar, * Player::baseBlueBar, * Player::baseGreenBar, * Player::baseYellowBar;
+* bullet,
+* redBar, * blueBar, * greenBar, * yellowBar,
+* baseRedBar, * baseBlueBar, * baseGreenBar, * baseYellowBar;
 
 void Player::init(int index)
 {
 	if(!bullet)
-		Player::bullet = new Model("Models/Bullet/bullet.obj");
+		bullet = new Model("Models/Bullet/bullet.obj");
 	if(!redBar)
-		Player::redBar = new Model("Models/BloodBar/RedBar/blood.obj");//64
+		redBar = new Model("Models/BloodBar/RedBar/blood.obj");//64
 	if(!blueBar)
-		Player::blueBar = new Model("Models/BloodBar/BlueBar/blood.obj");//65
+		blueBar = new Model("Models/BloodBar/BlueBar/blood.obj");//65
 	if(!greenBar)
-		Player::greenBar = new Model("Models/BloodBar/GreenBar/blood.obj");//66
+		greenBar = new Model("Models/BloodBar/GreenBar/blood.obj");//66
 	if(!yellowBar)
-		Player::yellowBar = new Model("Models/BloodBar/YellowBar/blood.obj");//67
+		yellowBar = new Model("Models/BloodBar/YellowBar/blood.obj");//67
 	if(!baseRedBar)
-		Player::baseRedBar = new Model("Models/BloodBar/RedBarLighter/blood.obj");//68
+		baseRedBar = new Model("Models/BloodBar/RedBarLighter/blood.obj");//68
 	if(!baseBlueBar)
-		Player::baseBlueBar = new Model("Models/BloodBar/BlueBarLighter/blood.obj");//69
+		baseBlueBar = new Model("Models/BloodBar/BlueBarLighter/blood.obj");//69
 	if(!baseGreenBar)
-		Player::baseGreenBar = new Model("Models/BloodBar/GreenBarLighter/blood.obj");//70
+		baseGreenBar = new Model("Models/BloodBar/GreenBarLighter/blood.obj");//70
 	if(!baseYellowBar)
-		Player::baseYellowBar = new Model("Models/BloodBar/YellowBarLighter/blood.obj");//71
+		baseYellowBar = new Model("Models/BloodBar/YellowBarLighter/blood.obj");//71
 
 	squash = new Animation();
 	squash->addDir("Models/RIP/Rip Ani/");
@@ -42,65 +42,47 @@ void Player::init(int index)
 	this->addChild(ringID);
 
 	ringID->rotate({0,-90.f, 0});
-	ringID->setScale(.75f);
+	ringID->scale(.75f);
 	gun = new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj");
 
-	if(type == PlayerType::assault)
+	Animation* walk = new Animation, * idle = new Animation;
+
+	switch(type)
 	{
-		Animation* walk = new Animation, * idle = new Animation;
+	case PlayerType::assault:
 		walk->addDir("Models/Class/Assault/Run/");
 		idle->addDir("Models/Class/Assault/Idle/");
-		addAnimation("walk", walk);
-		addAnimation("idle", idle);
-		setAnimation("idle");
-		walk->repeat(true);
-		walk->setAnimationSpeed(0.05f);
-		idle->repeat(true);
-		idle->setAnimationSpeed(.25);
-		idle->play();
-	}
-	else if(type == PlayerType::tank)
-	{
-		Animation* walk = new Animation, * idle = new Animation;
+		break;
+
+	case PlayerType::tank:
 		walk->addDir("Models/Class/Tank/Run/");
 		idle->addDir("Models/Class/Tank/Idle/");
-		addAnimation("walk", walk);
-		addAnimation("idle", idle);
-		setAnimation("idle");
-		walk->repeat(true);
-		walk->setAnimationSpeed(0.05f);
-		idle->repeat(true);
-		idle->setAnimationSpeed(.25);
-		idle->play();
-	}
-	else if(type == PlayerType::medic)
-	{
-		Animation* walk = new Animation, * idle = new Animation;
+		break;
+
+	case PlayerType::medic:
 		walk->addDir("Models/Class/Medic/Run/");
 		idle->addDir("Models/Class/Medic/Idle/");
-		addAnimation("walk", walk);
-		addAnimation("idle", idle);
-		setAnimation("idle");
-		walk->repeat(true);
-		walk->setAnimationSpeed(0.05f);
-		idle->repeat(true);
-		idle->setAnimationSpeed(.25);
-		idle->play();
-	}
-	else
-	{
-		Animation* walk = new Animation, * idle = new Animation;
+		break;
+
+
+	case PlayerType::specialist:
 		walk->addDir("Models/Class/Specialist/Run/");
 		idle->addDir("Models/Class/Specialist/Idle/");
-		addAnimation("walk", walk);
-		addAnimation("idle", idle);
-		setAnimation("idle");
-		walk->repeat(true);
-		walk->setAnimationSpeed(0.05f);
-		idle->repeat(true);
-		idle->setAnimationSpeed(.25);
-		idle->play();
+		break;
+
+	default:
+		walk->addDir("Models/Class/Assault/Run/");
+		idle->addDir("Models/Class/Assault/Idle/");
 	}
+
+	addAnimation("walk", walk);
+	addAnimation("idle", idle);
+	setAnimation("idle");
+	walk->repeat(true);
+	walk->setAnimationSpeed(0.05f);
+	idle->repeat(true);
+	idle->setAnimationSpeed(.25);
+	idle->play();
 
 	dead = false;
 	setPlayerIndex(index);
@@ -123,8 +105,7 @@ Player::Player(const char* path):Model(path)
 }
 
 Player::~Player()
-{
-}
+{}
 
 void Player::setPlayerIndex(int index)
 {
@@ -174,14 +155,12 @@ void Player::setPlayerIndex(int index)
 	//m_lifeBar->setScale(0.08f, 0.08f, 0.065f);
 	//m_lifeBar->translate(0.35f, 1.6f, 0.0f);
 	m_baseBar->addChild(m_lifeBar);
-	m_baseBar->setScale(0.08f, 0.08f, 0.065f);
+	m_baseBar->scale(0.08f, 0.08f, 0.065f);
 	m_baseBar->rotate({0, 90.f, 0});
-	m_baseBar->translate(getPosition() + Coord3D{0.35f,1.6f,0.0f});
+	m_baseBar->translate(getLocalPosition() + Coord3D{0.35f,1.6f,0.0f});
 
 
 	GameEmGine::addModel(m_baseBar);
-
-
 }
 
 float Player::getHealth()
@@ -220,10 +199,8 @@ void Player::hitByEnemy(Model* mod, float damage)
 		return;
 
 	XinputController* p1 = (XinputController*)GameEmGine::getController(m_index);
-	if(collision2D(ringID, mod, {0,0,1}))
+	if(collision2D(ringID, mod, {0,1,0}))
 	{
-		//curveroni[a] = 1;
-		//CandyMan->getMissial(a)->translate(mod[8]->getCenter());
 		float tempHealth = getHealth() - damage;
 		setHealth(tempHealth < 0 ? 0 : tempHealth);
 
@@ -238,11 +215,11 @@ void Player::hitByEnemy(Model* mod, float damage)
 
 void Player::onPlayArea(Model* mod)
 {
-	if(!collision2D(mod, {false,true,false}))
+	if(!collision2D(mod, {0,1,0}))
 		translate(
-			abs(getPosition().x) > mod->getWidth() / 2 ? getPosition().x < 0 ? -mod->getWidth() / 2 : mod->getWidth() / 2 : getPosition().x,
-			0,
-			abs(getPosition().z) > mod->getDepth() / 2 ? getPosition().z < 0 ? -mod->getDepth() / 2 : mod->getDepth() / 2 : getPosition().z);
+		abs(getLocalPosition().x) > mod->getWidth() / 2 ? getLocalPosition().x < 0 ? -mod->getWidth() / 2 : mod->getWidth() / 2 : getLocalPosition().x,
+		0,
+		abs(getLocalPosition().z) > mod->getDepth() / 2 ? getLocalPosition().z < 0 ? -mod->getDepth() / 2 : mod->getDepth() / 2 : getLocalPosition().z);
 }
 
 bool Player::bulletCollisions(Model* mod)
@@ -252,7 +229,7 @@ bool Player::bulletCollisions(Model* mod)
 	for(unsigned b = 0; b < bullets.size(); b++)
 		if(bullets[b])
 		{
-			if(collision2D(bullets[b], mod, {0,0,1}))
+			if(collision2D(bullets[b], mod, {0,1,0}))
 				bulletHit = true;
 
 
@@ -290,8 +267,8 @@ void Player::update(float dt)
 			{
 
 				angle = acosf(p1->getSticks()[RS].x /
-					sqrtf(p1->getSticks()[RS].x * p1->getSticks()[RS].x
-						+ p1->getSticks()[RS].y * p1->getSticks()[RS].y)) * (180 / (float)M_PI);
+							  sqrtf(p1->getSticks()[RS].x * p1->getSticks()[RS].x
+							  + p1->getSticks()[RS].y * p1->getSticks()[RS].y)) * (180 / (float)M_PI);
 				angle += (p1->getSticks()[RS].y < 0 ? (180 - angle) * 2 : 0) + 90;//90 represents the start angle
 				angle = fmodf(angle, 360);
 			}
@@ -303,7 +280,7 @@ void Player::update(float dt)
 				AudioPlayer::createAudioStream("Audio/dead.wav", "Death Sound");
 				AudioPlayer::play();
 				graveStone->setColour(getColour());
-				graveStone->setScale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->translate(getPosition()), graveStone->rotate({0.0f,270.0f,0.0f});
+				graveStone->scale(0.75f * 2, 1 * 2, 0.5 * 2), graveStone->translate(getLocalPosition()), graveStone->rotate({0.0f,270.0f,0.0f});
 				GameEmGine::addModel(graveStone);
 				graveStone->addAnimation("squash", squash);
 
@@ -325,17 +302,16 @@ void Player::update(float dt)
 
 						bullets.push_back(new Model(*bullet));
 						GameEmGine::addModel(bullets.back());
-						bullets.back()->setColour(getColour());//bullet color = players color
-						Coord3D pos = getPosition();
-						bullets.back()->translate(pos.x, pos.y + .1f, pos.z);
-						bullets.back()->setScale(.25f);
+						bullets.back()->setColour(getColour());//bullet color = players color						
+						bullets.back()->translate(getLocalPosition());
+						bullets.back()->scale(.25f);
 						bullets.back()->rotate({90 , angle ,0});
 
 						float cosVal = cos((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 						float sinVal = sin((float)(fmodf(angle - 90, 360) * (M_PI / 180)));
 
 						velocity.push_back(Coord3D());
-						velocity.back() = Coord3D<>(cosVal * move * 3, 0, sinVal * move * 3);
+						velocity.back() = Coord3D<>(cosVal * move, 0, sinVal * move).normal() * 3;
 
 						timer.push_back(0);
 						std::string tag = "Shots Fired" + std::to_string(bullets.size());
@@ -474,7 +450,7 @@ void Player::update(float dt)
 			}
 
 			//Update each player's Bullet Circle
-			bulletCircle->setScale((getBulletCount() / 30.0f) * 0.9f);
+			bulletCircle->scale((getBulletCount() / 30.0f) * 0.9f);
 
 			//checks if bullet timer is up
 			for(unsigned b = 0; b < bullets.size(); b++)
@@ -502,8 +478,8 @@ void Player::update(float dt)
 			p1->resetVibration();
 
 	//Update each player's Blood Bar
-	m_lifeBar->setScale(1.f, 1.f, ((float)getHealth() / (float)getInitialHealth()));
-	m_baseBar->translate(getPosition() + Coord3D{0.35f,1.6f,0.0f});
+	m_lifeBar->scale(1.f, 1.f, ((float)getHealth() / (float)getInitialHealth()));
+	m_baseBar->translate(getLocalPosition() + Coord3D{0.35f,1.6f,0.0f});
 }
 
 void Player::setActive(bool active)

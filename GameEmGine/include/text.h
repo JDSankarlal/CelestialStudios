@@ -16,7 +16,7 @@ class Text:public Transformer
 {
 public:
 	Text();
-	Text(const char* font);
+	Text(cstring font);
 
 	~Text();
 
@@ -41,7 +41,7 @@ public:
 	GLuint getTexture();
 
 	bool isTransparent();
-	//static Character loadCharacter(const char c, const char* font);
+	//static Character loadCharacter(cstring c, cstring font);
 
 private:
 	void testSize();
@@ -50,9 +50,9 @@ private:
 
 	void scaleBy(float scale) { Transformer::scaleBy(scale); }
 	void scaleBy(float x, float y, float z) { Transformer::scaleBy(x, y, z); }
-	void setScale(Coord3D<> scale) { Transformer::setScale(scale); }
-	void setScale(float scale) { Transformer::setScale(scale); }
-	void setScale(float x, float y, float z) { Transformer::setScale(x, y, z); }
+	void scale(Vec3 scale) { Transformer::scale(scale); }
+	void scale(float scale) { Transformer::scale(scale); }
+	void scale(float x, float y, float z) { Transformer::scale(x, y, z); }
 
 	void renderInit();
 

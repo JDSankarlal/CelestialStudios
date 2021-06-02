@@ -12,13 +12,13 @@ void Boss::init()
 	minion->setToRender(true);
 
 	missiles.resize(4);
-	missiles[0] = (new Model("Models/Missile/BossMissile.obj"));
+	*std::next(missiles.begin(), 0) = (new Model("Models/Missile/BossMissile.obj"));
 	//GAME::addModel(missles[0]);
-	missiles[1] = (new Model(*missiles[0]));
+	*std::next(missiles.begin(), 1) = (new Model(**std::next(missiles.begin(), 0)));
 	//GAME::addModel(missles[1]);
-	missiles[2] = (new Model(*missiles[0]));
+	*std::next(missiles.begin(), 2) = (new Model(**std::next(missiles.begin(), 0)));
 	//GAME::addModel(missles[2]);
-	missiles[3] = (new Model(*missiles[0]));
+	*std::next(missiles.begin(), 3) = (new Model(**std::next(missiles.begin(), 0)));
 	//GAME::addModel(missles[3]);
 
 	lazer = new Model("Models/lazer/lazer.obj");
@@ -31,15 +31,15 @@ void Boss::init()
 	m_baseBar->setToRender(true);
 
 	//Boss Blood Bar
-	//m_baseBar->translate(this->getPosition() + Coord3D{ m_baseBar->getWidth() / 2, this->getHeight() - 10 , 0 });
+	//m_baseBar->translate(this->getLocalPosition() + Coord3D{ m_baseBar->getWidth() / 2, this->getHeight() - 10 , 0 });
 	m_baseBar->translate(10.5f, 20.0f, 20.0f);
 	m_baseBar->rotate(Coord3D<>(0, 90, 0));
-	m_baseBar->setScale(0.8f, 0.8f, 2.0f);
+	m_baseBar->scale(0.8f, 0.8f, 2.0f);
 
-	//m_lifeBar->translate(this->getPosition() + Coord3D{ m_lifeBar->getWidth() / 2  ,this->getHeight() - 10, 0 });
+	//m_lifeBar->translate(this->getLocalPosition() + Coord3D{ m_lifeBar->getWidth() / 2  ,this->getHeight() - 10, 0 });
 	m_lifeBar->translate(10.5f, 20.0f, 20.0f);
 	m_lifeBar->rotate(Coord3D<>(0, 90, 0));
-	m_lifeBar->setScale(0.8f, 0.8f, 2.0f);
+	m_lifeBar->scale(0.8f, 0.8f, 2.0f);
 
 	GameEmGine::addModel(m_baseBar);
 	GameEmGine::addModel(m_lifeBar);
@@ -59,9 +59,9 @@ void Boss::init()
 	getCurrentAnimation()->play();
 
 	//m_baseBar->addChild(m_lifeBar);
-	//m_lifeBar->translate(getPosition() + Coord3D{13.0f,18.5f,0.0f});
+	//m_lifeBar->translate(getLocalPosition() + Coord3D{13.0f,18.5f,0.0f});
 	//m_lifeBar->rotate(Coord3D(0, 90, 0));
-	//m_lifeBar->setScale(0.8f, 0.8f, 2.5f);
+	//m_lifeBar->scale(0.8f, 0.8f, 2.5f);
 
 
 	//addChild(m_baseBar);
@@ -102,9 +102,11 @@ Boss::~Boss()
 	//Player** targets;
 }
 
-void Boss::setPlayers(Player* players[4])
+void Boss::setPlayers(std::list<Player* >& players)
 {
-	targets = players;
+	int inc = 0;
+	for(auto& a : players)
+		targets[inc++] = a;
 }
 
 bool Boss::randAttacks()
@@ -126,7 +128,7 @@ void Boss::setHealth(float v)
 	m_health = v;
 }
 
-std::vector<Model*>& Boss::getMissials()
+std::list<Model*>& Boss::getMissials()
 {
 	return missiles;
 }
@@ -167,8 +169,8 @@ void Boss::update(float dt)
 		for(int a = 0; a < 4; a++)
 		{
 
-			missiles[a]->setScale(1.5f); //every missile shot is scaled up a bit since the original is small 
-			pointPosition[a] = getPosition();
+			(*std::next(missiles.begin(), a))->scale(1.5f); //every missile shot is scaled up a bit since the original is small 
+			pointPosition[a] = getLocalPosition();
 			if(targets[a]->isActive())
 				if(!targets[a]->dead)
 				{
@@ -180,11 +182,11 @@ void Boss::update(float dt)
 					{
 						if(!curveroni[a])
 						{
-							GameEmGine::addModel(missiles[a]);
+							GameEmGine::addModel(*std::next(missiles.begin(), a));
 							GameEmGine::addModel(missileRadius[a]);
-							bossTarget[a] = targets[a]->getPosition();
+							bossTarget[a] = targets[a]->getLocalPosition();
 						}
-						curveroni[a] += 28.f / (getPosition() - bossTarget[a]).distance() * missileSpeed;
+						curveroni[a] += 28.f / (getLocalPosition() - bossTarget[a]).length() * missileSpeed;
 					}
 
 					if(!hasTarget[a])
@@ -199,15 +201,15 @@ void Boss::update(float dt)
 					{
 						//Missile to Player Collisions
 						for(int t = 0; t < 4; t++)
-							targets[t]->hitByEnemy(missiles[a], 35);
+							targets[t]->hitByEnemy(*std::next(missiles.begin(), a), 35);
 
 						curveroni[a] = 0;
 						lastDelay[a] = clock();
 						hasTarget[a] = false;
 
-						GameEmGine::removeModel(missiles[a]);
+						GameEmGine::removeModel(*std::next(missiles.begin(), a));
 						GameEmGine::removeModel(missileRadius[a]);
-						missiles[a]->translate(getPosition());
+						(*std::next(missiles.begin(), a))->translate(getLocalPosition());
 					}
 
 					Coord3D<>
@@ -217,7 +219,7 @@ void Boss::update(float dt)
 						c2[4];
 					if(hasTarget[a])
 					{
-						p1[a] = getPosition() + Coord3D(0.0f, 8.0f, 2.0f),//start point
+						p1[a] = getLocalPosition() + Coord3D(0.0f, 8.0f, 2.0f),//start point
 							p2[a] = bossTarget[a],//end point 
 							c1[a] = p1[a] - Coord3D<>{0, 100, 100},//control point
 							c2[a] = p2[a] - Coord3D<>{0, 150, 100};//control point
@@ -236,27 +238,27 @@ void Boss::update(float dt)
 
 					if(hasTarget[a])
 					{
-						missiles[a]->translate(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
-						missileRadius[a]->translate(bossTarget[a] + Coord3D<>{0,.06f + .02f * a,0});
-						missileRadius[a]->setScale(catmull(-7.f, 1.f, 0.7f, -7.f, curveroni[a]));
+						(*std::next(missiles.begin(), a))->translate(pointPosition[a].x, pointPosition[a].y, pointPosition[a].z);
+						missileRadius[a]->translate(bossTarget[a] + Coord3D<>{0, .06f + .02f * a, 0});
+						missileRadius[a]->scale(catmull(-7.f, 1.f, 0.7f, -7.f, curveroni[a]));
 					}
 
-						//Player comes near Boss, gets teleported backwards
-					if(collision2D(targets[a], Coord3D<>{0,1,0}))
+					//Player comes near Boss, gets teleported backwards
+					if(collision2D(targets[a], {0,1,0}))
 					{
 						getAnimation("missleShoot")->stop();
 						setAnimation("slam");
 						getCurrentAnimation()->setAnimationSpeed(0.25f);
 						getCurrentAnimation()->repeat(true);
 						getCurrentAnimation()->play();
-					
+
 					}
 
 					if(getAnimation("slam")->getFrameNumber() == 5)
 					{
 						targets[a]->hitByEnemy(this);
-						
-						if(!collision2D(targets[a], {false,true,false}))
+
+						if(!collision2D(targets[a], {0,1,0}))
 						{
 							getAnimation("slam")->stop();
 							setAnimation("missleShoot");
@@ -278,8 +280,8 @@ void Boss::update(float dt)
 		}
 
 		//Boss health bar calculation
-		m_lifeBar->setScale(0.8f, 0.8f, 2.0f * (m_health / m_initialHealth));
-		
+		m_lifeBar->scale(0.8f, 0.8f, 2.0f * (m_health / m_initialHealth));
+
 		//eliminates the possibility of the bar being too large
 		if(m_health > m_initialHealth)
 			m_initialHealth = m_health;
@@ -298,14 +300,14 @@ void Boss::update(float dt)
 
 				minions.back()->setColour({200, 50, 50});
 				minions.back()->translate(float(rand() % 15 + rand() % 1000 * .001f) * -(rand() % 2), 0, -float(rand() % 2 + rand() % 100 * .001f)); // Random spawns in bottom right of screen
-				while(
-					minions.back()->collision2D(targets[0],{0,1,0}) ||
-					minions.back()->collision2D(targets[1],{0,1,0}) ||
-					minions.back()->collision2D(targets[2],{0,1,0}) ||
-					minions.back()->collision2D(targets[3],{0,1,0}))
-					minions.back()->translate(float(rand() % 15 + rand() % 1000 * .001f) * -(rand() % 2), 0, -float(rand() % 2 + rand() % 100 * .001f)); // Random spawns in bottom right of screen
+				//while(
+				//	minions.back()->collision2D(targets[0],{0,1,0}) ||
+				//	minions.back()->collision2D(targets[1],{0,1,0}) ||
+				//	minions.back()->collision2D(targets[2],{0,1,0}) ||
+				//	minions.back()->collision2D(targets[3],{0,1,0}))
+				//	minions.back()->translate(float(rand() % 15 + rand() % 1000 * .001f) * -(rand() % 2), 0, -float(rand() % 2 + rand() % 100 * .001f)); // Random spawns in bottom right of screen
 
-				minions.back()->setScale(0.4f, 0.6f, 0.4f);
+				minions.back()->scale(0.4f, 0.6f, 0.4f);
 
 				minionDelay = float(rand() % 9) + rand() % 1001 * .001f;//delay from 0 to 9 seconds
 			}
@@ -314,15 +316,15 @@ void Boss::update(float dt)
 		for(int a = 0; a < (int)minions.size(); a++)
 		{
 			for(int b = 0; b < a; b++)
-				if(collision2D(minions[a - 1], minions[a], {0,0,1}))
+				if(collision2D(*std::next(minions.begin(), a - 1), *std::next(minions.begin(), a), {0,0,1}))
 				{
-					minions[a]->move(false);
+					(*std::next(minions.begin(), a))->move(false);
 					break;
 				}
 				else
-					minions[a]->move(true);
+					(*std::next(minions.begin(), a))->move(true);
 
-			minions[a]->update(dt);
+			(*std::next(minions.begin(), a))->update(dt);
 		}
 
 		if(m_health <= 0)
@@ -347,10 +349,10 @@ void Boss::update(float dt)
 
 		for(int a = 0; a < (int)minions.size(); a++)
 		{
-			if(minions[a]->getHealth() <= 0)
+			if((*std::next(minions.begin(), a))->getHealth() <= 0)
 			{
-				GameEmGine::removeModel(minions[a]);
-				minions.erase(minions.begin() + a);
+				GameEmGine::removeModel(*std::next(minions.begin(), a));
+				minions.erase(std::next(minions.begin(), a));
 
 				minionDelay = minionDelayCounter;
 				a--;
@@ -376,10 +378,10 @@ void Boss::update(float dt)
 
 void Boss::shootLazer(int playerIndex)
 {
-	Coord3D start = getPosition() + Coord3D(0.0f, 8.0f, 0.0f)
-		, end = targets[playerIndex]->getPosition();
+	Coord3D start = getLocalPosition() + Coord3D(0.0f, 8.0f, 0.0f)
+		, end = targets[playerIndex]->getLocalPosition();
 
-	float distance = (end - start).distance();
+	float distance = (end - start).length();
 	static float counter, amount = .01f;
 
 	counter += amount;
@@ -393,16 +395,16 @@ void Boss::shootLazer(int playerIndex)
 
 	float angle[3];
 	angle[0] = acosf((start.x * end.x + start.y * end.y + start.z * end.z) /
-		(sqrtf(start.x * start.x
-			+ start.y * start.y + start.z * start.z) * sqrtf(end.x * end.x + end.y * end.y + end.z * end.z)));
+					 (sqrtf(start.x * start.x
+					 + start.y * start.y + start.z * start.z) * sqrtf(end.x * end.x + end.y * end.y + end.z * end.z)));
 
 	angle[1] = acosf((start.x * end.x + start.z * end.z) /
-		(sqrtf(start.x * start.x
-			+ start.z * start.z) * sqrtf(end.x * end.x + end.z * end.z))) * (180 / (float)M_PI);
+					 (sqrtf(start.x * start.x
+					 + start.z * start.z) * sqrtf(end.x * end.x + end.z * end.z))) * (180 / (float)M_PI);
 
 	angle[2] = acosf((start.y * end.y + start.z * end.z) /
-		(sqrtf(start.y * start.y
-			+ start.z * start.z) * sqrtf(end.y * end.y + end.z * end.z))) * (180 / (float)M_PI);
+					 (sqrtf(start.y * start.y
+					 + start.z * start.z) * sqrtf(end.y * end.y + end.z * end.z))) * (180 / (float)M_PI);
 
 	//angle[0] += (end.y - start.y < 0 ? (180 - angle[0]) * 2 : 0);//90 represents the start angle
 	//angle[1] += (end.z - start.z < 0 ? (180 - angle[1]) * 2 : 0);//90 represents the start angle
@@ -410,7 +412,7 @@ void Boss::shootLazer(int playerIndex)
 
 
 	lazer->translate(start);
-	lazer->setScale(.5f, lerp(0.0f, distance, counter), .5f);
+	lazer->scale(.5f, lerp(0.0f, distance, counter), .5f);
 
 	float anglex = cosf(angle[0]) * (360 / (float)M_PI),
 		angley = tanf(angle[0]) * (360 / (float)M_PI),
@@ -433,7 +435,7 @@ bool Boss::isActive()
 	return m_active;
 }
 
-bool Boss::hitByEnemy(Model * mod, float damage)
+bool Boss::hitByEnemy(Model* mod, float damage)
 {
 	if(!m_active)
 		return false;

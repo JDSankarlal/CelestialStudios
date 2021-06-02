@@ -1,6 +1,7 @@
 #include "Shader.h"
 
 std::unordered_map<GLuint, Shader*> Shader::m_shaders;
+bool Shader::uniformErrors = true;
 //GLuint *Shader::m_programs = new GLuint[0], *Shader::m_attribs = new GLuint[0], Shader::m_num;
 
 Shader::Shader():m_vtsh(""), m_vtPath(""), m_fmPath(""), m_attribNum(0),
@@ -21,6 +22,11 @@ void Shader::refresh()
 {
 	for(auto& a : m_shaders)
 		a.second->create(a.second->m_vtPath, a.second->m_fmPath);
+}
+
+void Shader::enableUniformErrors(bool err)
+{
+	uniformErrors = err;
 }
 
 bool Shader::create(const std::string& vertFilePath, const std::string& fragFilePath)
@@ -61,7 +67,8 @@ void Shader::createDefault()
 	std::string tmpFileContent =
 		"#version 420\n"
 
-		"uniform mat4 uModel;\n"
+		"uniform mat4 uLocalModel;\n"
+		"uniform mat4 uWorldModel;\n"
 		"uniform mat4 uView;\n"
 		"uniform mat4 uProj;\n"
 
@@ -71,38 +78,58 @@ void Shader::createDefault()
 
 		"out vec2 texcoord;\n"
 		"out vec3 norm;\n"
-		"out vec3 pos;\n"
+		"out vec4 pos;\n"
 
 		"void main()\n"
 		"{\n"
 		"texcoord = in_uv;\n"
-		"norm = mat3(uView) * mat3(uModel) * in_normal;\n"
+		"norm = mat3(uView) * mat3(uWorldModel) * (mat3(uLocalModel) * in_normal);\n"
 
-		"pos = (uView * uModel * vec4(in_vert, 1.0f)).xyz;\n"
+		"pos = (uView * uWorldModel * (uLocalModel * vec4(in_vert, 1.0f)));\n"
 
-		"gl_Position = uProj * vec4(pos, 1.0f);\n"
+		"gl_Position = uProj * pos;\n"
 		"}\n"
 		;
 
 	m_vtsh = tmpFileContent;
-	const char* tmp = tmpFileContent.c_str();
+	cstring tmp = tmpFileContent.c_str();
 
 	glShaderSource(m_vertID, 1, &tmp, nullptr);
 	glCompileShader(m_vertID);
 
+	GLint success = 0;
+	glGetShaderiv(m_vertID, GL_COMPILE_STATUS, &success);
+
+	if(success == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(m_vertID, GL_INFO_LOG_LENGTH, &maxLength);
+
+		char* errorLog = new char[maxLength];
+		glGetShaderInfoLog(m_vertID, maxLength, &maxLength, errorLog);
+
+		printf("Error in default Vert Shader:\n");
+		printf("%s\n\n", errorLog);
+
+		delete[] errorLog;
+	}
 
 	tmpFileContent =
 		"#version 420\n"
 
 		"in vec2 texcoord;\n"
 		"in vec3 norm;\n"
-		"in vec3 pos;\n"
+		"in vec4 pos;\n"
 
-		"out vec4 outColor;\n"
+		"out vec4 outColor1;\n"
+		"out vec4 outColor2;\n"
+		"out vec4 outColor3;\n"
 
 		"void main()\n"
 		"{\n"
-		"outColor = vec4(1, 0, 1, 1);\n"
+		"outColor1 = vec4(0, 0, 0, 1);\n"
+		"outColor2 = vec4(0, 0, 0, 1);\n"
+		"outColor3 = vec4(1, 0, 1, 1);\n"
 		"}\n"
 		;
 	tmp = tmpFileContent.c_str();
@@ -110,7 +137,26 @@ void Shader::createDefault()
 	glShaderSource(m_fragID, 1, &tmp, nullptr);
 	glCompileShader(m_fragID);
 
-	//linkShaders ();
+	success = 0;
+	glGetShaderiv(m_fragID, GL_COMPILE_STATUS, &success);
+
+	if(success == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(m_fragID, GL_INFO_LOG_LENGTH, &maxLength);
+
+		char* errorLog = new char[maxLength];
+		glGetShaderInfoLog(m_fragID, maxLength, &maxLength, errorLog);
+
+		printf("Error in default Frag Shader:\n");
+		printf("%s\n\n", errorLog);
+
+		delete[] errorLog;
+	}
+
+	linkShaders();
+	puts("Created default shader\n");
+
 	//delete tmpFileContent;
 }
 
@@ -167,7 +213,7 @@ bool Shader::linkShaders()
 	glLinkProgram(m_programID);
 
 	GLint isLinked = 0;
-	glGetProgramiv(m_programID, GL_LINK_STATUS, (int*)& isLinked);
+	glGetProgramiv(m_programID, GL_LINK_STATUS, (int*)&isLinked);
 
 	if(isLinked == GL_FALSE)
 	{
@@ -189,9 +235,12 @@ bool Shader::linkShaders()
 		m_programID = m_vertID = m_fragID = 0;
 
 		// Use the infoLog as you see fit.
-		printf(infoLog);
+		printf("Could not link shaders \"%s\" and \"%s\"\n",m_vtPath.c_str(),m_fmPath.c_str());
+		puts(infoLog);
 		puts("\n");
 		delete[] infoLog;
+
+		createDefault();
 		//system("pause");
 		// In this simple program, we'll just leave
 		return false;
@@ -226,58 +275,82 @@ GLint Shader::getAttribLocation(const std::string attributeName)
 	return glGetAttribLocation(m_programID, attributeName.c_str());
 }
 
-GLint Shader::getUniformLocation(const char* uniform)
+GLint Shader::getUniformLocation(cstring uniform)
 {
 	GLint uni = glGetUniformLocation(m_programID, uniform);
-	if(uni < 0)
-	{
-		printf("could not find uniform variable \"%s\" \n"
-			"within \"%s\" or \"%s\" shaders\n\n", uniform, m_vtPath.substr(m_vtPath.find_last_of('/') + 1).c_str(), m_fmPath.substr(m_fmPath.find_last_of('/') + 1).c_str());
-	}
+	if(uniformErrors)
+		if(uni < 0)
+		{
+			printf("could not find uniform variable \"%s\" \n"
+				   "within \"%s\" or \"%s\" shaders\n\n", uniform, m_vtPath.substr(m_vtPath.find_last_of('/') + 1).c_str(), m_fmPath.substr(m_fmPath.find_last_of('/') + 1).c_str());
+		}
 
 	return uni;
 }
 
-void Shader::sendUniform(const char* uniform, glm::mat4 val)
+void Shader::sendUniform(cstring uniform, glm::mat4 val, bool transpose)
 {
 	GLint uni = getUniformLocation(uniform);
-	glUniformMatrix4fv(uni, 1, false, &val[0][0]);
+	glUniformMatrix4fv(uni, 1, transpose, &val[0][0]);
 }
 
-void Shader::sendUniform(const char* uniform, glm::vec4 val)
+void Shader::sendUniform(cstring uniform, glm::vec4 val)
 {
 	GLint uni = getUniformLocation(uniform);
 	glUniform4fv(uni, 1, &val[0]);
 }
 
-void Shader::sendUniform(const char* uniform, Coord3D<> val)
+void Shader::sendUniform(cstring uniform, Vec3 val)
 {
 	GLint uni = getUniformLocation(uniform);
 	glUniform3fv(uni, 1, &val.x);
 }
 
-void Shader::sendUniform(const char* uniform, float x, float y, float z)
+void Shader::sendUniform(cstring uniform, Vec2 val)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform2fv(uni, 1, &val.x);
+}
+
+void Shader::sendUniform(cstring uniform, float x, float y)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform2f(uni, x, y);
+}
+
+void Shader::sendUniform(cstring uniform, float x, float y, float z)
 {
 	GLint uni = getUniformLocation(uniform);
 	glUniform3f(uni, x, y, z);
 }
 
-void Shader::sendUniform(const char* uniform, float x, float y, float z, float w)
+void Shader::sendUniform(cstring uniform, float x, float y, float z, float w)
 {
 	GLint uni = getUniformLocation(uniform);
 	glUniform4f(uni, x, y, z, w);
 }
 
-void Shader::sendUniform(const char* uniform, float val)
+void Shader::sendUniform(cstring uniform, float val)
 {
 	GLint uni = getUniformLocation(uniform);
 	glUniform1f(uni, val);
 }
 
-void Shader::sendUniform(const char* uniform, int val)
+void Shader::sendUniform(cstring uniform, unsigned val)
+{
+	GLint uni = getUniformLocation(uniform);
+	glUniform1ui(uni, val);
+}
+
+void Shader::sendUniform(cstring uniform, int val)
 {
 	GLint uni = getUniformLocation(uniform);
 	glUniform1i(uni, val);
+}
+
+void Shader::sendUniform(cstring uniform, bool val)
+{
+	sendUniform(uniform, (int)val);
 }
 
 
@@ -307,7 +380,7 @@ bool Shader::compileShader(Shaders shadType, const std::string filePath, GLuint 
 	if(shadType == VERT_SHADER) //stores vtsh
 		m_vtsh = fileContent;
 
-	const char* tmpFileContent = fileContent.c_str();
+	cstring tmpFileContent = fileContent.c_str();
 	glShaderSource(id, 1, &tmpFileContent, nullptr);
 	glCompileShader(id);
 	//delete tmpFileContent;

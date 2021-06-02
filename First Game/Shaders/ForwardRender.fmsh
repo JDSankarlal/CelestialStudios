@@ -8,29 +8,30 @@ const int DIRECTIONAL=2;
 const int SPOTLIGHT=3;
 
 
-uniform vec4 LightPosition[MAX_LIGHTS_SIZE];
+uniform vec4 LightPosition;
 
 //color
 uniform vec3 LightAmbient;
-uniform vec3 LightDiffuse[MAX_LIGHTS_SIZE];
-uniform vec3 LightSpecular[MAX_LIGHTS_SIZE];
+uniform vec3 LightDiffuse;
+uniform vec3 LightSpecular;
 
 //scalar
-uniform float LightSpecularExponent[MAX_LIGHTS_SIZE];
-uniform float Attenuation_Constant[MAX_LIGHTS_SIZE];
-uniform float Attenuation_Linear[MAX_LIGHTS_SIZE];
-uniform float Attenuation_Quadratic[MAX_LIGHTS_SIZE];
+uniform float LightSpecularExponent;
+uniform float Attenuation_Constant;
+uniform float Attenuation_Linear;
+uniform float Attenuation_Quadratic;
 
 //amount of lights
 uniform int LightAmount;
 
-uniform bool LightEnable[MAX_LIGHTS_SIZE];
-uniform int LightType[MAX_LIGHTS_SIZE];
-uniform vec3 LightDirection[MAX_LIGHTS_SIZE] ;
-uniform float LightAngleConstraint[MAX_LIGHTS_SIZE];
+uniform bool LightEnable;
+uniform int LightType;
+uniform vec3 LightDirection ;
+uniform float LightAngleConstraint;
 
 
 uniform sampler2D uTex;
+uniform vec3 uViewPos = vec3(0, 0, 0);
 //uniform sampler2D uPos;
 //uniform sampler2D uNorm;
 //uniform sampler2D uScene;
@@ -42,68 +43,133 @@ uniform bool textured;
 uniform bool darken ;
 
 in vec2 texcoord;
-in vec3 norm;
-in vec3 pos;
+in vec4 norm;
+in vec4 pos;
 
 out vec4 outColor;
 
-void pointLight(int a);
+void pointLight();
 
-void defaultLight(int a)
+void defaultLight()
 {
-    pointLight(a);
+    pointLight();
 }
 
-void spotLight(int a)
+void spotLight()
 {
 
 }
 
-void directionalLight(int a)
+void directionalLight()
 {
-    vec3 normal = normalize(norm);
-    vec3 lightVec = LightPosition[a].xyz - pos;
+    vec3 normal = normalize(norm).xyz;
+    vec3 lightVec = LightPosition.xyz - (pos.xyz / pos.w);
     float dist = length(lightVec);
-    float NdotL = max(dot(normal, LightDirection[a]),0.0);
+    float NdotL = max(dot(normal, LightDirection),0.0);
 
     //float angle = acos(dot(lightDir , LightDirection) / length(lightDir * LightDirection));
     if(NdotL > 0.0)
     {
         //The light contributes to this surface
         //Calculate attenuation (falloff)
-        float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) + (Attenuation_Quadratic[a] * dist * dist));
+        float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
        
         //Calculate diffuse contribution
-        outColor.rgb += LightDiffuse[a] * NdotL * attenuation;
+        outColor.rgb += LightDiffuse * NdotL * attenuation;
         
         //Blinn-Phong half vector
-        float NdotHV =  max(dot(normal, normalize(LightDirection[a] + lightVec)), 0.0); 
+        float NdotHV =  max(dot(normal, normalize(LightDirection + lightVec)), 0.0); 
         
         //Calculate specular contribution
-        outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
+        outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
     }
 }
 
-void pointLight(int a)
+void pointLight()
 {
-    vec3 normal = normalize(norm);
-    vec3 lightVec = LightPosition[a].xyz - pos;
-    float dist = length(lightVec);
+    vec3 normal = normalize(norm).xyz;
+    vec3 lightVec = normalize(LightPosition.xyz - (pos.xyz / pos.w));
+    float diff = max(dot(normal, lightVec), 0.0);
+   // float dist = length(lightVec);
    
    
     //The light contributes to this surface
     //Calculate attenuation (falloff)
-    float attenuation = 1.0 / (Attenuation_Constant[a] + (Attenuation_Linear[a] * dist) + (Attenuation_Quadratic[a] * dist * dist));
+    float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * diff) + (Attenuation_Quadratic * diff * diff));
       
     //Calculate diffuse contribution
-    outColor.rgb += LightDiffuse[a] * attenuation ;
+    outColor.rgb += LightDiffuse * diff * attenuation ;
     
     //Blinn-Phong half vector
-    float NdotHV =  max(dot(normal, normalize(lightVec + normalize(-pos))), 0.0); 
+    float NdotHV =  max(dot(normal, normalize(lightVec + normalize(-pos.xyz))), 0.0); 
     
     //Calculate specular contribution
-    outColor.rgb += LightSpecular[a] * pow(NdotHV, LightSpecularExponent[a]) * attenuation;
+    outColor.rgb += LightSpecular * pow(NdotHV, LightSpecularExponent) * attenuation;
 }
+
+//void directionalLight()
+//{
+//    vec3 colour = texture(uTex, texcoord).rgb; 
+//
+//    vec3 normal = normalize(norm);
+//    vec3 lightVec = LightPosition.xyz - pos;
+//    float dist = length(lightVec);
+//	vec3 direc = LightDirection;
+//	vec3 reflection = reflect(-direc,normal);	
+//	float viewToRe = max(dot(normalize(-pos),reflection),0.0);
+//
+//    float NdotL = max(dot(normal, lightVec),0.0);
+//
+//   
+//    //The light contributes to this surface
+//    //Calculate attenuation (falloff)
+//    float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
+//      
+//    //Calculate diffuse contribution
+//	outColor.rgb +=  max(NdotL, 0.0) *  LightDiffuse * attenuation * colour;
+//	//NdotL = NdotL * 0.5 + 0.5;
+//    //outColor.rgb += LightDiffuse * attenuation * texture(uRamp, vec2(NdotL, 0.5)).rgb;
+//    
+//    //Blinn-Phong half vector
+//    float NdotHV =  max(dot(normal, normalize(LightDirection + lightVec)), 0.0); 
+//        
+//    //Calculate specular contribution
+//	float spec = pow(max(viewToRe, 0.0), 16);
+//	outColor.rgb +=  LightSpecular * spec * attenuation * colour * LightSpecularExponent;
+//    //outColor.rgb += LightSpecular * texture(uRamp, vec2(viewToRe, 0.5)).rgb * attenuation;
+//}
+//
+//void pointLight()
+//{
+//	vec3 colour = texture(uTex, texcoord).rgb; 
+//
+//    vec3 normal = normalize(norm);
+//    vec3 lightVec = LightPosition.xyz - pos;
+//    float dist = length(lightVec);
+//	vec3 direc = LightDirection;
+//	vec3 reflection = reflect(-direc,normal);	
+//	float viewToRe = max(dot(normalize(-pos),reflection),0.0);
+//
+//    float NdotL = max(dot(normal, lightVec),0.0);
+//
+//   
+//    //The light contributes to this surface
+//    //Calculate attenuation (falloff)
+//    float attenuation = 1.0 / (Attenuation_Constant + (Attenuation_Linear * dist) + (Attenuation_Quadratic * dist * dist));
+//      
+//    //Calculate diffuse contribution
+//	outColor.rgb +=  max(NdotL, 0.0) *  LightDiffuse * attenuation * colour;
+//	//NdotL = NdotL * 0.5 + 0.5;
+//    //outColor.rgb += LightDiffuse * attenuation * texture(uRamp, vec2(NdotL, 0.5)).rgb;
+//    
+//    //Blinn-Phong half vector
+//    float NdotHV =  max(dot(normal, normalize(LightDirection + lightVec)), 0.0); 
+//        
+//    //Calculate specular contribution
+//	float spec = pow(max(viewToRe, 0.0), 16);
+//	
+//	outColor.rgb += LightSpecular * spec * colour * attenuation ;
+//}
 
 void main()
 {
@@ -123,27 +189,23 @@ void main()
     
     
     //account for rasterizer interpolating
-    vec3 normal = normalize(norm);
+    vec3 normal = normalize(norm).xyz;
     
-    for(int a = 0; a < LightAmount; a++)
-    { 
-        if(LightEnable[a])
-            switch(LightType[a])
-            {        
-            case POINT:
-                pointLight(a);
-                break;
-            case DIRECTIONAL:
-                directionalLight(a);
-                break;
-            case SPOTLIGHT:
-                spotLight(a);
-                break;
-            default:
-                defaultLight(a);
-            }
-     // outColor.rgb = vec3(NdotL,NdotL,NdotL); 
-    } 
+    if(LightEnable)
+        switch(LightType)
+        {        
+        case POINT:
+            pointLight();
+            break;
+        case DIRECTIONAL:
+            directionalLight();
+            break;
+        case SPOTLIGHT:
+            spotLight();
+            break;
+        default:
+            defaultLight();
+        }   
 
-   
+    //outColor.rgb = normal;    
 }

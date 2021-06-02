@@ -6,6 +6,7 @@
 class Menu:public Scene
 {
 public:
+	void onSceneExit() {}
 
 	~Menu()
 	{
@@ -21,6 +22,8 @@ public:
 	// Set menu screen
 	void init()
 	{
+		LightManager::enableShadows(false);
+
 		mod.clear();
 		fadein = true;
 		fadeout = false;
@@ -31,37 +34,54 @@ public:
 
 
 
-		GameEmGine::m_modelShader->sendUniform("darken", false);
+		//GameEmGine::m_modelShader->sendUniform("darken", false);
 
-		mod.push_back(new Model("Models/Scene/Menu/menu.obj"));
-		GameEmGine::addModel(mod.back()); //Mod 0 
-		mod.push_back(new Model("Models/Scene/Menu/Start.obj"));
-		GameEmGine::addModel(mod.back()); //Mod 1
-		mod.push_back(new Model("Models/Scene/Menu/Options.obj"));
-		GameEmGine::addModel(mod.back()); //Mod 2
-		mod.push_back(new Model("Models/Scene/Menu/Exit.obj"));
-		GameEmGine::addModel(mod.back()); //Mod 3
+		Model tmp(new PrimitivePlane(115, 65), "intro Scene");
+		tmp.replaceTexture(0, 0, ResourceManager::getTexture2D("texture/scene/menu/menu.png"));
+		mod.push_back(tmp);
+		mod.back().scale(16);
+		mod.back().setTransparent(true);
+		mod.back().setColour(1, 1, 1, 0);
 
-		mod[0]->addChild(mod[1]);
-		mod[0]->addChild(mod[2]);
-		mod[0]->addChild(mod[3]);
+		mod.push_back(Model("Models/Scene/Menu/Start.obj"));
+		mod.back().setTransparent(true);
+		mod.back().setColour(1, 1, 1, 0);
 
-		mod[0]->setScale(16);
-		LightSource::setSceneAmbient({0,0,0,255}); //255
+		mod.push_back(Model("Models/Scene/Menu/Options.obj"));
+		mod.back().setTransparent(true);
+		mod.back().setColour(1, 1, 1, 0);
+
+		mod.push_back(Model("Models/Scene/Menu/Exit.obj"));
+		mod.back().setTransparent(true);
+		mod.back().setColour(1, 1, 1, 0);
+
+		for(auto& a : mod)
+			GameEmGine::addModel(&a); //Mod 0 
+
+		mod[0].addChild(&mod[1]);
+		mod[0].addChild(&mod[2]);
+		mod[0].addChild(&mod[3]);
+
+		mod[0].scale(16);
+
+
+		LightManager::addLight(&sceneLight);
+		sceneLight.setLightType(Light::DIRECTIONAL);
+		sceneLight.rotate({-45,0,0});
+		sceneLight.setAmbient({0,0,0,255});
+		sceneLight.setDiffuse({0,0,0,255});
+		sceneLight.setSpecular({0,0,0,255});
 
 		for(unsigned int i = 1; i < mod.size(); i++)
 		{
-			mod[i]->rotate({90,0,0});
-			mod[i]->setScale(10.0f);
-			mod[i]->translate({mod[0]->getWidth() / 2 - mod[i]->getWidth() / 2 , -mod[i]->getHeight() * i ,0});
+			mod[i].rotate({90,0,0});
+			mod[i].scale(10.0f);
 		}
 
-		LightSource::setSceneAmbient({0,0,0,255});
-		LightSource::setLightAmount(0);
 
-		GameEmGine::setCameraType(ORTHOGRAPHIC);
-		GameEmGine::setCameraPosition({0,0,-100});
-		GameEmGine::setCameraRotation({0,0,0});
+		GameEmGine::setCameraType(Camera::ORTHOGRAPHIC);
+		GameEmGine::getMainCamera()->translate({0,0,-100});
+		GameEmGine::getMainCamera()->rotate({0,0,0});
 
 
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b);  };
@@ -78,32 +98,63 @@ public:
 	// doing the update for menu screen
 	void updateMenu()
 	{
-		GameEmGine::m_grayScalePost->enable();
-		GameEmGine::m_grayScalePost->sendUniform("uTime", 0);
-		GameEmGine::m_grayScalePost->disable();
+
+		for(unsigned int i = 1; i < mod.size(); i++)
+		{
+			
+			mod[i].translate({20, -mod[i].getHeight() * i+15 , 0});
+		}
+
 
 		static bool menuMoved[] = {false,false,false,false};
 
 
 
 		if(GetAsyncKeyState(VK_LEFT))
-			mod[1]->translateBy(-100.f,0,0); 
+			mod[1].translateBy(-100.f, 0, 0);
 		if(GetAsyncKeyState(VK_RIGHT))
-			mod[1]->translateBy(100.f, 0, 0);
+			mod[1].translateBy(100.f, 0, 0);
 
 
+		GLubyte maxi = GLubyte(255 * .3f);
+		GLubyte mini = 0;
 		if(fadein)
 		{
 			splashT += 0.01f;
-			splashAmbient = (GLubyte)lerp(0, 255, splashT);
-			LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
-			if(splashAmbient >= 250)
+			splashAmbient = (GLubyte)lerp(mini, maxi, splashT);
+			sceneLight.setAmbient({splashAmbient,splashAmbient,splashAmbient,255});
+
+			if(splashT >= 1)
 			{
 				fadein = false;
-				splashT = 0;
-				splashAmbient = 255;
-				LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
+
+				splashAmbient = maxi;
 			}
+			for(auto& a : mod)
+				a.setColour(1, 1, 1, splashT);
+		}
+
+
+
+		if(fadeout)
+		{
+			splashT += 0.01f;
+			splashAmbient = (GLubyte)lerp(maxi, mini, splashT);
+			sceneLight.setAmbient({splashAmbient,splashAmbient,splashAmbient,255});
+
+			if(splashT >= 1)
+			{
+				fadein = true;
+				fadeout = false;
+				splashT = 0;
+				splashAmbient = mini;
+
+				
+				static Controls controls;
+				GameEmGine::setScene(&controls);
+			}
+			for(auto& a : mod)
+				a.setColour(1, 1, 1, 1 - splashT);
 		}
 
 		static Coord3D tmp = Coord3D(20.0f);
@@ -122,9 +173,9 @@ public:
 						option = option > 3 ? 1 : option < 1 ? 3 : option;
 
 						lerpParam = 0;
-						mod[lastOption]->setScale(10);
-						mod[lastOption]->setColour({255,255,255});
-						tmp = mod[option]->getScale();
+						mod[lastOption].scale(10);
+						mod[lastOption].setColour({255,255,255});
+						tmp = mod[option].getScale();
 						menuMoved[a] = true;
 					}
 				}
@@ -151,31 +202,13 @@ public:
 				}
 			}
 
-		mod[option]->setScale(lerp(tmp, Coord3D(12.0f), lerpParam));
-		mod[option]->setColour(lerp(ColourRGBA{255,255,255}, ColourRGBA{0,255,255}, lerpParam));
+		mod[option].scale(lerp(tmp, Coord3D(12.0f), lerpParam));
+		mod[option].setColour(lerp(ColourRGBA{255,255,255}, ColourRGBA{0,255,255}, lerpParam));
 		lerpParam += .1f;
 
 		if(lerpParam >= 1)
 		{
 			lerpParam = 1;
-		}
-
-		if(fadeout)
-		{
-			splashT += 0.01f;
-			splashT = splashT > 1 ? 1 : splashT;
-			splashAmbient = (GLubyte)lerp(255, 0, splashT);
-			LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
-			if(splashAmbient <= 5)
-			{
-				fadein = true;
-				fadeout = false;
-				splashT = 0;
-				splashAmbient = 255;
-
-				//GamePlayInit();
-				GameEmGine::setScene(new Controls);
-			}
 		}
 	}
 
@@ -187,7 +220,8 @@ public:
 	}
 
 private:
-	std::vector<Model*> mod;
+	std::vector<Model> mod;
+	Light sceneLight;
 	bool fadein = true;
 	bool fadeout = false;
 	float splashT = 0;

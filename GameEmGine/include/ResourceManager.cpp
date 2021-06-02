@@ -3,89 +3,121 @@
 std::map<std::string, Texture2D> Texture2DCache::m_textures;
 std::map<std::string, Texture3D> Texture3DCache::m_textures;
 std::map<std::pair<char, std::string>, Character> CharacterCache::m_characters;
-//Texture3DCache ResourceManager::m_texture3DCache;
 std::map<std::vector<std::string>, Shader*>  ShaderCache::m_shaders;
 
-Character& CharacterCache::getCharacter(char c, const char* font)
-{
-	auto it = m_characters.find({c, font});
 
+
+/// Resource Caches ///
+
+Character& CharacterCache::getCharacter(char c, cstring font)
+{
+	std::string dFont = tolower((char*)font);
+	auto it = m_characters.find({c, dFont});
 
 	if(it == m_characters.end())
 	{
-		Character tmp = Character::loadCharacter(c, font);
-		m_characters.insert({{c, font},tmp});
-		return m_characters[{c, font}];
+		Character tmp = Character::loadCharacter(c, dFont.c_str());
+		m_characters.insert({{c, dFont},tmp});
+		return m_characters[{c, dFont}];
 	}
 	//printf("cashed image loaded\n");
 	return it->second;
 }
 
-Texture2D& Texture2DCache::getTexture(const char* path)
+Texture2D& Texture2DCache::getTexture(cstring path)
 {
-	auto it = m_textures.find(path);
+	std::string dPath = tolower((char*)path);
+
+	auto it = m_textures.find(dPath);
 
 	if(it == m_textures.end())
 	{
-		Texture2D tmp = ImageLoader::loadImage2D(path);
-		m_textures.insert({path,tmp});
-		return m_textures[path];
+		Texture2D tmp = ImageLoader::loadImage2D(dPath.c_str());
+		m_textures.insert({dPath,tmp});
+		return m_textures[dPath];
 	}
 	//printf("cashed image loaded\n");
 	return it->second;
 }
 
-Texture3D& Texture3DCache::getTexture(const char* path)
+Texture3D& Texture3DCache::getTextureLUT(cstring path)
 {
-	auto it = m_textures.find(path);
+	std::string dPath = tolower((char*)path);
+
+	auto it = m_textures.find(dPath);
 
 	if(it == m_textures.end())
 	{
-		Texture3D tmp = ImageLoader::loadImage3D(path);
-		m_textures.insert({path,tmp});
-		return m_textures[path];
+		Texture3D tmp = ImageLoader::loadImage3D(dPath.c_str());
+		tmp.type = TEXTURE_TYPE3D::LUT;
+		m_textures.insert({dPath,tmp});
+		return m_textures[dPath];
 	}
 	return it->second;
 }
 
-Shader* ShaderCache::getShader(const char* vtsh, const char* fmsh)
+Texture3D& Texture3DCache::getTextureCubeMap(cstring path)
 {
-	auto it = m_shaders.find(std::vector<std::string>{vtsh, fmsh});
+	std::string dPath = tolower((char*)path);
+
+	auto it = m_textures.find(dPath);
+
+	if(it == m_textures.end())
+	{
+		Texture3D tmp = ImageLoader::createImage3D(dPath.c_str());
+		tmp.type = TEXTURE_TYPE3D::CUBE;
+		m_textures.insert({dPath,tmp});
+		return m_textures[dPath];
+	}
+	return it->second;
+}
+
+Shader* ShaderCache::getShader(cstring vtsh, cstring fmsh)
+{
+	std::string dvtsh = tolower((char*)vtsh), dfmsh = tolower((char*)fmsh);
+
+	auto it = m_shaders.find(std::vector<std::string>{dvtsh, dfmsh});
 
 	if(it == m_shaders.end())
 	{
 		Shader* tmp = new Shader;
-		if(tmp->create(vtsh, fmsh))
+		tmp->create(dvtsh, dfmsh);
 		{
-			m_shaders[{ (std::string)vtsh, (std::string)fmsh }] = tmp;
+			m_shaders[{ (std::string)dvtsh, (std::string)dfmsh }] = tmp;
 
-			return m_shaders[{ (std::string)vtsh, (std::string)fmsh }];
+			return m_shaders[{ (std::string)dvtsh, (std::string)dfmsh }];
 		}
-		return nullptr;
+		//return nullptr;
 	}
 
 	return it->second;
 }
 
-Texture2D& ResourceManager::getTexture2D(const char* path)
+
+
+/// Resource Management ///
+
+Texture2D& ResourceManager::getTexture2D(cstring path)
 {
 	return Texture2DCache::getTexture(path);
 }
 
-
-Texture3D& ResourceManager::getTexture3D(const char* path)
+Texture3D& ResourceManager::getTextureLUT(cstring path)
 {
-
-	return Texture3DCache::getTexture(path);
+	return Texture3DCache::getTextureLUT(path);
 }
 
-Shader* ResourceManager::getShader(const char* vtsh, const char* fmsh)
+Texture3D& ResourceManager::getTextureCubeMap(cstring path)
 {
+	return Texture3DCache::getTextureCubeMap(path);
+}
 
+Shader* ResourceManager::getShader(cstring vtsh, cstring fmsh)
+{
 	return ShaderCache::getShader(vtsh, fmsh);
 }
 
-Character& ResourceManager::getCharacter(char c, const char* font)
+Character& ResourceManager::getCharacter(char c, cstring font)
 {
 	return CharacterCache::getCharacter(c, font);
 }

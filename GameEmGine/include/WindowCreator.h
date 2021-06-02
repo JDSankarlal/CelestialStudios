@@ -2,7 +2,23 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
+#include <functional>
 #include "Utilities.h"
+
+struct WindowInfo
+{
+	std::string title;
+	Coord2D<int> position,
+	size;
+	int monitor;
+	void print()
+	{
+		printf("Title    : %s\n\n", title.c_str());
+		printf("Position : (%d, %d)\n", position.x, position.y);
+		printf("Size     : (%d, %d)\n", size.width, size.height);
+		printf("Monitor  : %d\n\n", monitor);
+	}
+};
 
 class WindowCreator
 {
@@ -14,27 +30,28 @@ public:
 	};
 
 	WindowCreator();
-	WindowCreator(std::string name, Coord3D<int>, Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
+	WindowCreator(std::string name, Coord2D<int>, Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
 	~WindowCreator();
 
-	int	createWindow(std::string name, Coord3D<int>, Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
+	static int	createWindow(std::string name, Coord2D<int>, Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
 
-	void setVisable(bool);
+	static void setVisable(bool);
 
-	void setFullScreen(bool);
+	static void setFullScreen(bool);
 
 	GLFWwindow* getWindow();
 
 	std::string& getTitle();
-	Coord3D<int>& getScreenSize();
-	int getScreenWidth();
-	int getScreenHeight();
+	static Coord2D<int>& getScreenSize();
+	static int getScreenWidth();
+	static int getScreenHeight();
+	static void(*m_onWindowResizeCallback)(GLFWwindow*, int, int);
 
 private:
-	GLFWwindow * m_window;
-	GLFWmonitor* m_monitor;
-	WindowInfo *m_info=new WindowInfo;
-	bool _full;		
+	static void onWindowResize(GLFWwindow* glfw, int w, int h);
+	
+	
+		
 
 };
 

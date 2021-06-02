@@ -6,10 +6,10 @@
 
 int main()
 {
-	Transformer::applyAspect();
-
-	GameEmGine::init("The Real Game", 1920, 1080, 0, 0, 0, false);
-	GameEmGine::setScene(new Splash);
+	GameEmGine::init("E.R.I.S.", 1820, 980, 0, 0, 0, false);//must go first
+	
+	PlayerSelect splash;
+	GameEmGine::setScene(&splash);
 	//GameEmGine::getWindow()->setFullScreen(true);
 	GameEmGine::run();
 	return 0;

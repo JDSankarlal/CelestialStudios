@@ -3,60 +3,46 @@
 #include <functional>
 #include "Intro.h"
 
+
+
 class Splash:public Scene
 {
 public:
-	~Splash() {
-		delete gray;
-	}
+	void onSceneExit() {}
 
 	// Set intro screen
 	void init()
 	{
-		//GAME::m_grayScalePost->enable();
-		//glUniform1f(GAME::m_grayScalePost->getUniformLocation("uTime"), 0.f);
-		//GAME::m_grayScalePost->disable();
+		LightManager::enableShadows(false);
+		
 
-		//gray = new Shader;
-		//grayPost = new FrameBuffer( 1, "Gray Scale");
-		//
-		//int width = GameEmGine::getWindowWidth(), 
-		//	height = GameEmGine::getWindowHeight();
-		//
-		//grayPost->initDepthTexture(width, height);
-		//grayPost->initColourTexture(0, width, height, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
-		//
-		//if(!grayPost->checkFBO())
-		//{
-		//	puts("FBO failed Creation");
-		//	system("pause");
-		//	return;
-		//}
-		//
-		//srand(clock());
-		//gray= ResourceManager::getShader("Shaders/Main Buffer.vtsh", "Shaders/Grayscale.fmsh");
-		//grayPost->setPostProcess(
-		//	[&]()->void
-		//	{
-		//		gray->enable();
-		//		glUniform1i(gray->getUniformLocation("uTex"), 0);
-		//		glBindTexture(GL_TEXTURE_2D, grayPost->getColorHandle(0));
-		//		FrameBuffer::drawFullScreenQuad();
-		//		glBindTexture(GL_TEXTURE_2D, GL_NONE);
-		//		gray->disable();
-		//	});
+		//GameEmGine::m_modelShader->sendUniform("darken", false);
 
-		GameEmGine::m_modelShader->sendUniform("darken", false);
+		setSkyBox("skyboxes/skybox");
+		//enableSkyBox(true);
 
-		mod.push_back(new Model("Models/Scene/Splash/splashScreen.obj"));
-		GameEmGine::addModel(mod.back());
-		mod[0]->setScale(16);
+		//mod.push_back(Model("Models/Scene/Splash/splashScreen.obj"));
+		Model tmp(new PrimitivePlane(115, 65), "Splash Scene");
+		tmp.replaceTexture(0, 0, ResourceManager::getTexture2D("textures/scene/splash/splashScreen.png"));
+		mod.push_back(tmp);
+		mod[0].scale(16);
+		mod[0].setTransparent(true);
+		mod[0].setColour(1, 1, 1, 0);
+
+		GameEmGine::addModel(&mod.back());
 		//mod[0]->addFrameBuffer(grayPost);
 
-		LightSource::setSceneAmbient({0,0,0,255});
 
-		GameEmGine::setCameraType(ORTHOGRAPHIC);
-		GameEmGine::setCameraPosition({0,0,-100});
+		LightManager::addLight(&sceneLight);
+		sceneLight.setLightType(Light::DIRECTIONAL);
+		sceneLight.rotate({-45,0,0});
+		sceneLight.setAmbient({0,0,0,255});
+		sceneLight.setDiffuse({0,0,0,255});
+		sceneLight.setSpecular({0,0,0,255});
+
+
+		GameEmGine::setCameraType(Camera::ORTHOGRAPHIC);
+		GameEmGine::getMainCamera()->reset();
 
 		//engine stuff
 		GameEmGine::setFPSLimit(60);
@@ -68,39 +54,43 @@ public:
 	// doing the update for splash screen
 	void updateSplash()
 	{
+		GLubyte maxi = GLubyte(255 * .3f);
+		GLubyte mini = 0;
 		if(fadein)
 		{
 			splashT += 0.01f;
-			splashAmbient = (GLubyte)lerp(0, 255, splashT);
-			LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
-			if(splashAmbient >= 250)
+			splashAmbient = (GLubyte)lerp(mini, maxi, splashT);
+			sceneLight.setAmbient({splashAmbient,splashAmbient,splashAmbient,255});
+		
+			mod[0].setColour(1,1,1,splashT);
+			if(splashT >= 1)
 			{
 				fadein = false;
 				fadeout = true;
 				splashT = 0;
-				splashAmbient = 255;
+				splashAmbient = maxi;
 			}
 		}
 
 		if(fadeout)
 		{
 			splashT += 0.01f;
-			splashAmbient = (GLubyte)lerp(255, 0, splashT);
-			LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,1});
-			if(splashAmbient <= 5)
+			splashAmbient = (GLubyte)lerp(maxi, mini, splashT);
+			sceneLight.setAmbient({splashAmbient,splashAmbient,splashAmbient,255});
+		
+			mod[0].setColour(1, 1, 1, 1-splashT);
+			if(splashT >= 1)
 			{
 				//fadein = true;
 				fadeout = false;
 				splashT = 0;
-				splashAmbient = 255;
+				splashAmbient = mini;
 
-
-				GameEmGine::removeModel(mod[0]);
+				GameEmGine::removeModel(&mod[0]);
 				mod.clear();
 
-
-				//IntroInite();
-				GameEmGine::setScene(new Intro);
+				static Intro intro;
+				GameEmGine::setScene(&intro);
 			}
 		}
 	}
@@ -114,11 +104,12 @@ public:
 
 private:
 
-	std::vector<Model*> mod;
+	std::vector<Model> mod;
+	Light sceneLight;
 	bool fadein = true;
 	bool fadeout = false;
 	float splashT = 0;
 	GLubyte splashAmbient = 0;
-	FrameBuffer *grayPost;
-	Shader *gray;
+	FrameBuffer* grayPost;
+	Shader gray;
 };

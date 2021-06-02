@@ -1,7 +1,7 @@
 #include "fileIO.h"
 
 			  
-int  fileIO::readFileToBuffer(const char * path, unsigned char * buffer)
+int  fileIO::readFileToBuffer(cstring path, unsigned char * buffer)
 {
 	FILE* file;
 	if(fopen_s(&file, path, "rb") == 0)

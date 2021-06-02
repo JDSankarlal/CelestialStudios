@@ -31,15 +31,19 @@ public:
 	void addAtribute(const std::string attributeName, short m_index = 1);
 
 	GLint getAttribLocation(const std::string attributeName);
-	GLint getUniformLocation(const char* uniform);
+	GLint getUniformLocation(cstring uniform);
 
-	void sendUniform(const char* uniform, glm::mat4 val);
-	void sendUniform(const char* uniform, glm::vec4 val);
-	void sendUniform(const char* uniform, Coord3D<> val);
-	void sendUniform(const char* uniform, float x, float y, float z);
-	void sendUniform(const char* uniform, float x, float y, float z,float w);
-	void sendUniform(const char* uniform, float val);
-	void sendUniform(const char* uniform, int val);
+	void sendUniform(cstring uniform, glm::mat4 val, bool transpose = false);
+	void sendUniform(cstring uniform, glm::vec4 val);
+	void sendUniform(cstring uniform, Vec3 val);
+	void sendUniform(cstring uniform, Vec2 val);
+	void sendUniform(cstring uniform, float x, float y);
+	void sendUniform(cstring uniform, float x, float y, float z);
+	void sendUniform(cstring uniform, float x, float y, float z,float w);
+	void sendUniform(cstring uniform, float val);
+	void sendUniform(cstring uniform, unsigned val);
+	void sendUniform(cstring uniform, int val);
+	void sendUniform(cstring uniform, bool val);
 
 	//enables shader program for use
 	void enable();
@@ -47,6 +51,9 @@ public:
 	static void disable();
 
 	static void refresh();
+
+	static void enableUniformErrors(bool err);
+
 private:
 	enum Shaders
 	{
@@ -61,6 +68,7 @@ private:
 	std::string m_vtsh = "", m_vtPath = "", m_fmPath = "", m_goPath = "";
 	int m_attribNum = 0;
 	bool m_enabled = false;
+	static bool uniformErrors;
 
 	GLuint
 		m_programID = 0,
@@ -69,8 +77,8 @@ private:
 		m_geomID = 0;
 
 	static std::unordered_map<GLuint,Shader*> m_shaders;
-	//	static GLuint *m_programs, *m_attribs, m_num;
 
+	//	static GLuint *m_programs, *m_attribs, m_num;
 };
 
 

@@ -76,8 +76,8 @@ void Medic::update(float dt)
 		{
 			if(time - getTimeSinceLastHeal() >= 8)
 			{
-				healingCircle->translate(this->getPosition() + (Coord3D<>({0.0f, 0.1f, 0.0f})));
-				healingCircle->setScale(4);
+				healingCircle->translate(this->getLocalPosition() + (Coord3D<>({0.0f, 0.1f, 0.0f})));
+				healingCircle->scale(4);
 				healingCircle->setToRender(true);
 				circleTime = time;
 				//puts("Special Ability MEDIC");

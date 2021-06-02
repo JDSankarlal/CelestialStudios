@@ -1,9 +1,11 @@
 #pragma once
 #include "PlayerSelect.h"
 #include <GameEmGine.h>
-class Controls :public Scene
+class Controls:public Scene
 {
 public:
+	void onSceneExit() {}
+
 	// Set splash screen and start update
 	void init()
 	{
@@ -12,20 +14,26 @@ public:
 		fadeout = false;
 		splashT = 0;
 		splashAmbient = 0;
-		
 
-		
-		GameEmGine::m_modelShader->sendUniform("darken", 0);
+		//	GameEmGine::m_modelShader->sendUniform("darken", 0);
+		Model tmp(new PrimitivePlane(115, 65), "Controls Scene");
+		tmp.replaceTexture(0, 0, ResourceManager::getTexture2D("texture/scene/controls/controller.png"));
+		mod.push_back(tmp);
+		mod.back().scale(16);
+		mod.back().setTransparent(true);
+		mod.back().setColour(1, 1, 1, 0);
 
-		mod.push_back(new Model("Models/Scene/Controls/controller.obj"));
-		mod[0]->setScale(16);
+		GameEmGine::addModel(&mod.back());
 
-		GameEmGine::addModel(mod.back());
-		LightSource::setSceneAmbient({ 0,0,0,255 });
-		LightSource::setLightAmount(0);
+		LightManager::addLight(&sceneLight);
+		sceneLight.setLightType(Light::DIRECTIONAL);
+		sceneLight.rotate({-45,0,0});
+		sceneLight.setAmbient({0,0,0,255});
+		sceneLight.setDiffuse({0,0,0,255});
+		sceneLight.setSpecular({0,0,0,255});
 
-		GameEmGine::setCameraType(ORTHOGRAPHIC);
-		GameEmGine::setCameraPosition({ 0,0,-100 });
+		GameEmGine::setCameraType(Camera::ORTHOGRAPHIC);
+		GameEmGine::getMainCamera()->translate({0,0,0});
 
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b);  };
 	}
@@ -33,57 +41,60 @@ public:
 	void keyInputPressed(int key, int modfier)
 	{
 		modfier;
-		if (key == 'A')
+		if(key == 'A' && !fadeout)
+		{
 			fadeout = true;
+			splashT = 0;
+		}
 	}
 
 	// doing the update for intro screen
 	void updateIntro()
 	{
-		if (fadein)
+		GLubyte maxi = GLubyte(255 * .3f);
+		GLubyte mini = 0;
+		if(fadein)
 		{
 			splashT += 0.01f;
-			splashAmbient = (GLubyte)lerp(0, 255, splashT);
-			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
-			if (splashAmbient >= 250)
+			splashAmbient = (GLubyte)lerp(mini, maxi, splashT);
+			sceneLight.setAmbient({splashAmbient,splashAmbient,splashAmbient,255});
+
+			if(splashT >= 1)
 			{
 				fadein = false;
-				splashT = 0;
-				splashAmbient = 255;
-				LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
+
+				splashAmbient = maxi;
 			}
+			mod[0].setColour(1, 1, 1, splashT);
 		}
 
-		if (!fadein)
-		{
-		}
-
-		for (int a = 0; a < 4; a++)
-			if (GameEmGine::getController(a)->isButtonPressed(CONTROLLER_A))
-			{
-				fadeout = true;
-			}
-
-		if (fadeout)
+		if(fadeout)
 		{
 			splashT += 0.01f;
-			splashAmbient = (GLubyte)lerp(255, 0, splashT);
-			LightSource::setSceneAmbient({ splashAmbient,splashAmbient,splashAmbient,splashAmbient });
-			if (splashAmbient <= 5)
+			splashAmbient = (GLubyte)lerp(maxi, mini, splashT);
+			sceneLight.setAmbient({splashAmbient,splashAmbient,splashAmbient,255});
+
+			mod[0].setColour(1, 1, 1, 1 - splashT);
+			if(splashT >= 1)
 			{
-				fadein = true;
+				//fadein = true;
 				fadeout = false;
 				splashT = 0;
-				splashAmbient = 255;
+				splashAmbient = mini;
 
-				GameEmGine::removeModel(mod[0]);
+				GameEmGine::removeModel(&mod[0]);
 				mod.clear();
 
-
-				//menuInite();
-				GameEmGine::setScene(new PlayerSelect);
+				static PlayerSelect select;
+				GameEmGine::setScene(&select);
 			}
 		}
+		for(int a = 0; a < 4; a++)
+			if(GameEmGine::getController(a)->isButtonPressed(CONTROLLER_A) && !fadeout)
+			{
+				fadeout = true;
+				splashT = 0;
+			}
 	}
 
 	//updates within game loop
@@ -94,7 +105,8 @@ public:
 	}
 
 private:
-	std::vector<Model*> mod;
+	std::vector<Model> mod;
+	Light sceneLight;
 	bool fadein = true;
 	bool fadeout = false;
 	float splashT = 0;

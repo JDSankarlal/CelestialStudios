@@ -2,6 +2,7 @@
 #include <EmGineAudioPlayer.h>
 #include <GameEmGine.h>
 #include <vector>
+#include <list>
 #include "Player.h"
 #include "Boss.h"
 #include "Minion.h"
@@ -16,7 +17,7 @@ using std::vector;
 class Game:public Scene
 {
 public:
-
+	void onSceneExit() {}
 
 	//instance key is pressed
 	void keyInputPressed(int key, int modifier)
@@ -68,8 +69,8 @@ public:
 
 		if(key == GLFW_KEY_SPACE) //changes the model that is being moved
 		{
-			static CAMERA_TYPE type = FRUSTUM;
-			GameEmGine::setCameraType(type = type == ORTHOGRAPHIC ? FRUSTUM : ORTHOGRAPHIC);
+			static Camera::CAM_TYPE type = Camera::FRUSTUM;
+			GameEmGine::setCameraType(type = type == Camera::ORTHOGRAPHIC ? Camera::FRUSTUM : Camera::ORTHOGRAPHIC);
 		}
 
 		if(key == GLFW_KEY_TAB)
@@ -77,24 +78,25 @@ public:
 
 		if(key == GLFW_KEY_F5) //resets the camera
 		{
-			GameEmGine::m_modelShader->refresh();
+			Shader::refresh();
 			//			GAME::m_grayScalePost->refresh();
 						//GAME::setCameraAngle(0, { 1, 1, 1 });
 						//	GAME::setCameraPosition({0,0,0});
 		}
-		if(key == GLFW_KEY_Q)
-			GameEmGine::lutActive = (GameEmGine::lutActive == false) ? true : false;
-		if(key == GLFW_KEY_T)
-			GameEmGine::toonActive = (GameEmGine::toonActive == false) ? true : false;
-		if(key == 'R')
-			GameEmGine::setCameraRotation({0,0,0});
+
+		//if(key == GLFW_KEY_Q)
+		//	GameEmGine::lutActive = (GameEmGine::lutActive == false) ? true : false;
+		//if(key == GLFW_KEY_T)
+		//	GameEmGine::toonActive = (GameEmGine::toonActive == false) ? true : false;
+		//if(key == 'R')
+		//	GameEmGine::setCameraRotation({0,0,0});
 
 		printf("key RELEASED code: %d\n\n", key);
 	}
 
-	void mouseButtonReleased(int button, int _mod)
+	void mouseButtonReleased(int button, int a_mod)
 	{
-		_mod;
+		a_mod;
 		if(button == MOUSE_LEFT_BUTTON)
 			leftM = InputManager::getMousePosition();
 		if(button == MOUSE_RIGHT_BUTTON)
@@ -110,14 +112,14 @@ public:
 	// Set game screen
 	void init()
 	{
-		
-		GameEmGine::m_modelShader->sendUniform("darken", 1);
+
+		//GameEmGine::m_modelShader->sendUniform("darken", 1);
 		mod.resize(132);//sets the initial size of the vector (if u add any more models, increase this number)
 
 		/// - Set Camera  - ///
-		GameEmGine::setCameraType(FRUSTUM);
-		GameEmGine::setCameraPosition({0,15.5f,-5});
-		GameEmGine::setCameraRotation({-45,0,0});
+		GameEmGine::setCameraType(Camera::FRUSTUM);
+		GameEmGine::getMainCamera()->translate({0,15.5f,-5});
+		GameEmGine::getMainCamera()->rotate({-45,0,0});
 
 
 		//GAME::setFPSLimit(60);
@@ -130,524 +132,514 @@ public:
 			else
 				break;
 
-		//Building 1s
-		mod[4] = (new Model("Models/Buildings/CashCorp/CashcorpBuildingWIP.obj"));
-		GameEmGine::addModel(mod[4]);//4
-		mod[5] = (new Model(*mod[4]));
-		GameEmGine::addModel(mod[5]);//5
-		mod[6] = (new Model(*mod[4]));
-		GameEmGine::addModel(mod[6]);//6
+		static Transformer uniScaler;
+		uniScaler.scale(.5);
 
-		mod[6]->setToRender(false);
+
+		//Building 1s
+		*std::next(mod.begin(), 4) = (new Model("Models/Buildings/CashCorp/CashcorpBuildingWIP.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 4));//4
+		*std::next(mod.begin(), 5) = (new Model(**std::next(mod.begin(), 4)));
+		GameEmGine::addModel(*std::next(mod.begin(), 5));//5
+		*std::next(mod.begin(), 6) = (new Model(**std::next(mod.begin(), 4)));
+		GameEmGine::addModel(*std::next(mod.begin(), 6));//6
+
+		(*std::next(mod.begin(), 6))->setToRender(false);
 
 		//Project Nebula Sign
-		mod[7] = new Model("Models/Neon Signs/Project Nebula/signn.obj");
-		GameEmGine::addModel(mod[7]); //7
+		*std::next(mod.begin(), 7) = new Model("Models/Neon Signs/Project Nebula/signn.obj");
+		GameEmGine::addModel(*std::next(mod.begin(), 7)); //7
 
 		//Boss
-		mod[8] = new Boss("Models/BOSS/missleShoot/BMS1.obj");
-		GameEmGine::addModel(mod[8]); //8
+		*std::next(mod.begin(), 8) = new Boss("Models/BOSS/missleShoot/BMS1.obj");
+		GameEmGine::addModel(*std::next(mod.begin(), 8)); //8
 
 
 
 		//Floor
-		mod[9] = (new Model("Models/Floor/Floor.obj"));
-		GameEmGine::addModel(mod[9]); //9
+		*std::next(mod.begin(), 9) = (new Model("Models/Floor/Floor.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 9)); //9
 
 		//Light Posts
-		mod[10] = (new Model("Models/Lamp/lampPost.obj"));
-		GameEmGine::addModel(mod[10]); //10
-		mod[11] = (new Model(*mod[10]));
-		GameEmGine::addModel(mod[11]);//11
-		mod[12] = (new Model(*mod[10]));
-		GameEmGine::addModel(mod[12]);//12
-		mod[13] = (new Model(*mod[10]));
-		GameEmGine::addModel(mod[13]);//13
-		mod[14] = (new Model(*mod[10]));
-		GameEmGine::addModel(mod[14]);//14
-		mod[15] = (new Model(*mod[10]));
-		GameEmGine::addModel(mod[15]);//15
+		*std::next(mod.begin(), 10) = (new Model("Models/Lamp/lampPost.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 10)); //10
+		*std::next(mod.begin(), 11) = (new Model(**std::next(mod.begin(), 10)));
+		GameEmGine::addModel(*std::next(mod.begin(), 11));//11
+		*std::next(mod.begin(), 12) = (new Model(**std::next(mod.begin(), 10)));
+		GameEmGine::addModel(*std::next(mod.begin(), 12));//12
+		*std::next(mod.begin(), 13) = (new Model(**std::next(mod.begin(), 10)));
+		GameEmGine::addModel(*std::next(mod.begin(), 13));//13
+		*std::next(mod.begin(), 14) = (new Model(**std::next(mod.begin(), 10)));
+		GameEmGine::addModel(*std::next(mod.begin(), 14));//14
+		*std::next(mod.begin(), 15) = (new Model(**std::next(mod.begin(), 10)));
+		GameEmGine::addModel(*std::next(mod.begin(), 15));//15
 
 		//Bench
-		mod[16] = (new Model("Models/Bench/Bench.obj"));
-		GameEmGine::addModel(mod[16]); //16
-		mod[17] = (new Model(*mod[16]));
-		GameEmGine::addModel(mod[17]);//17
+		*std::next(mod.begin(), 16) = (new Model("Models/Bench/Bench.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 16)); //16
+		*std::next(mod.begin(), 17) = (new Model(**std::next(mod.begin(), 16)));
+		GameEmGine::addModel(*std::next(mod.begin(), 17));//17
 
 		//Planet
-		mod[18] = (new Model("Models/Planet/planet.obj"));
-		GameEmGine::addModel(mod[18]); //18
-		mod[18]->setToRender(false);
+		*std::next(mod.begin(), 18) = (new Model("Models/Planet/planet.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 18)); //18
+		(*std::next(mod.begin(), 18))->setToRender(false);
 
 		//Building 2s
-		mod[19] = (new Model("Models/Buildings/Tunnel/Tunnel_Back_Final.obj"));
-		GameEmGine::addModel(mod[19]);//19
-		mod[20] = (new Model(*mod[19]));
-		GameEmGine::addModel(mod[20]);//20
-		mod[21] = (new Model(*mod[19]));
-		GameEmGine::addModel(mod[21]);//21
-		mod[21]->setToRender(false);
+		*std::next(mod.begin(), 19) = (new Model("Models/Buildings/Tunnel/Tunnel_Back_Final.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 19));//19
+		*std::next(mod.begin(), 20) = (new Model(**std::next(mod.begin(), 19)));
+		GameEmGine::addModel(*std::next(mod.begin(), 20));//20
+		*std::next(mod.begin(), 21) = (new Model(**std::next(mod.begin(), 19)));
+		GameEmGine::addModel(*std::next(mod.begin(), 21));//21
+		(*std::next(mod.begin(), 21))->setToRender(false);
 
 		//GraveStones
-		mod[22] = (new Model("Models/RIP/Rip Ani/RIP1.obj")); //22
-		mod[23] = (new Model("Models/RIP/Rip Ani/RIP1.obj"));//23
-		mod[24] = (new Model("Models/RIP/Rip Ani/RIP1.obj"));//24
-		mod[25] = (new Model("Models/RIP/Rip Ani/RIP1.obj"));//25
+		*std::next(mod.begin(), 22) = (new Model("Models/RIP/Rip Ani/RIP1.obj")); //22
+		*std::next(mod.begin(), 23) = (new Model("Models/RIP/Rip Ani/RIP1.obj"));//23
+		*std::next(mod.begin(), 24) = (new Model("Models/RIP/Rip Ani/RIP1.obj"));//24
+		*std::next(mod.begin(), 25) = (new Model("Models/RIP/Rip Ani/RIP1.obj"));//25
 
 		//Building 3s
-		mod[30] = (new Model("Models/Buildings/Building3/House.obj"));
-		GameEmGine::addModel(mod[30]);//30
-		mod[31] = (new Model(*mod[30]));
-		GameEmGine::addModel(mod[31]);//31
-		mod[32] = (new Model(*mod[30]));
-		GameEmGine::addModel(mod[32]);//32
+		*std::next(mod.begin(), 30) = (new Model("Models/Buildings/Building3/House.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 30));//30
+		*std::next(mod.begin(), 31) = (new Model(**std::next(mod.begin(), 30)));
+		GameEmGine::addModel(*std::next(mod.begin(), 31));//31
+		*std::next(mod.begin(), 32) = (new Model(**std::next(mod.begin(), 30)));
+		GameEmGine::addModel(*std::next(mod.begin(), 32));//32
 
 		//Building 4s
-		mod[33] = (new Model("Models/Buildings/Building4/tallBuilding.obj"));
-		GameEmGine::addModel(mod[33]);//33
-		mod[34] = (new Model(*mod[33]));
-		GameEmGine::addModel(mod[34]);//34
+		*std::next(mod.begin(), 33) = (new Model("Models/Buildings/Building4/tallBuilding.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 33));//33
+		*std::next(mod.begin(), 34) = (new Model(**std::next(mod.begin(), 33)));
+		GameEmGine::addModel(*std::next(mod.begin(), 34));//34
 
 		//Trees
-		mod[35] = (new Model("Models/DiedTree/tree.obj"));
-		GameEmGine::addModel(mod[35]);//35
-		mod[36] = (new Model(*mod[35]));
-		GameEmGine::addModel(mod[36]);//36
-		mod[37] = (new Model(*mod[35]));
-		GameEmGine::addModel(mod[37]);//37
-		mod[38] = (new Model(*mod[35]));
-		GameEmGine::addModel(mod[38]);//38
+		*std::next(mod.begin(), 35) = (new Model("Models/DiedTree/tree.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 35));//35
+		*std::next(mod.begin(), 36) = (new Model(**std::next(mod.begin(), 35)));
+		GameEmGine::addModel(*std::next(mod.begin(), 36));//36
+		*std::next(mod.begin(), 37) = (new Model(**std::next(mod.begin(), 35)));
+		GameEmGine::addModel(*std::next(mod.begin(), 37));//37
+		*std::next(mod.begin(), 38) = (new Model(**std::next(mod.begin(), 35)));
+		GameEmGine::addModel(*std::next(mod.begin(), 38));//38
 
 		//Building 5s
-		mod[39] = (new Model("Models/Buildings/Building5/smallShop.obj"));
-		GameEmGine::addModel(mod[39]);//39
-		mod[40] = (new Model(*mod[39]));
-		GameEmGine::addModel(mod[40]);//40
-		mod[41] = (new Model(*mod[39]));
-		GameEmGine::addModel(mod[41]);//41
+		*std::next(mod.begin(), 39) = (new Model("Models/Buildings/Building5/smallShop.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 39));//39
+		*std::next(mod.begin(), 40) = (new Model(**std::next(mod.begin(), 39)));
+		GameEmGine::addModel(*std::next(mod.begin(), 40));//40
+		*std::next(mod.begin(), 41) = (new Model(**std::next(mod.begin(), 39)));
+		GameEmGine::addModel(*std::next(mod.begin(), 41));//41
 
-		mod[41]->setToRender(false);
+		(*std::next(mod.begin(), 41))->setToRender(false);
 
-		mod[42] = (new Model("Models/Buildings/Building6/Building6.obj"));
-		GameEmGine::addModel(mod[42]);//42
-		mod[43] = (new Model(*mod[42]));
-		GameEmGine::addModel(mod[43]);//43
+		*std::next(mod.begin(), 42) = (new Model("Models/Buildings/Building6/Building6.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 42));//42
+		*std::next(mod.begin(), 43) = (new Model(**std::next(mod.begin(), 42)));
+		GameEmGine::addModel(*std::next(mod.begin(), 43));//43
 
-		mod[42]->setToRender(false);
-		mod[43]->setToRender(false);
+		(*std::next(mod.begin(), 42))->setToRender(false);
+		(*std::next(mod.begin(), 43))->setToRender(false);
 
-		mod[44] = new Model("Models/missile/candyMissile.obj");
+		*std::next(mod.begin(), 44) = new Model("Models/missile/candyMissile.obj");
 
-		mod[48] = (new Model("Models/Bullet/bullet.obj"));//48
+		*std::next(mod.begin(), 48) = (new Model("Models/Bullet/bullet.obj"));//48
 
-		mod[49] = (new Model("Models/Trash/TrashCan.obj"));
-		GameEmGine::addModel(mod[49]); //49
-		mod[50] = (new Model(*mod[49]));
-		GameEmGine::addModel(mod[50]);//50
+		*std::next(mod.begin(), 49) = (new Model("Models/Trash/TrashCan.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 49)); //49
+		*std::next(mod.begin(), 50) = (new Model(**std::next(mod.begin(), 49)));
+		GameEmGine::addModel(*std::next(mod.begin(), 50));//50
 
-		mod[49]->setToRender(false);
-		mod[50]->setToRender(false);
+		(*std::next(mod.begin(), 49))->setToRender(false);
+		(*std::next(mod.begin(), 50))->setToRender(false);
 
-		mod[51] = (new Model("Models/Picnic/PicnicTable.obj"));
-		GameEmGine::addModel(mod[51]); //51
-		mod[52] = (new Model(*mod[51]));
-		GameEmGine::addModel(mod[52]);//52
+		*std::next(mod.begin(), 51) = (new Model("Models/Picnic/PicnicTable.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 51)); //51
+		*std::next(mod.begin(), 52) = (new Model(**std::next(mod.begin(), 51)));
+		GameEmGine::addModel(*std::next(mod.begin(), 52));//52
 
-		mod[51]->setToRender(false);
-		mod[52]->setToRender(false);
+		(*std::next(mod.begin(), 51))->setToRender(false);
+		(*std::next(mod.begin(), 52))->setToRender(false);
 
-		mod[53] = (new Model("Models/PizzaSign/PIZZA.obj"));
-		GameEmGine::addModel(mod[53]); //53
+		*std::next(mod.begin(), 53) = (new Model("Models/PizzaSign/PIZZA.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 53)); //53
 
-		mod[54] = (new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj"));
-		GameEmGine::addModel(mod[54]); //54
-		mod[55] = (new Model(*mod[54]));
-		GameEmGine::addModel(mod[55]); //55
-		mod[56] = (new Model(*mod[54]));
-		GameEmGine::addModel(mod[56]); //56
-		mod[57] = (new Model(*mod[54]));
-		GameEmGine::addModel(mod[57]); //57
-		mod[54]->setToRender(false);
-		mod[55]->setToRender(false);
-		mod[56]->setToRender(false);
-		mod[57]->setToRender(false);
+		*std::next(mod.begin(), 54) = (new Model("Models/AssaultModel/Weapon/AssaultClassGun.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 54)); //54
+		*std::next(mod.begin(), 55) = (new Model(**std::next(mod.begin(), 54)));
+		GameEmGine::addModel(*std::next(mod.begin(), 55)); //55
+		*std::next(mod.begin(), 56) = (new Model(**std::next(mod.begin(), 54)));
+		GameEmGine::addModel(*std::next(mod.begin(), 56)); //56
+		*std::next(mod.begin(), 57) = (new Model(**std::next(mod.begin(), 54)));
+		GameEmGine::addModel(*std::next(mod.begin(), 57)); //57
+		(*std::next(mod.begin(), 54))->setToRender(false);
+		(*std::next(mod.begin(), 55))->setToRender(false);
+		(*std::next(mod.begin(), 56))->setToRender(false);
+		(*std::next(mod.begin(), 57))->setToRender(false);
 
-		mod[58] = (new Model("Models/Planet/Planet2/planet.obj"));
-		GameEmGine::addModel(mod[58]); //58
+		*std::next(mod.begin(), 58) = (new Model("Models/Planet/Planet2/planet.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 58)); //58
 
-		mod[58]->setToRender(false);
+		(*std::next(mod.begin(), 58))->setToRender(false);
 		//Pause Menu
-		//mod[] = (new Model("Models/Pause Menu/Pause Menu.obj"));//33
+		//*std::next(mod.begin(),) = (new Model("Models/Pause Menu/Pause Menu.obj"));//33
 
 		//collision2D floor
-		mod[59] = (new Model("Models/Floor/Floor2.obj"));//59
-		GameEmGine::addModel(mod[59]);
+		*std::next(mod.begin(), 59) = (new Model("Models/Floor/Floor2.obj"));//59
+		GameEmGine::addModel(*std::next(mod.begin(), 59));
 
-		mod[59]->setToRender(false);
-		mod[59]->setScale(1.f, 1.0f, 1.f), mod[59]->translate(0.0f, 0.15f, 5.0f);
+		(*std::next(mod.begin(), 59))->setToRender(false);
+		(*std::next(mod.begin(), 59))->scale(1.f, 1.0f, 1.f), (*std::next(mod.begin(), 59))->translate(0.0f, 0.15f, 5.0f);
 
 		//TRAIN
-		mod[79] = (new Model("Models/Train/Head/trainhead.obj"));//79
-		GameEmGine::addModel(mod[79]);
-		mod[80] = (new Model("Models/Train/Body/trainbodyblend.obj"));//80
-		GameEmGine::addModel(mod[80]);
-		mod[81] = (new Model(*mod[80]));//81
-		GameEmGine::addModel(mod[81]);
-		mod[82] = (new Model(*mod[81]));//82
-		GameEmGine::addModel(mod[82]);
-		mod[83] = (new Model(*mod[82]));//83
-		GameEmGine::addModel(mod[83]);
-		mod[84] = (new Model(*mod[83]));//84
-		GameEmGine::addModel(mod[84]);
-		mod[85] = (new Model("Models/Train/Head/trainhead.obj"));//85
-		GameEmGine::addModel(mod[85]);
-		mod[79]->translate(-14.45f, 0.3f, 8.0f);
-		mod[80]->translate(-9.2f, 0.3f, 8.0f);
-		mod[81]->translate(-4.6f, 0.3f, 8.0f);
-		mod[82]->translate(0.0f, 0.3f, 8.0f);
-		mod[83]->translate(4.6f, 0.3f, 8.0f);
-		mod[84]->translate(9.2f, 0.3f, 8.0f);
-		mod[85]->translate(14.45f, 0.3f, 8.0f), mod[85]->rotate(Coord3D<>(0, 180, 0));
+		*std::next(mod.begin(), 79) = (new Model("Models/Train/Head/trainhead.obj"));//79
+		GameEmGine::addModel(*std::next(mod.begin(), 79));
+		*std::next(mod.begin(), 80) = (new Model("Models/Train/Body/trainbodyblend.obj"));//80
+		GameEmGine::addModel(*std::next(mod.begin(), 80));
+		*std::next(mod.begin(), 81) = (new Model(**std::next(mod.begin(), 80)));//81
+		GameEmGine::addModel(*std::next(mod.begin(), 81));
+		*std::next(mod.begin(), 82) = (new Model(**std::next(mod.begin(), 81)));//82
+		GameEmGine::addModel(*std::next(mod.begin(), 82));
+		*std::next(mod.begin(), 83) = (new Model(**std::next(mod.begin(), 82)));//83
+		GameEmGine::addModel(*std::next(mod.begin(), 83));
+		*std::next(mod.begin(), 84) = (new Model(**std::next(mod.begin(), 83)));//84
+		GameEmGine::addModel(*std::next(mod.begin(), 84));
+		*std::next(mod.begin(), 85) = (new Model("Models/Train/Head/trainhead.obj"));//85
+		GameEmGine::addModel(*std::next(mod.begin(), 85));
+		(*std::next(mod.begin(), 79))->translate(-14.45f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 80))->translate(-9.2f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 81))->translate(-4.6f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 82))->translate(0.0f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 83))->translate(4.6f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 84))->translate(9.2f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 85))->translate(14.45f, 0.3f, 8.0f), (*std::next(mod.begin(), 85))->rotate(Coord3D<>(0, 180, 0));
 
 		//Rail
-		mod[86] = (new Model("Models/Rail/rail.obj"));//86
-		GameEmGine::addModel(mod[86]);
-		mod[87] = (new Model(*mod[86]));//87
-		GameEmGine::addModel(mod[87]);
-		mod[88] = (new Model(*mod[87]));//88
-		GameEmGine::addModel(mod[88]);
-		mod[89] = (new Model(*mod[88]));//89
-		GameEmGine::addModel(mod[89]);
-		mod[90] = (new Model(*mod[89]));//90
-		GameEmGine::addModel(mod[90]);
-		mod[91] = (new Model(*mod[90]));//91
-		GameEmGine::addModel(mod[91]);
-		mod[92] = (new Model(*mod[91]));//92
-		GameEmGine::addModel(mod[92]);
+		*std::next(mod.begin(), 86) = (new Model("Models/Rail/rail.obj"));//86
+		GameEmGine::addModel(*std::next(mod.begin(), 86));
+		*std::next(mod.begin(), 87) = (new Model(**std::next(mod.begin(), 86)));//87
+		GameEmGine::addModel(*std::next(mod.begin(), 87));
+		*std::next(mod.begin(), 88) = (new Model(**std::next(mod.begin(), 87)));//88
+		GameEmGine::addModel(*std::next(mod.begin(), 88));
+		*std::next(mod.begin(), 89) = (new Model(**std::next(mod.begin(), 88)));//89
+		GameEmGine::addModel(*std::next(mod.begin(), 89));
+		*std::next(mod.begin(), 90) = (new Model(**std::next(mod.begin(), 89)));//90
+		GameEmGine::addModel(*std::next(mod.begin(), 90));
+		*std::next(mod.begin(), 91) = (new Model(**std::next(mod.begin(), 90)));//91
+		GameEmGine::addModel(*std::next(mod.begin(), 91));
+		*std::next(mod.begin(), 92) = (new Model(**std::next(mod.begin(), 91)));//92
+		GameEmGine::addModel(*std::next(mod.begin(), 92));
 
-		mod[86]->setScale(0.7f), mod[86]->translate(-18.0f, 0.0f, 8.0f), mod[86]->rotate(Coord3D<>(0, 90, 0));
-		mod[87]->setScale(0.7f), mod[87]->translate(-12.0f, 0.0f, 8.0f), mod[87]->rotate(Coord3D<>(0, 90, 0));
-		mod[88]->setScale(0.7f), mod[88]->translate(-6.0f, 0.0f, 8.0f), mod[88]->rotate(Coord3D<>(0, 90, 0));
-		mod[89]->setScale(0.7f), mod[89]->translate(0.0f, 0.0f, 8.0f), mod[89]->rotate(Coord3D<>(0, 90, 0));
-		mod[90]->setScale(0.7f), mod[90]->translate(6.0f, 0.0f, 8.0f), mod[90]->rotate(Coord3D<>(0, 90, 0));
-		mod[91]->setScale(0.7f), mod[91]->translate(12.0f, 0.0f, 8.0f), mod[91]->rotate(Coord3D<>(0, 90, 0));
-		mod[92]->setScale(0.7f), mod[92]->translate(18.0f, 0.0f, 8.0f), mod[92]->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 86))->scale(0.7f), (*std::next(mod.begin(), 86))->translate(-18.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 86))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 87))->scale(0.7f), (*std::next(mod.begin(), 87))->translate(-12.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 87))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 88))->scale(0.7f), (*std::next(mod.begin(), 88))->translate(-6.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 88))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 89))->scale(0.7f), (*std::next(mod.begin(), 89))->translate(0.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 89))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 90))->scale(0.7f), (*std::next(mod.begin(), 90))->translate(6.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 90))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 91))->scale(0.7f), (*std::next(mod.begin(), 91))->translate(12.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 91))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 92))->scale(0.7f), (*std::next(mod.begin(), 92))->translate(18.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 92))->rotate(Coord3D<>(0, 90, 0));
 
 
 		//Escape pods
-		mod[94] = (new Model("Models/TrainGrayBox.obj"));//94
-		GameEmGine::addModel(mod[94]);
-		mod[95] = (new Model(*mod[94]));//95
-		GameEmGine::addModel(mod[95]);
-		mod[96] = (new Model(*mod[94]));//96
-		GameEmGine::addModel(mod[96]);
-		mod[97] = (new Model(*mod[94]));//97
-		GameEmGine::addModel(mod[97]);
+		*std::next(mod.begin(), 94) = (new Model("Models/TrainGrayBox.obj"));//94
+		GameEmGine::addModel(*std::next(mod.begin(), 94));
+		*std::next(mod.begin(), 95) = (new Model(**std::next(mod.begin(), 94)));//95
+		GameEmGine::addModel(*std::next(mod.begin(), 95));
+		*std::next(mod.begin(), 96) = (new Model(**std::next(mod.begin(), 94)));//96
+		GameEmGine::addModel(*std::next(mod.begin(), 96));
+		*std::next(mod.begin(), 97) = (new Model(**std::next(mod.begin(), 94)));//97
+		GameEmGine::addModel(*std::next(mod.begin(), 97));
 
 		//yeah we arent using these anytime soon so :) 
-		mod[94]->setToRender(false);
-		mod[95]->setToRender(false);
-		mod[96]->setToRender(false);
-		mod[97]->setToRender(false);
+		(*std::next(mod.begin(), 94))->setToRender(false);
+		(*std::next(mod.begin(), 95))->setToRender(false);
+		(*std::next(mod.begin(), 96))->setToRender(false);
+		(*std::next(mod.begin(), 97))->setToRender(false);
 
 		//RailLight
-		mod[99] = (new Model("Models/Rail/railLight.obj"));//99
-		GameEmGine::addModel(mod[99]);
-		mod[100] = (new Model(*mod[99]));//100
-		GameEmGine::addModel(mod[100]);
-		mod[101] = (new Model(*mod[100]));//101
-		GameEmGine::addModel(mod[101]);
-		mod[102] = (new Model(*mod[101]));//102
-		GameEmGine::addModel(mod[102]);
-		mod[103] = (new Model(*mod[102]));//103
-		GameEmGine::addModel(mod[103]);
-		mod[104] = (new Model(*mod[103]));//104
-		GameEmGine::addModel(mod[104]);
-		mod[105] = (new Model(*mod[104]));//105
-		GameEmGine::addModel(mod[105]);
+		*std::next(mod.begin(), 99) = (new Model("Models/Rail/railLight.obj"));//99
+		GameEmGine::addModel(*std::next(mod.begin(), 99));
+		*std::next(mod.begin(), 100) = (new Model(**std::next(mod.begin(), 99)));//100
+		GameEmGine::addModel(*std::next(mod.begin(), 100));
+		*std::next(mod.begin(), 101) = (new Model(**std::next(mod.begin(), 100)));//101
+		GameEmGine::addModel(*std::next(mod.begin(), 101));
+		*std::next(mod.begin(), 102) = (new Model(**std::next(mod.begin(), 101)));//102
+		GameEmGine::addModel(*std::next(mod.begin(), 102));
+		*std::next(mod.begin(), 103) = (new Model(**std::next(mod.begin(), 102)));//103
+		GameEmGine::addModel(*std::next(mod.begin(), 103));
+		*std::next(mod.begin(), 104) = (new Model(**std::next(mod.begin(), 103)));//104
+		GameEmGine::addModel(*std::next(mod.begin(), 104));
+		*std::next(mod.begin(), 105) = (new Model(**std::next(mod.begin(), 104)));//105
+		GameEmGine::addModel(*std::next(mod.begin(), 105));
 
 		//Background
-		mod[106] = (new Model("Models/BackgroundSky/sky.obj"));//106
-		GameEmGine::addModel(mod[106]);
-		mod[106]->setScale(8.0f, 8.0f, 5.0f), mod[106]->translate(1.0f, 4.0f, 40.0f), mod[106]->rotate({90.0f,0.0f,0.0f});
+		*std::next(mod.begin(), 106) = (new Model("Models/BackgroundSky/sky.obj"));//106
+		GameEmGine::addModel(*std::next(mod.begin(), 106));
+		(*std::next(mod.begin(), 106))->scale(8.0f, 8.0f, 5.0f), (*std::next(mod.begin(), 106))->translate(1.0f, 4.0f, 40.0f), (*std::next(mod.begin(), 106))->rotate({90.0f,0.0f,0.0f});
 
 		//Add more buildings in the back
-		mod[107] = (new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//107
-		GameEmGine::addModel(mod[107]);
+		*std::next(mod.begin(), 107) = (new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//107
+		GameEmGine::addModel(*std::next(mod.begin(), 107));
 
-		mod[107]->setScale(1.5f, 1.5f, 1.0f), mod[107]->translate(2.5f, 0.0f, 30.0f);
+		(*std::next(mod.begin(), 107))->scale(1.5f, 1.5f, 1.0f), (*std::next(mod.begin(), 107))->translate(2.5f, 0.0f, 30.0f);
 
-		mod[108] = (new Model("Models/Buildings/Building1/building1.obj"));//108
-		GameEmGine::addModel(mod[108]);
-		mod[109] = (new Model(*mod[108]));//109
-		GameEmGine::addModel(mod[109]);
+		*std::next(mod.begin(), 108) = (new Model("Models/Buildings/Building1/building1.obj"));//108
+		GameEmGine::addModel(*std::next(mod.begin(), 108));
+		*std::next(mod.begin(), 109) = (new Model(**std::next(mod.begin(), 108)));//109
+		GameEmGine::addModel(*std::next(mod.begin(), 109));
 
-		mod[108]->setScale(2.0f, 3.5f, 2.5f), mod[108]->translate(-6.0f, 0.0f, 37.0f), mod[108]->rotate({0.0f, -90.0f, 0.0f});
-		mod[109]->setScale(2.0f, 3.5f, 2.5f), mod[109]->translate(25.2f, 0.0f, 18.0f), mod[109]->rotate({0.0f, 180.0f, 0.0f});
+		(*std::next(mod.begin(), 108))->scale(2.0f, 3.5f, 2.5f), (*std::next(mod.begin(), 108))->translate(-6.0f, 0.0f, 37.0f), (*std::next(mod.begin(), 108))->rotate({0.0f, -90.0f, 0.0f});
+		(*std::next(mod.begin(), 109))->scale(2.0f, 3.5f, 2.5f), (*std::next(mod.begin(), 109))->translate(25.2f, 0.0f, 18.0f), (*std::next(mod.begin(), 109))->rotate({0.0f, 180.0f, 0.0f});
 
-		mod[110] = (new Model("Models/Buildings/Building2/building2.obj"));//110
-		GameEmGine::addModel(mod[110]);
-		mod[111] = (new Model(*mod[110]));//111
-		GameEmGine::addModel(mod[111]);
+		*std::next(mod.begin(), 110) = (new Model("Models/Buildings/Building2/building2.obj"));//110
+		GameEmGine::addModel(*std::next(mod.begin(), 110));
+		*std::next(mod.begin(), 111) = (new Model(**std::next(mod.begin(), 110)));//111
+		GameEmGine::addModel(*std::next(mod.begin(), 111));
 
-		mod[110]->setScale(2.0f, 3.5f, 2.5f), mod[110]->translate(-22.0f, 0.0f, 15.0f), mod[110]->rotate({0.0f, 0.0f, 0.0f});
-		mod[111]->setScale(1.0f, 3.5f, 2.5f), mod[111]->translate(5.0f, 0.0f, 37.0f), mod[111]->rotate({0.0f, -90.0f, 0.0f});
+		(*std::next(mod.begin(), 110))->scale(2.0f, 3.5f, 2.5f), (*std::next(mod.begin(), 110))->translate(-22.0f, 0.0f, 15.0f), (*std::next(mod.begin(), 110))->rotate({0.0f, 0.0f, 0.0f});
+		(*std::next(mod.begin(), 111))->scale(1.0f, 3.5f, 2.5f), (*std::next(mod.begin(), 111))->translate(5.0f, 0.0f, 37.0f), (*std::next(mod.begin(), 111))->rotate({0.0f, -90.0f, 0.0f});
 
-		mod[112] = (new Model("Models/Buildings/Building8/Pharmacure_Model.obj"));//112
-		GameEmGine::addModel(mod[112]);
-		mod[113] = (new Model(*mod[112]));//113
-		GameEmGine::addModel(mod[113]);
+		*std::next(mod.begin(), 112) = (new Model("Models/Buildings/Building8/Pharmacure_Model.obj"));//112
+		GameEmGine::addModel(*std::next(mod.begin(), 112));
+		*std::next(mod.begin(), 113) = (new Model(**std::next(mod.begin(), 112)));//113
+		GameEmGine::addModel(*std::next(mod.begin(), 113));
 
-		mod[112]->setScale(1.0f, 1.0f, 1.0f), mod[112]->translate(17.0f, 0.0f, 22.0f), mod[112]->rotate({0.0f, -90.0f, 0.0f});
-		mod[113]->setScale(2.0f, 2.0f, 2.0f), mod[113]->translate(-25.0f, 0.0f, 25.0f), mod[113]->rotate({0.0f, 90.0f, 0.0f});
+		(*std::next(mod.begin(), 112))->scale(1.0f, 1.0f, 1.0f), (*std::next(mod.begin(), 112))->translate(17.0f, 0.0f, 22.0f), (*std::next(mod.begin(), 112))->rotate({0.0f, -90.0f, 0.0f});
+		(*std::next(mod.begin(), 113))->scale(2.0f, 2.0f, 2.0f), (*std::next(mod.begin(), 113))->translate(-25.0f, 0.0f, 25.0f), (*std::next(mod.begin(), 113))->rotate({0.0f, 90.0f, 0.0f});
 
-		mod[114] = (new Model("Models/Buildings/Building3/House.obj"));//114
-		GameEmGine::addModel(mod[114]);
+		*std::next(mod.begin(), 114) = (new Model("Models/Buildings/Building3/House.obj"));//114
+		GameEmGine::addModel(*std::next(mod.begin(), 114));
 
-		mod[114]->setScale(2.0f, 2.0f, 2.0f), mod[114]->translate(25.0f, 0.0f, 10.0f), mod[114]->rotate({0.0f, 90.0f, -90.0f});
+		(*std::next(mod.begin(), 114))->scale(2.0f, 2.0f, 2.0f), (*std::next(mod.begin(), 114))->translate(25.0f, 0.0f, 10.0f), (*std::next(mod.begin(), 114))->rotate({0.0f, 90.0f, -90.0f});
 
-		mod[115] = (new Model("Models/Buildings/Building9/cyber1.obj"));//115
-		GameEmGine::addModel(mod[115]);
-		mod[116] = (new Model(*mod[115]));//116
-		GameEmGine::addModel(mod[116]);
+		*std::next(mod.begin(), 115) = (new Model("Models/Buildings/Building9/cyber1.obj"));//115
+		GameEmGine::addModel(*std::next(mod.begin(), 115));
+		*std::next(mod.begin(), 116) = (new Model(**std::next(mod.begin(), 115)));//116
+		GameEmGine::addModel(*std::next(mod.begin(), 116));
 
-		mod[115]->setScale(3.0f, 3.0f, 3.0f), mod[115]->translate(-22.0f, 0.0f, 35.0f), mod[115]->rotate({0.0f, 45.0f, 0.0f});
-		mod[116]->setScale(3.0f, 3.0f, 3.0f), mod[116]->translate(13.5f, 0.0f, 35.0f), mod[116]->rotate({0.0f, 0.0f, 0.0f});
+		(*std::next(mod.begin(), 115))->scale(3.0f, 3.0f, 3.0f), (*std::next(mod.begin(), 115))->translate(-22.0f, 0.0f, 35.0f), (*std::next(mod.begin(), 115))->rotate({0.0f, 45.0f, 0.0f});
+		(*std::next(mod.begin(), 116))->scale(3.0f, 3.0f, 3.0f), (*std::next(mod.begin(), 116))->translate(13.5f, 0.0f, 35.0f), (*std::next(mod.begin(), 116))->rotate({0.0f, 0.0f, 0.0f});
 
-		mod[117] = (new Model("Models/Buildings/Building10/cyber2.obj"));//117
-		GameEmGine::addModel(mod[117]);
-		mod[118] = (new Model(*mod[117]));//118
-		GameEmGine::addModel(mod[118]);
+		*std::next(mod.begin(), 117) = (new Model("Models/Buildings/Building10/cyber2.obj"));//117
+		GameEmGine::addModel(*std::next(mod.begin(), 117));
+		*std::next(mod.begin(), 118) = (new Model(**std::next(mod.begin(), 117)));//118
+		GameEmGine::addModel(*std::next(mod.begin(), 118));
 
-		mod[117]->setScale(3.0f, 3.0f, 3.0f), mod[117]->translate(21.0f, 0.0f, 27.0f), mod[117]->rotate({0.0f, 90.0f, 0.0f});
-		mod[118]->setScale(3.0f, 3.0f, 3.0f), mod[118]->translate(-0.5f, 2.0f, 36.0f), mod[118]->rotate({0.0f, 90.0f, 0.0f});
+		(*std::next(mod.begin(), 117))->scale(3.0f, 3.0f, 3.0f), (*std::next(mod.begin(), 117))->translate(21.0f, 0.0f, 27.0f), (*std::next(mod.begin(), 117))->rotate({0.0f, 90.0f, 0.0f});
+		(*std::next(mod.begin(), 118))->scale(3.0f, 3.0f, 3.0f), (*std::next(mod.begin(), 118))->translate(-0.5f, 2.0f, 36.0f), (*std::next(mod.begin(), 118))->rotate({0.0f, 90.0f, 0.0f});
 
-		mod[119] = (new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//119
-		GameEmGine::addModel(mod[119]);
-		mod[119]->setScale(1.0f, 3.0f, 1.0f), mod[119]->translate(17.f, 0.0f, 30.0f), mod[119]->rotate({0.0f, -90.0f, 0.0f});
+		*std::next(mod.begin(), 119) = (new Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//119
+		GameEmGine::addModel(*std::next(mod.begin(), 119));
+		(*std::next(mod.begin(), 119))->scale(1.0f, 3.0f, 1.0f), (*std::next(mod.begin(), 119))->translate(17.f, 0.0f, 30.0f), (*std::next(mod.begin(), 119))->rotate({0.0f, -90.0f, 0.0f});
 
-		mod[120] = (new Model("Models/Buildings/Building11/cyber3.obj"));//120
-		GameEmGine::addModel(mod[120]);
-		mod[121] = (new Model(*mod[120]));//121
-		GameEmGine::addModel(mod[121]);
-		mod[120]->setScale(2.0f, 3.0f, 3.0f), mod[120]->translate(-17.f, -5.0f, 24.0f), mod[120]->rotate({0.0f, 0.0f, 0.0f});
-		mod[121]->setScale(2.0f, 2.0f, 2.0f), mod[121]->translate(-4.2f, -5.0f, 29.7f), mod[121]->rotate({0.0f, -90.0f, 0.0f});
+		*std::next(mod.begin(), 120) = (new Model("Models/Buildings/Building11/cyber3.obj"));//120
+		GameEmGine::addModel(*std::next(mod.begin(), 120));
+		*std::next(mod.begin(), 121) = (new Model(**std::next(mod.begin(), 120)));//121
+		GameEmGine::addModel(*std::next(mod.begin(), 121));
+		(*std::next(mod.begin(), 120))->scale(2.0f, 3.0f, 3.0f), (*std::next(mod.begin(), 120))->translate(-17.f, -5.0f, 24.0f), (*std::next(mod.begin(), 120))->rotate({0.0f, 0.0f, 0.0f});
+		(*std::next(mod.begin(), 121))->scale(2.0f, 2.0f, 2.0f), (*std::next(mod.begin(), 121))->translate(-4.2f, -5.0f, 29.7f), (*std::next(mod.begin(), 121))->rotate({0.0f, -90.0f, 0.0f});
 
-		mod[122] = (new Model("Models/Buildings/Building5/smallShop.obj"));//122
-		GameEmGine::addModel(mod[122]);
-		mod[122]->setScale(1.2f, 1.2f, 1.2f), mod[122]->translate(-8.0f, 0.0f, 27.0f), mod[122]->rotate({0.0f, -90.0f, 0.0f});
+		*std::next(mod.begin(), 122) = (new Model("Models/Buildings/Building5/smallShop.obj"));//122
+		GameEmGine::addModel(*std::next(mod.begin(), 122));
+		(*std::next(mod.begin(), 122))->scale(1.2f, 1.2f, 1.2f), (*std::next(mod.begin(), 122))->translate(-8.0f, 0.0f, 27.0f), (*std::next(mod.begin(), 122))->rotate({0.0f, -90.0f, 0.0f});
 
 		//Building 2s
-		mod[123] = (new Model("Models/Buildings/Tunnel/Tunnel_Front_Blue.obj")); //123
-		GameEmGine::addModel(mod[123]);
-		mod[124] = (new Model(*mod[123]));
-		GameEmGine::addModel(mod[124]);//124
-		mod[123]->setColour({0,255,255});
-		mod[124]->setColour({0,255,255});
+		*std::next(mod.begin(), 123) = (new Model("Models/Buildings/Tunnel/Tunnel_Front_Blue.obj")); //123
+		GameEmGine::addModel(*std::next(mod.begin(), 123));
+		*std::next(mod.begin(), 124) = (new Model(**std::next(mod.begin(), 123)));
+		GameEmGine::addModel(*std::next(mod.begin(), 124));//124
+		(*std::next(mod.begin(), 123))->setColour({0,255,255});
+		(*std::next(mod.begin(), 124))->setColour({0,255,255});
 
 		//boss portrait beside its health bar 
-		mod[125] = (new Model("Models/BOSS/bossPORTRAIT.obj")); //125
-		mod[125]->translate(10.2f, 18.2f, 19.2f);
-		mod[125]->setScale(2.0f, 2.0f, 2.0f);
-		mod[125]->rotate({0, 0, 0});
-		mod[125]->setTransparent(true);
-		GameEmGine::addModel(mod[125]);
+		(*std::next(mod.begin(), 125)) = (new Model("Models/BOSS/bossPORTRAIT.obj")); //125
+		(*std::next(mod.begin(), 125))->translate(10.2f, 18.2f, 19.2f);
+		(*std::next(mod.begin(), 125))->scale(2.0f, 2.0f, 2.0f);
+		(*std::next(mod.begin(), 125))->rotate({0, 0, 0});
+		(*std::next(mod.begin(), 125))->setTransparent(true);
+		GameEmGine::addModel(*std::next(mod.begin(), 125));
 
 		//pause screen
-		mod[126] = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
-		mod[126]->translate(-0.8f, 10.0f, -8.0f);
-		mod[126]->setScale(0.25f, 0.45f, 0.25f);
-		GameEmGine::addModel(mod[126]);
-		mod[126]->setToRender(false);
-		mod[126]->setTransparent(true);
+		(*std::next(mod.begin(), 126)) = (new Model("Models/Scene/Pause/pausedScreen.obj")); //125
+		(*std::next(mod.begin(), 126))->translate(-0.8f, 10.0f, -8.0f);
+		(*std::next(mod.begin(), 126))->scale(0.25f, 0.45f, 0.25f);
+		GameEmGine::addModel(*std::next(mod.begin(), 126));
+		(*std::next(mod.begin(), 126))->setToRender(false);
+		(*std::next(mod.begin(), 126))->setTransparent(true);
 
 		//Tutorial Sign
-		mod[127] = (new Model("Models/Sign/tallSign/tallSign.obj"));
-		GameEmGine::addModel(mod[127]);
-		mod[127]->translate(-14.0f, 0.0f, 36.0f), mod[127]->setScale(1.5f, 1.5f, 1.5f);
-		mod[127]->setColour({0,255,255});
+		*std::next(mod.begin(), 127) = (new Model("Models/Sign/tallSign/tallSign.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 127));
+		(*std::next(mod.begin(), 127))->translate(-14.0f, 0.0f, 36.0f), (*std::next(mod.begin(), 127))->scale(1.5f, 1.5f, 1.5f);
+		(*std::next(mod.begin(), 127))->setColour({0,255,255});
 
-		mod[128] = (new Model("Models/Sign/shortSign/shortSign.obj"));
-		GameEmGine::addModel(mod[128]);
-		mod[128]->translate(-16.9f, 0.0f, 17.0f), mod[128]->rotate({0, 90, 0}), mod[128]->setScale(0.8f, 1.0f, 1.0f);
-		mod[128]->setColour({0,255,255});
+		*std::next(mod.begin(), 128) = (new Model("Models/Sign/shortSign/shortSign.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 128));
+		(*std::next(mod.begin(), 128))->translate(-16.9f, 0.0f, 17.0f), (*std::next(mod.begin(), 128))->rotate({0, 90, 0}), (*std::next(mod.begin(), 128))->scale(0.8f, 1.0f, 1.0f);
+		(*std::next(mod.begin(), 128))->setColour({0,255,255});
 
-		mod[129] = (new Model("Models/Sign/sideSign/sideSign.obj"));
-		GameEmGine::addModel(mod[129]);
-		mod[129]->setScale(1.0f, 3.0f, 1.0f), mod[129]->translate(16.8f, 0.0f, 29.5f), mod[129]->rotate({0.0f, -90.0f, 0.0f});
+		*std::next(mod.begin(), 129) = (new Model("Models/Sign/sideSign/sideSign.obj"));
+		GameEmGine::addModel(*std::next(mod.begin(), 129));
+		(*std::next(mod.begin(), 129))->scale(1.0f, 3.0f, 1.0f), (*std::next(mod.begin(), 129))->translate(16.8f, 0.0f, 29.5f), (*std::next(mod.begin(), 129))->rotate({0.0f, -90.0f, 0.0f});
 
-		mod[130] = (new Model("Models/Scene/GameOver/gameOver.obj")); //125
-		mod[130]->translate(-0.8f, 10.0f, -8.0f);
-		mod[130]->setScale(0.25f, 0.45f, 0.25f);
-		GameEmGine::addModel(mod[130]);
-		mod[130]->setToRender(false);
-		mod[130]->setTransparent(true);
+		(*std::next(mod.begin(), 130)) = (new Model("Models/Scene/GameOver/gameOver.obj")); //125
+		(*std::next(mod.begin(), 130))->translate(-0.8f, 10.0f, -8.0f);
+		(*std::next(mod.begin(), 130))->scale(0.25f, 0.45f, 0.25f);
+		GameEmGine::addModel(*std::next(mod.begin(), 130));
+		(*std::next(mod.begin(), 130))->setToRender(false);
+		(*std::next(mod.begin(), 130))->setTransparent(true);
 
-		mod[131] = (new Model("Models/Scene/Win/win.obj")); //125
-		mod[131]->translate(-0.8f, 10.0f, -8.0f);
-		mod[131]->setScale(0.25f, 0.45f, 0.25f);
-		GameEmGine::addModel(mod[131]);
-		mod[131]->setToRender(false);
-		mod[131]->setTransparent(true);
+		(*std::next(mod.begin(), 131)) = (new Model("Models/Scene/Win/win.obj")); //125
+		(*std::next(mod.begin(), 131))->translate(-0.8f, 10.0f, -8.0f);
+		(*std::next(mod.begin(), 131))->scale(0.25f, 0.45f, 0.25f);
+		GameEmGine::addModel(*std::next(mod.begin(), 131));
+		(*std::next(mod.begin(), 131))->setToRender(false);
+		(*std::next(mod.begin(), 131))->setTransparent(true);
 
 		/// - Set Model Transforms - ///
 		//Player Transforms
-		mod[0]->setScale(1.2f, 1.4f, 1.2f), mod[0]->translate(1.0f, 0.0f, -5.0f);
-		mod[1]->setScale(1.2f, 1.4f, 1.2f), mod[1]->translate(-1.0f, 0.0f, -5.0f);
-		mod[2]->setScale(1.2f, 1.4f, 1.2f), mod[2]->translate(2.0f, 0.0f, -5.0f);
-		mod[3]->setScale(1.2f, 1.4f, 1.2f), mod[3]->translate(-2.0f, 0.0f, -5.0f);
-		mod[0]->rotate(Coord3D<>(0, 180, 0));
-		mod[1]->rotate(Coord3D<>(0, 180, 0));
-		mod[2]->rotate(Coord3D<>(0, 180, 0));
-		mod[3]->rotate(Coord3D<>(0, 180, 0));
+		(*std::next(mod.begin(), 0))->scale(1.2f, 1.4f, 1.2f), (*std::next(mod.begin(), 0))->translate(1.0f, 0.0f, -5.0f);
+		(*std::next(mod.begin(), 1))->scale(1.2f, 1.4f, 1.2f), (*std::next(mod.begin(), 1))->translate(-1.0f, 0.0f, -5.0f);
+		(*std::next(mod.begin(), 2))->scale(1.2f, 1.4f, 1.2f), (*std::next(mod.begin(), 2))->translate(2.0f, 0.0f, -5.0f);
+		(*std::next(mod.begin(), 3))->scale(1.2f, 1.4f, 1.2f), (*std::next(mod.begin(), 3))->translate(-2.0f, 0.0f, -5.0f);
+		(*std::next(mod.begin(), 0))->rotate(Coord3D<>(0, 180, 0));
+		(*std::next(mod.begin(), 1))->rotate(Coord3D<>(0, 180, 0));
+		(*std::next(mod.begin(), 2))->rotate(Coord3D<>(0, 180, 0));
+		(*std::next(mod.begin(), 3))->rotate(Coord3D<>(0, 180, 0));
 
-		mod[19]->addChild(mod[123]);
-		mod[20]->addChild(mod[124]);
+		(*std::next(mod.begin(), 19))->addChild(*std::next(mod.begin(), 123));
+		(*std::next(mod.begin(), 20))->addChild(*std::next(mod.begin(), 124));
 
 		//Building Transforms
 		//Building 1s
-		mod[4]->setScale(1), mod[4]->translate(-15.175f, 0.0f, -2.0f), mod[4]->rotate({0.0f,90.0f,0.0f});;
-		mod[5]->setScale(1), mod[5]->translate(6.0f, 0.0f, 29.0f), mod[5]->rotate({0.0f,-90.0f,0.0f});
-		//mod[6]->setScale(2), mod[6]->translate(-4.0f, 0.0f, 22.75f), mod[6]->rotate({0.0f,-90.0f,0.0f});
+		(*std::next(mod.begin(), 4))->scale(1), (*std::next(mod.begin(), 4))->translate(-15.175f, 0.0f, -2.0f), (*std::next(mod.begin(), 4))->rotate({0.0f,90.0f,0.0f});;
+		(*std::next(mod.begin(), 5))->scale(1), (*std::next(mod.begin(), 5))->translate(6.0f, 0.0f, 29.0f), (*std::next(mod.begin(), 5))->rotate({0.0f,-90.0f,0.0f});
+		//*std::next(mod.begin(),6)->scale(2), *std::next(mod.begin(),6)->translate(-4.0f, 0.0f, 22.75f), *std::next(mod.begin(),6)->rotate({0.0f,-90.0f,0.0f});
 
 		//Building 2s
-		mod[19]->setScale(0.85f), mod[19]->translate(-18.0f, 0.0f, 6.4f), mod[19]->rotate({0.0f, 90.0f,0.0f}); //left 
-		mod[20]->setScale(0.85f), mod[20]->translate(18.0f, 0.0f, 9.5f), mod[20]->rotate({0.0f, -90.0f, 0.0f}); //right 
+		(*std::next(mod.begin(), 19))->scale(0.85f), (*std::next(mod.begin(), 19))->translate(-18.0f, 0.0f, 6.4f), (*std::next(mod.begin(), 19))->rotate({0.0f, 90.0f,0.0f}); //left 
+		(*std::next(mod.begin(), 20))->scale(0.85f), (*std::next(mod.begin(), 20))->translate(18.0f, 0.0f, 9.5f), (*std::next(mod.begin(), 20))->rotate({0.0f, -90.0f, 0.0f}); //right 
 
-		//Buildings 3s
-		mod[30]->translate(10.5f, 0.0f, 23.6f);
-		mod[31]->translate(19.5f, 0.0f, 3.75f), mod[31]->rotate({0,180,0});
-		mod[32]->translate(-12.0f, 0.0f, 25.35f), mod[32]->rotate({0,-90,0});
+			//Buildings 3s
+		(*std::next(mod.begin(), 30))->translate(10.5f, 0.0f, 23.6f);
+		(*std::next(mod.begin(), 31))->translate(19.5f, 0.0f, 3.75f), (*std::next(mod.begin(), 31))->rotate({0,180,0});
+		(*std::next(mod.begin(), 32))->translate(-12.0f, 0.0f, 25.35f), (*std::next(mod.begin(), 32))->rotate({0,-90,0});
 		//Building 4s //Lillian's building, moved back
-		mod[33]->translate(27.0f, 0.0f, 26.0f), mod[33]->rotate({0,45,0}); //right
-		mod[34]->translate(-14.0f, 0.0f, 36.0f), mod[34]->setScale(1.5f, 1.5f, 1.5f), mod[34]->rotate({0,180,0}); //left
-		//Building 5s
-		mod[39]->setScale(1.0f, 1.0f, 1.05f), mod[39]->translate(19.6f, 0.0f, 16.5f), mod[39]->rotate({0,180,0});
-		mod[40]->setScale(1.25f, 1.0f, 1.0f), mod[40]->translate(-16.9f, 0.0f, 16.35f), mod[40]->rotate({0,90,0});
+		(*std::next(mod.begin(), 33))->translate(27.0f, 0.0f, 26.0f), (*std::next(mod.begin(), 33))->rotate({0,45,0}); //right
+		(*std::next(mod.begin(), 34))->translate(-14.0f, 0.0f, 36.0f), (*std::next(mod.begin(), 34))->scale(1.5f, 1.5f, 1.5f), (*std::next(mod.begin(), 34))->rotate({0,180,0}); //left
+			//Building 5s
+		(*std::next(mod.begin(), 39))->scale(1.0f, 1.0f, 1.05f), (*std::next(mod.begin(), 39))->translate(19.6f, 0.0f, 16.5f), (*std::next(mod.begin(), 39))->rotate({0,180,0});
+		(*std::next(mod.begin(), 40))->scale(1.25f, 1.0f, 1.0f), (*std::next(mod.begin(), 40))->translate(-16.9f, 0.0f, 16.35f), (*std::next(mod.begin(), 40))->rotate({0,90,0});
 
 		//Project Nebula Sign Transforms
-		mod[7]->setScale(3), mod[7]->translate(9.5f, 5.34f, 22.5f);
+		(*std::next(mod.begin(), 7))->scale(3), (*std::next(mod.begin(), 7))->translate(9.5f, 5.34f, 22.5f);
 
 		//Boss Trarrnsforms
-		mod[8]->setScale(2.0f), mod[8]->translate(0.0f, 0.0f, 23.0f), mod[8]->rotate({0.0f, 0.0f, 0.0f});
+		(*std::next(mod.begin(), 8))->scale(2.0f), (*std::next(mod.begin(), 8))->translate(0.0f, 0.0f, 23.0f), (*std::next(mod.begin(), 8))->rotate({0.0f, 0.0f, 0.0f});
 
 		//Floor Transforms
-		mod[9]->setScale(2.25f, 1.0f, 5.0f), mod[9]->translate(0.0f, 0.0f, 5.0f);
+		(*std::next(mod.begin(), 9))->scale(2.25f, 1.0f, 5.0f), (*std::next(mod.begin(), 9))->translate(0.0f, 0.0f, 5.0f);
 
 		//Street Light Transforms
-		mod[10]->setScale(0.5f, 0.8f, 0.5f), mod[10]->translate(13.0f, 0.0f, -1.0f);
-		mod[11]->setScale(0.5f, 0.8f, 0.5f), mod[11]->translate(13.0f, 0.0f, 6.0f);
-		mod[12]->setScale(0.5f, 0.8f, 0.5f), mod[12]->translate(13.0f, 0.0f, 15.0f);
-		mod[13]->setScale(0.5f, 0.8f, 0.5f), mod[13]->translate(-13.0f, 0.0f, -1.0f), mod[13]->rotate({0.0f,180.0f,0.0f});
-		mod[14]->setScale(0.5f, 0.8f, 0.5f), mod[14]->translate(-13.0f, 0.0f, 6.0f), mod[14]->rotate({0.0f,180.0f,0.0f});
-		mod[15]->setScale(0.5f, 0.8f, 0.5f), mod[15]->translate(-13.0f, 0.0f, 15.0f), mod[15]->rotate({0.0f,180.0f,0.0f});
+		(*std::next(mod.begin(), 10))->scale(0.5f, 0.8f, 0.5f), (*std::next(mod.begin(), 10))->translate(13.0f, 0.0f, -1.0f);
+		(*std::next(mod.begin(), 11))->scale(0.5f, 0.8f, 0.5f), (*std::next(mod.begin(), 11))->translate(13.0f, 0.0f, 6.0f);
+		(*std::next(mod.begin(), 12))->scale(0.5f, 0.8f, 0.5f), (*std::next(mod.begin(), 12))->translate(13.0f, 0.0f, 15.0f);
+		(*std::next(mod.begin(), 13))->scale(0.5f, 0.8f, 0.5f), (*std::next(mod.begin(), 13))->translate(-13.0f, 0.0f, -1.0f), (*std::next(mod.begin(), 13))->rotate({0.0f,180.0f,0.0f});
+		(*std::next(mod.begin(), 14))->scale(0.5f, 0.8f, 0.5f), (*std::next(mod.begin(), 14))->translate(-13.0f, 0.0f, 6.0f), (*std::next(mod.begin(), 14))->rotate({0.0f,180.0f,0.0f});
+		(*std::next(mod.begin(), 15))->scale(0.5f, 0.8f, 0.5f), (*std::next(mod.begin(), 15))->translate(-13.0f, 0.0f, 15.0f), (*std::next(mod.begin(), 15))->rotate({0.0f,180.0f,0.0f});
 
 		//Bench Transforms
-		mod[16]->translate(-13.0f, 0.0f, 3.0f);
-		mod[17]->translate(13.0f, 0.0f, 3.0f), mod[17]->rotate({0.0f,180.0f,0.0f});
+		(*std::next(mod.begin(), 16))->translate(-13.0f, 0.0f, 3.0f);
+		(*std::next(mod.begin(), 17))->translate(13.0f, 0.0f, 3.0f), (*std::next(mod.begin(), 17))->rotate({0.0f,180.0f,0.0f});
 
 		//Planet Transforms
-		mod[18]->translate(9.0f, 17.0f, 36.0f);
-		//mod[58]->translate(-10.0f, 11.0f, 25.0f);
+		(*std::next(mod.begin(), 18))->translate(9.0f, 17.0f, 36.0f);
+		//*std::next(mod.begin(),58)->translate(-10.0f, 11.0f, 25.0f);
 
 		//Trees
-		mod[35]->setScale(0.3f), mod[35]->translate(13.0f, 0.0f, -3.0f), mod[35]->rotate({0,-0,0});
-		mod[36]->setScale(0.3f), mod[36]->translate(-13.0f, 0.0f, -3.0f), mod[36]->rotate({0,-0,0});
-		mod[37]->setScale(0.3f), mod[37]->translate(13.0f, 0.0f, 11.0f), mod[37]->rotate({0,-0,0});
-		mod[38]->setScale(0.3f), mod[38]->translate(-13.0f, 0.0f, 11.0f), mod[38]->rotate({0,-0,0});
+		(*std::next(mod.begin(), 35))->scale(0.3f), (*std::next(mod.begin(), 35))->translate(13.0f, 0.0f, -3.0f), (*std::next(mod.begin(), 35))->rotate({0,-0,0});
+		(*std::next(mod.begin(), 36))->scale(0.3f), (*std::next(mod.begin(), 36))->translate(-13.0f, 0.0f, -3.0f), (*std::next(mod.begin(), 36))->rotate({0,-0,0});
+		(*std::next(mod.begin(), 37))->scale(0.3f), (*std::next(mod.begin(), 37))->translate(13.0f, 0.0f, 11.0f), (*std::next(mod.begin(), 37))->rotate({0,-0,0});
+		(*std::next(mod.begin(), 38))->scale(0.3f), (*std::next(mod.begin(), 38))->translate(-13.0f, 0.0f, 11.0f), (*std::next(mod.begin(), 38))->rotate({0,-0,0});
 
 		//Pizza Sign
-		mod[53]->setScale(1.5f), mod[53]->translate(-13.0f, 5.4f, 22.3f);
+		(*std::next(mod.begin(), 53))->scale(1.5f), (*std::next(mod.begin(), 53))->translate(-13.0f, 5.4f, 22.3f);
 
 		//Train
-		mod[79]->translate(-14.45f, 0.3f, 8.0f);
-		mod[80]->translate(-9.2f, 0.3f, 8.0f);
-		mod[81]->translate(-4.6f, 0.3f, 8.0f);
-		mod[82]->translate(0.0f, 0.3f, 8.0f);
-		mod[83]->translate(4.6f, 0.3f, 8.0f);
-		mod[84]->translate(9.2f, 0.3f, 8.0f);
-		mod[85]->translate(14.45f, 0.3f, 8.0f), mod[85]->rotate(Coord3D<>(0, 180, 0));
+		(*std::next(mod.begin(), 79))->translate(-14.45f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 80))->translate(-9.2f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 81))->translate(-4.6f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 82))->translate(0.0f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 83))->translate(4.6f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 84))->translate(9.2f, 0.3f, 8.0f);
+		(*std::next(mod.begin(), 85))->translate(14.45f, 0.3f, 8.0f), (*std::next(mod.begin(), 85))->rotate(Coord3D<>(0, 180, 0));
 
 		//Rail
-		mod[86]->setScale(0.7f), mod[86]->translate(-18.0f, 0.0f, 8.0f), mod[86]->rotate(Coord3D<>(0, 90, 0));
-		mod[87]->setScale(0.7f), mod[87]->translate(-12.0f, 0.0f, 8.0f), mod[87]->rotate(Coord3D<>(0, 90, 0));
-		mod[88]->setScale(0.7f), mod[88]->translate(-6.0f, 0.0f, 8.0f), mod[88]->rotate(Coord3D<>(0, 90, 0));
-		mod[89]->setScale(0.7f), mod[89]->translate(0.0f, 0.0f, 8.0f), mod[89]->rotate(Coord3D<>(0, 90, 0));
-		mod[90]->setScale(0.7f), mod[90]->translate(6.0f, 0.0f, 8.0f), mod[90]->rotate(Coord3D<>(0, 90, 0));
-		mod[91]->setScale(0.7f), mod[91]->translate(12.0f, 0.0f, 8.0f), mod[91]->rotate(Coord3D<>(0, 90, 0));
-		mod[92]->setScale(0.7f), mod[92]->translate(18.0f, 0.0f, 8.0f), mod[92]->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 86))->scale(0.7f), (*std::next(mod.begin(), 86))->translate(-18.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 86))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 87))->scale(0.7f), (*std::next(mod.begin(), 87))->translate(-12.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 87))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 88))->scale(0.7f), (*std::next(mod.begin(), 88))->translate(-6.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 88))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 89))->scale(0.7f), (*std::next(mod.begin(), 89))->translate(0.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 89))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 90))->scale(0.7f), (*std::next(mod.begin(), 90))->translate(6.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 90))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 91))->scale(0.7f), (*std::next(mod.begin(), 91))->translate(12.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 91))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 92))->scale(0.7f), (*std::next(mod.begin(), 92))->translate(18.0f, 0.0f, 8.0f), (*std::next(mod.begin(), 92))->rotate(Coord3D<>(0, 90, 0));
 
 		//RialLight
-		mod[99]->setScale(0.7f), mod[99]->translate(-18.0f, 0.03f, 8.0f), mod[99]->rotate(Coord3D<>(0, 90, 0));
-		mod[100]->setScale(0.7f), mod[100]->translate(-12.0f, 0.03f, 8.0f), mod[100]->rotate(Coord3D<>(0, 90, 0));
-		mod[101]->setScale(0.7f), mod[101]->translate(-6.0f, 0.03f, 8.0f), mod[101]->rotate(Coord3D<>(0, 90, 0));
-		mod[102]->setScale(0.7f), mod[102]->translate(0.0f, 0.03f, 8.0f), mod[102]->rotate(Coord3D<>(0, 90, 0));
-		mod[103]->setScale(0.7f), mod[103]->translate(6.0f, 0.03f, 8.0f), mod[103]->rotate(Coord3D<>(0, 90, 0));
-		mod[104]->setScale(0.7f), mod[104]->translate(12.0f, 0.03f, 8.0f), mod[104]->rotate(Coord3D<>(0, 90, 0));
-		mod[105]->setScale(0.7f), mod[105]->translate(18.0f, 0.03f, 8.0f), mod[105]->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 99))->scale(0.7f), (*std::next(mod.begin(), 99))->translate(-18.0f, 0.03f, 8.0f), (*std::next(mod.begin(), 99))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 100))->scale(0.7f), (*std::next(mod.begin(), 100))->translate(-12.0f, 0.03f, 8.0f), (*std::next(mod.begin(), 100))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 101))->scale(0.7f), (*std::next(mod.begin(), 101))->translate(-6.0f, 0.03f, 8.0f), (*std::next(mod.begin(), 101))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 102))->scale(0.7f), (*std::next(mod.begin(), 102))->translate(0.0f, 0.03f, 8.0f), (*std::next(mod.begin(), 102))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 103))->scale(0.7f), (*std::next(mod.begin(), 103))->translate(6.0f, 0.03f, 8.0f), (*std::next(mod.begin(), 103))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 104))->scale(0.7f), (*std::next(mod.begin(), 104))->translate(12.0f, 0.03f, 8.0f), (*std::next(mod.begin(), 104))->rotate(Coord3D<>(0, 90, 0));
+		(*std::next(mod.begin(), 105))->scale(0.7f), (*std::next(mod.begin(), 105))->translate(18.0f, 0.03f, 8.0f), (*std::next(mod.begin(), 105))->rotate(Coord3D<>(0, 90, 0));
 
-		LightSource::setLightAmount(14);
+		//apply uniform transform
+		for(auto& a : mod)
+			uniScaler.addChild(a);
+
+		lights.resize(14);
 		for(int a = 0; a < 6; a++)
 		{
-			//mod[10 + a]->boundingBoxUpdate();
-			LightSource::setLightType(LIGHT_TYPE::DIRECTIONAL, a);
-			LightSource::setParent(mod[10 + a], a);
-			LightSource::translate({-5.0f,4.5,0.0f}, a);
-			LightSource::setDirection({0.0f,-1.0f,0.0f}, a);
-			//LightSource::setDiffuse({ 255,100,0,100 }, 6);
-			//LightSource::setAttenuationQuadratic(0.06f, 6);
+			//*std::next(mod.begin(),10 + a)->boundingBoxUpdate();
+			(*std::next(lights.begin(), a)).setLightType(Light::DIRECTIONAL);
+			(*std::next(lights.begin(), a)).setParent(*std::next(mod.begin(), 10 + a));
+			(*std::next(lights.begin(), a)).translate({-0.5f,4.5,0.0f});
+			//(*std::next(lights.begin(),a).setDiffuse({ 255,100,0,100 }, 6);
+			//(*std::next(lights.begin(),a).setAttenuationQuadratic(0.06f, 6);
 		}
 
-		LightSource::setLightType(LIGHT_TYPE::POINT, 6);
-		LightSource::setParent(mod[0], 6);
-		LightSource::translate({0, -0.75f, 0}, 6);
-		LightSource::setDiffuse({255,0,0,100}, 6);
-		LightSource::setAttenuationQuadratic(1.f, 6);
+		for(int a = 0; a < 4; a++)
+		{
+			(*std::next(lights.begin(), a + 6)).setLightType(Light::POINT);
+			(*std::next(lights.begin(), a + 6)).setParent(*std::next(mod.begin(), a));
+			(*std::next(lights.begin(), a + 6)).translate({0, -0.75f, 0});
+			(*std::next(lights.begin(), a + 6)).setAttenuationQuadratic(1.f);
+		}
 
-		LightSource::setLightType(LIGHT_TYPE::POINT, 7);
-		LightSource::setParent(mod[1], 7);
-		LightSource::translate({0, -0.75f, 0}, 7);
-		LightSource::setDiffuse({0,0,255,100}, 7);
-		LightSource::setAttenuationQuadratic(1.f, 7);
+		(*std::next(lights.begin(), 6)).setDiffuse({255,0,0,100});
+		(*std::next(lights.begin(), 7)).setDiffuse({0,0,255,100});
+		(*std::next(lights.begin(), 8)).setDiffuse({0,255,0,100});
+		(*std::next(lights.begin(), 9)).setDiffuse({255,255,0});
 
-		LightSource::setLightType(LIGHT_TYPE::POINT, 8);
-		LightSource::setParent(mod[2], 8);
-		LightSource::translate({0, -0.75f, 0}, 8);
-		LightSource::setDiffuse({0,255,0,100}, 8);
-		LightSource::setAttenuationQuadratic(1.f, 8);
 
-		LightSource::setLightType(LIGHT_TYPE::POINT, 9);
-		LightSource::setParent(mod[3], 9);
-		LightSource::translate({0, -0.75f, 0}, 9);
-		LightSource::setDiffuse({255,255,0,100}, 9);
-		LightSource::setAttenuationQuadratic(1.f, 9);
+		for(int a = 0; a < 4; a++)
+		{
+			(*std::next(lights.begin(), a + 10)).setLightType(Light::POINT);
+			(*std::next(lights.begin(), a + 10)).setParent(*std::next(((Boss*)*std::next(mod.begin(), 8))->getMissials().begin(), a));
+			(*std::next(lights.begin(), a + 10)).setAttenuationQuadratic(0.06f);
+		}
 
-		LightSource::setLightType(LIGHT_TYPE::POINT, 10);
-		LightSource::setParent(((Boss*)mod[8])->getMissials()[0], 10);
-		LightSource::setDiffuse({255,100,0,100}, 10);
-		LightSource::setAttenuationQuadratic(0.06f, 10);
 
-		LightSource::setLightType(LIGHT_TYPE::POINT, 11);
-		LightSource::setParent(((Boss*)mod[8])->getMissials()[1], 11);
-		LightSource::setDiffuse({255,100,0,100}, 11);
-		LightSource::setAttenuationQuadratic(0.06f, 11);
+		(*std::next(lights.begin(), 10)).setDiffuse({255,0,0});
+		(*std::next(lights.begin(), 11)).setDiffuse({0,255,0});
+		(*std::next(lights.begin(), 12)).setDiffuse({0,0,255});
+		(*std::next(lights.begin(), 13)).setDiffuse({255,255,0});
 
-		LightSource::setLightType(LIGHT_TYPE::POINT, 12);
-		LightSource::setParent(((Boss*)mod[8])->getMissials()[2], 12);
-		LightSource::setDiffuse({255,100,0,100}, 12);
-		LightSource::setAttenuationQuadratic(0.06f, 12);
-
-		LightSource::setLightType(LIGHT_TYPE::POINT, 13);
-		LightSource::setParent(((Boss*)mod[8])->getMissials()[3], 13);
-		LightSource::setDiffuse({255,100,0,100}, 13);
-		LightSource::setAttenuationQuadratic(0.06f, 13);
-
-		LightSource::setSceneAmbient({255,255,255,255});
+		//(*std::next(lights.begin(),a).setSceneAmbient({255,255,255,255});
 
 		/// - Set Camera  - ///
-	//	mod[130]->translate(-0.8f, 10.0f, -8.0f);
-		GameEmGine::setCameraPosition({0,15.5f,-17.5});
-		GameEmGine::setCameraRotation({-25,0,0});
+	//	*std::next(mod.begin(),130)->translate(-0.8f, 10.0f, -8.0f);
+		GameEmGine::getMainCamera()->translate({0,15.5f,-17.5});
+		GameEmGine::getMainCamera()->rotate({-25,0,0});
 
 		/// key/mouse input ///
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
@@ -662,39 +654,37 @@ public:
 		audio.play(true);
 	}
 
-
-	void insertionSort(std::vector<Minion*>& arr, Model* checker)
+	void insertionSort(std::list<Minion*>& arr, Model* checker)
 	{
 		int i, j;
 		float key;
 		for(i = 1; i < (int)arr.size(); i++)
 		{
-			key = Coord3D<>::distance(arr[i]->getPosition(), checker->getPosition());
-			Minion* tmp = arr[i];
+			key = Coord3D<>::distance((*std::next(arr.begin(), i))->getLocalPosition(), checker->getLocalPosition());
+			Minion* tmp = (*std::next(arr.begin(), i));
 			j = i - 1;
 
-			/* Move elements of arr[0..i-1], that are
-			  greater than key, to one position ahead
-			  of their current position */
-			while(j >= 0 && Coord3D<>::distance(arr[j]->getPosition(), checker->getPosition()) > key)
+			/*
+				Move elements of (*std::next(arr.begin(),0..i-1], that are
+				greater than key, to one position ahead
+				of their current position
+			*/
+			while(j >= 0 && Coord3D<>::distance((*std::next(arr.begin(), j))->getLocalPosition(), checker->getLocalPosition()) > key)
 			{
-
-				arr[j + 1] = arr[j];
+				(*std::next(arr.begin(), j + 1)) = (*std::next(arr.begin(), j));
 				j = j - 1;
 			}
-			arr[j + 1] = tmp;
+			(*std::next(arr.begin(), j + 1)) = tmp;
 		}
 	}
 
 	/// - The Update Loop - ///
 	void update(double dt)
 	{
-		LightSource::setParent(((Boss*)mod[8])->getMissials()[0], 10);
-		LightSource::setParent(((Boss*)mod[8])->getMissials()[1], 11);
-		LightSource::setParent(((Boss*)mod[8])->getMissials()[2], 12);
-		LightSource::setParent(((Boss*)mod[8])->getMissials()[3], 13);
-
-
+		//(*std::next(lights.begin(),a].setParent(((Boss*)(*std::next(mod.begin(),8])->getMissials()[0], 10);
+		//(*std::next(lights.begin(),a].setParent(((Boss*)(*std::next(mod.begin(),8])->getMissials()[1], 11);
+		//(*std::next(lights.begin(),a].setParent(((Boss*)(*std::next(mod.begin(),8])->getMissials()[2], 12);
+		//(*std::next(lights.begin(),a].setParent(((Boss*)(*std::next(mod.begin(),8])->getMissials()[3], 13);
 
 
 		time += (float)dt; //Add Delta Time to Time
@@ -703,7 +693,7 @@ public:
 		Player* player;
 
 		// Boss Variables
-		Boss* CandyMan = (Boss*)mod[8]; //Set model 8 as Boss called "CandyMan"
+		Boss* CandyMan = (Boss*)(*std::next(mod.begin(), 8)); //Set model 8 as Boss called "CandyMan"
 
 
 		Model* count;
@@ -715,7 +705,7 @@ public:
 			CandyMan->setActive(false);
 			for(int a = 0; a < 4; a++)
 			{
-				player = (Player*)mod[a];
+				player = (Player*)(*std::next(mod.begin(), a));
 				player->setActive(false);
 			}
 
@@ -730,7 +720,7 @@ public:
 				m_init = true;
 			}
 
-			count->translate(lerp(-GameEmGine::getMainCamera()->getPosition() + Coord3D<>{0, -5, 7}, -GameEmGine::getMainCamera()->getPosition() - Coord3D<>{0, 1, 0}, (time - countdownTimer) / 3.5f));
+			count->translate(lerp(GameEmGine::getMainCamera()->getLocalPosition() + Coord3D<>{0, -5, 7}, GameEmGine::getMainCamera()->getLocalPosition() - Coord3D<>{0, 0, 0}, (time - countdownTimer) / 3.5f));
 
 			if(int((time - countdownTimer) / 2))
 			{
@@ -743,22 +733,26 @@ public:
 					CandyMan->setActive(true);
 					for(int a = 0; a < 4; a++)
 					{
-						player = (Player*)mod[a];
+						player = (Player*)(*std::next(mod.begin(), a));
 						player->setActive(true);
 					}
 				}
 			}
 		}
 
+		static std::list<Player*> players;
+		if(players.size() != 4)
+			for(int a = 0; a < 4; ++a)
+				players.push_back((Player*)*std::next(mod.begin(), a));
 
-		CandyMan->setPlayers((Player * *)mod.data());
+		CandyMan->setPlayers(players);
 		CandyMan->update((float)dt);
 
 		//add mod for pause screen here but set render to false 
 		for(int a = 0; a < 4; a++)
 		{
 
-			player = (Player*)mod[a];
+			player = (Player*)(*std::next(mod.begin(), a));
 			player->setPlayerIndex(a);
 
 			static bool pausedAgain[4] = {0,0,0,0};
@@ -770,7 +764,7 @@ public:
 				{
 					//pausedAgain[a] = true;
 					for(int b = 0; b < 4; b++)
-						((Player*)mod[b])->setActive(pause);
+						((Player*)(*std::next(mod.begin(), b)))->setActive(pause);
 
 					//rn the music gets quieter during the pause screen 
 					if(!pause)
@@ -779,10 +773,10 @@ public:
 					else
 						EmGineAudioPlayer::setVolume(0.6f, 0);
 
-					mod[130]->rotate(GameEmGine::getMainCamera()->getRotation()); //should be parallel to camera hopefully 
-					mod[130]->translate(GameEmGine::getMainCamera()->getPosition() + Coord3D{-0.8f, -5.5f, 8.5f}); //should be parallel to camera hopefully 
+					(*std::next(mod.begin(), 130))->rotate(GameEmGine::getMainCamera()->getLocalRotation() * Coord3D { -1.f, 1.f, 1.f }); //should be parallel to camera hopefully 
+					(*std::next(mod.begin(), 130))->translate(GameEmGine::getMainCamera()->getLocalPosition() + Coord3D{-0.8f, -5.5f, 8.5f}); //should be parallel to camera hopefully 
 
-					mod[130]->setToRender(!pause);
+					(*std::next(mod.begin(), 130))->setToRender(!pause);
 					CandyMan->setActive(pause);
 
 					if(fadeout)
@@ -790,7 +784,7 @@ public:
 						splashT += 0.01f;
 						splashT = splashT > 1 ? 1 : splashT;
 						splashAmbient = (GLubyte)lerp(255, 0, splashT);
-						LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
+						(*std::next(lights.begin(), a)).setAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
 						if(splashAmbient <= 2)
 						{
 							fadein = true;
@@ -798,7 +792,7 @@ public:
 							splashT = 0;
 							splashAmbient = 255;
 
-							GameEmGine::setScene(parent->parent->parent); // Can't set new scene from game for some reason?
+							GameEmGine::setScene((getParent()->getParent()->getParent())); // Can't set new scene from game for some reason?
 						}
 					}
 					if(GameEmGine::getController(a)->isButtonStroked(CONTROLLER_A))
@@ -816,7 +810,7 @@ public:
 				{
 					//pausedAgain[a] = true;
 					for(int b = 0; b < 4; b++)
-						((Player*)mod[b])->setActive(pause);
+						((Player*)(*std::next(mod.begin(), b)))->setActive(pause);
 
 					//rn the music gets quieter during the pause screen 
 					if(!pause)
@@ -825,8 +819,8 @@ public:
 					else
 						EmGineAudioPlayer::setVolume(0.6f, 0);
 
-					mod[131]->rotate(GameEmGine::getMainCamera()->getRotation()); //should be parallel to camera hopefully 
-					mod[131]->setToRender(!pause);
+					(*std::next(mod.begin(), 131))->rotate(GameEmGine::getMainCamera()->getLocalRotation()); //should be parallel to camera hopefully 
+					(*std::next(mod.begin(), 131))->setToRender(!pause);
 					CandyMan->setActive(pause);
 
 					if(GameEmGine::getController(a)->isButtonStroked(CONTROLLER_A))
@@ -834,7 +828,7 @@ public:
 						splashT += 0.01f;
 						splashT = splashT > 1 ? 1 : splashT;
 						splashAmbient = (GLubyte)lerp(255, 0, splashT);
-						LightSource::setSceneAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
+						(*std::next(lights.begin(), a)).setAmbient({splashAmbient,splashAmbient,splashAmbient,splashAmbient});
 						if(splashAmbient <= 5)
 						{
 							fadein = true;
@@ -857,17 +851,16 @@ public:
 				{
 					pausedAgain[a] = true;
 					for(int b = 0; b < 4; b++)
-						((Player*)mod[b])->setActive(pause);
+						((Player*)(*std::next(mod.begin(), b)))->setActive(pause);
 
 					//rn the music gets quieter during the pause screen 
 					if(!pause)
 						EmGineAudioPlayer::setVolume(.3f, 0);
-
 					else
 						EmGineAudioPlayer::setVolume(0.6f, 0);
 
-					mod[126]->rotate(GameEmGine::getMainCamera()->getRotation()); //should be parallel to camera hopefully 
-					mod[126]->setToRender(!pause);
+					(*std::next(mod.begin(), 126))->rotate(GameEmGine::getMainCamera()->getLocalRotation()); //should be parallel to camera hopefully 
+					(*std::next(mod.begin(), 126))->setToRender(!pause);
 					CandyMan->setActive(pause);
 					//music should slow down in the pause menu!!!!
 					pause = !pause;
@@ -878,7 +871,7 @@ public:
 				{
 					pausedAgain[a] = false;
 					//pauseScreen[a] = false; 
-					//mod[126]->setToRender(false);
+					//(*std::next(mod.begin(),126]->setToRender(false);
 				}
 
 				if(!player->dead)
@@ -886,11 +879,11 @@ public:
 			}
 			else
 			{
-				((Player*)mod[a])->setActive(false);
+				((Player*)(*std::next(mod.begin(), a)))->setActive(false);
 			}
 			player->update((float)dt);
 
-			player->onPlayArea(mod[59]);
+			player->onPlayArea((*std::next(mod.begin(), 59)));
 
 			//bullet collisions with boss
 			if(player->bulletCollisions(CandyMan))
@@ -910,7 +903,7 @@ public:
 			{
 				if(player->bulletCollisions(minion))
 					minion->setHealth(minion->getHealth() - 10);
-				if(player->collision2D(minion, {false,true,false}))
+				if(player->collision2D(minion, {0,1,0}))
 				{
 					player->hitByEnemy(minion, 5);
 					player->translateBy(minion->moveTo * 3);
@@ -925,13 +918,13 @@ public:
 
 			for(int b = 0; b < 7; b++)
 			{
-				player->bulletCollisions(mod[79 + b]);
-				if(player->collision2D(mod[79 + b], {false,true,false}))
+				player->bulletCollisions((*std::next(mod.begin(), 79 + b)));
+				if(player->collision2D((*std::next(mod.begin(), 79 + b)), {0,1,0}))
 				{
 
 					player->translateBy(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x * -move * 1.1f, 0,
-						((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y * move *
-						player->getPosition().z < mod[79 + b]->getPosition().z ? -1 : 1 * 1.1f); //move player back
+										((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y * move *
+										player->getLocalPosition().z < (*std::next(mod.begin(), 79 + b))->getLocalPosition().z ? -1 : 1 * 1.1f); //move player back
 
 				}
 
@@ -950,7 +943,7 @@ public:
 
 				for(int t = 79; t < 79 + 7; t++)
 				{
-					((Assault*)player)->missileCollision(mod[t]);
+					((Assault*)player)->missileCollision((*std::next(mod.begin(), t)));
 				}
 
 
@@ -962,7 +955,7 @@ public:
 			case medic:
 				for(int b = 0; b < 4; b++)
 					if(((Medic*)player)->isHealing)
-						((Medic*)player)->getHealing((Player*)mod[b]);
+						((Medic*)player)->getHealing((Player*)(*std::next(mod.begin(), b)));
 				break;
 			case specialist:
 				for(auto& b : ((Specialist*)player)->pTurrets)
@@ -1003,22 +996,22 @@ public:
 		//Train Sits in middle of map
 		if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
 		{
-			mod[123]->setColour({255, 0, 0});
-			mod[124]->setColour({255, 0, 0});
+			(*std::next(mod.begin(), 123))->setColour({255, 0, 0});
+			(*std::next(mod.begin(), 124))->setColour({255, 0, 0});
 			for(int t = 0; t < 7; t++)
 			{
-				if(Model::Model::collision2D(mod[79 + t], player, {false,true,false}))
+				if(Model::Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
 				{
 
 					player->translate(
-						abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+						abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 						0,
-						abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+						abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 
-					//if(player->getPosition().z < mod[79 + t]->getPosition().z)
-					//	player->translate(player->getPosition() + Coord3D<>(0.0f, 0.f, -0.1f));
-					//if(player->getPosition().z > mod[79 + t]->getPosition().z)
-					//	player->translate(player->getPosition() + Coord3D<>(0.0f, 0.f, 0.1f));
+					//if(player->getLocalPosition().z < (*std::next(mod.begin(),79 + t]->getLocalPosition().z)
+					//	player->translate(player->getLocalPosition() + Coord3D<>(0.0f, 0.f, -0.1f));
+					//if(player->getLocalPosition().z > (*std::next(mod.begin(),79 + t]->getLocalPosition().z)
+					//	player->translate(player->getLocalPosition() + Coord3D<>(0.0f, 0.f, 0.1f));
 				}
 			}
 			trainInit = false;
@@ -1028,17 +1021,17 @@ public:
 		{
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
 				for(int a = 0; a < 4; a++)
 				{
-					player = (Player*)mod[a];
-					if(Model::Model::collision2D(mod[79 + t], player, {false,true,false}))
+					player = (Player*)(*std::next(mod.begin(), a));
+					if(Model::Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
 					{
 						player->setHealth(player->getHealth() - 10);
 						player->translate(
-							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 							0,
-							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 					}
 				}
 			}
@@ -1052,27 +1045,27 @@ public:
 				audio.play();
 				trainInit = true;
 			}
-			mod[123]->setColour({0, 255, 255});
-			mod[124]->setColour({0, 255, 255});
+			(*std::next(mod.begin(), 123))->setColour({0, 255, 255});
+			(*std::next(mod.begin(), 124))->setColour({0, 255, 255});
 			for(int i = 99; i <= 105; i++)
 			{
 
-				mod[i]->translate(mod[i]->getPosition().x, -1.0f, mod[i]->getPosition().z);
+				(*std::next(mod.begin(), i))->translate((*std::next(mod.begin(), i))->getLocalPosition().x, -1.0f, (*std::next(mod.begin(), i))->getLocalPosition().z);
 			}
 
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
 				for(int a = 0; a < 4; a++)
 				{
-					player = (Player*)mod[a];
-					if(Model::collision2D(mod[79 + t], player, {false,true,false}))
+					player = (Player*)(*std::next(mod.begin(), a));
+					if(Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
 					{
 						player->setHealth(player->getHealth() - 10);
 						player->translate(
-							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 							0,
-							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 					}
 				}
 			}
@@ -1083,7 +1076,7 @@ public:
 		{
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
 			}
 			trainInit = false;
 		}
@@ -1092,19 +1085,19 @@ public:
 		{
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 
 				for(int a = 0; a < 4; a++)
 				{
-					player = (Player*)mod[a];
-					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
+					player = (Player*)(*std::next(mod.begin(), a));
+					if(Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
 						player->translate(
-							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 							0,
-							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 					}
 				}
 			}
@@ -1120,51 +1113,51 @@ public:
 				trainInit = true;
 			}
 
-			mod[123]->setColour({255, 0, 0});
-			mod[124]->setColour({255, 0, 0});
+			(*std::next(mod.begin(), 123))->setColour({255, 0, 0});
+			(*std::next(mod.begin(), 124))->setColour({255, 0, 0});
 			for(int i = 99; i <= 105; i++)
 			{
-				mod[i]->translate(mod[i]->getPosition().x, 0.03f, mod[i]->getPosition().z);
+				(*std::next(mod.begin(), i))->translate((*std::next(mod.begin(), i))->getLocalPosition().x, 0.03f, (*std::next(mod.begin(), i))->getLocalPosition().z);
 
 			}
 
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 				for(int a = 0; a < 4; a++)
 				{
-					player = (Player*)mod[a];
-					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
+					player = (Player*)(*std::next(mod.begin(), a));
+					if(Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
 						player->translate(
-							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 							0,
-							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 					}
 				}
 			}
 		}
 		else if(37.5f <= (time - trainTimer) && 38 > (time - trainTimer))
 		{
-			mod[123]->setColour({0, 255, 255});
-			mod[124]->setColour({0, 255, 255});
+			(*std::next(mod.begin(), 123))->setColour({0, 255, 255});
+			(*std::next(mod.begin(), 124))->setColour({0, 255, 255});
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 
 				for(int a = 0; a < 4; a++)
 				{
-					player = (Player*)mod[a];
-					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
+					player = (Player*)(*std::next(mod.begin(), a));
+					if(Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
 						player->translate(
-							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 							0,
-							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 					}
 				}
 			}
@@ -1172,40 +1165,40 @@ public:
 		}
 		else if(38 <= (time - trainTimer) && 38.5f > (time - trainTimer))
 		{
-			mod[123]->setColour({255, 0, 0});
-			mod[124]->setColour({255, 0, 0});
+			(*std::next(mod.begin(), 123))->setColour({255, 0, 0});
+			(*std::next(mod.begin(), 124))->setColour({255, 0, 0});
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-				if(Model::collision2D(mod[79 + t], player, {0,1,0}))
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				if(Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
 				{
 					player->setHealth(player->getHealth() - 10);
 					player->translate(
-						abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+						abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 						0,
-						abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+						abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 				}
 			}
 			trainInit = false;
 		}
 		else if(38.5f <= (time - trainTimer) && 39 > (time - trainTimer))
 		{
-			mod[123]->setColour({0, 255, 255});
-			mod[124]->setColour({0, 255, 255});
+			(*std::next(mod.begin(), 123))->setColour({0, 255, 255});
+			(*std::next(mod.begin(), 124))->setColour({0, 255, 255});
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 				for(int a = 0; a < 4; a++)
 				{
-					player = (Player*)mod[a];
-					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
+					player = (Player*)(*std::next(mod.begin(), a));
+					if(Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
 						player->translate(
-							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 							0,
-							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 					}
 				}
 			}
@@ -1213,22 +1206,22 @@ public:
 		}
 		else if(39 <= (time - trainTimer) && 40 > (time - trainTimer))
 		{
-			mod[123]->setColour({255, 0, 0});
-			mod[124]->setColour({255, 0, 0});
+			(*std::next(mod.begin(), 123))->setColour({255, 0, 0});
+			(*std::next(mod.begin(), 124))->setColour({255, 0, 0});
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+				(*std::next(mod.begin(), 79 + t))->translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
 				for(int a = 0; a < 4; a++)
 				{
-					player = (Player*)mod[a];
-					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
+					player = (Player*)(*std::next(mod.begin(), a));
+					if(Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
 						player->translate(
-							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 							0,
-							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 					}
 				}
 			}
@@ -1240,17 +1233,17 @@ public:
 
 			for(int t = 0; t < 7; t++)
 			{
-				mod[79 + t]->translate(mod[79 + t]->getPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
+				(*std::next(mod.begin(), 79 + t))->translate((*std::next(mod.begin(), 79 + t))->getLocalPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
 
 				for(int a = 0; a < 4; a++)
 				{
-					player = (Player*)mod[a];
-					if(Model::collision2D(mod[79 + t], player, {0,1,0}))
+					player = (Player*)(*std::next(mod.begin(), a));
+					if(Model::collision2D((*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
 					{
 						player->translate(
-							abs(player->getPosition().x) > mod[79 + t]->getWidth() / 2 ? player->getPosition().x < 0 ? -mod[79 + t]->getWidth() / 2 : mod[79 + t]->getWidth() / 2 : player->getPosition().x,
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t))->getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t))->getWidth() / 2 : (*std::next(mod.begin(), 79 + t))->getWidth() / 2 : player->getLocalPosition().x,
 							0,
-							abs(player->getPosition().z) > mod[79 + t]->getDepth() / 2 ? player->getPosition().z < 0 ? -mod[79 + t]->getDepth() / 2 : mod[79 + t]->getDepth() / 2 : player->getPosition().z);
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t))->getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t))->getDepth() / 2 : (*std::next(mod.begin(), 79 + t))->getDepth() / 2 : player->getLocalPosition().z);
 					}
 					trainTimer += time; //Reset Train timer so it all starts again.
 				}
@@ -1264,14 +1257,14 @@ public:
 		{
 			CandyMan->setActive(true);
 			for(int a = 0; a < 4; a++)
-				((Player*)mod[a])->setActive(true);
+				((Player*)(*std::next(mod.begin(), a)))->setActive(true);
 		}
 
 		/// - If game not m_active and Camera is m_active (Move camera mode) - ///
 		if(!movePlayer)
 		{
 			for(int a = 0; a < 4; a++)
-				((Player*)mod[a])->setActive(false);
+				((Player*)(*std::next(mod.begin(), a)))->setActive(false);
 
 			CandyMan->setActive(false);
 			deathCounter = 0;
@@ -1293,9 +1286,9 @@ public:
 				move /= 2;
 			}
 		}
-		GameEmGine::m_grayScalePost->enable();
-		glUniform1f(GameEmGine::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
-		GameEmGine::m_grayScalePost->disable();
+		//GameEmGine::m_grayScalePost->enable();
+		//glUniform1f(GameEmGine::m_grayScalePost->getUniformLocation("uTime"), deathCounter);
+		//GameEmGine::m_grayScalePost->disable();
 
 		if(deathCounter)
 			gameOver = true;
@@ -1307,7 +1300,8 @@ private:
 	bool m_init = false;
 
 
-	std::vector<Model*> mod;
+	std::list<Model*> mod;
+	std::list<Light> lights;
 	bool fadein = true;
 	bool fadeout = false;
 	float splashT = 0;
@@ -1320,10 +1314,12 @@ private:
 		movePlayer = true;
 	Coord2D<> leftM, rightM;
 	AudioPlayer audio;
-	bool pause = false;
+
+
 	bool gameOver = false;
 	bool gameWin = false;
 	bool screenPause = false;
+	bool pause = false;
 
 	//Time
 	float  time = 0;

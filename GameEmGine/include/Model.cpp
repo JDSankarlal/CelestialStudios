@@ -1,63 +1,86 @@
 #include "Model.h" 
-#include "ResourceManager.h"
 #include <ctime>
 
-Model::Model():Transformer()
+#include <GLFW/glfw3.h>
+
+Model::Model(Model& model, cstring tag):
+	Transformer(model, "MODEL"),
+	m_tag(tag)
 {
-	m_type = MODEL;
+	//glfwInit();
+	create(model, tag);
+}
+Model::Model(const Model& model, cstring tag):
+	Transformer(model, "MODEL"),
+	m_tag(tag)
+{
+	//glfwInit();
+	create(model, tag);
+}
+Model::Model(PrimitiveMesh* mesh, cstring tag):
+	Transformer("MODEL"),
+	m_tag(tag)
+{
+	//glfwInit();
+	create(mesh, tag);
 }
 
-Model::Model(Model& model, const char* tag) :
-	Transformer(model),
-	m_mesh(model.m_mesh),
-	m_colour(model.m_colour),
-	m_transBB(glm::mat4(1)),
-	m_render(model.m_render),
-	m_tag(tag),
-	m_copy(true)
+Model::Model(cstring path, cstring tag):
+	Transformer("MODEL"),
+	m_tag(tag)
 {
-	m_type = MODEL;
-	m_shaderBB = ResourceManager::getShader("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
+	//glfwInit();
+	create(path, tag);
+}
 
-	float top = m_mesh->top.y,
-		bottom = m_mesh->bottom.y,
-		left = m_mesh->left.x,
-		right = m_mesh->right.x,
-		front = m_mesh->front.z,
-		back = m_mesh->back.z;
-
-	(m_topLeftBack = {left,top,back}),
-		(m_topRightBack = {right,top,back}),
-		(m_topLeftFront = {left,top,front}),
-		(m_topRightFront = {right,top,front}),
-		(m_bottomLeftBack = {left,bottom,back}),
-		(m_bottomRightBack = {right,bottom,back}),
-		(m_bottomLeftFront = {left,bottom,front}),
-		(m_bottomRightFront = {right,bottom,front});
+Model::~Model()
+{
+#if _DEBUG
+//	printf("Deleted %s\n", m_type.c_str());
+#endif // _DEBUG
+	if(!m_copy)
+		meshCleanUp();
+}
 
 
-	boundingBoxInit();
+void Model::create(const Model& model, cstring tag)
+{
+	*this = model;
+	if(strlen(tag))
+		m_tag = tag;
+	m_copy = true;
+	//boundingBoxInit();
 	boundingBoxUpdate();
-
 }
 
-Model::Model(primitiveMesh* model, const char* tag):
-	Transformer(),
-	m_transBB(glm::mat4(1)), m_tag(tag)
+void Model::create(PrimitiveMesh* mesh, cstring tag)
 {
-	m_type = MODEL;
-	m_mesh = new Mesh;
-	if(m_mesh->loadPrimitive(model))
+	m_meshes.clear();
+	m_meshes.push_back(std::shared_ptr<Mesh>(new Mesh()));
+	if(strlen(tag))
+		m_tag = tag;
+	if(m_meshes.back()->loadPrimitive(mesh))
 	{
 		m_shaderBB = ResourceManager::getShader("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
 
 
-		float top = m_mesh->top.y,
-			bottom = m_mesh->bottom.y,
-			left = m_mesh->left.x,
-			right = m_mesh->right.x,
-			front = m_mesh->front.z,
-			back = m_mesh->back.z;
+		float top = m_meshes[0]->top.y,
+			bottom = m_meshes[0]->bottom.y,
+			left = m_meshes[0]->left.x,
+			right = m_meshes[0]->right.x,
+			front = m_meshes[0]->front.z,
+			back = m_meshes[0]->back.z;
+
+		for(auto& a : m_meshes)
+		{
+			top = top < a->top.y ? a->top.y : top,
+				bottom = bottom>a->bottom.y ? a->bottom.y : bottom,
+				left = left > a->left.x ? a->left.x : left,
+				right = right < a->right.x ? a->right.x : right,
+				front = front< a->front.z ? a->front.z : front,
+				back = back > a->back.z ? a->back.z : back;
+		}
+
 
 		(m_topLeftBack = {left,top,back}),
 			(m_topRightBack = {right,top,back}),
@@ -74,24 +97,32 @@ Model::Model(primitiveMesh* model, const char* tag):
 	}
 }
 
-Model::Model(const char* path, const char* tag):
-	Transformer(),
-	m_transBB(glm::mat4(1)), m_tag(tag)
+void Model::create(cstring path, cstring tag)
 {
-	m_type = MODEL;
-
-	m_mesh = new Mesh;
+	m_meshes.clear();
+	if(strlen(tag))
+		m_tag = tag;
 	if(loadModel(path))
 	{
 		m_shaderBB = ResourceManager::getShader("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
 
 
-		float top = m_mesh->top.y,
-			bottom = m_mesh->bottom.y,
-			left = m_mesh->left.x,
-			right = m_mesh->right.x,
-			front = m_mesh->front.z,
-			back = m_mesh->back.z;
+		float top = m_meshes[0]->top.y,
+			bottom = m_meshes[0]->bottom.y,
+			left = m_meshes[0]->left.x,
+			right = m_meshes[0]->right.x,
+			front = m_meshes[0]->front.z,
+			back = m_meshes[0]->back.z;
+
+		for(auto& a : m_meshes)
+		{
+			top = top < a->top.y ? a->top.y : top,
+				bottom = bottom>a->bottom.y ? a->bottom.y : bottom,
+				left = left > a->left.x ? a->left.x : left,
+				right = right < a->right.x ? a->right.x : right,
+				front = front< a->front.z ? a->front.z : front,
+				back = back > a->back.z ? a->back.z : back;
+		}
 
 		(m_topLeftBack = {left,top,back}),
 			(m_topRightBack = {right,top,back}),
@@ -108,41 +139,47 @@ Model::Model(const char* path, const char* tag):
 	}
 }
 
-
-Model::~Model()
+void Model::setActive(bool active)
 {
-	if(!m_copy)
-		delete m_mesh;
+	m_active = active;
+}
+
+bool Model::isActive()
+{
+	return m_active;
 }
 
 /// - Collision Function - ///
 
-bool Model::collision2D(Model* box2, Coord3D<>ignore)
+bool Model::collision2D(Model* box2, Vec3 ignore)
 {
 	return collision2D(this, box2, ignore);
 }
 
-bool Model::collision2D(Model* box1, Model* box2, Coord3D<>RPos)
+bool Model::collision2D(Model* box1, Model* box2, Vec3 RPos)
 {
 
 	RPos.normalize();
-	RPos = (Coord3D<>{1, 1, 1}-RPos);
+	RPos = (Vec3{1, 1, 1} - RPos);
 
 	RPos = (box1->m_center - box2->m_center) * RPos;
-	Coord3D<> AxisX{1,0,0}, AxisY{0,1,0}, AxisZ{0,0,1};
+	Vec3 AxisX{1,0,0}, AxisY{0,1,0}, AxisZ{0,0,1};
 
 	glm::mat4
-		* rot1 = &box1->getRotationMatrix(),
-		* rot2 = &box2->getRotationMatrix();
+		* rotLocal1 = (glm::mat4*)&box1->getLocalRotationMatrix(),
+		* rotLocal2 = (glm::mat4*)&box2->getLocalRotationMatrix(),
 
-	static Coord3D<> AxisX1, AxisY1, AxisZ1, AxisX2, AxisY2, AxisZ2;
-	AxisX1 = *(Coord3D<>*) & (*rot1 * glm::vec4(*(glm::vec3*) & AxisX, 1));
-	AxisY1 = *(Coord3D<>*) & (*rot1 * glm::vec4(*(glm::vec3*) & AxisY, 1));
-	AxisZ1 = *(Coord3D<>*) & (*rot1 * glm::vec4(*(glm::vec3*) & AxisZ, 1));
+		* rotWorld1 = (glm::mat4*)&box1->getWorldRotationMatrix(),
+		* rotWorld2 = (glm::mat4*)&box2->getWorldRotationMatrix();
 
-	AxisX2 = *(Coord3D<>*) & (*rot2 * glm::vec4(*(glm::vec3*) & AxisX, 1));
-	AxisY2 = *(Coord3D<>*) & (*rot2 * glm::vec4(*(glm::vec3*) & AxisY, 1));
-	AxisZ2 = *(Coord3D<>*) & (*rot2 * glm::vec4(*(glm::vec3*) & AxisZ, 1));
+	static Vec3 AxisX1, AxisY1, AxisZ1, AxisX2, AxisY2, AxisZ2;
+	AxisX1 = (*rotWorld1 * (*rotLocal1 * glm::vec4(*(glm::vec3*)&AxisX, 1)));
+	AxisY1 = (*rotWorld1 * (*rotLocal1 * glm::vec4(*(glm::vec3*)&AxisY, 1)));
+	AxisZ1 = (*rotWorld1 * (*rotLocal1 * glm::vec4(*(glm::vec3*)&AxisZ, 1)));
+
+	AxisX2 = (*rotWorld2 * (*rotLocal2 * glm::vec4(*(glm::vec3*)&AxisX, 1)));
+	AxisY2 = (*rotWorld2 * (*rotLocal2 * glm::vec4(*(glm::vec3*)&AxisY, 1)));
+	AxisZ2 = (*rotWorld2 * (*rotLocal2 * glm::vec4(*(glm::vec3*)&AxisZ, 1)));
 
 	return !(
 		getSeparatingPlane(RPos, AxisX1, *box1, *box2) ||
@@ -151,15 +188,15 @@ bool Model::collision2D(Model* box1, Model* box2, Coord3D<>RPos)
 		getSeparatingPlane(RPos, AxisX2, *box1, *box2) ||
 		getSeparatingPlane(RPos, AxisY2, *box1, *box2) ||
 		getSeparatingPlane(RPos, AxisZ2, *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisX1, AxisX2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisX1, AxisY2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisX1, AxisZ2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisY1, AxisX2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisY1, AxisY2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisY1, AxisZ2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisZ1, AxisX2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisZ1, AxisY2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisZ1, AxisZ2), *box1, *box2));
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisX1, AxisX2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisX1, AxisY2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisX1, AxisZ2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisY1, AxisX2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisY1, AxisY2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisY1, AxisZ2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisZ1, AxisX2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisZ1, AxisY2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisZ1, AxisZ2), *box1, *box2));
 
 }
 
@@ -173,22 +210,25 @@ bool Model::collision3D(Model* k)
 
 bool Model::collision3D(Model* box1, Model* box2)
 {
-	static Coord3D<> RPos;
+	static Vec3 RPos;
 	RPos = box1->m_center - box2->m_center;
-	Coord3D<> AxisX{1,0,0}, AxisY{0,1,0}, AxisZ{0,0,1};
+	Vec3 AxisX{1,0,0}, AxisY{0,1,0}, AxisZ{0,0,1};
 
 	glm::mat4
-		* rot1 = &box1->getRotationMatrix(),
-		* rot2 = &box2->getRotationMatrix();
+		* rotLocal1 = (glm::mat4*)&box1->getLocalRotationMatrix(),
+		* rotLocal2 = (glm::mat4*)&box2->getLocalRotationMatrix(),
 
-	static Coord3D<> AxisX1, AxisY1, AxisZ1, AxisX2, AxisY2, AxisZ2;
-	AxisX1 = *(Coord3D<>*) & (*rot1 * glm::vec4(*(glm::vec3*) & AxisX, 1));
-	AxisY1 = *(Coord3D<>*) & (*rot1 * glm::vec4(*(glm::vec3*) & AxisY, 1));
-	AxisZ1 = *(Coord3D<>*) & (*rot1 * glm::vec4(*(glm::vec3*) & AxisZ, 1));
+		* rotWorld1 = (glm::mat4*)&box1->getWorldRotationMatrix(),
+		* rotWorld2 = (glm::mat4*)&box2->getWorldRotationMatrix();
 
-	AxisX2 = *(Coord3D<>*) & (*rot2 * glm::vec4(*(glm::vec3*) & AxisX, 1));
-	AxisY2 = *(Coord3D<>*) & (*rot2 * glm::vec4(*(glm::vec3*) & AxisY, 1));
-	AxisZ2 = *(Coord3D<>*) & (*rot2 * glm::vec4(*(glm::vec3*) & AxisZ, 1));
+	static Vec3 AxisX1, AxisY1, AxisZ1, AxisX2, AxisY2, AxisZ2;
+	AxisX1 = (*rotWorld1 * (*rotLocal1 * glm::vec4(*(glm::vec3*)&AxisX, 1)));
+	AxisY1 = (*rotWorld1 * (*rotLocal1 * glm::vec4(*(glm::vec3*)&AxisY, 1)));
+	AxisZ1 = (*rotWorld1 * (*rotLocal1 * glm::vec4(*(glm::vec3*)&AxisZ, 1)));
+
+	AxisX2 = (*rotWorld2 * (*rotLocal2 * glm::vec4(*(glm::vec3*)&AxisX, 1)));
+	AxisY2 = (*rotWorld2 * (*rotLocal2 * glm::vec4(*(glm::vec3*)&AxisY, 1)));
+	AxisZ2 = (*rotWorld2 * (*rotLocal2 * glm::vec4(*(glm::vec3*)&AxisZ, 1)));
 
 	return !(
 		getSeparatingPlane(RPos, AxisX1, *box1, *box2) ||
@@ -197,118 +237,80 @@ bool Model::collision3D(Model* box1, Model* box2)
 		getSeparatingPlane(RPos, AxisX2, *box1, *box2) ||
 		getSeparatingPlane(RPos, AxisY2, *box1, *box2) ||
 		getSeparatingPlane(RPos, AxisZ2, *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisX1, AxisX2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisX1, AxisY2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisX1, AxisZ2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisY1, AxisX2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisY1, AxisY2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisY1, AxisZ2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisZ1, AxisX2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisZ1, AxisY2), *box1, *box2) ||
-		getSeparatingPlane(RPos, Coord3D<>::crossProduct(AxisZ1, AxisZ2), *box1, *box2));
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisX1, AxisX2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisX1, AxisY2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisX1, AxisZ2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisY1, AxisX2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisY1, AxisY2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisY1, AxisZ2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisZ1, AxisX2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisZ1, AxisY2), *box1, *box2) ||
+		getSeparatingPlane(RPos, Vec3::crossProduct(AxisZ1, AxisZ2), *box1, *box2));
 }
 
-bool Model::getSeparatingPlane(const Coord3D<>& RPos, const Coord3D<>& plane, Model& box1, Model& box2)
+bool Model::getSeparatingPlane(const Vec3& RPos, const Vec3& plane, Model& box1, Model& box2)
 {
 
-	RPos;
-	Coord3D<> AxisX{1,0,0}, AxisY{0,1,0}, AxisZ{0,0,1};
+	//RPos;
+	Vec3 AxisX{1,0,0}, AxisY{0,1,0}, AxisZ{0,0,1};
 
 	glm::mat4
-		* trans1 = &box1.getRotationMatrix(),
-		* trans2 = &box2.getRotationMatrix();
+		* trans1 = (glm::mat4*)&box1.getLocalRotationMatrix(),
+		* trans2 = (glm::mat4*)&box2.getLocalRotationMatrix();
 
-	Coord3D<> AxisX1 = *(Coord3D<>*) & (*trans1 * glm::vec4(*(glm::vec3*) & AxisX, 1));
-	Coord3D<> AxisY1 = *(Coord3D<>*) & (*trans1 * glm::vec4(*(glm::vec3*) & AxisY, 1));
-	Coord3D<> AxisZ1 = *(Coord3D<>*) & (*trans1 * glm::vec4(*(glm::vec3*) & AxisZ, 1));
+	Vec3 AxisX1 = (*trans1 * glm::vec4(*(glm::vec3*)&AxisX, 1));
+	Vec3 AxisY1 = (*trans1 * glm::vec4(*(glm::vec3*)&AxisY, 1));
+	Vec3 AxisZ1 = (*trans1 * glm::vec4(*(glm::vec3*)&AxisZ, 1));
 
-	Coord3D<> AxisX2 = *(Coord3D<>*) & (*trans2 * glm::vec4(*(glm::vec3*) & AxisX, 1));
-	Coord3D<> AxisY2 = *(Coord3D<>*) & (*trans2 * glm::vec4(*(glm::vec3*) & AxisY, 1));
-	Coord3D<> AxisZ2 = *(Coord3D<>*) & (*trans2 * glm::vec4(*(glm::vec3*) & AxisZ, 1));
+	Vec3 AxisX2 = (*trans2 * glm::vec4(*(glm::vec3*)&AxisX, 1));
+	Vec3 AxisY2 = (*trans2 * glm::vec4(*(glm::vec3*)&AxisY, 1));
+	Vec3 AxisZ2 = (*trans2 * glm::vec4(*(glm::vec3*)&AxisZ, 1));
 
 	//float w, h;
 	//glfwGetFramebufferSize(glfwGetCurrentContext(), &w, &h);
 
-	return (fabs(Coord3D<>::dotProduct(RPos, plane)) >
-		(
-			fabs(Coord3D<>::dotProduct((AxisX1 * (box1.m_width / 2)), plane)) +
-			fabs(Coord3D<>::dotProduct((AxisY1 * (box1.m_height / 2)), plane)) +
-			fabs(Coord3D<>::dotProduct((AxisZ1 * (box1.m_depth / 2)), plane)) +
+	return (fabs(Vec3::dotProduct(RPos, plane)) >
+			(
+			fabs(Vec3::dotProduct((AxisX1 * (box1.m_width / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisY1 * (box1.m_height / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisZ1 * (box1.m_depth / 2)), plane)) +
 
-			fabs(Coord3D<>::dotProduct((AxisX2 * (box2.m_width / 2)), plane)) +
-			fabs(Coord3D<>::dotProduct((AxisY2 * (box2.m_height / 2)), plane)) +
-			fabs(Coord3D<>::dotProduct((AxisZ2 * (box2.m_depth / 2)), plane))
+			fabs(Vec3::dotProduct((AxisX2 * (box2.m_width / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisY2 * (box2.m_height / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisZ2 * (box2.m_depth / 2)), plane))
 			));
-
-
-	//std::vector<Coord3D> boxVert1
-	//{
-	//	box1.m_topLeftBack,
-	//	box1.m_topRightBack,
-	//	box1.m_topLeftFront,
-	//	box1.m_topRightFront,
-	//	box1.m_bottomLeftBack,
-	//	box1.m_bottomRightBack,
-	//	box1.m_bottomLeftFront,
-	//	box1.m_bottomRightFront
-	//};
-	//
-	//std::vector<Coord3D> boxVert2
-	//{
-	//	box2.m_topLeftBack,
-	//	box2.m_topRightBack,
-	//	box2.m_topLeftFront,
-	//	box2.m_topRightFront,
-	//	box2.m_bottomLeftBack,
-	//	box2.m_bottomRightBack,
-	//	box2.m_bottomLeftFront,
-	//	box2.m_bottomRightFront
-	//};
-	//
-	//float min1, max1, min2, max2;
-	//min1 = max1 = dotProduct(boxVert1[0], plane);
-	//for(int i = 1; i < 8; i++)
-	//{
-	//	float value = dotProduct(boxVert1[i], plane);
-	//	min1 = std::min(min1, value);
-	//	max1 = std::max(max1, value);
-	//}
-	//
-	//min2 = max2 = dotProduct(boxVert2[0], plane);
-	//for(int i = 1; i < 8; i++)
-	//{
-	//	float value = dotProduct(boxVert2[i], plane);
-	//	min2 = std::min(min2, value);
-	//	max2 = std::max(max2, value);
-	//}
-	//
-	//return (max1 < min2 || max2 < min1);
 }
-
 
 void Model::render(Shader& shader, Camera* cam)
 {
+	if(!m_active)return;
+
 	float colour[4]{(float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255};
 	m_camera = cam;
 	m_shader = &shader;
-	//glm::mat4 transformationMat(1);
 	shader.enable();
-	glUniformMatrix4fv(shader.getUniformLocation("uModel"), 1, GL_FALSE, &(getTransformation()[0][0]));
 
-	glUniform4fv(shader.getUniformLocation("colourMod"), 1, colour);
+	shader.sendUniform("uLocalModel", getLocalTransformation());
+	shader.sendUniform("uWorldModel", getWorldTransformation());
+	shader.sendUniform("colourMod", reclass(glm::vec4, colour));
+	shader.sendUniform("flip", true);
+
 	shader.disable();
 
 	if(m_animations[m_animation])
-		m_animations[m_animation]->update(&shader, m_mesh);
+		m_animations[m_animation]->update(&shader, this);
 
 	// update the position of the object
-	m_transBB = getTransformation();
 	boundingBoxUpdate();
 
 	if(m_render)
 	{
-		//render the mesh
-		m_mesh->render(shader);
+		if(m_wireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		//render the meshes
+		for(auto& a : m_meshes)
+			a->render(shader, m_useTex);
 
 		if(m_enableBB)
 			drawBoundingBox();
@@ -316,18 +318,16 @@ void Model::render(Shader& shader, Camera* cam)
 		static Shader* shader2;
 		//render child meshes
 		for(auto& a : getChildren())
-			switch(a->getType())
-			{
-			case MODEL:
+			if(a->getCompType() == "MODEL")
 				reclass(Model*, a)->render(shader, cam);
-				break;
-			case TEXT:
-				shader2 = ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh");
+			else if(a->getCompType() == "TEXT")
+				shader2 = ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh"),
 				reclass(Text*, a)->render(*shader2, cam);
-				break;
 
-			}
+
 		resetUpdated();
+		if(m_wireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
 
@@ -347,12 +347,12 @@ void Model::drawBoundingBox()
 
 void Model::setColour(float r, float g, float b, float a)
 {
-	m_colour.set((GLubyte)(255 * r), (GLubyte)(255 * g), (GLubyte)(255 * b), (GLubyte)(255 * a));
+	m_colour.set((GLubyte)(255 * clamp(0.f, 1.f, r)), (GLubyte)(255 * clamp(0.f, 1.f, g)), (GLubyte)(255 * clamp(0.f, 1.f, b)), (GLubyte)(255 * clamp(0.f, 1.f, a)));
 }
 
 void Model::setColour(float r, float g, float b)
 {
-	m_colour.set((GLubyte)(255 * r), (GLubyte)(255 * g), (GLubyte)(255 * b));
+	m_colour.set((GLubyte)(255 * clamp(0.f, 1.f, r)), (GLubyte)(255 * clamp(0.f, 1.f, g)), (GLubyte)(255 * clamp(0.f, 1.f, b)));
 }
 
 void Model::setColour(ColourRGBA colour)
@@ -365,9 +365,12 @@ ColourRGBA Model::getColour()
 	return m_colour;
 }
 
-bool Model::loadModel(const char* path)
+bool Model::loadModel(cstring path)
 {
-	return m_mesh->loadMesh(path);
+
+	m_meshes.clear();
+	m_meshes = MeshLoader::loadMesh(path);
+	return !!m_meshes.size();
 }
 
 void Model::enableBoundingBox(bool enable)
@@ -378,6 +381,13 @@ void Model::enableBoundingBox(bool enable)
 void Model::addAnimation(std::string tag, Animation* animation)
 {
 	m_animations[tag] = animation;
+}
+
+void Model::editVerts(Model* first, Model* second)
+{
+	for(unsigned a = 0; a < first->m_meshes.size(); a++)
+		m_meshes[a]->editVerts(first->m_meshes[a].get(), second->m_meshes[a].get());
+
 }
 
 float Model::getWidth()
@@ -396,16 +406,26 @@ float Model::getDepth()
 	return m_depth;
 }
 
-Coord3D<> Model::getSize()
+Vec3 Model::getDimentions()
 {
 
 	return {m_width,m_height,m_depth};
 }
 
-Coord3D<> Model::getCenter()
+Vec3 Model::getCenter()
 {
 
 	return m_center;
+}
+
+cstring Model::getTag()
+{
+	return m_tag;
+}
+
+void Model::setTag(cstring tag)
+{
+	m_tag = tag;
 }
 
 void Model::boundingBoxUpdate()
@@ -413,25 +433,29 @@ void Model::boundingBoxUpdate()
 	if(m_enableBB && m_shaderBB)
 	{
 		m_shaderBB->enable();
-		glUniformMatrix4fv(m_shaderBB->getUniformLocation("uModel"), 1, GL_FALSE, &(m_transBB[0][0]));
-		glUniformMatrix4fv(m_shaderBB->getUniformLocation("uView"), 1, GL_FALSE, &((m_camera->getObjectMatrix() * m_camera->getViewMatrix())[0][0]));
+		m_shaderBB->sendUniform("uLocalModel", getLocalTransformation());
+		m_shaderBB->sendUniform("uWorldModel", getWorldTransformation());
+		glUniformMatrix4fv(m_shaderBB->getUniformLocation("uView"), 1, GL_FALSE, &(m_camera->getViewMatrix()[0][0]));
 		glUniformMatrix4fv(m_shaderBB->getUniformLocation("uProj"), 1, GL_FALSE, &(m_camera->getProjectionMatrix()[0][0]));
 		m_shaderBB->disable();
 	}
 
+
+
+
 	std::vector<glm::vec4> bounds =
 	{
-	{*(glm::vec3*) & m_mesh->right,1},
-	{*(glm::vec3*) & m_mesh->left,1},
-	{*(glm::vec3*) & m_mesh->top,1},
-	{*(glm::vec3*) & m_mesh->bottom,1},
-	{*(glm::vec3*) & m_mesh->front,1},
-	{*(glm::vec3*) & m_mesh->back,1}
+	{*(glm::vec3*)&m_bottomRightBack,1},
+	{*(glm::vec3*)&m_bottomLeftBack,1},
+	{*(glm::vec3*)&m_topLeftBack,1},
+	{*(glm::vec3*)&m_bottomLeftBack,1},
+	{*(glm::vec3*)&m_topLeftFront,1},
+	{*(glm::vec3*)&m_topLeftBack,1}
 	};
 
 
 	for(auto& a : bounds)
-		a = getScaleMatrix() * a;
+		a = getWorldScaleMatrix() * (getLocalScaleMatrix() * a);
 
 
 	m_width = abs(bounds[0].x - bounds[1].x);
@@ -441,26 +465,26 @@ void Model::boundingBoxUpdate()
 
 	bounds =
 	{
-	{*(glm::vec3*) & m_mesh->right,1},
-	{*(glm::vec3*) & m_mesh->left,1},
-	{*(glm::vec3*) & m_mesh->top,1},
-	{*(glm::vec3*) & m_mesh->bottom,1},
-	{*(glm::vec3*) & m_mesh->front,1},
-	{*(glm::vec3*) & m_mesh->back,1}
+	{*(glm::vec3*)&m_bottomRightBack,1},
+	{*(glm::vec3*)&m_bottomLeftBack,1},
+	{*(glm::vec3*)&m_topLeftBack,1},
+	{*(glm::vec3*)&m_bottomLeftBack,1},
+	{*(glm::vec3*)&m_topLeftFront,1},
+	{*(glm::vec3*)&m_topLeftBack,1}
 	};
 
 
 	for(auto& a : bounds)
-		a = getTransformation() * a;
+		a = getWorldTranslationMatrix() * (getLocalTransformation() * a);
 
 	m_center =
-		(Coord3D<>(
-			bounds[0].x + bounds[1].x,
-			bounds[2].y + bounds[3].y,
-			bounds[4].z + bounds[5].z) / 2);
+		(Vec3(
+		bounds[0].x + bounds[1].x,
+		bounds[2].y + bounds[3].y,
+		bounds[4].z + bounds[5].z) / 2);
 }
 
-Animation* Model::getAnimation(const char* tag)
+Animation* Model::getAnimation(cstring tag)
 {
 	return m_animations[tag];
 }
@@ -470,14 +494,19 @@ Animation* Model::getCurrentAnimation()
 	return m_animations[m_animation];
 }
 
-void Model::setAnimation(const char* tag)
+void Model::setAnimation(cstring tag)
 {
 	m_animation = tag;
 }
 
-Mesh* Model::getMesh()
+void Model::addMesh(Mesh* mesh)
 {
-	return m_mesh;
+	m_meshes.push_back(std::shared_ptr<Mesh>(mesh));
+}
+
+Mesh* Model::getMesh(const unsigned index)
+{
+	return m_meshes[index].get();
 }
 
 Shader* Model::getShader()
@@ -485,9 +514,24 @@ Shader* Model::getShader()
 	return m_shader;
 }
 
-void Model::replaceTexture(int mesh, int index, GLuint tex)
+void Model::replaceTexture(int mesh, int index, GLuint texID)
 {
-	m_mesh->replaceTexture(mesh, index, tex);
+	m_meshes[mesh]->replaceTexture(index, texID);
+}
+
+void Model::replaceTexture(int mesh, int index, Texture2D tex)
+{
+	replaceTexture(mesh, index, tex.id);
+}
+
+void Model::enableTexture(bool enable)
+{
+	m_useTex = enable;
+}
+
+bool Model::isTextureEnabled()
+{
+	return m_useTex;
 }
 
 void Model::setToRender(bool render)
@@ -500,9 +544,24 @@ void Model::setTransparent(bool trans)
 	m_transparent = trans;
 }
 
+void Model::setWireframe(bool wire)
+{
+	m_wireframe = wire;
+}
+
 bool Model::isTransparent()
 {
 	return m_transparent;
+}
+
+void Model::setCastShadow(bool cast)
+{
+	m_shadowCast = cast;
+}
+
+bool Model::isCastingShadow()
+{
+	return m_shadowCast;
 }
 
 void Model::boundingBoxInit()
@@ -578,5 +637,23 @@ void Model::print()
 		"Depth: %f\n"
 		"Center: (%f, %f, %f)\n"
 		, m_tag, m_width, m_height, m_depth, m_center.x, m_center.y, m_center.z);
+}
+
+std::vector<Vec3> Model::getBounds()
+{
+	return std::vector<Vec3>{m_topLeftBack,
+		m_topRightBack,
+		m_topLeftFront,
+		m_topRightFront,
+		m_bottomLeftBack,
+		m_bottomRightBack,
+		m_bottomLeftFront,
+		m_bottomRightFront};
+}
+
+void Model::meshCleanUp()
+{
+
+	//m_meshes.clear();
 }
 

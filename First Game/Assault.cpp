@@ -83,10 +83,10 @@ void Assault::update(float dt)
 			GameEmGine::addModel(pMissiles.back());
 			pMissiles.back()->reset();
 			pMissiles.back()->setColour(getColour());
-			Coord3D pos = getPosition();
+			Coord3D pos = getLocalPosition();
 
 			pMissiles.back()->translate(pos.x, pos.y + .1f, pos.z);
-			pMissiles.back()->setScale(0.4f);
+			pMissiles.back()->scale(0.4f);
 			pMissiles.back()->rotate({ 0 , angle ,0 });
 
 			float cosVal = cos((float)(fmodf(angle - 90, 360) * (M_PI / 180)));

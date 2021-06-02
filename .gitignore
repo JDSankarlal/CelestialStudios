@@ -77,3 +77,5 @@ x64/
 First Game/Models/BIN/
 
 FINAL_EXE/
+
+*.TMP

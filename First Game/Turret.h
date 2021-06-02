@@ -1,8 +1,8 @@
 #define _USE_MATH_DEFINES 
 #pragma once
 #include <GameEmGine.h>
-#include "Minion.h"
 #include <EmGineAudioPlayer.h>
+#include "Minion.h"
 typedef EmGineAudioPlayer AudioPlayer;
 class Turret : public Model
 {
@@ -18,14 +18,14 @@ public:
 	int getHealth();
 
 	void update(float dt);
-	void setMinions(std::vector<Minion*> minions);
+	void setMinions(std::list<Minion*> minions);
 private:
 	float m_lifeTime;
 	int m_health;
 	
-	std::vector<Model*> bullets;
+	std::list<Model*> bullets;
 	float move = .1f;
-	std::vector<Minion*> m_minions;
+	std::list<Minion*> m_minions;
 	std::vector<Coord3D<>> velocity;
 };
 

@@ -46,7 +46,7 @@ bool Minion::hitByEnemy(Model* enemy, float damage)
 {
 	if(enemy)
 	{
-		if(collision2D(enemy, {false,true,true}))
+		if(collision2D(enemy, {0,1,0}))
 		{
 			setHealth(getHealth() - damage);
 			return true;
@@ -62,17 +62,17 @@ void Minion::update(float dt)
 	if(m_move)
 	{
 		float distance, lastDistance = 0;
-		moveTo = targets[0]->getPosition();
+		moveTo = targets[0]->getLocalPosition();
 
 		if(!targets.empty())
-			lastDistance = (getPosition() - targets[0]->getPosition()).distance();
+			lastDistance = (getLocalPosition() - targets[0]->getLocalPosition()).length();
 
 		for(auto& a : targets)
 		{
-			distance = (getPosition() - a->getPosition()).distance();
+			distance = (getLocalPosition() - a->getLocalPosition()).length();
 			if(distance < lastDistance)
-				moveTo = a->getPosition() - getPosition(),
-				lastDistance = (getPosition() - a->getPosition()).distance();
+				moveTo = a->getLocalPosition() - getLocalPosition(),
+				lastDistance = (getLocalPosition() - a->getLocalPosition()).length();
 		}
 
 		moveTo.normalize();

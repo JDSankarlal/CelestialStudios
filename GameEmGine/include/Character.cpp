@@ -4,7 +4,7 @@
 FT_Library Character::m_ft;
 FT_Face Character::m_face ;
 
-Character Character::loadCharacter(const char c, const char* font)
+Character Character::loadCharacter(const char c, cstring font)
 {
 	
 

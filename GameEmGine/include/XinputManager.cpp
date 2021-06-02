@@ -1,6 +1,6 @@
 #include "XinputManager.h"
 
-XinputDevice* XinputManager::m_controllers[4];
+XinputDevice* m_controllers[4];
 
 void XinputManager::update()
 {
@@ -11,10 +11,11 @@ void XinputManager::update()
 		if(!m_controllers[index])
 			m_controllers[index] = new XinputDevice;
 
-		if(getControllerType(index) != m_controllers[index]->type)
+		CONTROLLER_TYPE tmpType = getControllerType(index);
+		if(tmpType != m_controllers[index]->type)
 		{
 			delete m_controllers[index];
-			switch(getControllerType(index))
+			switch(tmpType)
 			{
 			case XINPUT_CONTROLLER:
 				m_controllers[index] = new XinputController;
@@ -25,11 +26,10 @@ void XinputManager::update()
 			case XINPUT_DRUM:
 				m_controllers[index] = new XinputDrum;
 				break;
-
 			default:
 				m_controllers[index] = new XinputDevice;
 			}
-			m_controllers[index]->type = getControllerType(index);
+			m_controllers[index]->type = tmpType;
 		}
 
 		//check if each controller is still connected

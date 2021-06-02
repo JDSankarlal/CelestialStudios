@@ -1,57 +1,68 @@
 #include "Animation.h"
 #include <filesystem>
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 
 Animation::Animation()
 {}
 
 Animation::~Animation()
-{}
-
-void Animation::addFrame(Mesh* frame, float speed)
 {
-	frame, speed;
+	for(auto& a : m_frames)
+		if(a)
+			delete a,
+			a = nullptr;
+
+	m_frames.clear();
 }
 
+//adds model to the end of the frame list
+void Animation::addFrame(Model* frame, float speed)
+{
+	m_frames.push_back(new Model(*frame)), speed;
+}
+
+//time between frames(will fix later)
 void Animation::setAnimationSpeed(float speed)
 {
 	m_speed = speed;
 }
 
-void Animation::addDir(const char * dir)
+//adds directory of Morph-Target models in Name order
+void Animation::addDir(cstring dir)
 {
 	std::string path(dir);
 	//path += fileName;
 	auto filePathData = fs::directory_iterator(path);
-
-	m_unpackedData.clear();
-	for(auto&a : filePathData)
+	//for(auto& a : m_frames)
+	//	delete a;
+	//m_frames.clear();
+	for(auto& a : filePathData)
 	{
 		std::wstring tmpPath = a.path();
 		int check = (int)tmpPath.find(L".obj");
 		if(check < 0)continue;
 
-		Mesh tmp;
 		std::string str;
-		for(auto&b : tmpPath)
+		for(auto& b : tmpPath)//wstring to sring
 			str += (char)b;
 
-		m_unpackedData.push_back(tmp.loadAni(str));
+		m_frames.push_back(new Model(str.c_str()));
 	}
 }
 
-void Animation::update(Shader* shader, Mesh* mesh)
+void Animation::update(Shader* shader, Model* mesh)
 {
-	float time;
-	
-	time = (float)clock() / CLOCKS_PER_SEC;
+	float time = (float)clock() / CLOCKS_PER_SEC;
 
 	if(!init)
 	{
 		m_lastTime = time;
 		init = true;
 	}
+
+	if(m_speed <= 0)
+		return;
 
 	if(!m_pause && !m_stop)
 	{
@@ -60,36 +71,37 @@ void Animation::update(Shader* shader, Mesh* mesh)
 			{
 				if(m_repeat)
 				{
-					m_frame = int(time / m_speed) % m_unpackedData.size();
-					mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frameNext = (m_frame + 1) % m_unpackedData.size()]);
-				} else
+					mesh->editVerts(m_frames[m_frame = int(time / m_speed) % m_frames.size()], m_frames[m_frameNext = (m_frame + 1) % m_frames.size()]);
+				}
+				else
 				{
 					m_frame = int(time / m_speed);
-					m_frame = m_frame >= m_unpackedData.size() - 1 ? unsigned((m_unpackedData.size() - 2) % m_unpackedData.size() ): m_frame;
+					m_frame = m_frame >= m_frames.size() - 1 ? unsigned((m_frames.size() - 2) % m_frames.size()) : m_frame;
 
-					if(m_frame < m_unpackedData.size() - 2)
-						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frameNext = (m_frame + 1) % m_unpackedData.size()]);
+					if(m_frame < m_frames.size() - 2)
+						mesh->editVerts(m_frames[m_frame], m_frames[m_frameNext = (m_frame + 1) % m_frames.size()]);
 					else
-						mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frameNext = m_frame]);
+						mesh->editVerts(m_frames[m_frame], m_frames[m_frameNext = m_frame]);
 				}
 
 			}
-	} else
+	}
+	else
 	{
 		if(mesh)
 			if((time = (time - m_lastTime)) >= m_speed)
 			{
 				if(m_pause)
 				{
-					mesh->editVerts(m_unpackedData[m_frame], m_unpackedData[m_frame]);
+					mesh->editVerts(m_frames[m_frame], m_frames[m_frame]);
 					m_lastTime = time;
 				}
 				else
 					if(m_stop)
-				{
-					mesh->editVerts(m_unpackedData[0], m_unpackedData[0]);
-					m_lastTime = time;
-				}
+					{
+						mesh->editVerts(m_frames[0], m_frames[0]);
+						m_lastTime = time;
+					}
 			}
 	}
 
@@ -103,10 +115,14 @@ int Animation::getFrameNumber()
 {
 	return m_frame;
 }
-
+int Animation::getTotalFrames()
+{
+	return(int) m_frames.size();
+}
+//checks if animation has ended if repeat is disabled
 bool Animation::hasEnded()
 {
-	return m_frame == m_frames.size()&& !m_repeat;
+	return m_frame == m_frames.size() && !m_repeat;
 }
 
 bool Animation::checkPlay()

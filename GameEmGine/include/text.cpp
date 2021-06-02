@@ -1,10 +1,10 @@
 #include "Text.h"
-
+#include <cmath>
 Text::Text():Transformer(), m_vaoID(0), m_vboID(0)
 {
-	setScale(1);
+	scale(1);
 
-	m_type = TEXT;
+	m_type = "TEXT";
 	m_font = "fonts/arial.ttf";
 
 	//printf("%s\n", m_face->style_name);
@@ -18,11 +18,11 @@ Text::Text():Transformer(), m_vaoID(0), m_vboID(0)
 	}
 }
 
-Text::Text(const char* font):Transformer(), m_vaoID(0), m_vboID(0)
+Text::Text(cstring font):Transformer(), m_vaoID(0), m_vboID(0)
 {
-	setScale(1);
+	scale(1);
 
-	m_type = TEXT;
+	m_type = "TEXT";
 	m_font = font;
 
 	m_texture = new FrameBuffer(1);
@@ -45,7 +45,7 @@ void Text::setText(std::string text)
 
 void Text::textSize(short s)
 {
-	setScale(s * 0.020834f);// s / 48 = s * 0.020834f 
+	scale(s * 0.020834f);// s / 48 = s * 0.020834f 
 	testSize();
 }
 
@@ -109,8 +109,10 @@ void Text::render(Shader& s, Camera* cam, bool texture)
 	// Activate corresponding render state	
 	s.enable();
 
-	glUniformMatrix4fv(s.getUniformLocation("uModel"), 1, GL_FALSE, &((texture ? glm::mat4(1) : getTransformation())[0][0]));
-	glUniformMatrix4fv(s.getUniformLocation("uView"), 1, GL_FALSE, &((cam->getViewMatrix() * cam->getObjectMatrix())[0][0]));
+	s.sendUniform("uLocalModel", texture ? glm::mat4(1) : getLocalTransformation());
+	s.sendUniform("uWorldModel", texture ? glm::mat4(1) : getWorldTransformation());
+
+	glUniformMatrix4fv(s.getUniformLocation("uView"), 1, GL_FALSE, &(cam->getViewMatrix()[0][0]));
 	glUniformMatrix4fv(s.getUniformLocation("uProj"), 1, GL_FALSE, &(cam->getProjectionMatrix()[0][0]));
 
 	s.sendUniform("flip", texture);
@@ -176,20 +178,16 @@ void Text::render(Shader& s, Camera* cam, bool texture)
 	//render child meshes
 	if(!texture)
 		for(auto& a : getChildren())
-			switch(a->getType())
-			{
-			case MODEL:
+			if(a->getCompType() == "MODEL")
 				reclass(Model*, a)->render(s, cam);
-				break;
-			case TEXT:
+			else if(a->getCompType() == "TEXT")
 				reclass(Text*, a)->render(s, cam);
-				break;
-			}
+
 }
 
 void Text::toTexture(unsigned int width)
 {
-	Coord3D<> tmpSize = getScale();
+	Vec3 tmpSize = getScale();
 
 	float
 		ypos = 0,
@@ -201,9 +199,9 @@ void Text::toTexture(unsigned int width)
 	{
 		ch = ResourceManager::getCharacter(c, m_font.c_str());
 
-		ypos = std::min(-float(ch.size.y - ch.bearing.y), ypos);
+		ypos = fmin(-float(ch.size.y - ch.bearing.y), ypos);
 
-		h = std::max((float)ch.size.y, h);
+		h = fmax((float)ch.size.y, h);
 
 
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
@@ -211,14 +209,16 @@ void Text::toTexture(unsigned int width)
 	}
 
 	if(width)
-		setScale(width / x);
+		scale(width / x);
 
 
 	x *= getScale().x;
 	ypos *= getScale().x;
 	h *= getScale().x;
 
-	static Camera cam; cam.setType(ORTHOGRAPHIC, &OrthoPeramiters{0.f,(float)x,0.f,(float)(h - ypos),0.f,1.f});
+	static Camera cam;
+	OrthoPeramiters perams{0.f,(float)x,0.f,(float)(h - ypos),0.f,1.f};
+	cam.setType(Camera::ORTHOGRAPHIC, &perams);
 
 	m_texture->clear();
 	m_texture->resizeColour(0, (int)x, int(h - ypos), GL_RGBA8);
@@ -231,14 +231,16 @@ void Text::toTexture(unsigned int width)
 	m_texture->enable();
 
 	m_initY = h;
+	auto a = m_colour;
+	setColour(1, 1, 1);
 	render(*ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh"), &cam, true);
-
+	setColour(a);
 	m_texture->disable();
-	setScale(tmpSize);
+	scale(tmpSize);
 	glViewport(view[0], view[1], view[2], view[3]);
 }
 
-GLuint Text::getTexture() { return m_texture->getColorHandle(0); }
+GLuint Text::getTexture() { return m_texture->getColourHandle(0); }
 
 bool Text::isTransparent()
 {
@@ -257,16 +259,16 @@ void Text::testSize()
 	{
 		ch = ResourceManager::getCharacter(c, m_font.c_str());
 
-		ypos = std::min(-float(ch.size.y - ch.bearing.y), ypos);
+		ypos = fmin(-float(ch.size.y - ch.bearing.y), ypos);
 
-		h = std::max((float)ch.size.y, h);
+		h = fmax((float)ch.size.y, h);
 
 
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64)
+		x += (ch.advance >> 6) * getScale().x; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 
-	m_size = {(x * getScale().x), ((h - ypos) * getScale().x)};
+	m_size = {(x), ((h - ypos) * getScale().x)};
 }
 
 

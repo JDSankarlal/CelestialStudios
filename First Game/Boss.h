@@ -1,8 +1,8 @@
 #pragma once
+#include <GameEmGine.h>
+#include <list>
 #include "Player.h"
 #include "Minion.h"
-#include <GameEmGine.h>
-
 
 class Boss: public Model
 {
@@ -13,7 +13,7 @@ public:
 	Boss(const char* path);
 	~Boss();
 
-	void setPlayers(Player* players[4]);
+	void setPlayers(std::list<Player* >& players);
 
 	template<class T>
 	void insertionSort(std::vector<T> vec)
@@ -32,15 +32,15 @@ public:
 	bool randAttacks();
 	float getHealth();
 	void setHealth(float v);
-	std::vector<Model*>& getMissials();
+	std::list<Model*>& getMissials();
 	void update(float dt);
 	void setActive(bool active);
 	bool isActive();
 
-	bool hitByEnemy(Model * mod, float damage = 10);
+	bool hitByEnemy(Model* mod, float damage = 10);
 
-	std::vector<Minion*> minions;
-	std::vector<Model* > missiles;
+	std::list<Minion*> minions;
+	std::list<Model* > missiles;
 	Model* lazer;
 	bool 	bossFlash;
 private:
@@ -55,5 +55,5 @@ private:
 	static Model* minion;
 	int attackDamage;
 	float attackCooldown;
-	Player** targets;
+	Player* targets[4];
 };

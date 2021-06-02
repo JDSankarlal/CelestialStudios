@@ -11,7 +11,7 @@ struct Character
 	Coord2D<int> bearing; // Offset from baseline to left/top of glyph
 	GLuint    advance;    // Offset to advance to next glyph
 
-	static Character loadCharacter(const char c, const char* font);
+	static Character loadCharacter(const char c, cstring font);
 
 private:
 	static FT_Library m_ft;

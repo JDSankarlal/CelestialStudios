@@ -1,6 +1,7 @@
 #version 420
 
-uniform mat4 uModel;
+uniform mat4 uLocalModel;
+uniform mat4 uWorldModel;
 uniform mat4 uView;
 uniform mat4 uProj;
 uniform uint uAni = 0;
@@ -16,7 +17,7 @@ layout(location = 4) in vec3 in_normal2;
 
 out vec2 texcoord;
 out vec3 norm;
-out vec3 pos;
+out vec4 pos;
 
 void main()
 {
@@ -28,11 +29,12 @@ void main()
    vec3 vert = mix(in_vert1, in_vert2, uTime);
 
 
-    norm =  mat3(uModel) * mat3(uView) * normal;
+    norm = mat3(uWorldModel) * (mat3(uLocalModel) * mat3(uView) * normal);
+   
+    vec4 viewSpace =  uWorldModel * (uLocalModel * vec4(vert, 1.0f));
+    viewSpace =  uProj * uView * viewSpace; 
+ 
+    gl_Position = viewSpace;
     
-    vec4 viewSpace =  uProj * uView * uModel * vec4(vert, 1.0f); 
-    
-    gl_Position =   viewSpace / viewSpace.w;
-    
-    pos = gl_Position.xyz;
+    pos = viewSpace;
 }

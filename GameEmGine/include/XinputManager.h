@@ -274,5 +274,5 @@ public:
 	static XinputDevice* getController(int m_index);
 
 private:
-	static	XinputDevice* m_controllers[4];
+	
 };

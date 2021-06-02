@@ -82,7 +82,16 @@
     <ClInclude Include="Character.h">
       <Filter>EmGine\Text Render</Filter>
     </ClInclude>
-    <ClInclude Include="LightSource.h">
+    <ClInclude Include="LightManager.h">
+      <Filter>EmGine\Resource Management</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshLoader.h">
+      <Filter>EmGine\File I/O</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
       <Filter>EmGine\Game Engine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -153,7 +162,16 @@
     <ClCompile Include="Character.cpp">
       <Filter>EmGine\Text Render</Filter>
     </ClCompile>
-    <ClCompile Include="LightSource.cpp">
+    <ClCompile Include="LightManager.cpp">
+      <Filter>EmGine\Resource Management</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshLoader.cpp">
+      <Filter>EmGine\File I/O</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
       <Filter>EmGine\Game Engine</Filter>
     </ClCompile>
   </ItemGroup>

@@ -160,7 +160,7 @@ void Specialist::update(float dt)
 			GameEmGine::addModel(pTurrets.back());
 			pTurrets.back()->reset();
 			//pTurrets.back()->setColour(getColour());
-			Coord3D pos = getPosition();
+			Vec3 pos = getLocalPosition();
 			pTurrets.back()->translate(pos.x, pos.y + .1f, pos.z);
 			pTurrets.back()->rotate({0.0f, 90.0f, 0.0f});
 			//pTurrets.back()->setScale(0.4f);
