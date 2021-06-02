@@ -7,20 +7,73 @@ Model::Model(Model& model, cstring tag):
 	Transformer(model, "MODEL"),
 	m_tag(tag)
 {
+	CompID tmp = 0;
+	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
+	{
+		m_ID = 1;
+		for(auto& a : getComponentList())
+		{
+			if(!a.second->getID())continue;
+
+			if(a.second->getID() - tmp < 2)
+				tmp = a.second->getID();
+			else
+			{
+				m_ID = ++tmp;
+				break;
+			}
+		}
+	}
 	//glfwInit();
 	create(model, tag);
 }
+
 Model::Model(const Model& model, cstring tag):
 	Transformer(model, "MODEL"),
 	m_tag(tag)
 {
+	CompID tmp = 0;
+	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
+	{
+		m_ID = 1;
+		for(auto& a : getComponentList())
+		{
+			if(!a.second->getID())continue;
+
+			if(a.second->getID() - tmp < 2)
+				tmp = a.second->getID();
+			else
+			{
+				m_ID = ++tmp;
+				break;
+			}
+		}
+	}
 	//glfwInit();
 	create(model, tag);
 }
+
 Model::Model(PrimitiveMesh* mesh, cstring tag):
 	Transformer("MODEL"),
 	m_tag(tag)
 {
+	CompID tmp = 0;
+	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
+	{
+		m_ID = 1;
+		for(auto& a : getComponentList())
+		{
+			if(!a.second->getID())continue;
+
+			if(a.second->getID() - tmp < 2)
+				tmp = a.second->getID();
+			else
+			{
+				m_ID = ++tmp;
+				break;
+			}
+		}
+	}
 	//glfwInit();
 	create(mesh, tag);
 }
@@ -29,6 +82,24 @@ Model::Model(cstring path, cstring tag):
 	Transformer("MODEL"),
 	m_tag(tag)
 {
+	CompID tmp = 0;
+	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
+	{
+		m_ID = 1;
+		for(auto& a : getComponentList())
+		{
+			if(!a.second->getID())continue;
+
+			if(a.second->getID() - tmp < 2)
+				tmp = a.second->getID();
+			else
+			{
+				m_ID = ++tmp;
+				break;
+			}
+		}
+	}
+
 	//glfwInit();
 	create(path, tag);
 }
@@ -36,8 +107,10 @@ Model::Model(cstring path, cstring tag):
 Model::~Model()
 {
 #if _DEBUG
-//	printf("Deleted %s\n", m_type.c_str());
+	//	printf("Deleted %s\n", m_type.c_str());
 #endif // _DEBUG
+	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
+		--m_countID;
 	if(!m_copy)
 		meshCleanUp();
 }
@@ -45,6 +118,9 @@ Model::~Model()
 
 void Model::create(const Model& model, cstring tag)
 {
+
+	m_colourID = *(ColourRGBA*)&m_ID;
+
 	*this = model;
 	if(strlen(tag))
 		m_tag = tag;
@@ -55,6 +131,8 @@ void Model::create(const Model& model, cstring tag)
 
 void Model::create(PrimitiveMesh* mesh, cstring tag)
 {
+	m_colourID = *(ColourRGBA*)&m_ID;
+
 	m_meshes.clear();
 	m_meshes.push_back(std::shared_ptr<Mesh>(new Mesh()));
 	if(strlen(tag))
@@ -99,6 +177,8 @@ void Model::create(PrimitiveMesh* mesh, cstring tag)
 
 void Model::create(cstring path, cstring tag)
 {
+	m_colourID = *(ColourRGBA*)&m_ID;
+
 	m_meshes.clear();
 	if(strlen(tag))
 		m_tag = tag;
@@ -286,6 +366,7 @@ void Model::render(Shader& shader, Camera* cam)
 	if(!m_active)return;
 
 	float colour[4]{(float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255};
+	float colourID[4]{(float)m_colourID.r / 255,(float)m_colourID.g / 255,(float)m_colourID.b / 255,(float)m_colourID.a / 255};
 	m_camera = cam;
 	m_shader = &shader;
 	shader.enable();
@@ -294,7 +375,7 @@ void Model::render(Shader& shader, Camera* cam)
 	shader.sendUniform("uWorldModel", getWorldTransformation());
 	shader.sendUniform("colourMod", reclass(glm::vec4, colour));
 	shader.sendUniform("flip", true);
-
+	shader.sendUniform("colourID", colourID);
 	shader.disable();
 
 	if(m_animations[m_animation])
@@ -504,9 +585,10 @@ void Model::addMesh(Mesh* mesh)
 	m_meshes.push_back(std::shared_ptr<Mesh>(mesh));
 }
 
-Mesh* Model::getMesh(const unsigned index)
+Mesh* Model::getMesh(const uint index)
 {
-	return m_meshes[index].get();
+
+	return index < m_meshes.size() ? m_meshes[index].get() : nullptr;
 }
 
 Shader* Model::getShader()

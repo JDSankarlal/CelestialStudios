@@ -6,6 +6,7 @@ uniform bool textured;
 uniform bool darken = false;
 uniform bool isTrans = false;
 uniform vec4 colourMod;
+uniform vec4 colourID;
 
 in vec2 texcoord;
 in vec3 norm;
@@ -16,6 +17,7 @@ layout(location = 1)out vec4 positionTrans;
 layout(location = 2)out vec4 normalOP;
 layout(location = 3)out vec4 normalTrans;
 layout(location = 4)out vec4 outColour;
+layout(location = 5)out vec4 IDColour;
 
 void main()
 {
@@ -24,7 +26,7 @@ void main()
     positionTrans = pos * float( isTrans);
     normalOP      = vec4(normalize(norm),1) * float(!isTrans);
     normalTrans   = vec4(normalize(norm),1) * float( isTrans);
-
+    IDColour      = colourID;
     //reverse the z component of the normal
     //normal.z*=-1;
     

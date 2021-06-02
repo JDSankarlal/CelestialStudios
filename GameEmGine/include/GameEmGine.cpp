@@ -63,7 +63,7 @@ void GameEmGine::init(std::string name, int width, int height, int x, int y, int
 	AudioPlayer::init();
 	InputManager::init();
 
-	
+
 
 
 	//LUTpath = "Texture/IWLTBAP_Aspen_-_Standard.cube";
@@ -121,6 +121,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_gBuff->initColourTexture(3, getWindowWidth(), getWindowHeight(), GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_gBuff->initColourTexture(4, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_gBuff->initColourTexture(5, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	if(!m_gBuff->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -168,7 +169,7 @@ void GameEmGine::run()
 
 		InputManager::update();
 		update();
-		
+
 		if(true)//fps calculation
 		{
 			calculateFPS();
@@ -356,29 +357,35 @@ Camera* GameEmGine::getMainCamera()
 
 bool GameEmGine::mouseCollision(Model* model)
 {
-	static PrimitiveCube smallCube({.01f});
-	static Model mouse(&smallCube, "Mouse");
+	Model* id = getMouseCollisionObject();
+	if(!id)return false;
 
-	addModel(&mouse);
-	mouse.setColour(0, 1, 0);
+	return id->getID() == model->getID();
+}
 
-	Camera* cam = getMainCamera();
-	//	glm::mat4 tmp = glm::inverse(cam->getProjectionMatrix());
-	Vec3 mPos = {InputManager::getMousePosition(),0};
-	glm::vec4 direction((mPos * 2 / (Vec3{(float)getWindowSize().x, (float)getWindowSize().y, 500} - 1)).toVec3(), 1);
-	direction = {direction.x,-direction.y,1,1};
+#include <cmath>
+Model* GameEmGine::getMouseCollisionObject()
+{
+
+	Vec2 mPos = InputManager::getMousePosition();
+	mPos.y = getWindowHeight() - mPos.y;
 
 
-	direction = glm::inverse(cam->getViewMatrix() * cam->getProjectionMatrix()) * direction;
-	direction = glm::normalize(direction);
+	m_gBuff->enable();
+	
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + 5);
 
-	//position = position * 2 - 1;
-	//position /= position.w;
+	ColourRGBA id = {};
+	glReadPixels(int(mPos.x),int(mPos.y), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &id);
+	
+	m_gBuff->disable();
 
-	//position.z = cam->getPosition().z;
-	mouse.translate(cam->getLocalPosition());
 
-	return mouse.collision2D(model, reclass(Vec3, direction));
+	for(auto& a : m_models)
+		if(a.second->getID() == id.r)
+			return a.second;
+
+	return nullptr;
 }
 
 void GameEmGine::setCameraType(Camera::CAM_TYPE type)
@@ -518,7 +525,7 @@ void GameEmGine::update()
 
 	glEnable(GL_DEPTH_TEST);
 
-	
+
 
 	//m_postProcessShader->disable();
 	m_postBuffer->disable();
@@ -549,7 +556,7 @@ void GameEmGine::update()
 
 	composite->disable();
 	m_postBuffer->disable();
-		
+
 	//Apply shadows
 	LightManager::shadowRender(500, 500, m_postBuffer, m_gBuff, m_models);
 
@@ -572,18 +579,18 @@ void GameEmGine::changeViewport(GLFWwindow*, int w, int h)
 	m_screenSize = {w,h};
 	glViewport(0, 0, w, h);
 
-//	switch(m_mainCamera->getType())
-//	{
-//	case Camera::FRUSTUM:
-//
-//		FrustumPeramiters* tmp = (FrustumPeramiters*)m_mainCamera->getProjectionData();
-//		if(tmp)
-//			tmp->aspect = (float)w / h;
-//		m_mainCamera->setType(m_mainCamera->getType(), tmp);
-//		break;
-//	}
+	//	switch(m_mainCamera->getType())
+	//	{
+	//	case Camera::FRUSTUM:
+	//
+	//		FrustumPeramiters* tmp = (FrustumPeramiters*)m_mainCamera->getProjectionData();
+	//		if(tmp)
+	//			tmp->aspect = (float)w / h;
+	//		m_mainCamera->setType(m_mainCamera->getType(), tmp);
+	//		break;
+	//	}
 
-	//Framebuffer Resizing 
+		//Framebuffer Resizing 
 	m_gBuff->resizeDepth(w, h);
 	m_gBuff->resizeColour(0, w, h);
 	m_gBuff->resizeColour(1, w, h);
@@ -591,6 +598,7 @@ void GameEmGine::changeViewport(GLFWwindow*, int w, int h)
 	m_gBuff->resizeColour(3, w, h);
 	m_gBuff->resizeColour(4, w, h);
 	m_gBuff->resizeColour(5, w, h);
+	m_gBuff->resizeColour(6, w, h);
 
 	m_postBuffer->resizeDepth(w, h);
 	m_postBuffer->resizeColour(0, w, h);

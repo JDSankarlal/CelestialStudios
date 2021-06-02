@@ -74,6 +74,8 @@ public:
 
 	static bool mouseCollision(Model* model);
 
+	static Model* getMouseCollisionObject();
+
 	static void setCameraType(Camera::CAM_TYPE type);
 	static void setCameraType(ProjectionPeramiters* proj);
 

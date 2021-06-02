@@ -20,6 +20,24 @@ Text::Text():Transformer(), m_vaoID(0), m_vboID(0)
 
 Text::Text(cstring font):Transformer(), m_vaoID(0), m_vboID(0)
 {
+	CompID tmp = 0;
+	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
+	{
+		m_ID = 1;
+		for(auto& a : getComponentList())
+		{
+			if(!a.second->getID())continue;
+
+			if(a.second->getID() - tmp < 2)
+				tmp = a.second->getID();
+			else
+			{
+				m_ID = ++tmp;
+				break;
+			}
+		}
+	}
+
 	scale(1);
 
 	m_type = "TEXT";
@@ -32,6 +50,9 @@ Text::Text(cstring font):Transformer(), m_vaoID(0), m_vboID(0)
 
 Text::~Text()
 {
+	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
+		--m_countID;
+
 	if(m_texture)
 		delete m_texture;
 	m_texture = 0;

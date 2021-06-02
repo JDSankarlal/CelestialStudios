@@ -241,9 +241,16 @@ struct Coord2D
 	{
 		return {x + coord.x, y + coord.y};
 	}
+	Coord2D operator+(T coord)
+	{
+		return {x + coord, y + coord};
+	}
 	Coord2D operator-(Coord2D coord)
 	{
 		return {x - coord.x, y - coord.y};
+	}Coord2D operator-(T coord)
+	{
+		return {x - coord, y - coord};
 	}
 	Coord2D operator/(Coord2D coord)
 	{
@@ -632,8 +639,14 @@ typedef Coord2D<float> Vec2;
 
 struct ColourRGBA
 {
-	GLubyte r, g, b, a;
-	//1/255 = 0.0039215686274509803921568627451
+
+	union
+	{
+		struct { GLubyte r, g, b, a; };
+		struct { uint id; };
+	};
+
+//1/255 = 0.0039215686274509803921568627451
 #define BYTE_TO_FLOAT_MULTI 0.0039215686274509803921568627451
 
 	ColourRGBA():r((GLubyte)255), g((GLubyte)255), b((GLubyte)255), a((GLubyte)255)

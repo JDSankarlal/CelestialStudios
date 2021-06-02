@@ -105,7 +105,7 @@ public:
 protected:
 	bool m_active=true;
 	cstring m_tag;
-	ColourRGBA m_colour;
+	ColourRGBA m_colour,m_colourID;
 	void meshCleanUp();
 
 private:

@@ -26,7 +26,7 @@ public:
 
 	Camera(CAM_TYPE = FRUSTUM, Vec3 = {1,1,1});
 	Camera(ProjectionPeramiters* peram, Vec3 = {1,1,1});
-	~Camera() ;
+	~Camera();
 
 	void init(Vec3 = {}, CAM_TYPE = FRUSTUM, ProjectionPeramiters* peram = nullptr);
 	void setType(CAM_TYPE type, ProjectionPeramiters* peram = nullptr);
@@ -69,7 +69,7 @@ public:
 	virtual glm::mat4 getWorldTransformation();
 
 	//render objects
-	void render(Shader* shader,const std::unordered_map<void*, Model*>& models,bool transparent = false,bool shadow=false);
+	void render(Shader* shader, const std::unordered_map<void*, Model*>& models, bool transparent = false, bool shadow = false);
 
 
 	bool isUpdated() { return m_cameraUpdate; }
@@ -137,7 +137,7 @@ struct ProjectionPeramiters
 	float zNear, zFar;
 	ProjectionPeramiters(Camera::CAM_TYPE a_type = Camera::CAM_TYPE::NONE):type(a_type) {}
 	ProjectionPeramiters(float znear, float zfar, Camera::CAM_TYPE a_type = Camera::CAM_TYPE::NONE):zNear(znear), zFar(zfar), type(a_type) {}
-	virtual ~ProjectionPeramiters()=default;
+	virtual ~ProjectionPeramiters() = default;
 
 	virtual void setNear(float znear) { zNear = znear; }
 	virtual void setFar(float zfar) { zFar = zfar; }
@@ -161,7 +161,7 @@ struct OrthoPeramiters:public ProjectionPeramiters
 	void setXAxis(float a_left, float a_right) { left = a_left; right = a_right; }
 	void setYAxis(float a_top, float a_bottom) { top = a_top; bottom = a_bottom; }
 
-	Vec2 getBounds() { return {abs(right-left),abs(top-bottom)}; }
+	Vec2 getBounds() { return {abs(right - left),abs(top - bottom)}; }
 	float  left = 0, right = 0, bottom = 0, top = 0;
 };
 
@@ -174,7 +174,7 @@ struct FrustumPeramiters:public ProjectionPeramiters
 
 	void setAngle(float a_angle) { angle = a_angle; }
 	void setAspect(float a_aspect) { aspect = a_aspect; }
-	float angle=45, aspect=0;
+	float angle = 45, aspect = 0;
 };
 #pragma endregion
 

@@ -109,6 +109,18 @@ public:
 
 
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
+		mousePressed = [](int  a, int b){a, b; };
+		mouseReleased = [](int key, int )
+		{
+
+			Model* obj;
+			if(key == MOUSE_LEFT_BUTTON)
+			{
+				obj = GameEmGine::getMouseCollisionObject();
+				if(obj)
+					obj->enableTexture(false);
+			}
+		};
 	}
 
 	void keyInputPressed(int key, int modfier)
@@ -393,6 +405,8 @@ public:
 	{
 		dt;
 		updateMenu(dt);
+
+
 	}
 
 private:

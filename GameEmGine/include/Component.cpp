@@ -1,29 +1,34 @@
 #include "Component.h"
-std::unordered_map<Component::COMP_TYPE, unsigned>
-m_compList = std::unordered_map<Component::COMP_TYPE, unsigned>();
+#include <typeinfo>
+
+
+std::list<std::pair<Component::COMP_TYPE, Component*>>
+m_compList = std::list<std::pair<Component::COMP_TYPE, Component*>>();
 bool Component::m_exit = false;
+uint Component::m_countID = 0;
+
+
 
 Component::Component(Component* parent):m_parent(parent)
 {
 	m_type = "UNKNOWN";
-	m_compList.find(m_type) != m_compList.end() ? m_compList[m_type]++ : 0;
+	m_compList.push_back({m_type,this});
 }
 
 Component::Component(COMP_TYPE type, Component* parent): m_parent(parent)
 {
 	m_type = type;
-	m_compList.find(m_type) != m_compList.end() ? m_compList[m_type]++ : 0;/*this dose not matter but I did it anyways*/
+	m_compList.push_back({m_type,this});
 }
 
 Component::~Component()
 {
-	if(!m_exit)
-		if(!(--m_compList[m_type]))
-			m_compList.erase(m_type);
+	//if(!m_exit)
+	//	if(!(--m_compList[m_type]))
+	//		m_compList.erase(m_type);
 }
 
-
-const std::unordered_map<Component::COMP_TYPE, unsigned>& Component::getComponentList()
+const std::list<std::pair<Component::COMP_TYPE, Component*>>& Component::getComponentList()
 {
 	return m_compList;
 }
@@ -72,6 +77,11 @@ void Component::removeParent(Component* parent)
 	if(!parent)return;
 
 	parent->removeChild(this);
+}
+
+Component::CompID Component::getID()
+{
+	return m_ID;
 }
 
 Component* Component::getChild(unsigned int index)
