@@ -3,27 +3,32 @@
 
 #include <GLFW/glfw3.h>
 
+void Model::createID()
+{
+	CompID tmp =
+		m_ID = 1;
+	for(auto& a : getComponentList())
+	{
+		if(!a.second->getID())continue;
+
+		if((a.second->getID() - tmp) < 2)
+			tmp = a.second->getID();
+		else
+		{
+			m_ID = ++tmp;
+			return;
+		}
+	}
+
+	m_ID = tmp ? tmp + 1 : m_ID;
+	m_colourID = *(ColourRGBA*)&m_ID;
+}
+
 Model::Model(Model& model, cstring tag):
 	Transformer(model, "MODEL"),
 	m_tag(tag)
 {
-	CompID tmp = 0;
-	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
-	{
-		m_ID = 1;
-		for(auto& a : getComponentList())
-		{
-			if(!a.second->getID())continue;
-
-			if(a.second->getID() - tmp < 2)
-				tmp = a.second->getID();
-			else
-			{
-				m_ID = ++tmp;
-				break;
-			}
-		}
-	}
+	createID();
 	//glfwInit();
 	create(model, tag);
 }
@@ -32,23 +37,7 @@ Model::Model(const Model& model, cstring tag):
 	Transformer(model, "MODEL"),
 	m_tag(tag)
 {
-	CompID tmp = 0;
-	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
-	{
-		m_ID = 1;
-		for(auto& a : getComponentList())
-		{
-			if(!a.second->getID())continue;
-
-			if(a.second->getID() - tmp < 2)
-				tmp = a.second->getID();
-			else
-			{
-				m_ID = ++tmp;
-				break;
-			}
-		}
-	}
+	createID();
 	//glfwInit();
 	create(model, tag);
 }
@@ -57,23 +46,7 @@ Model::Model(PrimitiveMesh* mesh, cstring tag):
 	Transformer("MODEL"),
 	m_tag(tag)
 {
-	CompID tmp = 0;
-	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
-	{
-		m_ID = 1;
-		for(auto& a : getComponentList())
-		{
-			if(!a.second->getID())continue;
-
-			if(a.second->getID() - tmp < 2)
-				tmp = a.second->getID();
-			else
-			{
-				m_ID = ++tmp;
-				break;
-			}
-		}
-	}
+	createID();
 	//glfwInit();
 	create(mesh, tag);
 }
@@ -82,24 +55,7 @@ Model::Model(cstring path, cstring tag):
 	Transformer("MODEL"),
 	m_tag(tag)
 {
-	CompID tmp = 0;
-	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
-	{
-		m_ID = 1;
-		for(auto& a : getComponentList())
-		{
-			if(!a.second->getID())continue;
-
-			if(a.second->getID() - tmp < 2)
-				tmp = a.second->getID();
-			else
-			{
-				m_ID = ++tmp;
-				break;
-			}
-		}
-	}
-
+	createID();
 	//glfwInit();
 	create(path, tag);
 }
@@ -118,9 +74,6 @@ Model::~Model()
 
 void Model::create(const Model& model, cstring tag)
 {
-
-	m_colourID = *(ColourRGBA*)&m_ID;
-
 	*this = model;
 	if(strlen(tag))
 		m_tag = tag;
@@ -131,8 +84,6 @@ void Model::create(const Model& model, cstring tag)
 
 void Model::create(PrimitiveMesh* mesh, cstring tag)
 {
-	m_colourID = *(ColourRGBA*)&m_ID;
-
 	m_meshes.clear();
 	m_meshes.push_back(std::shared_ptr<Mesh>(new Mesh()));
 	if(strlen(tag))
@@ -177,8 +128,6 @@ void Model::create(PrimitiveMesh* mesh, cstring tag)
 
 void Model::create(cstring path, cstring tag)
 {
-	m_colourID = *(ColourRGBA*)&m_ID;
-
 	m_meshes.clear();
 	if(strlen(tag))
 		m_tag = tag;

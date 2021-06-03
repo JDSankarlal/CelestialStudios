@@ -109,6 +109,7 @@ protected:
 	void meshCleanUp();
 
 private:
+	void createID();
 	void boundingBoxInit();
 	void drawBoundingBox();
 

@@ -54,10 +54,11 @@ private:
 	void scale(float scale) { Transformer::scale(scale); }
 	void scale(float x, float y, float z) { Transformer::scale(x, y, z); }
 
+	void createID();
 	void renderInit();
 
 	FrameBuffer* m_texture;
-	ColourRGBA m_colour;
+	ColourRGBA m_colour, m_colourID;
 	std::string m_font, m_text;
 	unsigned int m_length;
 	GLuint m_vaoID, m_vboID;

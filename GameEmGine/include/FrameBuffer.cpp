@@ -177,7 +177,7 @@ void FrameBuffer::setClearColour(GLclampf r, GLclampf g, GLclampf b, GLclampf a)
 }
 
 // Clears all attached textures
-void FrameBuffer::clear(GLbitfield clearBit)
+void FrameBuffer::clear(ColourRGBA colour ,GLbitfield clearBit)
 {
 	GLbitfield temp = 0;
 
@@ -190,9 +190,17 @@ void FrameBuffer::clear(GLbitfield clearBit)
 	{
 		temp |= GL_COLOR_BUFFER_BIT;
 	}
-
+	glClearColor(colour.getf4()[0], colour.getf4()[1], colour.getf4()[2], colour.getf4()[3]);
 	enable();
 	glClear(clearBit ? clearBit : temp);
+	disable();
+}
+
+void FrameBuffer::clearSingleColour(ColourRGBA colour, int index)
+{
+	enable();
+	glm::vec4 tmp = colour.getf4();
+	glClearBufferfv(GL_COLOR,index,(float*)&tmp);
 	disable();
 }
 

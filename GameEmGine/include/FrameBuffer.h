@@ -39,8 +39,10 @@ public:
 	/// <param name="a">alpha channel</param>
 	static void setClearColour(GLclampf r, GLclampf g, GLclampf b, GLclampf a);
 
-	// Clears all attached textures
-	void clear(GLbitfield = 0);
+	// Clears all attached textures (can specify only depth or colour)
+	void clear(ColourRGBA = {0,0,0,255}, GLbitfield = 0);
+
+	void clearSingleColour(ColourRGBA, int index = 0);
 
 	static void clearBackBuffer(bool clearCol = true, bool clearDep = true);
 	//binds objects to frame buffer/s

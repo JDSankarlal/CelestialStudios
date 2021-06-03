@@ -12,6 +12,7 @@ public:
 	void init()
 	{
 		LightManager::enableShadows(false);
+		GameEmGine::setBackgroundColour(1, 0, 0);
 
 		mod.clear();
 		fadein = true;

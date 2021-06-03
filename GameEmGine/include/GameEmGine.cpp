@@ -110,7 +110,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 	printf("created the window\n");
 
-	m_gBuff = new FrameBuffer(6, "Main Buffer");
+	m_gBuff = new FrameBuffer(7, "Main Buffer");
 	m_postBuffer = new FrameBuffer(1, "Post Process Buffer");
 
 
@@ -121,7 +121,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_gBuff->initColourTexture(3, getWindowWidth(), getWindowHeight(), GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_gBuff->initColourTexture(4, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_gBuff->initColourTexture(5, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
-	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	if(!m_gBuff->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -370,19 +370,19 @@ Model* GameEmGine::getMouseCollisionObject()
 	Vec2 mPos = InputManager::getMousePosition();
 	mPos.y = getWindowHeight() - mPos.y;
 
-
+	
 	m_gBuff->enable();
 	
-	glReadBuffer(GL_COLOR_ATTACHMENT0 + 5);
-
-	ColourRGBA id = {};
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + 6);
+	
+	ColourRGBA id = {0,0,0,0};
 	glReadPixels(int(mPos.x),int(mPos.y), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &id);
 	
 	m_gBuff->disable();
 
 
 	for(auto& a : m_models)
-		if(a.second->getID() == id.r)
+		if(a.second->getID() == *(Component::CompID*)&id)
 			return a.second;
 
 	return nullptr;
@@ -453,23 +453,21 @@ std::unordered_map<void*, Model*>& GameEmGine::getObjectList()
 }
 
 
-void GameEmGine::customRenderCallback(std::function<void(FrameBuffer*, FrameBuffer*, float dt)>render)
-{
-	m_customRender = render;
-}
-
 void GameEmGine::update()
 {
 
 	glClearDepth(1.f);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	glClearColor(0, 0, 0, 1);
+	FrameBuffer::clearBackBuffer();
+	
+	
 	m_gBuff->clear();//buffer must be black
 	//glClearColor((float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);//BG colour
+	m_gBuff->clearSingleColour(m_colour, 4);//this is the colour buffer
+	m_gBuff->clearSingleColour({0,0,0,0}, 6);//this is the ID buffer
 
-	glClearColor((float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);//BG colour
-	m_postBuffer->clear();
+	//glClearColor((float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);//BG colour
+	m_postBuffer->clear(m_colour);
 
 	m_mainCamera->update();
 
@@ -567,10 +565,16 @@ void GameEmGine::update()
 	m_postBuffer->copyColourToBackBuffer(getWindowWidth(), getWindowHeight());
 	m_postBuffer->copyDepthToBackBuffer(getWindowWidth(), getWindowHeight());
 
+
 	if(m_gameLoop != nullptr)
 		m_gameLoop(glfwGetTime());
 
 	glfwPollEvents();//updates the event handlers
+}
+
+void GameEmGine::customRenderCallback(std::function<void(FrameBuffer*, FrameBuffer*, float dt)>render)
+{
+	m_customRender = render;
 }
 
 void GameEmGine::changeViewport(GLFWwindow*, int w, int h)

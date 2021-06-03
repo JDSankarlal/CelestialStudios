@@ -12,20 +12,19 @@ uint Component::m_countID = 0;
 Component::Component(Component* parent):m_parent(parent)
 {
 	m_type = "UNKNOWN";
-	m_compList.push_back({m_type,this});
+	m_compList.push_back({m_type, this});
 }
 
 Component::Component(COMP_TYPE type, Component* parent): m_parent(parent)
 {
 	m_type = type;
-	m_compList.push_back({m_type,this});
+	m_compList.push_back({m_type, this});
 }
 
 Component::~Component()
 {
-	//if(!m_exit)
-	//	if(!(--m_compList[m_type]))
-	//		m_compList.erase(m_type);
+
+	m_compList.erase(std::find(m_compList.begin(), m_compList.end(), std::pair{m_type, this}));
 }
 
 const std::list<std::pair<Component::COMP_TYPE, Component*>>& Component::getComponentList()

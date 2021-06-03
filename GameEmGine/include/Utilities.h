@@ -642,11 +642,11 @@ struct ColourRGBA
 
 	union
 	{
-		struct { GLubyte r, g, b, a; };
 		struct { uint id; };
+		struct { GLubyte r, g, b, a; };
 	};
 
-//1/255 = 0.0039215686274509803921568627451
+	//1/255 = 0.0039215686274509803921568627451
 #define BYTE_TO_FLOAT_MULTI 0.0039215686274509803921568627451
 
 	ColourRGBA():r((GLubyte)255), g((GLubyte)255), b((GLubyte)255), a((GLubyte)255)
@@ -696,6 +696,16 @@ struct ColourRGBA
 		this[0][1] = GLubyte(a_g * 255);
 		this[0][2] = GLubyte(a_b * 255);
 		this[0][3] = GLubyte(a_a * 255);
+	}
+
+	glm::vec4 getf4()
+	{
+			glm::vec4 colour{
+		 float(r * BYTE_TO_FLOAT_MULTI),
+		 float(g * BYTE_TO_FLOAT_MULTI),
+		 float(b * BYTE_TO_FLOAT_MULTI),
+		 float(a * BYTE_TO_FLOAT_MULTI)};
+			return colour;
 	}
 
 	ColourRGBA operator+(ColourRGBA rgba)

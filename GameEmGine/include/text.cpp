@@ -1,5 +1,28 @@
 #include "Text.h"
 #include <cmath>
+
+void Text::createID()
+{
+	CompID tmp =
+		m_ID = 1;
+	for(auto& a : getComponentList())
+	{
+		if(!a.second->getID())continue;
+
+		if((a.second->getID() - tmp) < 2)
+			tmp = a.second->getID();
+		else
+		{
+			m_ID = ++tmp;
+			return;
+		}
+	}
+
+	m_ID = tmp ? tmp + 1 : m_ID;
+	m_colourID = *(ColourRGBA*)&m_ID;
+}
+
+
 Text::Text():Transformer(), m_vaoID(0), m_vboID(0)
 {
 	scale(1);

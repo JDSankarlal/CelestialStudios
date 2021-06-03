@@ -77,10 +77,10 @@
       <Filter>EmGine\Shader Stuff</Filter>
     </ClInclude>
     <ClInclude Include="Text.h">
-      <Filter>EmGine\Text Render</Filter>
+      <Filter>EmGine\Text Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
-      <Filter>EmGine\Text Render</Filter>
+      <Filter>EmGine\Text Rendering</Filter>
     </ClInclude>
     <ClInclude Include="LightManager.h">
       <Filter>EmGine\Resource Management</Filter>
@@ -157,10 +157,10 @@
       <Filter>EmGine\Shader Stuff</Filter>
     </ClCompile>
     <ClCompile Include="Text.cpp">
-      <Filter>EmGine\Text Render</Filter>
+      <Filter>EmGine\Text Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
-      <Filter>EmGine\Text Render</Filter>
+      <Filter>EmGine\Text Rendering</Filter>
     </ClCompile>
     <ClCompile Include="LightManager.cpp">
       <Filter>EmGine\Resource Management</Filter>
@@ -194,11 +194,11 @@
     <Filter Include="EmGine\Resource Management">
       <UniqueIdentifier>{9ede1b93-f3f0-450f-b7f3-8c78f40241af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EmGine\Text Render">
-      <UniqueIdentifier>{17b1cc08-3d7b-489d-9ee6-b842a0aa4a47}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EmGine\File I/O">
       <UniqueIdentifier>{c6e045cb-8f5d-4965-b695-f33b33e3bbac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EmGine\Text Rendering">
+      <UniqueIdentifier>{17b1cc08-3d7b-489d-9ee6-b842a0aa4a47}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
