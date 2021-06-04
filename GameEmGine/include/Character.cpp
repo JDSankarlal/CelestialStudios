@@ -56,8 +56,8 @@ Character Character::loadCharacter(const char c, cstring font)
 
 	return	tmp = {
 		   texture,
-		   Coord2D<int>((m_face)->glyph->bitmap.width, (m_face)->glyph->bitmap.rows),
-		   Coord2D<int>((m_face)->glyph->bitmap_left, (m_face)->glyph->bitmap_top),
+		   util::Coord2D<int>((m_face)->glyph->bitmap.width, (m_face)->glyph->bitmap.rows),
+		   util::Coord2D<int>((m_face)->glyph->bitmap_left, (m_face)->glyph->bitmap_top),
 		   (GLuint)(m_face)->glyph->advance.x
 	};
 

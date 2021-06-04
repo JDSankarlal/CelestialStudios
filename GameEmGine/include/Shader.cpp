@@ -1,5 +1,8 @@
 #include "Shader.h"
 
+
+using namespace util;
+
 std::unordered_map<GLuint, Shader*> Shader::m_shaders;
 bool Shader::uniformErrors = true;
 //GLuint *Shader::m_programs = new GLuint[0], *Shader::m_attribs = new GLuint[0], Shader::m_num;

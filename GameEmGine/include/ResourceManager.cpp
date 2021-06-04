@@ -1,5 +1,7 @@
 #include "ResourceManager.h"
 
+using namespace util;
+
 std::map<std::string, Texture2D> Texture2DCache::m_textures;
 std::map<std::string, Texture3D> Texture3DCache::m_textures;
 std::map<std::pair<char, std::string>, Character> CharacterCache::m_characters;

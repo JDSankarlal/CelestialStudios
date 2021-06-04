@@ -8,8 +8,8 @@
 struct WindowInfo
 {
 	std::string title;
-	Coord2D<int> position,
-	size;
+	util::Coord2D<int> position,
+		size;
 	int monitor;
 	void print()
 	{
@@ -30,10 +30,10 @@ public:
 	};
 
 	WindowCreator();
-	WindowCreator(std::string name, Coord2D<int>, Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
+	WindowCreator(std::string name, util::Coord2D<int>, util::Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
 	~WindowCreator();
 
-	static int	createWindow(std::string name, Coord2D<int>, Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
+	static int	createWindow(std::string name, util::Coord2D<int>, util::Coord2D<int> = {}, int monitor = 0, bool fullScreeen = false, bool visable = true);
 
 	static void setVisable(bool);
 
@@ -42,16 +42,16 @@ public:
 	GLFWwindow* getWindow();
 
 	std::string& getTitle();
-	static Coord2D<int>& getScreenSize();
+	static util::Coord2D<int>& getScreenSize();
 	static int getScreenWidth();
 	static int getScreenHeight();
 	static void(*m_onWindowResizeCallback)(GLFWwindow*, int, int);
 
 private:
 	static void onWindowResize(GLFWwindow* glfw, int w, int h);
-	
-	
-		
+
+
+
 
 };
 

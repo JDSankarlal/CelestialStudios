@@ -1,4 +1,6 @@
 #include "FrameBuffer.h"
+
+using namespace util;
 GLuint FrameBuffer::m_fsQuadVAO_ID, FrameBuffer::m_fsQuadVBO_ID;
 
 FrameBuffer::FrameBuffer(unsigned numColorAttachments, std::string tag)
@@ -329,16 +331,6 @@ Texture2D& FrameBuffer::getColorTexture(unsigned m_index) const
 	return m_colorAttachments[m_index];
 }
 
-void FrameBuffer::setPostProcess(std::function<void()>post, unsigned layer)
-{
-	m_postProcess = post;
-	m_layer = layer;
-}
-
-std::function<void()> FrameBuffer::getPostProcess()
-{
-	return m_postProcess;
-}
 
 unsigned FrameBuffer::getNumColourAttachments()
 {

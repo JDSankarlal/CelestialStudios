@@ -68,7 +68,7 @@ public:
 	/*
 	Gets window size in pixels
 	*/
-	static Coord2D<int> getWindowSize();
+	static util::Coord2D<int> getWindowSize();
 
 	static Camera* getMainCamera();
 
@@ -82,26 +82,38 @@ public:
 	/*
 	moves the camera position in pixels
 	*/
-	static void translateCameraBy(Vec3 pos);
+	static void translateCameraBy(util::Vec3 pos);
 	/*
 	sets the camera position in pixels
 	*/
-	static void translateCamera(Vec3 pos);
+	static void translateCamera(util::Vec3 pos);
 
 	/*
 	moves the camera angle
 	*/
-	static void rotateCameraBy(Vec3 direction);
+	static void rotateCameraBy(util::Vec3 direction);
 
 	/*
 		sets the camera angle
 	*/
-	static void rotateCamera(Vec3 direction);
+	static void rotateCamera(util::Vec3 direction);
 
-	//Adds a new model to the draw list
+
+	/// <summary>
+	/// Adds a new model to the draw list.
+	/// 
+	/// Note: adding objects that are in a vector can cause undefined behavior, use a list instead
+	/// </summary>
+	/// <param name="model"></param>
 	static void addModel(Model* model);
 
-	//Adds new text to the draw list
+
+	/// <summary>
+	/// Adds new text to the draw list.
+	/// 
+	/// Note: adding objects that are in a vector can cause undefined behavior, use a list instead
+	/// </summary>
+	/// <param name="text"></param>
 	static void addText(Text* text);
 
 	static void removeModel(Model* model);
@@ -109,7 +121,7 @@ public:
 	static void removeText(Text* text);
 
 	static void addCamera(Camera* camera);
-	
+
 	static std::unordered_map<void*, Model*>& getObjectList();
 
 	static void setFPSLimit(short limit);
@@ -130,7 +142,7 @@ public:
 
 	static XinputDevice* getController(int m_index);
 
-	
+
 	static Texture2D* m_LUT;
 
 	static bool lutActive;
@@ -148,13 +160,13 @@ private:
 	*/
 
 	/*Custom effects*/
-	static void customRenderCallback(std::function<void(FrameBuffer* gbuff, FrameBuffer* post,float dt)>);
+	static void customRenderCallback(std::function<void(FrameBuffer* gbuff, FrameBuffer* post, float dt)>);
 	static void update();
 	static void changeViewport(GLFWwindow* win, int w, int h);
 
 
 
-	
+
 	//static GLuint colorCustom;
 	//static int LUTsize;
 };

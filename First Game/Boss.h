@@ -1,5 +1,6 @@
 #pragma once
 #include <GameEmGine.h>
+#include <memory>
 #include <list>
 #include "Player.h"
 #include "Minion.h"
@@ -32,15 +33,16 @@ public:
 	bool randAttacks();
 	float getHealth();
 	void setHealth(float v);
-	std::list<Model*>& getMissials();
+	const std::list<std::shared_ptr<Model>>& getMissials();
 	void update(float dt);
 	void setActive(bool active);
 	bool isActive();
 
 	bool hitByEnemy(Model* mod, float damage = 10);
 
+	std::list<Light> lights;
 	std::list<Minion*> minions;
-	std::list<Model* > missiles;
+	std::list<std::shared_ptr<Model>> missiles;
 	Model* lazer;
 	bool 	bossFlash;
 private:

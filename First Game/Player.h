@@ -6,6 +6,8 @@
 #include <EmGineAudioPlayer.h>
 typedef EmGineAudioPlayer AudioPlayer;
 
+using namespace util;
+
 enum PlayerType
 {
 	assault,

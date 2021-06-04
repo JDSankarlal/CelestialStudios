@@ -12,7 +12,8 @@ public:
 	void init()
 	{
 		LightManager::enableShadows(false);
-		GameEmGine::setBackgroundColour(1, 0, 0);
+
+		Text test;
 
 		mod.clear();
 		fadein = true;
@@ -111,7 +112,7 @@ public:
 
 		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
 		mousePressed = [](int  a, int b){a, b; };
-		mouseReleased = [](int key, int )
+		mouseReleased = [](int key, int)
 		{
 
 			Model* obj;
@@ -131,6 +132,9 @@ public:
 		{
 			fadeout = true;
 		}
+
+		if(key == GLFW_KEY_F5)
+			Shader::refresh();
 	}
 
 	// doing the update for menu screenb

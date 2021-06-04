@@ -17,12 +17,15 @@ private:
 	Component* m_parent;
 
 protected:
-	Component(Component* parent = nullptr);
-	Component(COMP_TYPE type, Component* parent = nullptr);
+	Component(Component* parent = nullptr, CompID id = 0);
+	Component(COMP_TYPE type, Component* parent = nullptr, CompID id = 0);
 	virtual ~Component();
+
 	COMP_TYPE m_type;
 	CompID m_ID = 0;
 	static uint m_countID;
+	static std::list<std::pair<Component::COMP_TYPE, Component*>>
+		m_compList;
 
 public:
 	virtual	COMP_TYPE getCompType()

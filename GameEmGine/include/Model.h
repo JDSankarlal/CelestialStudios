@@ -35,15 +35,15 @@ public:
 	void setActive(bool active);
 	bool isActive();
 
-	bool collision2D(Model* k, Coord3D<float> ignore);
+	bool collision2D(Model* k, util::Vec3 ignore);
 
 	bool collision3D(Model* k);
 
-	static bool collision2D(Model* l, Model* k, Coord3D<float> ignore);
+	static bool collision2D(Model* l, Model* k, util::Vec3 ignore);
 
 	static bool collision3D(Model* l, Model* k);
 
-	static bool getSeparatingPlane(const Vec3& RPos, const Vec3& Plane, Model& box1, Model& box2);
+	static bool getSeparatingPlane(const util::Vec3& RPos, const util::Vec3& Plane, Model& box1, Model& box2);
 
 
 	virtual void render(Shader& shader, Camera* cam);
@@ -56,9 +56,9 @@ public:
 	void setColour(float r, float g, float b);
 
 	//sets RGBA colour with values ranging from 0 -> 255
-	void setColour(ColourRGBA colour);
+	void setColour(util::ColourRGBA colour);
 
-	ColourRGBA getColour();
+	util::ColourRGBA getColour();
 
 
 	bool loadModel(cstring path);
@@ -73,9 +73,9 @@ public:
 	float getWidth();
 	float getHeight();
 	float getDepth();
-	Vec3 getDimentions();
+	util::Vec3 getDimentions();
 
-	Vec3 getCenter();
+	util::Vec3 getCenter();
 
 	cstring getTag();
 	void setTag(cstring tag);
@@ -100,16 +100,16 @@ public:
 	bool isCastingShadow();
 	void setWireframe(bool wire);
 	void print();
-	std::vector<Vec3> getBounds();
+	std::vector<util::Vec3> getBounds();
 	void boundingBoxUpdate();
 protected:
-	bool m_active=true;
+	bool m_active = true;
 	cstring m_tag;
-	ColourRGBA m_colour,m_colourID;
+	util::ColourRGBA m_colour;
 	void meshCleanUp();
 
 private:
-	void createID();
+	CompID createID();
 	void boundingBoxInit();
 	void drawBoundingBox();
 
@@ -128,7 +128,7 @@ private:
 	GLuint m_BBVaoID = 0, m_BBVboID = 0;
 	//Transformer m_transform;
 
-	Vec3
+	util::Vec3
 		m_topLeftBack,
 		m_topRightBack,
 		m_topLeftFront,
@@ -141,7 +141,7 @@ private:
 
 	float m_width, m_height, m_depth;
 	Shader* m_shader, * m_shaderBB;
-	Vertex3D m_vertBBDat[12 * 3];
+	util::Vertex3D m_vertBBDat[12 * 3];
 
 	bool m_enableBB = false, m_copy = false;
 

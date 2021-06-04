@@ -3,6 +3,8 @@
 #include "LightManager.h"
 #include "WindowCreator.h"
 
+using namespace util;
+
 #pragma region Static Variables
 std::vector<Light*> m_lights;
 FrameBuffer* m_framebuffer;

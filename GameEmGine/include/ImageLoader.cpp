@@ -1,6 +1,8 @@
 #include "ImageLoader.h"
 #include <filesystem>
 namespace fs = std::filesystem;
+using namespace util;
+
 Texture2D ImageLoader::loadImage2D(cstring path)
 {
 	Texture2D texture;

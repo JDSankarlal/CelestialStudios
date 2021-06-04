@@ -1,14 +1,13 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include <memory>
 #include "Shader.h"
 #include "Camera.h"
 #include "Transformer.h"
-#include "ResourceManager.h"
 #include "FrameBuffer.h"
 //#include "Utilities.h"
-
-
 
 class Camera;
 
@@ -16,17 +15,21 @@ class Text:public Transformer
 {
 public:
 	Text();
+
+	Text(Text& text);
+	Text(const Text& text);
+
 	Text(cstring font);
 
 	~Text();
 
-	void setText(std::string text);
+	void setText(cstring text);
 
 	void textSize(short s);
 
 	void setColour(float r, float g, float b, float a = 1);
 
-	void setColour(ColourRGBA colour);
+	void setColour(util::ColourRGBA colour);
 
 	unsigned int size();
 
@@ -36,7 +39,7 @@ public:
 
 	void render(Shader& s, Camera* cam, bool texture = false);
 
-	void toTexture(unsigned int width = 720);
+	void toTexture(uint width = 720);
 
 	GLuint getTexture();
 
@@ -44,26 +47,28 @@ public:
 	//static Character loadCharacter(cstring c, cstring font);
 
 private:
+	void create(cstring font);
 	void testSize();
 
 	/*SET SCALE*/
 
 	void scaleBy(float scale) { Transformer::scaleBy(scale); }
 	void scaleBy(float x, float y, float z) { Transformer::scaleBy(x, y, z); }
-	void scale(Vec3 scale) { Transformer::scale(scale); }
+	void scale(util::Vec3 scale) { Transformer::scale(scale); }
 	void scale(float scale) { Transformer::scale(scale); }
 	void scale(float x, float y, float z) { Transformer::scale(x, y, z); }
 
-	void createID();
+	CompID createID();
 	void renderInit();
 
-	FrameBuffer* m_texture;
-	ColourRGBA m_colour, m_colourID;
-	std::string m_font, m_text;
-	unsigned int m_length;
-	GLuint m_vaoID, m_vboID;
-	Coord2D<float> m_size;
+	std::shared_ptr<FrameBuffer> m_texture;
+	util::ColourRGBA m_colour = {};
+	cstring m_font = "";
+	std::string m_text = "";
+	unsigned int m_length = 0;
+	GLuint m_vaoID = 0, m_vboID = 0;
+	util::Vec3 m_size = {};
 
-	float m_initY;
+	float m_initY = 0;
 };
 

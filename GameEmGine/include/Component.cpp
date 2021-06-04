@@ -3,28 +3,37 @@
 
 
 std::list<std::pair<Component::COMP_TYPE, Component*>>
-m_compList = std::list<std::pair<Component::COMP_TYPE, Component*>>();
+Component::m_compList = std::list<std::pair<Component::COMP_TYPE, Component*>>();
 bool Component::m_exit = false;
 uint Component::m_countID = 0;
 
 
 
-Component::Component(Component* parent):m_parent(parent)
+Component::Component(Component* parent, CompID id):m_parent(parent), m_type("UNKNOWN"), m_ID(id)
 {
-	m_type = "UNKNOWN";
 	m_compList.push_back({m_type, this});
 }
 
-Component::Component(COMP_TYPE type, Component* parent): m_parent(parent)
+Component::Component(COMP_TYPE type, Component* parent, CompID id) : m_parent(parent), m_type(type), m_ID(id)
 {
-	m_type = type;
 	m_compList.push_back({m_type, this});
 }
 
+bool validityTest(Component* mod)
+{
+	try { auto a = mod->getChildren(); a; } catch(...) { return false; }
+
+	return true;
+}
 Component::~Component()
 {
+	////text is cursed for some reason
+	//if(m_type == "TEXT")
+	//	return;
 
-	m_compList.erase(std::find(m_compList.begin(), m_compList.end(), std::pair{m_type, this}));
+	//if(m_exit)return;
+	auto a = std::find(m_compList.begin(), m_compList.end(), std::pair{m_type, this});
+	m_compList.erase(a);
 }
 
 const std::list<std::pair<Component::COMP_TYPE, Component*>>& Component::getComponentList()

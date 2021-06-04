@@ -1,6 +1,8 @@
 #include "SkyBox.h"
 SkyBox* m_instance = 0;
 
+using namespace util;
+
 SkyBox::SkyBox(): m_sky(nullptr)
 {
 	init();

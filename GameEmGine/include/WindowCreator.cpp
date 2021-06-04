@@ -6,6 +6,8 @@ GLFWwindow* m_window;
 GLFWmonitor* m_monitor;
 bool m_full;
 
+using namespace util;
+
 WindowCreator::WindowCreator()
 {
 	m_monitor = glfwGetPrimaryMonitor();

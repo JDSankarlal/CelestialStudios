@@ -28,7 +28,7 @@ public:
 	/// Set Clear Colour for the next clear calls
 	/// </summary>
 	/// <param name="colour"></param>
-	static void setClearColour(ColourRGBA colour = {});
+	static void setClearColour(util::ColourRGBA colour = {});
 
 	/// <summary>
 	/// Set Clear Colour for the next clear calls. Values range 0 -> 1 (inclusive)
@@ -40,9 +40,9 @@ public:
 	static void setClearColour(GLclampf r, GLclampf g, GLclampf b, GLclampf a);
 
 	// Clears all attached textures (can specify only depth or colour)
-	void clear(ColourRGBA = {0,0,0,255}, GLbitfield = 0);
+	void clear(util::ColourRGBA = {0,0,0,255}, GLbitfield = 0);
 
-	void clearSingleColour(ColourRGBA, int index = 0);
+	void clearSingleColour(util::ColourRGBA, int index = 0);
 
 	static void clearBackBuffer(bool clearCol = true, bool clearDep = true);
 	//binds objects to frame buffer/s
@@ -75,9 +75,7 @@ public:
 
 	Texture2D& getColorTexture(unsigned m_index) const;
 
-	void setPostProcess(std::function<void()>, unsigned layer = 0);
-	std::function<void()> getPostProcess();
-
+	
 	uint getNumColourAttachments();
 
 	GLuint getFrameBufferID();
@@ -108,12 +106,11 @@ private:
 		m_filter = GL_LINEAR,
 		m_wrap = GL_CLAMP_TO_EDGE;
 
-	uint m_width, m_height;
+	uint m_width, m_height;//depth
 
 	GLenum* m_buffs = nullptr;
 
 	uint m_numColorAttachments = 0;
 	std::string m_tag;
-	std::function<void()>m_postProcess;
 	Shader* m_shader;
 };

@@ -12,9 +12,9 @@ class Transformer:public Component
 public:
 
 	Transformer();
-	Transformer(Transformer&, COMP_TYPE type = "TRANSFORMER");
-	Transformer(const Transformer&, COMP_TYPE type = "TRANSFORMER");
-	Transformer(COMP_TYPE type);
+	Transformer(Transformer&, COMP_TYPE type = "TRANSFORMER", CompID id = 0);
+	Transformer(const Transformer&, COMP_TYPE type = "TRANSFORMER", CompID id = 0);
+	Transformer(COMP_TYPE type, CompID id = 0);
 	virtual ~Transformer();
 
 	void reset();
@@ -22,34 +22,34 @@ public:
 
 	/*SET ROTATION*/
 
-	virtual void rotate(Vec3 angles);
+	virtual void rotate(util::Vec3 angles);
 	virtual void rotate(float x, float y, float z);
-	virtual void rotateBy(Vec3 angles);
+	virtual void rotateBy(util::Vec3 angles);
 	virtual void rotateBy(float x, float y, float z);
 
 	/*SET POSITION*/
 
 	virtual void translate(float x, float y, float z);
-	virtual void translate(Vec3 pos);
+	virtual void translate(util::Vec3 pos);
 	virtual void translateBy(float x, float y, float z);
-	virtual void translateBy(Vec3 pos);
+	virtual void translateBy(util::Vec3 pos);
 
 
 	/*SET SCALE*/
 
 	virtual void scaleBy(float scale);
 	virtual void scaleBy(float x, float y, float z);
-	virtual void scale(Vec3 scale);
+	virtual void scale(util::Vec3 scale);
 	virtual void scale(float scale);
 	virtual void scale(float x, float y, float z);
 
 	/*GETTERS*/
-	virtual Vec3 getLocalPosition();
-	virtual Vec3 getLocalRotation();
-	virtual Vec3 getScale();
-	Vec3 getForward();
-	Vec3 getUp();
-	Vec3 getRight();
+	virtual util::Vec3 getLocalPosition();
+	virtual util::Vec3 getLocalRotation();
+	virtual util::Vec3 getScale();
+	util::Vec3 getForward();
+	util::Vec3 getUp();
+	util::Vec3 getRight();
 
 	virtual const glm::mat4& getLocalRotationMatrix();
 	virtual const glm::mat4& getLocalScaleMatrix();
@@ -79,9 +79,9 @@ private:
 	void calculateWorldTranslationMatrix();
 
 
-	Vec3 m_forward = {0,0,1}, m_up = {0,1,0}, m_right = {1,0,0};
-	Vec3 m_posDat, m_rotDat, m_scaleDat;
-	
+	util::Vec3 m_forward = {0,0,1}, m_up = {0,1,0}, m_right = {1,0,0};
+	util::Vec3 m_posDat, m_rotDat, m_scaleDat;
+
 	bool  m_updatedRot = true,
 		m_updatedTrans = true,
 		m_updatedScale = true,

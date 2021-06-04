@@ -12,13 +12,32 @@ void Boss::init()
 	minion->setToRender(true);
 
 	missiles.resize(4);
-	*std::next(missiles.begin(), 0) = (new Model("Models/Missile/BossMissile.obj"));
-	//GAME::addModel(missles[0]);
-	*std::next(missiles.begin(), 1) = (new Model(**std::next(missiles.begin(), 0)));
-	//GAME::addModel(missles[1]);
-	*std::next(missiles.begin(), 2) = (new Model(**std::next(missiles.begin(), 0)));
-	//GAME::addModel(missles[2]);
-	*std::next(missiles.begin(), 3) = (new Model(**std::next(missiles.begin(), 0)));
+	*std::next(missiles.begin(), 0) = std::shared_ptr<Model>(new Model("Models/Missile/BossMissile.obj"));
+	lights.push_back(Light());
+	lights.back().setLightType(Light::POINT);
+	lights.back().setParent((*std::next(missiles.begin(), 0)).get());
+	lights.back().setAttenuationQuadratic(0.06f);
+
+	//GAME::addModel(missles[0]);	  std::shared_ptr<Model>
+	*std::next(missiles.begin(), 1) = std::shared_ptr<Model>(new Model(**std::next(missiles.begin(), 0)));
+	lights.push_back(Light());
+	lights.back().setLightType(Light::POINT);
+	lights.back().setParent((*std::next(missiles.begin(), 1)).get());
+	lights.back().setAttenuationQuadratic(0.06f);
+
+	//GAME::addModel(missles[1]);	  std::shared_ptr<Model>
+	*std::next(missiles.begin(), 2) = std::shared_ptr<Model>(new Model(**std::next(missiles.begin(), 0)));
+	lights.push_back(Light());
+	lights.back().setLightType(Light::POINT);
+	lights.back().setParent((*std::next(missiles.begin(), 2)).get());
+	lights.back().setAttenuationQuadratic(0.06f);
+
+	//GAME::addModel(missles[2]);	  std::shared_ptr<Model>
+	*std::next(missiles.begin(), 3) = std::shared_ptr<Model>(new Model(**std::next(missiles.begin(), 0)));
+	lights.push_back(Light());
+	lights.back().setLightType(Light::POINT);
+	lights.back().setParent((*std::next(missiles.begin(), 3)).get());
+	lights.back().setAttenuationQuadratic(0.06f);
 	//GAME::addModel(missles[3]);
 
 	lazer = new Model("Models/lazer/lazer.obj");
@@ -128,7 +147,7 @@ void Boss::setHealth(float v)
 	m_health = v;
 }
 
-std::list<Model*>& Boss::getMissials()
+const std::list<std::shared_ptr<Model>>& Boss::getMissials()
 {
 	return missiles;
 }
@@ -182,7 +201,7 @@ void Boss::update(float dt)
 					{
 						if(!curveroni[a])
 						{
-							GameEmGine::addModel(*std::next(missiles.begin(), a));
+							GameEmGine::addModel((*std::next(missiles.begin(), a)).get());
 							GameEmGine::addModel(missileRadius[a]);
 							bossTarget[a] = targets[a]->getLocalPosition();
 						}
@@ -201,13 +220,13 @@ void Boss::update(float dt)
 					{
 						//Missile to Player Collisions
 						for(int t = 0; t < 4; t++)
-							targets[t]->hitByEnemy(*std::next(missiles.begin(), a), 35);
+							targets[t]->hitByEnemy((*std::next(missiles.begin(), a)).get(), 35);
 
 						curveroni[a] = 0;
 						lastDelay[a] = clock();
 						hasTarget[a] = false;
 
-						GameEmGine::removeModel(*std::next(missiles.begin(), a));
+						GameEmGine::removeModel((*std::next(missiles.begin(), a)).get());
 						GameEmGine::removeModel(missileRadius[a]);
 						(*std::next(missiles.begin(), a))->translate(getLocalPosition());
 					}
@@ -335,7 +354,7 @@ void Boss::update(float dt)
 				GameEmGine::removeModel(a);
 
 			for(auto& a : missiles)
-				GameEmGine::removeModel(a);
+				GameEmGine::removeModel(a.get());
 
 			for(int a = 0; a < 4; a++)
 			{

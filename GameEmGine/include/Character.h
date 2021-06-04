@@ -7,8 +7,8 @@
 struct Character
 {
 	GLuint    textureID;  // ID handle of the glyph texture
-	Coord2D<int> size;   // Size of glyph
-	Coord2D<int> bearing; // Offset from baseline to left/top of glyph
+	util::Coord2D<int> size;   // Size of glyph
+	util::Coord2D<int> bearing; // Offset from baseline to left/top of glyph
 	GLuint    advance;    // Offset to advance to next glyph
 
 	static Character loadCharacter(const char c, cstring font);

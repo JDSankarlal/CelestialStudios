@@ -1,4 +1,5 @@
 #include "Camera.h"
+using namespace util;
 
 Camera::Camera(CAM_TYPE type, Vec3 size)
 	:Transformer("CAMERA"), m_scale(1), m_projMat(1), m_viewMat(1), m_cameraUpdate(true)
@@ -275,6 +276,12 @@ glm::mat4 Camera::getWorldTransformation()
 	return glm::inverse(Transformer::getWorldTransformation());
 }
 
+bool validityTest(Model* mod)
+{
+	try { mod->getLocalTransformation(); } catch(...) { return false; }
+
+	return true;
+}
 
 #include <algorithm>
 void Camera::render(Shader* shader, const std::unordered_map<void*, Model*>& models, bool trans, bool shadow)
@@ -286,10 +293,33 @@ void Camera::render(Shader* shader, const std::unordered_map<void*, Model*>& mod
 	std::sort(models2.begin(), models2.end(),
 			  [tmpCam](std::pair<void*, Model*>a, std::pair<void*, Model*>b)->bool
 	{
+
+	#pragma region Stupid Validity Test
+		int count = !validityTest(a.second) ? (!validityTest(b.second) ? 2 : 1) : (!validityTest(b.second) ? 1 : 0);
+
+		if(count)
+		{
+			if(count == 2)	return true;//both
+
+			return validityTest(a.second) ? true : false;
+		}
+	#pragma endregion
+
 		return
 			(a.second->getLocalPosition() - tmpCam->getLocalPosition()) >
 			(b.second->getLocalPosition() - tmpCam->getLocalPosition());
 	});
+
+	//remove invalid instances
+	for(auto a = models2.end() - 1; a >= models2.begin(); --a)
+		if(!validityTest((*a).second))
+		{
+			puts("This is an invalid Model*");
+			models2.erase(a);
+		}
+		else
+			break;
+
 
 	if(shader)
 	{

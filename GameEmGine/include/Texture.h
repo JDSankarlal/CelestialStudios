@@ -19,7 +19,7 @@ enum class TEXTURE_TYPE3D:unsigned
 struct Texture2D
 {
 	GLuint id;
-	ColourRGBA colour;
+	util::ColourRGBA colour;
 	int width, height;
 	TEXTURE_TYPE2D type = TEXTURE_TYPE2D::NONE;
 

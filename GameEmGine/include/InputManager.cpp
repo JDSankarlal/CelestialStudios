@@ -5,24 +5,24 @@
 //InputManager::m_controllerConneced,
 //InputManager::m_controllerDisconnected;
 
-std::unordered_map<int, bool> InputManager::m_keyStroke, InputManager::m_keyState;
-std::unordered_map<MouseButton, bool> InputManager::m_mouseStroke, InputManager::m_mouseState;
+std::unordered_map<int, bool> m_keyStroke, m_keyState;
+std::unordered_map<MouseButton, bool> m_mouseStroke, m_mouseState;
 
-Coord2D<float> InputManager::m_mousePos;
+util::Vec2 m_mousePos;
 
 std::function<void(int, int)>
-InputManager::m_keyUp,
-InputManager::m_keyInitDown,
-InputManager::m_keyHeldDown,
-InputManager::m_mouseButtonPress,
-InputManager::m_mouseButtonRelease;
+m_keyUp,
+m_keyInitDown,
+m_keyHeldDown,
+m_mouseButtonPress,
+m_mouseButtonRelease;
 
 std::function<void(double, double)>
-InputManager::m_mousePosition;
+m_mousePosition;
 
 std::function<void(int, int, int)>
-InputManager::m_keyAll,
-InputManager::m_mouseButtonAll;
+m_keyAll,
+m_mouseButtonAll;
 #pragma endregion
 
 void InputManager::init()
@@ -61,7 +61,8 @@ void InputManager::mouseButtonUpdate(GLFWwindow*, int button, int state, int mod
 		if(m_mouseButtonRelease != nullptr)
 			m_mouseButtonRelease(button, mods);
 
-		m_mouseState[MouseButton(button)] = !(m_mouseStroke[MouseButton(button)] = true);
+		(m_mouseStroke[MouseButton(button)] = true);
+		m_mouseState[MouseButton(button)] = !m_mouseStroke[MouseButton(button)];
 	}
 }
 
@@ -92,7 +93,8 @@ void InputManager::keyUpdate(GLFWwindow*, int key, int scancode, int state, int 
 		if(m_keyUp != nullptr)
 			m_keyUp(key, mods);
 
-		m_keyState[key] = !(m_keyStroke[key] = true);
+		(m_keyStroke[key] = true);
+		m_keyState[key] = !m_keyStroke[key];
 	}
 }
 
@@ -131,7 +133,7 @@ bool InputManager::mouseStroke(MouseButton button)
 	return m_mouseStroke[button];
 }
 
-Coord2D<float> InputManager::getMousePosition()
+util::Vec2 InputManager::getMousePosition()
 {
 	return m_mousePos;
 }

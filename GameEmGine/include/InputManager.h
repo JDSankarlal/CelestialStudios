@@ -67,7 +67,7 @@ public:
 
 	static bool mouseStroke(MouseButton button);
 
-	static Coord2D<float> getMousePosition();
+	static util::Vec2 getMousePosition();
 
 	/*
 	Callback for whenever any key is pressed
@@ -131,23 +131,6 @@ private:
 
 	//static void xinputConnectionUpdate(int controller, int connected);
 
-	static std::unordered_map<int, bool> m_keyState, m_keyStroke;
-	static std::unordered_map<MouseButton, bool> m_mouseState, m_mouseStroke;
 
-	static Coord2D<float> m_mousePos;
-
-	static std::function<void(int, int)>
-		m_keyUp,
-		m_keyInitDown,
-		m_keyHeldDown,
-		m_mouseButtonPress,
-		m_mouseButtonRelease;
-
-	static std::function<void(double x, double y)>
-		m_mousePosition;
-
-	static std::function<void(int, int, int)>
-		m_keyAll,
-		m_mouseButtonAll;
 };
 

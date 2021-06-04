@@ -6,8 +6,9 @@
 
 int main()
 {
+
 	GameEmGine::init("E.R.I.S.", 1820, 980, 0, 0, 0, false);//must go first
-	
+	GameEmGine::setBackgroundColour(0, 0, 0);
 	PlayerSelect splash;
 	GameEmGine::setScene(&splash);
 	//GameEmGine::getWindow()->setFullScreen(true);

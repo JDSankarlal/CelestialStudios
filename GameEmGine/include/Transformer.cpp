@@ -1,5 +1,6 @@
 #include "Transformer.h"
 
+using namespace util;
 
 Transformer::Transformer():
 	m_localTranslate(1), m_localRotate(1),
@@ -9,22 +10,22 @@ Transformer::Transformer():
 	Component("TRANSFORMER")
 {}
 
-Transformer::Transformer(Transformer& ref, COMP_TYPE type):Component(type)
+Transformer::Transformer(Transformer& ref, COMP_TYPE type, CompID id):Component(type, nullptr, id)
 {
 	*this = ref;
 }
 
-Transformer::Transformer(const Transformer& ref, COMP_TYPE type):Component(type)
+Transformer::Transformer(const Transformer& ref, COMP_TYPE type, CompID id) : Component(type, nullptr, id)
 {
 	*this = ref;
 }
 
-Transformer::Transformer(COMP_TYPE type) :
+Transformer::Transformer(COMP_TYPE type, CompID id) :
 	m_localTranslate(1), m_localRotate(1),
 	m_localScale(1), m_worldTranslate(1),
 	m_worldRotate(1), m_worldScale(1),
 	m_fps(false),
-	Component(type)
+	Component(type, nullptr, id)
 {}
 
 Transformer::~Transformer()
@@ -129,7 +130,7 @@ void Transformer::translate(Vec3 pos)
 		forward = {0,0,1},
 		up = {0,1,0},
 		right = {1,0,0};
-	
+
 	m_posDat = pos.x * right + pos.y * up + -pos.z * forward;
 	m_localTranslate = glm::translate(glm::mat4(1), reclass(glm::vec3, m_posDat));
 }

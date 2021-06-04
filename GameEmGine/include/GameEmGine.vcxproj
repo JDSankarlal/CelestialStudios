@@ -116,7 +116,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4201;4505;4002;4238;4706;4103</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4505;</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnablePREfast>false</EnablePREfast>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -139,7 +139,7 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4201;4505;4002;4238;4706;4103</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4505;</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnablePREfast>false</EnablePREfast>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -164,7 +164,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4201;4505;4002;4238;4706;4103</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4505;</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnablePREfast>false</EnablePREfast>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -190,7 +190,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <DisableSpecificWarnings>4201;4505;4002;4238;4706;4103</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4505;</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnablePREfast>false</EnablePREfast>

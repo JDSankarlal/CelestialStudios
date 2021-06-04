@@ -6,7 +6,7 @@ uniform bool textured;
 uniform bool darken = false;
 uniform bool isTrans = false;
 uniform vec4 colourMod;
-uniform vec4 colourID;
+uniform uint colourID;
 
 in vec2 texcoord;
 in vec3 norm;
@@ -18,7 +18,7 @@ layout(location = 2)out vec4 normalOP;
 layout(location = 3)out vec4 normalTrans;
 layout(location = 4)out vec4 outColour;
 //location 5 is light accumulation
-layout(location = 6)out vec4 IDColour;
+layout(location = 6)out uint IDColour;
 
 void main()
 {
@@ -27,9 +27,9 @@ void main()
     positionTrans = pos * float( isTrans);
     normalOP      = vec4(normalize(norm),1) * float(!isTrans);
     normalTrans   = vec4(normalize(norm),1) * float( isTrans);
+    
     IDColour      = colourID;
-    //reverse the z component of the normal
-    //normal.z*=-1;
+   
     
     outColour = colourMod; 
     if(textured)

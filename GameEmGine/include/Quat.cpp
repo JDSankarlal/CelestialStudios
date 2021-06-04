@@ -1,6 +1,7 @@
 #include "Quat.h"
 
-using namespace std;
+
+using namespace util;
 
 Quat::Quat()
 {}

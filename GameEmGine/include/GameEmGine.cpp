@@ -1,5 +1,6 @@
 #include "EmGineAudioPlayer.h"
 #include "GameEmGine.h"
+using namespace util;
 
 #pragma region Static Variables
 void(*m_compileShaders)();
@@ -16,7 +17,7 @@ FrameBuffer
 
 
 WindowCreator* m_window;	//must be init in the constructor
-ColourRGBA m_colour{123,123,123};
+ColourRGBA m_colour{58,58,58};
 
 std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
 std::unordered_map<void*, Model*> m_models;
@@ -37,6 +38,7 @@ bool GameEmGine::lutActive = false;
 
 
 #pragma endregion
+
 
 void GLAPIENTRY
 GameEmGine::MessageCallback(GLenum source,
@@ -121,7 +123,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	m_gBuff->initColourTexture(3, getWindowWidth(), getWindowHeight(), GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_gBuff->initColourTexture(4, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	m_gBuff->initColourTexture(5, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
-	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_R32UI, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	if(!m_gBuff->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -140,9 +142,9 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 
 
-	//// During init, enable debug output
-	//glEnable(GL_DEBUG_OUTPUT);
-	//glDebugMessageCallback(MessageCallback, 0);
+	// During init, enable debug output
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(MessageCallback, 0);
 
 }
 
@@ -178,7 +180,7 @@ void GameEmGine::run()
 
 			glClear(GL_DEPTH_BUFFER_BIT);
 
-			static Text fps;
+			static Text fps=Text();
 			static OrthoPeramiters ortho{0,(float)getWindowWidth(),(float)getWindowHeight(),0,0,500};
 			static Camera cam(&ortho);
 			cam.update();
@@ -375,8 +377,8 @@ Model* GameEmGine::getMouseCollisionObject()
 	
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + 6);
 	
-	ColourRGBA id = {0,0,0,0};
-	glReadPixels(int(mPos.x),int(mPos.y), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &id);
+	ColourRGBA id = {0,0,0,255};
+	glReadPixels(int(mPos.x),int(mPos.y), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &id.id);
 	
 	m_gBuff->disable();
 

@@ -30,11 +30,11 @@ struct Light:public Transformer
 
 	void setLightType(Light::TYPE type);
 
-	void setAmbient(ColourRGBA diff);
+	void setAmbient(util::ColourRGBA diff);
 
-	void setDiffuse(ColourRGBA diff);
+	void setDiffuse(util::ColourRGBA diff);
 
-	void setSpecular(ColourRGBA spec);
+	void setSpecular(util::ColourRGBA spec);
 
 	void setRamp(Texture2D*);
 
@@ -57,7 +57,7 @@ struct Light:public Transformer
 	Light::TYPE type = DEFAULT;
 
 
-	ColourRGBA ambient, diffuse, specular;
+	util::ColourRGBA ambient, diffuse, specular;
 	float
 		angleConstraint = 45,
 		specularExponent = 25,

@@ -12,7 +12,7 @@ private:
 
 	//adds indices to the existing structure
 	template<class _iter>
-	void indiceAdder(_iter begin, _iter end, std::vector<Indicie>& origIndi, std::vector<Vertex3D>& origVerts, std::vector<Vertex3D> newVerts)
+	void indiceAdder(_iter begin, _iter end, std::vector<util::Indicie>& origIndi, std::vector<util::Vertex3D>& origVerts, std::vector<util::Vertex3D> newVerts)
 	{
 		for(auto& i = begin; i < end; ++i)
 		{
@@ -33,7 +33,7 @@ private:
 	static std::vector<std::shared_ptr<Mesh>> m_meshes;
 	static std::vector<std::pair<std::string, std::vector<Texture2D>>> m_textures;
 	//static std::vector<std::pair<std::string, std::vector<unsigned>>> m_indicieData;
-	//static std::vector<std::vector<Vertex3D>> m_unpackedData;
+	//static std::vector<std::vector<util::Vertex3D>> m_unpackedData;
 	//static std::vector<std::pair<std::string,std::vector<Texture2D>>> m_textures;
 	//static std::vector<std::vector<GLuint>> m_replaceTex;
 

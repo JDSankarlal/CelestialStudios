@@ -24,11 +24,11 @@ public:
 		FRUSTUM
 	};
 
-	Camera(CAM_TYPE = FRUSTUM, Vec3 = {1,1,1});
-	Camera(ProjectionPeramiters* peram, Vec3 = {1,1,1});
+	Camera(CAM_TYPE = FRUSTUM, util::Vec3 = {1,1,1});
+	Camera(ProjectionPeramiters* peram, util::Vec3 = {1,1,1});
 	~Camera();
 
-	void init(Vec3 = {}, CAM_TYPE = FRUSTUM, ProjectionPeramiters* peram = nullptr);
+	void init(util::Vec3 = {}, CAM_TYPE = FRUSTUM, ProjectionPeramiters* peram = nullptr);
 	void setType(CAM_TYPE type, ProjectionPeramiters* peram = nullptr);
 	void setType(ProjectionPeramiters* peram = nullptr);
 	bool update();
@@ -36,9 +36,9 @@ public:
 	/*SET POSITION*/
 
 	void translate(float x, float y, float z);
-	void translate(Vec3 pos);
+	void translate(util::Vec3 pos);
 	void translateBy(float x, float y, float z);
-	void translateBy(Vec3 pos);
+	void translateBy(util::Vec3 pos);
 
 	/*SET SCALE*/
 
@@ -46,9 +46,9 @@ public:
 
 	/*SET ROTATION*/
 
-	void rotate(Vec3 angles);
+	void rotate(util::Vec3 angles);
 	void rotate(float x, float y, float z);
-	void rotateBy(Vec3 angles);
+	void rotateBy(util::Vec3 angles);
 	void rotateBy(float x, float y, float z);
 
 	bool cull(Model*);
@@ -75,7 +75,7 @@ public:
 	bool isUpdated() { return m_cameraUpdate; }
 
 	/*GETTERS*/
-	Vec3 getLocalRotation();
+	util::Vec3 getLocalRotation();
 
 	glm::mat4& getProjectionMatrix();
 	glm::mat4& getViewMatrix();
@@ -92,7 +92,7 @@ protected:
 
 	float m_scale;
 
-	Vec3 m_size,
+	util::Vec3 m_size,
 		m_position, m_positionBy,
 		m_rotate, m_rotateBy,
 		m_camRotation;
@@ -119,7 +119,7 @@ private:
 
 	void scaleBy(float scale) { scale; }
 	void scaleBy(float x, float y, float z) { x, y, z; }
-	void scale(Vec3 scale) { scale; }
+	void scale(util::Vec3 scale) { scale; }
 	void scale(float x, float y, float z) { x, y, z; }
 
 	bool isScaleUpdated() { return false; }
@@ -161,7 +161,7 @@ struct OrthoPeramiters:public ProjectionPeramiters
 	void setXAxis(float a_left, float a_right) { left = a_left; right = a_right; }
 	void setYAxis(float a_top, float a_bottom) { top = a_top; bottom = a_bottom; }
 
-	Vec2 getBounds() { return {abs(right - left),abs(top - bottom)}; }
+	util::Vec2 getBounds() { return {abs(right - left),abs(top - bottom)}; }
 	float  left = 0, right = 0, bottom = 0, top = 0;
 };
 

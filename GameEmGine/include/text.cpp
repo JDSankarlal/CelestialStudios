@@ -1,11 +1,13 @@
 #include "Text.h"
+#include "ResourceManager.h"
 #include <cmath>
 
-void Text::createID()
+using namespace util;
+Component::CompID Text::createID()
 {
-	CompID tmp =
-		m_ID = 1;
-	for(auto& a : getComponentList())
+	CompID tmp = 0;
+	CompID id = 1;
+	for(auto& a : m_compList)
 	{
 		if(!a.second->getID())continue;
 
@@ -13,25 +15,20 @@ void Text::createID()
 			tmp = a.second->getID();
 		else
 		{
-			m_ID = ++tmp;
-			return;
+			id = ++tmp;
+			return id;
 		}
 	}
 
-	m_ID = tmp ? tmp + 1 : m_ID;
-	m_colourID = *(ColourRGBA*)&m_ID;
+	id = tmp ? tmp + 1 : id;
+	return id;
 }
-
-
-Text::Text():Transformer(), m_vaoID(0), m_vboID(0)
+void Text::create(cstring font)
 {
-	scale(1);
-
 	m_type = "TEXT";
-	m_font = "fonts/arial.ttf";
+	m_font = font;
 
-	//printf("%s\n", m_face->style_name);
-	m_texture = new FrameBuffer(1);
+	m_texture = std::shared_ptr<FrameBuffer>(new FrameBuffer(1));
 	m_texture->initColourTexture(0, 1, 1, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	if(!m_texture->checkFBO())
 	{
@@ -41,47 +38,27 @@ Text::Text():Transformer(), m_vaoID(0), m_vboID(0)
 	}
 }
 
-Text::Text(cstring font):Transformer(), m_vaoID(0), m_vboID(0)
+Text::Text():Transformer("TEXT", createID())
 {
-	CompID tmp = 0;
-	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
-	{
-		m_ID = 1;
-		for(auto& a : getComponentList())
-		{
-			if(!a.second->getID())continue;
+	create("fonts/arial.ttf");
+	createID();
+}
 
-			if(a.second->getID() - tmp < 2)
-				tmp = a.second->getID();
-			else
-			{
-				m_ID = ++tmp;
-				break;
-			}
-		}
-	}
+Text::Text(Text& text):Transformer("TEXT", createID()) { *this = text; create(text.m_font); }
+Text::Text(const Text& text) : Transformer("TEXT", createID()) { *this = text; create(text.m_font); }
 
-	scale(1);
-
-	m_type = "TEXT";
-	m_font = font;
-
-	m_texture = new FrameBuffer(1);
-	m_texture->initColourTexture(0, 0, 0, GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
-
+Text::Text(cstring font) : Transformer("TEXT", createID())
+{
+	create(font);
+	createID();
 }
 
 Text::~Text()
 {
-	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
-		--m_countID;
-
-	if(m_texture)
-		delete m_texture;
-	m_texture = 0;
+	--m_countID;
 }
 
-void Text::setText(std::string text)
+void Text::setText(cstring text)
 {
 	m_text = text;
 	testSize();
@@ -160,8 +137,7 @@ void Text::render(Shader& s, Camera* cam, bool texture)
 	glUniformMatrix4fv(s.getUniformLocation("uProj"), 1, GL_FALSE, &(cam->getProjectionMatrix()[0][0]));
 
 	s.sendUniform("flip", texture);
-	float colour[4]{(float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255};
-	s.sendUniform("textColor", colour[0], colour[1], colour[2], colour[3]);
+	s.sendUniform("textColor", (float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(m_vaoID);
@@ -181,7 +157,7 @@ void Text::render(Shader& s, Camera* cam, bool texture)
 	// Iterate through all characters
 	for(auto& c : m_text)
 	{
-		ch = ResourceManager::getCharacter(c, m_font.c_str());
+		ch = ResourceManager::getCharacter(c, m_font);
 
 		xpos = (x + (float)ch.bearing.x * getScale().x);
 		ypos = texture ?
@@ -229,7 +205,7 @@ void Text::render(Shader& s, Camera* cam, bool texture)
 
 }
 
-void Text::toTexture(unsigned int width)
+void Text::toTexture(uint width)
 {
 	Vec3 tmpSize = getScale();
 
@@ -241,7 +217,7 @@ void Text::toTexture(unsigned int width)
 	Character ch;
 	for(auto& c : m_text)
 	{
-		ch = ResourceManager::getCharacter(c, m_font.c_str());
+		ch = ResourceManager::getCharacter(c, m_font);
 
 		ypos = fmin(-float(ch.size.y - ch.bearing.y), ypos);
 
@@ -301,7 +277,7 @@ void Text::testSize()
 	Character ch;
 	for(auto& c : m_text)
 	{
-		ch = ResourceManager::getCharacter(c, m_font.c_str());
+		ch = ResourceManager::getCharacter(c, m_font);
 
 		ypos = fmin(-float(ch.size.y - ch.bearing.y), ypos);
 
@@ -312,7 +288,7 @@ void Text::testSize()
 		x += (ch.advance >> 6) * getScale().x; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 
-	m_size = {(x), ((h - ypos) * getScale().x)};
+	m_size = {(x), ((h - ypos) * getScale().x),0};
 }
 
 

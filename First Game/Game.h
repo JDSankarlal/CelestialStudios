@@ -147,9 +147,8 @@ public:
 		*std::next(mod.begin(), 7) = Model("Models/Neon Signs/Project Nebula/signn.obj");
 		GameEmGine::addModel(&*std::next(mod.begin(), 7)); //7
 
-		//Boss
-		Boss tmpvoss("Models/BOSS/missleShoot/BMS1.obj");
-		*std::next(mod.begin(), 8) = *(Model*)(&tmpvoss);
+		//Boss		
+		*std::next(mod.begin(), 8) = Boss("Models/BOSS/missleShoot/BMS1.obj");
 		GameEmGine::addModel(&*std::next(mod.begin(), 8)); //8
 
 
@@ -595,9 +594,10 @@ public:
 		for(auto& a : mod)
 			uniScaler.addChild(&a);
 
-		lights.resize(14);
+		//lights.resize(14);
 		for(int a = 0; a < 6; a++)
 		{
+			lights.push_back(Light());
 			//&*std::next(mod.begin(),10 + a)->boundingBoxUpdate();
 			(*std::next(lights.begin(), a)).setLightType(Light::DIRECTIONAL);
 			(*std::next(lights.begin(), a)).setParent(&*std::next(mod.begin(), 10 + a));
@@ -608,6 +608,7 @@ public:
 
 		for(int a = 0; a < 4; a++)
 		{
+			lights.push_back(Light());
 			(*std::next(lights.begin(), a + 6)).setLightType(Light::POINT);
 			(*std::next(lights.begin(), a + 6)).setParent(&*std::next(mod.begin(), a));
 			(*std::next(lights.begin(), a + 6)).translate({0, -0.75f, 0});
@@ -620,18 +621,6 @@ public:
 		(*std::next(lights.begin(), 9)).setDiffuse({255,255,0});
 
 
-		for(int a = 0; a < 4; a++)
-		{
-			(*std::next(lights.begin(), a + 10)).setLightType(Light::POINT);
-			(*std::next(lights.begin(), a + 10)).setParent(*std::next(((Boss*)&*std::next(mod.begin(), 8))->getMissials().begin(), a));
-			(*std::next(lights.begin(), a + 10)).setAttenuationQuadratic(0.06f);
-		}
-
-
-		(*std::next(lights.begin(), 10)).setDiffuse({255,0,0});
-		(*std::next(lights.begin(), 11)).setDiffuse({0,255,0});
-		(*std::next(lights.begin(), 12)).setDiffuse({0,0,255});
-		(*std::next(lights.begin(), 13)).setDiffuse({255,255,0});
 
 		//(&*std::next(lights.begin(),a).setSceneAmbient({255,255,255,255});
 
@@ -697,10 +686,12 @@ public:
 			case GAME:
 				break;
 			case LEVEL:
-				GameEmGine::getMainCamera()->translateBy(0,0,0);
+				GameEmGine::getMainCamera()->enableFPSMode(false);
+				(*std::next(mod.begin(),numModel)).translateBy(-moveSpd, 0, 0);
 				break;
 			case CAMERA:
-				GameEmGine::getMainCamera()->translateBy(0,0,0);
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->translateBy(-moveSpd, 0, 0);
 				break;
 			}
 		if(m_right)
@@ -1124,7 +1115,7 @@ public:
 				}
 
 				for(auto& missile : CandyMan->getMissials())
-					if((*(Specialist*)player).hitTurret(missile))
+					if((*(Specialist*)player).hitTurret(missile.get()))
 					{
 						//do something?
 					}

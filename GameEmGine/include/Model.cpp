@@ -3,11 +3,14 @@
 
 #include <GLFW/glfw3.h>
 
-void Model::createID()
+
+using namespace util;
+
+Component::CompID Model::createID()
 {
-	CompID tmp =
-		m_ID = 1;
-	for(auto& a : getComponentList())
+	CompID tmp = 0;
+	CompID id = 1;
+	for(auto& a : m_compList)
 	{
 		if(!a.second->getID())continue;
 
@@ -15,47 +18,44 @@ void Model::createID()
 			tmp = a.second->getID();
 		else
 		{
-			m_ID = ++tmp;
-			return;
+			id = ++tmp;
+			return id;
 		}
 	}
 
-	m_ID = tmp ? tmp + 1 : m_ID;
-	m_colourID = *(ColourRGBA*)&m_ID;
+	id = tmp ? tmp + 1 : id;
+	return id;
 }
 
 Model::Model(Model& model, cstring tag):
-	Transformer(model, "MODEL"),
+	Transformer(model, "MODEL",createID()),
 	m_tag(tag)
 {
-	createID();
 	//glfwInit();
+
 	create(model, tag);
 }
 
 Model::Model(const Model& model, cstring tag):
-	Transformer(model, "MODEL"),
+	Transformer(model, "MODEL", createID()),
 	m_tag(tag)
 {
-	createID();
 	//glfwInit();
 	create(model, tag);
 }
 
 Model::Model(PrimitiveMesh* mesh, cstring tag):
-	Transformer("MODEL"),
+	Transformer("MODEL", createID()),
 	m_tag(tag)
 {
-	createID();
 	//glfwInit();
 	create(mesh, tag);
 }
 
 Model::Model(cstring path, cstring tag):
-	Transformer("MODEL"),
+	Transformer("MODEL", createID()),
 	m_tag(tag)
 {
-	createID();
 	//glfwInit();
 	create(path, tag);
 }
@@ -65,8 +65,8 @@ Model::~Model()
 #if _DEBUG
 	//	printf("Deleted %s\n", m_type.c_str());
 #endif // _DEBUG
-	if(dynamic_cast<Model*>(this) || dynamic_cast<Text*>(this))
-		--m_countID;
+	--m_countID;
+
 	if(!m_copy)
 		meshCleanUp();
 }
@@ -80,6 +80,8 @@ void Model::create(const Model& model, cstring tag)
 	m_copy = true;
 	//boundingBoxInit();
 	boundingBoxUpdate();
+
+	createID();
 }
 
 void Model::create(PrimitiveMesh* mesh, cstring tag)
@@ -124,6 +126,8 @@ void Model::create(PrimitiveMesh* mesh, cstring tag)
 		boundingBoxInit();
 		boundingBoxUpdate();
 	}
+
+	createID();
 }
 
 void Model::create(cstring path, cstring tag)
@@ -166,6 +170,8 @@ void Model::create(cstring path, cstring tag)
 		boundingBoxInit();
 		boundingBoxUpdate();
 	}
+
+	createID();
 }
 
 void Model::setActive(bool active)
@@ -315,7 +321,6 @@ void Model::render(Shader& shader, Camera* cam)
 	if(!m_active)return;
 
 	float colour[4]{(float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255};
-	float colourID[4]{(float)m_colourID.r / 255,(float)m_colourID.g / 255,(float)m_colourID.b / 255,(float)m_colourID.a / 255};
 	m_camera = cam;
 	m_shader = &shader;
 	shader.enable();
@@ -324,7 +329,7 @@ void Model::render(Shader& shader, Camera* cam)
 	shader.sendUniform("uWorldModel", getWorldTransformation());
 	shader.sendUniform("colourMod", reclass(glm::vec4, colour));
 	shader.sendUniform("flip", true);
-	shader.sendUniform("colourID", colourID);
+	shader.sendUniform("colourID",m_ID);
 	shader.disable();
 
 	if(m_animations[m_animation])
@@ -685,6 +690,6 @@ std::vector<Vec3> Model::getBounds()
 void Model::meshCleanUp()
 {
 
-	//m_meshes.clear();
+	m_meshes.clear();
 }
 
