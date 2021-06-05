@@ -7,6 +7,10 @@ Component::CompID Text::createID()
 {
 	CompID tmp = 0;
 	CompID id = 1;
+	using std::pair;
+	m_compList.sort([](pair<COMP_TYPE, Component*> a,
+					pair<COMP_TYPE, Component*> b)->bool
+	{return a.second->getID() < b.second->getID(); });
 	for(auto& a : m_compList)
 	{
 		if(!a.second->getID())continue;
@@ -29,7 +33,7 @@ void Text::create(cstring font)
 	m_font = font;
 
 	m_texture = std::shared_ptr<FrameBuffer>(new FrameBuffer(1));
-	m_texture->initColourTexture(0, 1, 1, GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_texture->initColourTexture(0, 1, 1);
 	if(!m_texture->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -41,16 +45,15 @@ void Text::create(cstring font)
 Text::Text():Transformer("TEXT", createID())
 {
 	create("fonts/arial.ttf");
-	createID();
+
 }
 
-Text::Text(Text& text):Transformer("TEXT", createID()) { *this = text; create(text.m_font); }
-Text::Text(const Text& text) : Transformer("TEXT", createID()) { *this = text; create(text.m_font); }
+Text::Text(Text& text):Transformer("TEXT", createID()) { *this = text; create(text.m_font); m_ID = createID(); }
+Text::Text(const Text& text) : Transformer("TEXT", createID()) { *this = text; create(text.m_font);  m_ID = createID(); }
 
 Text::Text(cstring font) : Transformer("TEXT", createID())
 {
 	create(font);
-	createID();
 }
 
 Text::~Text()
@@ -241,7 +244,7 @@ void Text::toTexture(uint width)
 	cam.setType(Camera::ORTHOGRAPHIC, &perams);
 
 	m_texture->clear();
-	m_texture->resizeColour(0, (int)x, int(h - ypos), GL_RGBA8);
+	m_texture->resizeColour(0, (int)x, int(h - ypos), GL_RGBA, GL_RGBA8);
 
 	int view[4];
 	glGetIntegerv(GL_VIEWPORT, view);

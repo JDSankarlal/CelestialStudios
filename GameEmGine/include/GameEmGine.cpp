@@ -117,13 +117,13 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 
 	m_gBuff->initDepthTexture(getWindowWidth(), getWindowHeight());
-	m_gBuff->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE);
-	m_gBuff->initColourTexture(1, getWindowWidth(), getWindowHeight(), GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE);
-	m_gBuff->initColourTexture(2, getWindowWidth(), getWindowHeight(), GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE);
-	m_gBuff->initColourTexture(3, getWindowWidth(), getWindowHeight(), GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE);
-	m_gBuff->initColourTexture(4, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
-	m_gBuff->initColourTexture(5, getWindowWidth(), getWindowHeight(), GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
-	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_R32UI, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_gBuff->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F,GL_FLOAT);
+	m_gBuff->initColourTexture(1, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F,GL_FLOAT);
+	m_gBuff->initColourTexture(2, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F,GL_FLOAT);
+	m_gBuff->initColourTexture(3, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F,GL_FLOAT);
+	m_gBuff->initColourTexture(4, getWindowWidth(), getWindowHeight(), GL_RGB, GL_RGB8);
+	m_gBuff->initColourTexture(5, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA8);
+	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_RED_INTEGER, GL_R32UI, GL_UNSIGNED_INT,GL_NEAREST);
 	if(!m_gBuff->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -132,7 +132,7 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 	}
 
 	m_postBuffer->initDepthTexture(getWindowWidth(), getWindowHeight());
-	m_postBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	m_postBuffer->initColourTexture(0, getWindowWidth(), getWindowHeight());
 	if(!m_postBuffer->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -180,7 +180,7 @@ void GameEmGine::run()
 
 			glClear(GL_DEPTH_BUFFER_BIT);
 
-			static Text fps=Text();
+			static Text fps;
 			static OrthoPeramiters ortho{0,(float)getWindowWidth(),(float)getWindowHeight(),0,0,500};
 			static Camera cam(&ortho);
 			cam.update();
@@ -372,19 +372,19 @@ Model* GameEmGine::getMouseCollisionObject()
 	Vec2 mPos = InputManager::getMousePosition();
 	mPos.y = getWindowHeight() - mPos.y;
 
-	
+
 	m_gBuff->enable();
-	
+
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + 6);
-	
-	ColourRGBA id = {0,0,0,255};
-	glReadPixels(int(mPos.x),int(mPos.y), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &id.id);
-	
+
+	uint id = 0;
+	glReadPixels(int(mPos.x), int(mPos.y), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &id);
+
 	m_gBuff->disable();
 
 
 	for(auto& a : m_models)
-		if(a.second->getID() == *(Component::CompID*)&id)
+		if(a.second->getID() == id)
 			return a.second;
 
 	return nullptr;
@@ -461,8 +461,8 @@ void GameEmGine::update()
 	glClearDepth(1.f);
 
 	FrameBuffer::clearBackBuffer();
-	
-	
+
+
 	m_gBuff->clear();//buffer must be black
 	//glClearColor((float)m_colour.r / 255, (float)m_colour.g / 255, (float)m_colour.b / 255, (float)m_colour.a / 255);//BG colour
 	m_gBuff->clearSingleColour(m_colour, 4);//this is the colour buffer
@@ -598,13 +598,13 @@ void GameEmGine::changeViewport(GLFWwindow*, int w, int h)
 
 		//Framebuffer Resizing 
 	m_gBuff->resizeDepth(w, h);
-	m_gBuff->resizeColour(0, w, h);
-	m_gBuff->resizeColour(1, w, h);
-	m_gBuff->resizeColour(2, w, h);
-	m_gBuff->resizeColour(3, w, h);
-	m_gBuff->resizeColour(4, w, h);
-	m_gBuff->resizeColour(5, w, h);
-	m_gBuff->resizeColour(6, w, h);
+	m_gBuff->resizeColour(0, w, h, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	m_gBuff->resizeColour(1, w, h, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	m_gBuff->resizeColour(2, w, h, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	m_gBuff->resizeColour(3, w, h, GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	m_gBuff->resizeColour(4, w, h, GL_RGB, GL_RGB8);
+	m_gBuff->resizeColour(5, w, h, GL_RGBA, GL_RGBA8);
+	m_gBuff->resizeColour(6, w, h, GL_RED_INTEGER, GL_R32UI, GL_UNSIGNED_INT, GL_NEAREST);
 
 	m_postBuffer->resizeDepth(w, h);
 	m_postBuffer->resizeColour(0, w, h);

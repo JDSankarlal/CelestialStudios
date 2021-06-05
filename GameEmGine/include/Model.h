@@ -69,6 +69,12 @@ public:
 
 	void editVerts(Model* first, Model* second);
 
+	bool operator==(Model& mod)const
+	{
+		if(!this || !&mod)return false;
+		return this->m_ID == mod.m_ID;
+	}
+
 
 	float getWidth();
 	float getHeight();
@@ -85,7 +91,7 @@ public:
 	void  setAnimation(cstring tag);
 
 	void addMesh(Mesh*);
-	Mesh* getMesh(const unsigned index);
+	Mesh* getMesh(uint index);
 	Shader* getShader();
 
 	void replaceTexture(int mesh, int index, GLuint tex);

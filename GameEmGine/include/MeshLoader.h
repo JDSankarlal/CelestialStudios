@@ -5,6 +5,7 @@ class MeshLoader
 {
 public:
 	static std::vector<std::shared_ptr<Mesh>> loadMesh(std::string path);
+	static void setDirectory(cstring dir);
 
 private:
 
@@ -26,16 +27,12 @@ private:
 
 	static void loadMaterials(cstring path);
 
-	static bool load(std::string path);
+	static bool load(std::string path,std::string bin);
 
 	static void cleanup();
 
+
 	static std::vector<std::shared_ptr<Mesh>> m_meshes;
 	static std::vector<std::pair<std::string, std::vector<Texture2D>>> m_textures;
-	//static std::vector<std::pair<std::string, std::vector<unsigned>>> m_indicieData;
-	//static std::vector<std::vector<util::Vertex3D>> m_unpackedData;
-	//static std::vector<std::pair<std::string,std::vector<Texture2D>>> m_textures;
-	//static std::vector<std::vector<GLuint>> m_replaceTex;
-
 };
 

@@ -66,7 +66,7 @@ Texture3D& Texture3DCache::getTextureCubeMap(cstring path)
 
 	if(it == m_textures.end())
 	{
-		Texture3D tmp = ImageLoader::createImage3D(dPath.c_str());
+		Texture3D tmp = ImageLoader::createCubeMap(dPath.c_str());
 		tmp.type = TEXTURE_TYPE3D::CUBE;
 		m_textures.insert({dPath,tmp});
 		return m_textures[dPath];

@@ -55,7 +55,7 @@ public:
 		rotDown = (key == GLFW_KEY_DOWN ? false : rotDown);
 
 		if(key == GLFW_KEY_TAB)
-			++(*(char*)&currentState) %= 3;//don't ask
+			++(*(char*)&currentState) %= 2;//don't ask
 
 		//changes fps limit
 		if(key == GLFW_KEY_KP_6)
@@ -94,10 +94,34 @@ public:
 	void mouseButtonReleased(int button, int a_mod)
 	{
 		a_mod;
+		//if(button == MOUSE_LEFT_BUTTON)
+		//	leftM = InputManager::getMousePosition();
+		//if(button == MOUSE_RIGHT_BUTTON)
+		//	rightM = InputManager::getMousePosition();
+		static ColourRGBA lastColour;
+
 		if(button == MOUSE_LEFT_BUTTON)
-			leftM = InputManager::getMousePosition();
+		{
+			if(curModel)
+				curModel->setColour(lastColour);
+
+			auto obj = std::find(mod.begin(), mod.end(), *GameEmGine::getMouseCollisionObject());
+			curModel = nullptr;
+			if(obj != mod.end())
+			{
+				curModel = &*obj;
+
+				if(curModel)
+					lastColour = curModel->getColour();
+				curModel->setColour(0, .65f, 0);
+			}
+		}
 		if(button == MOUSE_RIGHT_BUTTON)
-			rightM = InputManager::getMousePosition();
+		{
+			if(curModel)
+				curModel->setColour(lastColour);
+			curModel = nullptr;
+		}
 	}
 
 	void playerTypes(vector<Player*>& playerType)
@@ -109,6 +133,9 @@ public:
 	// Set game screen
 	void init()
 	{
+
+		setSkyBox("skyboxes/space2/");
+		enableSkyBox(true);
 
 		//GameEmGine::m_modelShader->sendUniform("darken", 1);
 		mod.resize(132);//sets the initial size of the vector (if u add any more models, increase this number)
@@ -197,7 +224,7 @@ public:
 		*std::next(mod.begin(), 24) = (Model("Models/RIP/Rip Ani/RIP1.obj"));//24
 		*std::next(mod.begin(), 25) = (Model("Models/RIP/Rip Ani/RIP1.obj"));//25
 
-			//Building 3s
+		//Building 3s
 		*std::next(mod.begin(), 30) = (Model("Models/Buildings/Building3/House.obj"));
 		GameEmGine::addModel(&*std::next(mod.begin(), 30));//30
 		*std::next(mod.begin(), 31) = (Model(*std::next(mod.begin(), 30)));
@@ -369,10 +396,10 @@ public:
 		*std::next(mod.begin(), 105) = (Model(*std::next(mod.begin(), 104)));//105
 		GameEmGine::addModel(&*std::next(mod.begin(), 105));
 
-		//Background
-		*std::next(mod.begin(), 106) = (Model("Models/BackgroundSky/sky.obj"));//106
-		GameEmGine::addModel(&*std::next(mod.begin(), 106));
-		(&*std::next(mod.begin(), 106))->scale(8.0f, 8.0f, 5.0f), (&*std::next(mod.begin(), 106))->translate(1.0f, 4.0f, 40.0f), (&*std::next(mod.begin(), 106))->rotate({90.0f,0.0f,0.0f});
+		////Background
+		//*std::next(mod.begin(), 106) = (Model("Models/BackgroundSky/sky.obj"));//106
+		//GameEmGine::addModel(&*std::next(mod.begin(), 106));
+		//(&*std::next(mod.begin(), 106))->scale(8.0f, 8.0f, 5.0f), (&*std::next(mod.begin(), 106))->translate(1.0f, 4.0f, 40.0f), (&*std::next(mod.begin(), 106))->rotate({90.0f,0.0f,0.0f});
 
 		//Add more buildings in the back
 		*std::next(mod.begin(), 107) = (Model("Models/Buildings/Building7/PharmacureBuilding.obj"));//107
@@ -670,15 +697,24 @@ public:
 
 	void update(double dt)
 	{
-		objectMovement(dt);
-		//gameUpdate(dt);
+		switch(currentState)
+		{
+		case CONTROL_STATE::CAMERA:
+		case CONTROL_STATE::LEVEL:
+
+			objectMovement(dt);
+			break;
+		case CONTROL_STATE::GAME:
+			//gameUpdate(dt);
+			break;
+		}
 	}
 
 
 
 	void objectMovement(double dt)
 	{
-		float moveSpd = 10 * (float)dt;
+		float moveSpd = 15 * (float)dt;
 		moveSpd;
 		if(m_left)
 			switch(currentState)
@@ -686,8 +722,8 @@ public:
 			case GAME:
 				break;
 			case LEVEL:
-				GameEmGine::getMainCamera()->enableFPSMode(false);
-				(*std::next(mod.begin(),numModel)).translateBy(-moveSpd, 0, 0);
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->translateBy(-moveSpd, 0, 0);
 				break;
 			case CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
@@ -698,65 +734,70 @@ public:
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->translateBy(moveSpd, 0, 0);
 				break;
 			case CAMERA:
-
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->translateBy(moveSpd, 0, 0);
 				break;
 			}
 		if(m_fwd)
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->translateBy(0, 0, moveSpd);
 				break;
 			case CAMERA:
-
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->translateBy(0, 0, moveSpd);
 				break;
 			}
 		if(m_back)
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->translateBy(0, 0, -moveSpd);
 				break;
 			case CAMERA:
-
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->translateBy(0, 0, -moveSpd);
 				break;
 			}
 		if(m_up)
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->translateBy(0, moveSpd, 0);
 				break;
 			case CAMERA:
-
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->translateBy(0, moveSpd, 0);
 				break;
 			}
 		if(m_down)
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->translateBy(0, -moveSpd, 0);
 				break;
 			case CAMERA:
-
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->translateBy(0, -moveSpd, 0);
 				break;
 			}
 
@@ -764,52 +805,58 @@ public:
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->rotateBy(0, -moveSpd, 0);
 				break;
 			case CAMERA:
-
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->rotateBy(0, -moveSpd, 0);
 				break;
 			}
 		if(rotRight)
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->rotateBy(0, moveSpd, 0);
 				break;
 			case CAMERA:
-
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->rotateBy(0, moveSpd, 0);
 				break;
 			}
 		if(rotUp)
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				//this is correct
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->rotateBy(moveSpd, 0, 0);
 				break;
 			case CAMERA:
-
+				//this is correct
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->rotateBy(moveSpd, 0, 0);
 				break;
 			}
 		if(rotDown)
 			switch(currentState)
 			{
 			case GAME:
-
 				break;
 			case LEVEL:
-
+				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
+				curModel->rotateBy(-moveSpd, 0, 0);
 				break;
 			case CAMERA:
-
+				GameEmGine::getMainCamera()->enableFPSMode();
+				GameEmGine::getMainCamera()->rotateBy(-moveSpd, 0, 0);
 				break;
 			}
 
@@ -1437,10 +1484,9 @@ private:
 
 	enum CONTROL_STATE:char
 	{
-		GAME,
+		CAMERA,
 		LEVEL,
-		CAMERA
-
+		GAME,
 	}currentState;
 
 
@@ -1452,13 +1498,12 @@ private:
 	GLubyte splashAmbient = 0;
 
 	float ang = 2;
-	int numModel = 0;
+	Model* curModel = nullptr;
 	bool m_left = 0, m_right = 0, m_fwd = 0, m_back = 0, m_up = 0, m_down = 0,
-		rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0,
-		movePlayer = true;
+		rotLeft = 0, rotRight = 0, rotUp = 0, rotDown = 0, movePlayer = true;
+
 	Coord2D<> leftM, rightM;
 	AudioPlayer audio;
-
 
 	bool gameOver = false;
 	bool gameWin = false;

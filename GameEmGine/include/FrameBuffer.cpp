@@ -9,13 +9,13 @@ FrameBuffer::FrameBuffer(unsigned numColorAttachments, std::string tag)
 	glGenFramebuffers(1, &m_fboID);
 	m_numColorAttachments = numColorAttachments;
 
-	m_colorAttachments = new Texture2D[m_numColorAttachments];
+	m_colorAttachments = new Texture2D[numColorAttachments];
 	memset(m_colorAttachments, 0, sizeof(Texture2D) * numColorAttachments);
 	m_depthAttachment = 0;
 
 	//Buffs is required as a parameter for glDrawBuffers()
-	m_buffs = new GLenum[m_numColorAttachments];
-	for(unsigned i = 0; i < m_numColorAttachments; i++)
+	m_buffs = new GLenum[numColorAttachments];
+	for(unsigned i = 0; i < numColorAttachments; i++)
 	{
 		m_buffs[i] = GL_COLOR_ATTACHMENT0 + i;
 	}
@@ -28,7 +28,7 @@ FrameBuffer::~FrameBuffer()
 	unload();
 }
 
-void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
+void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint format, GLint formatType, GLint filter, GLint wrap)
 {
 	if(!m_colorAttachments[index].id)
 	{
@@ -37,7 +37,7 @@ void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned hei
 		glGenTextures(1, &m_colorAttachments[index].id);
 		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 
-		resizeColour(index, width, height, internalFormat, filter, wrap);
+		resizeColour(index, width, height, internalFormat, format, formatType, filter, wrap);
 	}
 }
 
@@ -55,7 +55,7 @@ void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 	}
 }
 
-void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint filter, GLint wrap)
+void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint format, GLint formatType, GLint filter, GLint wrap)
 {
 	if(!(width && height) ||
 	   (m_colorAttachments[index].width == (int)width &&
@@ -67,26 +67,33 @@ void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, 
 
 		static GLuint tmpAttachment; tmpAttachment = m_colorAttachments[index].id;
 
-		glGenTextures(1, &m_colorAttachments[index].id);
+		if(tmpAttachment)
+			glDeleteTextures(1, &tmpAttachment);
 
-		m_internalFormat = internalFormat;
+		glGenTextures(1, &tmpAttachment);
+
+		m_internalFormat = format;
 		m_filter = filter;
 		m_wrap = wrap;
 		m_colorAttachments[index].width = width;
 		m_colorAttachments[index].height = height;
 
-		glBindTexture(GL_TEXTURE_2D, m_colorAttachments[index].id);
-		glTexStorage2D(GL_TEXTURE_2D, 1, m_internalFormat, width, height);
+		glBindTexture(GL_TEXTURE_2D, tmpAttachment);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, internalFormat, formatType, nullptr);
+		//	glTexStorage2D(GL_TEXTURE_2D, 1, m_internalFormat, width, height);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap);
 
 		//Bind texture to the fbo
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_colorAttachments[index].id, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, tmpAttachment, 0);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
-		glDeleteTextures(1, &tmpAttachment);
+		//glDeleteTextures(1, &tmpAttachment);
+
+		m_colorAttachments->id = tmpAttachment;
 	}
 	if(!checkFBO())
 		puts("error resizing colour texture");
@@ -95,28 +102,39 @@ void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, 
 void FrameBuffer::resizeDepth(unsigned width, unsigned height)
 {
 	if(!(width && height))return;
+
 	if(m_depthAttachment)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
 		static GLuint tmpAttachment; tmpAttachment = m_depthAttachment;
-		glGenTextures(1, &m_depthAttachment);
+
+		if(tmpAttachment)
+			glDeleteTextures(1, &tmpAttachment);
+
+		glGenTextures(1, &tmpAttachment);
 
 		m_width = width;
 		m_height = height;
-		glBindTexture(GL_TEXTURE_2D, m_depthAttachment);
+		glBindTexture(GL_TEXTURE_2D, tmpAttachment);
 
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0,
+			GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr
+		);
+		//glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, width, height);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		//Bind texture to the fbo
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachment, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tmpAttachment, 0);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
-		glDeleteTextures(1, &tmpAttachment);
+		//glDeleteTextures(1, &tmpAttachment);
+
+		m_depthAttachment = tmpAttachment;
 	}
 
 	if(!checkFBO())
@@ -127,7 +145,20 @@ bool FrameBuffer::checkFBO()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	GLenum error = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+
+	switch(error)
+	{
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+		puts("incomplete attachment");
+		break;
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+		puts("incomplete missing attachment");
+		break;
+	}
+
+	if(error != GL_FRAMEBUFFER_COMPLETE)
 	{
 		unload();
 		return false;
@@ -179,7 +210,7 @@ void FrameBuffer::setClearColour(GLclampf r, GLclampf g, GLclampf b, GLclampf a)
 }
 
 // Clears all attached textures
-void FrameBuffer::clear(ColourRGBA colour ,GLbitfield clearBit)
+void FrameBuffer::clear(ColourRGBA colour, GLbitfield clearBit)
 {
 	GLbitfield temp = 0;
 
@@ -202,7 +233,7 @@ void FrameBuffer::clearSingleColour(ColourRGBA colour, int index)
 {
 	enable();
 	glm::vec4 tmp = colour.getf4();
-	glClearBufferfv(GL_COLOR,index,(float*)&tmp);
+	glClearBufferfv(GL_COLOR, index, (float*)&tmp);
 	disable();
 }
 

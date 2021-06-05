@@ -10,7 +10,7 @@ class ImageLoader
 public:
 	static Texture2D loadImage2D(cstring file);
 	static Texture3D loadImage3D(cstring LUTfile);
-	static Texture3D createImage3D(cstring path);
+	static Texture3D createCubeMap(cstring path);
 private:
 };
 

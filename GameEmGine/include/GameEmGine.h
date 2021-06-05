@@ -13,7 +13,6 @@
 #include "WindowCreator.h"
 #include "Camera.h"
 #include "Model.h"
-#include "ExtraMath.h"
 #include "FrameBuffer.h"
 #include "LightManager.h"
 #include "Text.h"

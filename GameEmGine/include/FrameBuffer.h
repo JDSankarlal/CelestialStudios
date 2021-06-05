@@ -13,9 +13,9 @@ public:
 	FrameBuffer(unsigned numColorAttachments, std::string tag = "");
 	~FrameBuffer();
 
-	void initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat = GL_RGBA8, GLint filter = GL_LINEAR, GLint wrap = GL_CLAMP_TO_EDGE);
+	void initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat = GL_RGBA, GLint format = GL_RGBA8, GLint formatType = GL_UNSIGNED_BYTE, GLint filter = GL_LINEAR, GLint wrap = GL_CLAMP_TO_EDGE);
 	void initDepthTexture(unsigned width, unsigned height);
-	void resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat = GL_RGBA8, GLint filter = GL_LINEAR, GLint wrap = GL_CLAMP_TO_EDGE);
+	void resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat = GL_RGBA, GLint format = GL_RGBA8, GLint formatType = GL_UNSIGNED_BYTE, GLint filter = GL_LINEAR, GLint wrap = GL_CLAMP_TO_EDGE);
 	void resizeDepth(unsigned width, unsigned height);
 
 	bool checkFBO();
@@ -62,7 +62,7 @@ public:
 	void copyColourToBuffer(int windowWidth, int windowHeight, FrameBuffer* fboID);
 
 	void copySingleColourToBackBuffer(int windowWidth, int windowHeight, uint from = 0);
-	void copySingleColourToBuffer(int windowWidth, int windowHeight, FrameBuffer* fboID, uint from=0, uint to=0);
+	void copySingleColourToBuffer(int windowWidth, int windowHeight, FrameBuffer* fboID, uint from = 0, uint to = 0);
 
 	void copyDepthToBackBuffer(int windowWidth, int windowHeight);
 	void copyDepthToBuffer(int windowWidth, int windowHeight, GLuint fboID);
@@ -75,7 +75,7 @@ public:
 
 	Texture2D& getColorTexture(unsigned m_index) const;
 
-	
+
 	uint getNumColourAttachments();
 
 	GLuint getFrameBufferID();

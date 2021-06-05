@@ -55,9 +55,6 @@
     <ClInclude Include="Physics3D.h">
       <Filter>EmGine</Filter>
     </ClInclude>
-    <ClInclude Include="ExtraMath.h">
-      <Filter>EmGine\Game Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities.h">
       <Filter>EmGine\Data Types</Filter>
     </ClInclude>
@@ -93,6 +90,9 @@
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>EmGine\Game Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>EmGine\Resource Management</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>EmGine\Game Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>EmGine\Resource Management</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

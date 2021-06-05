@@ -92,7 +92,7 @@ Texture3D ImageLoader::loadImage3D(cstring LUTfile)
 	return texture;
 }
 
-Texture3D ImageLoader::createImage3D(cstring SBpath)
+Texture3D ImageLoader::createCubeMap(cstring SBpath)
 {
 	Texture3D texture = Texture3D();
 	std::string pos[6]{"_right.","_left.","_top.","_bottom.","_front.","_back."};

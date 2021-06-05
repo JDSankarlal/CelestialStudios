@@ -13,7 +13,7 @@ FrameBuffer* m_shadows;
 
 Shader* m_shader;
 Camera* m_cam;
-bool m_enableShadows = true,m_enableLights=true;
+bool m_enableShadows = true, m_enableLights = true;
 //LightInfo LightSource::m_info;
 //unsigned LightSource::m_size;
 #pragma endregion
@@ -73,10 +73,10 @@ void LightManager::shadowRender(unsigned w, unsigned h, FrameBuffer* to, const F
 	glViewport(0, 0, w, h);
 	if(m_shadows)
 	{
-		m_shadows->resizeColour(w, h,0);
+		m_shadows->resizeColour(0, w, h);
 		m_shadows->resizeDepth(w, h);
 	}
-	
+
 	for(uint a = 0; a < m_lights.size(); ++a)
 	{
 		if(!m_lights[a]->shadowEnable)continue;
@@ -91,7 +91,7 @@ void LightManager::shadowRender(unsigned w, unsigned h, FrameBuffer* to, const F
 			if(!m_shadows)
 			{
 				m_shadows = new FrameBuffer(1, "shadow buffer");
-				m_shadows->initColourTexture(w, h, GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+				m_shadows->initColourTexture(w, h,GL_RGB, GL_RGB8);
 				m_shadows->initDepthTexture(w, h);
 				if(!m_shadows->checkFBO())
 				{

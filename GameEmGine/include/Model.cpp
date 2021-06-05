@@ -10,6 +10,10 @@ Component::CompID Model::createID()
 {
 	CompID tmp = 0;
 	CompID id = 1;
+	using std::pair;
+	m_compList.sort([](pair<COMP_TYPE, Component*> a,
+					pair<COMP_TYPE, Component*> b)->bool
+	{return a.second->getID() < b.second->getID(); });
 	for(auto& a : m_compList)
 	{
 		if(!a.second->getID())continue;
@@ -28,7 +32,7 @@ Component::CompID Model::createID()
 }
 
 Model::Model(Model& model, cstring tag):
-	Transformer(model, "MODEL",createID()),
+	Transformer(model, "MODEL", createID()),
 	m_tag(tag)
 {
 	//glfwInit();
@@ -75,13 +79,14 @@ Model::~Model()
 void Model::create(const Model& model, cstring tag)
 {
 	*this = model;
+
 	if(strlen(tag))
 		m_tag = tag;
 	m_copy = true;
 	//boundingBoxInit();
 	boundingBoxUpdate();
 
-	createID();
+	m_ID = createID();
 }
 
 void Model::create(PrimitiveMesh* mesh, cstring tag)
@@ -126,8 +131,6 @@ void Model::create(PrimitiveMesh* mesh, cstring tag)
 		boundingBoxInit();
 		boundingBoxUpdate();
 	}
-
-	createID();
 }
 
 void Model::create(cstring path, cstring tag)
@@ -170,8 +173,6 @@ void Model::create(cstring path, cstring tag)
 		boundingBoxInit();
 		boundingBoxUpdate();
 	}
-
-	createID();
 }
 
 void Model::setActive(bool active)
@@ -329,7 +330,7 @@ void Model::render(Shader& shader, Camera* cam)
 	shader.sendUniform("uWorldModel", getWorldTransformation());
 	shader.sendUniform("colourMod", reclass(glm::vec4, colour));
 	shader.sendUniform("flip", true);
-	shader.sendUniform("colourID",m_ID);
+	shader.sendUniform("colourID", m_ID);
 	shader.disable();
 
 	if(m_animations[m_animation])
