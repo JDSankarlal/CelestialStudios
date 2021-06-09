@@ -6,15 +6,17 @@ using namespace util;
 Texture2D ImageLoader::loadImage2D(cstring path)
 {
 	Texture2D texture;
-	//int width, height;
 
-	unsigned char* image = SOIL_load_image(path, &texture.width, &texture.height, nullptr, SOIL_LOAD_RGBA);
-	
+	unsigned char* image = SOIL_load_image(path, &texture.size.width, &texture.size.height, nullptr, SOIL_LOAD_RGBA);
+
 	if(image == nullptr)
 	{
 		printf("Image \"%s\", returned with null pointer\n", path);
 		return texture;
 	}
+
+	//texture path
+	texture.path = path;
 
 	//set the name of the texture	
 	texture.name = std::string(path).substr(std::string(path).find_last_of('/') + 1);
@@ -23,7 +25,7 @@ Texture2D ImageLoader::loadImage2D(cstring path)
 	//Bind texture to model
 	glGenTextures(1, &texture.id);
 	texture.bindTexture();
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.size.width, texture.size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -60,10 +62,10 @@ Texture3D ImageLoader::loadImage3D(cstring LUTfile)
 	{
 		std::string LUTline;
 		getline(LUTfile2, LUTline);
-		
+
 		if(LUTline.empty()) continue;
 		if(LUTline[0] == ('#'))continue;
-		
+
 		if(strstr(LUTline.c_str(), "LUT_3D_SIZE"))
 			sscanf_s(LUTline.c_str(), "LUT_3D_SIZE %d", &texture.lutSize);
 
@@ -75,7 +77,7 @@ Texture3D ImageLoader::loadImage3D(cstring LUTfile)
 
 	glGenTextures(1, &texture.id);
 	texture.bindTexture();
-	
+
 
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -112,10 +114,10 @@ Texture3D ImageLoader::createCubeMap(cstring SBpath)
 			if(strstr(tmp.c_str(), pos[a].c_str()))
 			{
 
-				data = SOIL_load_image(tmp.c_str(), &texture.width, &texture.height, nullptr, SOIL_LOAD_RGBA);
+				data = SOIL_load_image(tmp.c_str(), &texture.size.width, &texture.size.height, nullptr, SOIL_LOAD_RGBA);
 				glTexImage2D(
 					GL_TEXTURE_CUBE_MAP_POSITIVE_X + a,
-					0, GL_RGBA, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+					0, GL_RGBA, texture.size.width, texture.size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
 				);
 				printf("%s\n\n", SOIL_last_result());
 				SOIL_free_image_data(data);

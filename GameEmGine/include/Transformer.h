@@ -7,14 +7,16 @@
 #include "Quat.h"
 #include "Utilities.h"
 
+
+
 class Transformer:public Component
 {
 public:
-
 	Transformer();
-	Transformer(Transformer&, COMP_TYPE type = "TRANSFORMER", CompID id = 0);
-	Transformer(const Transformer&, COMP_TYPE type = "TRANSFORMER", CompID id = 0);
-	Transformer(COMP_TYPE type, CompID id = 0);
+	Transformer(Transformer&, COMP_TYPE type = TRANSFORMER);
+	Transformer(const Transformer&, COMP_TYPE type = TRANSFORMER);
+	Transformer(COMP_TYPE type);
+
 	virtual ~Transformer();
 
 	void reset();
@@ -38,9 +40,10 @@ public:
 	/*SET SCALE*/
 
 	virtual void scaleBy(float scale);
+	virtual void scaleBy(util::Vec3 scale);
 	virtual void scaleBy(float x, float y, float z);
-	virtual void scale(util::Vec3 scale);
 	virtual void scale(float scale);
+	virtual void scale(util::Vec3 scale);
 	virtual void scale(float x, float y, float z);
 
 	/*GETTERS*/
@@ -70,34 +73,75 @@ public:
 	virtual bool isRotationUpdated();
 	virtual bool isTranslatinUpdated();
 
+	struct TransformationData
+	{
+		util::Vec3 m_forward = {0,0,1}, m_up = {0,1,0}, m_right = {1,0,0};
+		util::Vec3 m_posDat, m_rotDat, m_scaleDat;
+	};
+	struct ActivatorData
+	{
 
+		bool  m_updatedRot = true,
+			m_updatedTrans = true,
+			m_updatedScale = true,
+			//first person movement
+			m_fps = false,
+			m_rotateBy = false;
+	};
+	struct MatrixData
+	{
+		glm::mat4
+			m_localTranslate = glm::mat4(1),
+			m_localRotate = glm::mat4(1),
+			m_localScale = glm::mat4(1),
+
+			m_worldTranslate = glm::mat4(1),
+			m_worldRotate = glm::mat4(1),
+			m_worldScale = glm::mat4(1);
+	};
+
+	TransformationData getTransformationData() { return m_transforms; }
+	Transformer::ActivatorData getActivatorData() { return m_activators; }
+	MatrixData getMatrixData() { return m_matricies; }
+
+	void setTransformationData(TransformationData dat) { m_transforms = dat; }
+	void setActivatorData(Transformer::ActivatorData dat) { m_activators = dat; }
+	void setMatrixData(MatrixData dat) { m_matricies = dat; }
 
 private:
-
 	void calculateWorldRotationMatrix();
 	void calculateWorldScaleMatrix();
 	void calculateWorldTranslationMatrix();
 
-
-	util::Vec3 m_forward = {0,0,1}, m_up = {0,1,0}, m_right = {1,0,0};
-	util::Vec3 m_posDat, m_rotDat, m_scaleDat;
-
-	bool  m_updatedRot = true,
-		m_updatedTrans = true,
-		m_updatedScale = true,
-		//first person movement
-		m_fps = false,
-		m_rotateBy = false;
+	TransformationData m_transforms;
+	ActivatorData m_activators;
 
 protected:
-	glm::mat4
-		m_localTranslate,
-		m_localRotate,
-		m_localScale,
+	MatrixData m_matricies;
+	Component::CompID createID()
+	{
+		CompID tmp = 0;
+		CompID id = 1;
+		using std::pair;
+		m_compList.sort([](pair<COMP_TYPE, Component*> a,
+						pair<COMP_TYPE, Component*> b)->bool
+		{return a.second->getID() < b.second->getID(); });
+		for(auto& a : m_compList)
+		{
+			if(!a.second->getID())continue;
 
-		m_worldTranslate,
-		m_worldRotate,
-		m_worldScale;
+			if((a.second->getID() - tmp) < 2)
+				tmp = a.second->getID();
+			else
+			{
+				id = ++tmp;
+				return id;
+			}
+		}
+
+		id = tmp ? tmp + 1 : id;
+		return id;
+	}
 
 };
 

@@ -3,33 +3,11 @@
 #include <cmath>
 
 using namespace util;
-Component::CompID Text::createID()
-{
-	CompID tmp = 0;
-	CompID id = 1;
-	using std::pair;
-	m_compList.sort([](pair<COMP_TYPE, Component*> a,
-					pair<COMP_TYPE, Component*> b)->bool
-	{return a.second->getID() < b.second->getID(); });
-	for(auto& a : m_compList)
-	{
-		if(!a.second->getID())continue;
 
-		if((a.second->getID() - tmp) < 2)
-			tmp = a.second->getID();
-		else
-		{
-			id = ++tmp;
-			return id;
-		}
-	}
-
-	id = tmp ? tmp + 1 : id;
-	return id;
-}
 void Text::create(cstring font)
 {
-	m_type = "TEXT";
+	m_ID = createID();
+	m_type = TEXT;
 	m_font = font;
 
 	m_texture = std::shared_ptr<FrameBuffer>(new FrameBuffer(1));
@@ -42,23 +20,22 @@ void Text::create(cstring font)
 	}
 }
 
-Text::Text():Transformer("TEXT", createID())
+Text::Text():Transformer(TEXT)
 {
 	create("fonts/arial.ttf");
 
 }
 
-Text::Text(Text& text):Transformer("TEXT", createID()) { *this = text; create(text.m_font); m_ID = createID(); }
-Text::Text(const Text& text) : Transformer("TEXT", createID()) { *this = text; create(text.m_font);  m_ID = createID(); }
+Text::Text(Text& text):Transformer(TEXT) { *this = text; create(text.m_font);  }
+Text::Text(const Text& text) : Transformer(TEXT) { *this = text; create(text.m_font);  }
 
-Text::Text(cstring font) : Transformer("TEXT", createID())
+Text::Text(cstring font) : Transformer(TEXT)
 {
 	create(font);
 }
 
 Text::~Text()
 {
-	--m_countID;
 }
 
 void Text::setText(cstring text)
@@ -201,10 +178,15 @@ void Text::render(Shader& s, Camera* cam, bool texture)
 	//render child meshes
 	if(!texture)
 		for(auto& a : getChildren())
-			if(a->getCompType() == "MODEL")
+			switch(a->getCompType())
+			{
+			case MODEL:
 				reclass(Model*, a)->render(s, cam);
-			else if(a->getCompType() == "TEXT")
+				break;
+			case TEXT:
 				reclass(Text*, a)->render(s, cam);
+				break;
+			}
 
 }
 

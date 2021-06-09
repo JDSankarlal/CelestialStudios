@@ -58,7 +58,6 @@ private:
 	void scale(float scale) { Transformer::scale(scale); }
 	void scale(float x, float y, float z) { Transformer::scale(x, y, z); }
 
-	CompID createID();
 	void renderInit();
 
 	std::shared_ptr<FrameBuffer> m_texture;

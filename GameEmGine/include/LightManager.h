@@ -18,12 +18,12 @@ struct Light:public Transformer
 		SPOTLIGHT
 	};
 
-	Light():Transformer("LIGHT") {}
-	Light(Light& lit):Transformer(lit, "LIGHT")
+	Light():Transformer(LIGHT) {}
+	Light(Light& lit):Transformer(lit, LIGHT)
 	{
 		*this = lit;
 	}
-	Light(const Light& lit):Transformer(lit, "LIGHT")
+	Light(const Light& lit):Transformer(lit, LIGHT)
 	{
 		*this = lit;
 	}

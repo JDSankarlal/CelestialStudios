@@ -1,7 +1,6 @@
 #include "Component.h"
 #include <typeinfo>
 
-
 std::list<std::pair<Component::COMP_TYPE, Component*>>
 Component::m_compList = std::list<std::pair<Component::COMP_TYPE, Component*>>();
 bool Component::m_exit = false;
@@ -9,14 +8,16 @@ uint Component::m_countID = 0;
 
 
 
-Component::Component(Component* parent, CompID id):m_parent(parent), m_type("UNKNOWN"), m_ID(id)
+Component::Component(Component* parent): m_type(UNKNOWN)
 {
-	m_compList.push_back({m_type, this});
+	setParent(parent);
+	m_compList.push_back(std::pair{m_type,this});
 }
 
-Component::Component(COMP_TYPE type, Component* parent, CompID id) : m_parent(parent), m_type(type), m_ID(id)
+Component::Component(COMP_TYPE type, Component* parent): m_parent(parent), m_type(type)
 {
-	m_compList.push_back({m_type, this});
+	setParent(parent);
+	m_compList.push_back(std::pair{m_type,(this)});
 }
 
 bool validityTest(Component* mod)
@@ -32,7 +33,7 @@ Component::~Component()
 	//	return;
 
 	//if(m_exit)return;
-	auto a = std::find(m_compList.begin(), m_compList.end(), std::pair{m_type, this});
+	auto a = std::find(m_compList.begin(), m_compList.end(), std::pair{m_type,(this)});
 	m_compList.erase(a);
 }
 
@@ -106,4 +107,3 @@ std::vector<Component*>& Component::getChildren()
 {
 	return m_children;
 }
-

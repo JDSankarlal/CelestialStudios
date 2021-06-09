@@ -6,7 +6,8 @@ enum class TEXTURE_TYPE2D:unsigned
 {
 	NONE,
 	DIFFUSE,
-	SPECULAR
+	SPECULAR,
+	ROUGHNESS
 };
 
 enum class TEXTURE_TYPE3D:unsigned
@@ -18,12 +19,14 @@ enum class TEXTURE_TYPE3D:unsigned
 
 struct Texture2D
 {
-	GLuint id;
+	GLuint id = 0;
 	util::ColourRGBA colour;
-	int width, height;
+	util::Coord2D<int> size;
 	TEXTURE_TYPE2D type = TEXTURE_TYPE2D::NONE;
 
-	std::string name;
+	std::string name,path;
+
+	Texture2D(){}
 
 	//~Texture2D()
 	//{
@@ -81,7 +84,7 @@ struct Texture2D
 struct Texture3D
 {
 	GLuint id;
-	int width, height, depth;
+	util::Coord3D<int> size;
 	int lutSize;
 	TEXTURE_TYPE3D type;
 	Texture3D(TEXTURE_TYPE3D aType = TEXTURE_TYPE3D::NONE):type(aType) {};
@@ -89,12 +92,10 @@ struct Texture3D
 	void deleteTexture()
 	{
 		if(id)
-		{
-			glDeleteTextures(1, &id);
+			glDeleteTextures(1, &id),
 			id = 0;
-		}
-	}
 
+	}
 
 	//bind texture to whatever slot is specified
 	void bindTexture(GLuint slot)
@@ -150,7 +151,7 @@ struct Texture3D
 			puts("undefined type\n");
 		}
 	}
-	
+
 	static void unbindTexture(TEXTURE_TYPE3D type)
 	{
 		switch(type)
@@ -180,6 +181,7 @@ struct Texture3D
 			puts("undefined type\n");
 		}
 	}
+
 	void unbindTexture(GLuint slot)
 	{
 		glActiveTexture(GL_TEXTURE0 + slot);

@@ -6,33 +6,9 @@
 
 using namespace util;
 
-Component::CompID Model::createID()
-{
-	CompID tmp = 0;
-	CompID id = 1;
-	using std::pair;
-	m_compList.sort([](pair<COMP_TYPE, Component*> a,
-					pair<COMP_TYPE, Component*> b)->bool
-	{return a.second->getID() < b.second->getID(); });
-	for(auto& a : m_compList)
-	{
-		if(!a.second->getID())continue;
-
-		if((a.second->getID() - tmp) < 2)
-			tmp = a.second->getID();
-		else
-		{
-			id = ++tmp;
-			return id;
-		}
-	}
-
-	id = tmp ? tmp + 1 : id;
-	return id;
-}
 
 Model::Model(Model& model, cstring tag):
-	Transformer(model, "MODEL", createID()),
+	Transformer(model, MODEL),
 	m_tag(tag)
 {
 	//glfwInit();
@@ -41,7 +17,7 @@ Model::Model(Model& model, cstring tag):
 }
 
 Model::Model(const Model& model, cstring tag):
-	Transformer(model, "MODEL", createID()),
+	Transformer(model, MODEL),
 	m_tag(tag)
 {
 	//glfwInit();
@@ -49,7 +25,7 @@ Model::Model(const Model& model, cstring tag):
 }
 
 Model::Model(PrimitiveMesh* mesh, cstring tag):
-	Transformer("MODEL", createID()),
+	Transformer(MODEL),
 	m_tag(tag)
 {
 	//glfwInit();
@@ -57,7 +33,7 @@ Model::Model(PrimitiveMesh* mesh, cstring tag):
 }
 
 Model::Model(cstring path, cstring tag):
-	Transformer("MODEL", createID()),
+	Transformer(MODEL),
 	m_tag(tag)
 {
 	//glfwInit();
@@ -69,28 +45,25 @@ Model::~Model()
 #if _DEBUG
 	//	printf("Deleted %s\n", m_type.c_str());
 #endif // _DEBUG
-	--m_countID;
 
-	if(!m_copy)
-		meshCleanUp();
 }
 
 
 void Model::create(const Model& model, cstring tag)
 {
 	*this = model;
-
-	if(strlen(tag))
-		m_tag = tag;
-	m_copy = true;
-	//boundingBoxInit();
-	boundingBoxUpdate();
-
 	m_ID = createID();
+
+	m_tag = strlen(tag) ? tag : "";
+
+	boundingBoxInit();
+	boundingBoxUpdate();
 }
 
 void Model::create(PrimitiveMesh* mesh, cstring tag)
 {
+	m_ID = createID();
+
 	m_meshes.clear();
 	m_meshes.push_back(std::shared_ptr<Mesh>(new Mesh()));
 	if(strlen(tag))
@@ -118,14 +91,14 @@ void Model::create(PrimitiveMesh* mesh, cstring tag)
 		}
 
 
-		(m_topLeftBack = {left,top,back}),
-			(m_topRightBack = {right,top,back}),
-			(m_topLeftFront = {left,top,front}),
-			(m_topRightFront = {right,top,front}),
-			(m_bottomLeftBack = {left,bottom,back}),
-			(m_bottomRightBack = {right,bottom,back}),
-			(m_bottomLeftFront = {left,bottom,front}),
-			(m_bottomRightFront = {right,bottom,front});
+		(m_bounds.m_topLeftBack = {left,top,back});
+		(m_bounds.m_topRightBack = {right,top,back});
+		(m_bounds.m_topLeftFront = {left,top,front});
+		(m_bounds.m_topRightFront = {right,top,front});
+		(m_bounds.m_bottomLeftBack = {left,bottom,back});
+		(m_bounds.m_bottomRightBack = {right,bottom,back});
+		(m_bounds.m_bottomLeftFront = {left,bottom,front});
+		(m_bounds.m_bottomRightFront = {right,bottom,front});
 
 
 		boundingBoxInit();
@@ -135,6 +108,8 @@ void Model::create(PrimitiveMesh* mesh, cstring tag)
 
 void Model::create(cstring path, cstring tag)
 {
+	m_ID = createID();
+
 	m_meshes.clear();
 	if(strlen(tag))
 		m_tag = tag;
@@ -160,15 +135,14 @@ void Model::create(cstring path, cstring tag)
 				back = back > a->back.z ? a->back.z : back;
 		}
 
-		(m_topLeftBack = {left,top,back}),
-			(m_topRightBack = {right,top,back}),
-			(m_topLeftFront = {left,top,front}),
-			(m_topRightFront = {right,top,front}),
-			(m_bottomLeftBack = {left,bottom,back}),
-			(m_bottomRightBack = {right,bottom,back}),
-			(m_bottomLeftFront = {left,bottom,front}),
-			(m_bottomRightFront = {right,bottom,front});
-
+		(m_bounds.m_topLeftBack = {left,top,back});
+		(m_bounds.m_topRightBack = {right,top,back});
+		(m_bounds.m_topLeftFront = {left,top,front});
+		(m_bounds.m_topRightFront = {right,top,front});
+		(m_bounds.m_bottomLeftBack = {left,bottom,back});
+		(m_bounds.m_bottomRightBack = {right,bottom,back});
+		(m_bounds.m_bottomLeftFront = {left,bottom,front});
+		(m_bounds.m_bottomRightFront = {right,bottom,front});
 
 		boundingBoxInit();
 		boundingBoxUpdate();
@@ -177,12 +151,12 @@ void Model::create(cstring path, cstring tag)
 
 void Model::setActive(bool active)
 {
-	m_active = active;
+	m_activators.m_active = active;
 }
 
 bool Model::isActive()
 {
-	return m_active;
+	return m_activators.m_active;
 }
 
 /// - Collision Function - ///
@@ -198,7 +172,7 @@ bool Model::collision2D(Model* box1, Model* box2, Vec3 RPos)
 	RPos.normalize();
 	RPos = (Vec3{1, 1, 1} - RPos);
 
-	RPos = (box1->m_center - box2->m_center) * RPos;
+	RPos = (box1->m_bounds.m_center - box2->m_bounds.m_center) * RPos;
 	Vec3 AxisX{1,0,0}, AxisY{0,1,0}, AxisZ{0,0,1};
 
 	glm::mat4
@@ -247,7 +221,7 @@ bool Model::collision3D(Model* k)
 bool Model::collision3D(Model* box1, Model* box2)
 {
 	static Vec3 RPos;
-	RPos = box1->m_center - box2->m_center;
+	RPos = box1->m_bounds.m_center - box2->m_bounds.m_center;
 	Vec3 AxisX{1,0,0}, AxisY{0,1,0}, AxisZ{0,0,1};
 
 	glm::mat4
@@ -307,19 +281,20 @@ bool Model::getSeparatingPlane(const Vec3& RPos, const Vec3& plane, Model& box1,
 
 	return (fabs(Vec3::dotProduct(RPos, plane)) >
 			(
-			fabs(Vec3::dotProduct((AxisX1 * (box1.m_width / 2)), plane)) +
-			fabs(Vec3::dotProduct((AxisY1 * (box1.m_height / 2)), plane)) +
-			fabs(Vec3::dotProduct((AxisZ1 * (box1.m_depth / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisX1 * (box1.m_bounds.m_dimentions.width / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisY1 * (box1.m_bounds.m_dimentions.height / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisZ1 * (box1.m_bounds.m_dimentions.depth / 2)), plane)) +
 
-			fabs(Vec3::dotProduct((AxisX2 * (box2.m_width / 2)), plane)) +
-			fabs(Vec3::dotProduct((AxisY2 * (box2.m_height / 2)), plane)) +
-			fabs(Vec3::dotProduct((AxisZ2 * (box2.m_depth / 2)), plane))
+			fabs(Vec3::dotProduct((AxisX2 * (box2.m_bounds.m_dimentions.width / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisY2 * (box2.m_bounds.m_dimentions.height / 2)), plane)) +
+			fabs(Vec3::dotProduct((AxisZ2 * (box2.m_bounds.m_dimentions.depth / 2)), plane))
 			));
 }
 
+#include <thread>
 void Model::render(Shader& shader, Camera* cam)
 {
-	if(!m_active)return;
+	if(!m_activators.m_active)return;
 
 	float colour[4]{(float)m_colour.r / 255,(float)m_colour.g / 255,(float)m_colour.b / 255,(float)m_colour.a / 255};
 	m_camera = cam;
@@ -339,30 +314,43 @@ void Model::render(Shader& shader, Camera* cam)
 	// update the position of the object
 	boundingBoxUpdate();
 
-	if(m_render)
+	if(m_activators.m_render)
 	{
-		if(m_wireframe)
+		if(m_activators.m_wireframe)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+		//std::list<std::thread> threads;
 		//render the meshes
 		for(auto& a : m_meshes)
-			a->render(shader, m_useTex);
+			a->render(shader, m_activators.m_useTex);
+			//threads.push_back(std::thread([&](){a->render(shader, m_activators.m_useTex);}));//
 
-		if(m_enableBB)
+
+		if(m_activators.m_enableBB)
 			drawBoundingBox();
 
 		static Shader* shader2;
 		//render child meshes
 		for(auto& a : getChildren())
-			if(a->getCompType() == "MODEL")
+			switch(a->getCompType())
+			{
+			case MODEL:
 				reclass(Model*, a)->render(shader, cam);
-			else if(a->getCompType() == "TEXT")
-				shader2 = ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh"),
+				break;
+			case TEXT:
+			{
+				shader2 = ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh");
 				reclass(Text*, a)->render(*shader2, cam);
+			}
+			break;
+			default:
+				break;
+			}
 
+	//	for(auto& a : threads) a.join();//rejoin all loose threads
 
 		resetUpdated();
-		if(m_wireframe)
+		if(m_activators.m_wireframe)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
@@ -411,7 +399,7 @@ bool Model::loadModel(cstring path)
 
 void Model::enableBoundingBox(bool enable)
 {
-	m_enableBB = enable;
+	m_activators.m_enableBB = enable;
 }
 
 void Model::addAnimation(std::string tag, Animation* animation)
@@ -428,30 +416,30 @@ void Model::editVerts(Model* first, Model* second)
 
 float Model::getWidth()
 {
-	return m_width;
+	return m_bounds.m_dimentions.width;
 }
 
 float Model::getHeight()
 {
-	return m_height;
+	return m_bounds.m_dimentions.height;
 }
 
 float Model::getDepth()
 {
 
-	return m_depth;
+	return m_bounds.m_dimentions.depth;
 }
 
 Vec3 Model::getDimentions()
 {
 
-	return {m_width,m_height,m_depth};
+	return m_bounds.m_dimentions;
 }
 
 Vec3 Model::getCenter()
 {
 
-	return m_center;
+	return m_bounds.m_center;
 }
 
 cstring Model::getTag()
@@ -466,7 +454,7 @@ void Model::setTag(cstring tag)
 
 void Model::boundingBoxUpdate()
 {
-	if(m_enableBB && m_shaderBB)
+	if(m_activators.m_enableBB && m_shaderBB)
 	{
 		m_shaderBB->enable();
 		m_shaderBB->sendUniform("uLocalModel", getLocalTransformation());
@@ -481,12 +469,12 @@ void Model::boundingBoxUpdate()
 
 	std::vector<glm::vec4> bounds =
 	{
-	{*(glm::vec3*)&m_bottomRightBack,1},
-	{*(glm::vec3*)&m_bottomLeftBack,1},
-	{*(glm::vec3*)&m_topLeftBack,1},
-	{*(glm::vec3*)&m_bottomLeftBack,1},
-	{*(glm::vec3*)&m_topLeftFront,1},
-	{*(glm::vec3*)&m_topLeftBack,1}
+	{*(glm::vec3*)&m_bounds.m_bottomRightBack,1},
+	{*(glm::vec3*)&m_bounds.m_bottomLeftBack,1},
+	{*(glm::vec3*)&m_bounds.m_topLeftBack,1},
+	{*(glm::vec3*)&m_bounds.m_bottomLeftBack,1},
+	{*(glm::vec3*)&m_bounds.m_topLeftFront,1},
+	{*(glm::vec3*)&m_bounds.m_topLeftBack,1}
 	};
 
 
@@ -494,26 +482,26 @@ void Model::boundingBoxUpdate()
 		a = getWorldScaleMatrix() * (getLocalScaleMatrix() * a);
 
 
-	m_width = abs(bounds[0].x - bounds[1].x);
-	m_height = abs(bounds[2].y - bounds[3].y);
-	m_depth = abs(bounds[4].z - bounds[5].z);
+	m_bounds.m_dimentions.width = abs(bounds[0].x - bounds[1].x);
+	m_bounds.m_dimentions.height = abs(bounds[2].y - bounds[3].y);
+	m_bounds.m_dimentions.depth = abs(bounds[4].z - bounds[5].z);
 
 
 	bounds =
 	{
-	{*(glm::vec3*)&m_bottomRightBack,1},
-	{*(glm::vec3*)&m_bottomLeftBack,1},
-	{*(glm::vec3*)&m_topLeftBack,1},
-	{*(glm::vec3*)&m_bottomLeftBack,1},
-	{*(glm::vec3*)&m_topLeftFront,1},
-	{*(glm::vec3*)&m_topLeftBack,1}
+	{*(glm::vec3*)&m_bounds.m_bottomRightBack,1},
+	{*(glm::vec3*)&m_bounds.m_bottomLeftBack,1},
+	{*(glm::vec3*)&m_bounds.m_topLeftBack,1},
+	{*(glm::vec3*)&m_bounds.m_bottomLeftBack,1},
+	{*(glm::vec3*)&m_bounds.m_topLeftFront,1},
+	{*(glm::vec3*)&m_bounds.m_topLeftBack,1}
 	};
 
 
 	for(auto& a : bounds)
 		a = getWorldTranslationMatrix() * (getLocalTransformation() * a);
 
-	m_center =
+	m_bounds.m_center =
 		(Vec3(
 		bounds[0].x + bounds[1].x,
 		bounds[2].y + bounds[3].y,
@@ -546,59 +534,59 @@ Mesh* Model::getMesh(const uint index)
 	return index < m_meshes.size() ? m_meshes[index].get() : nullptr;
 }
 
+std::vector<std::shared_ptr<Mesh>>& Model::getMeshList()
+{
+	return m_meshes;
+}
+
 Shader* Model::getShader()
 {
 	return m_shader;
 }
 
-void Model::replaceTexture(int mesh, int index, GLuint texID)
-{
-	m_meshes[mesh]->replaceTexture(index, texID);
-}
-
 void Model::replaceTexture(int mesh, int index, Texture2D tex)
 {
-	replaceTexture(mesh, index, tex.id);
+	m_meshes[mesh]->replaceTexture(index, tex);
 }
 
 void Model::enableTexture(bool enable)
 {
-	m_useTex = enable;
+	m_activators.m_useTex = enable;
 }
 
 bool Model::isTextureEnabled()
 {
-	return m_useTex;
+	return m_activators.m_useTex;
 }
 
 void Model::setToRender(bool render)
 {
-	m_render = render;
+	m_activators.m_render = render;
 }
 
 void Model::setTransparent(bool trans)
 {
-	m_transparent = trans;
+	m_activators.m_transparent = trans;
 }
 
 void Model::setWireframe(bool wire)
 {
-	m_wireframe = wire;
+	m_activators.m_wireframe = wire;
 }
 
 bool Model::isTransparent()
 {
-	return m_transparent;
+	return m_activators.m_transparent;
 }
 
 void Model::setCastShadow(bool cast)
 {
-	m_shadowCast = cast;
+	m_activators.m_shadowCast = cast;
 }
 
 bool Model::isCastingShadow()
 {
-	return m_shadowCast;
+	return m_activators.m_shadowCast;
 }
 
 void Model::boundingBoxInit()
@@ -611,14 +599,14 @@ void Model::boundingBoxInit()
 
 
 	Vertex3D
-		topLeftBack{m_topLeftBack},
-		topRightBack{m_topRightBack},
-		topLeftFront{m_topLeftFront},
-		topRightFront{m_topRightFront},
-		bottomLeftBack{m_bottomLeftBack},
-		bottomRightBack{m_bottomRightBack},
-		bottomLeftFront{m_bottomLeftFront},
-		bottomRightFront{m_bottomRightFront};
+		topLeftBack{m_bounds.m_topLeftBack},
+		topRightBack{m_bounds.m_topRightBack},
+		topLeftFront{m_bounds.m_topLeftFront},
+		topRightFront{m_bounds.m_topRightFront},
+		bottomLeftBack{m_bounds.m_bottomLeftBack},
+		bottomRightBack{m_bounds.m_bottomRightBack},
+		bottomLeftFront{m_bounds.m_bottomLeftFront},
+		bottomRightFront{m_bounds.m_bottomRightFront};
 
 
 	Vertex3D tmp[12 * 3]{
@@ -642,23 +630,23 @@ void Model::boundingBoxInit()
 		bottomRightBack,bottomRightFront,topRightBack
 	};
 
-	memcpy_s(m_vertBBDat, sizeof(Vertex3D) * 12 * 3, tmp, sizeof(Vertex3D) * 12 * 3);
+	memcpy_s(m_bounds.m_vertBBDat, sizeof(Vertex3D) * 12 * 3, tmp, sizeof(Vertex3D) * 12 * 3);
 
 	glBindVertexArray(m_BBVaoID);
 	glBindBuffer(GL_ARRAY_BUFFER, m_BBVboID);
-	glBufferData(GL_ARRAY_BUFFER, 12 * 3 * sizeof(Vertex3D), m_vertBBDat, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 12 * 3 * sizeof(Vertex3D), m_bounds.m_vertBBDat, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
 	//vertex     atributes
+	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
 
 	//UV         atributes
+	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, uv));
 
 	//normal     atributes
+	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -673,24 +661,20 @@ void Model::print()
 		"Height: %f\n"
 		"Depth: %f\n"
 		"Center: (%f, %f, %f)\n"
-		, m_tag, m_width, m_height, m_depth, m_center.x, m_center.y, m_center.z);
+		, m_tag, m_bounds.m_dimentions.width, m_bounds.m_dimentions.height, m_bounds.m_dimentions.depth, m_bounds.m_center.x, m_bounds.m_center.y, m_bounds.m_center.z);
 }
 
 std::vector<Vec3> Model::getBounds()
 {
-	return std::vector<Vec3>{m_topLeftBack,
-		m_topRightBack,
-		m_topLeftFront,
-		m_topRightFront,
-		m_bottomLeftBack,
-		m_bottomRightBack,
-		m_bottomLeftFront,
-		m_bottomRightFront};
+	return std::vector<Vec3>{
+		m_bounds.m_topLeftBack,
+			m_bounds.m_topRightBack,
+			m_bounds.m_topLeftFront,
+			m_bounds.m_topRightFront,
+			m_bounds.m_bottomLeftBack,
+			m_bounds.m_bottomRightBack,
+			m_bounds.m_bottomLeftFront,
+			m_bounds.m_bottomRightFront};
 }
 
-void Model::meshCleanUp()
-{
-
-	m_meshes.clear();
-}
 

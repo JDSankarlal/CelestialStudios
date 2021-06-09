@@ -118,10 +118,11 @@ private:
 	/*REMOVED FROM TRANSFORMER*/
 
 	void scaleBy(float scale) { scale; }
+	void scaleBy(util::Vec3 scale) { scale; }
 	void scaleBy(float x, float y, float z) { x, y, z; }
 	void scale(util::Vec3 scale) { scale; }
-	void scale(float x, float y, float z) { x, y, z; }
-
+	void scale(float x, float y, float z){ x, y, z; }
+	
 	bool isScaleUpdated() { return false; }
 	bool isRotationUpdated() { return false; }
 	bool isTranslatinUpdated() { return false; }

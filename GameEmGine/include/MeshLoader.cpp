@@ -7,6 +7,7 @@
 using namespace util;
 namespace fs = std::filesystem;
 using std::string;
+using std::vector;
 
 std::vector<std::shared_ptr<Mesh>> MeshLoader::m_meshes;
 std::vector<std::pair<string, std::vector<Texture2D>>> MeshLoader::m_textures;
@@ -131,8 +132,8 @@ bool MeshLoader::load(string path, string binPath)
 					if(strcmp(str, a.first.c_str()) == 0)
 					{
 						auto& tmp = a.second;//refernce original
-						m_meshes.back()->getTextures().insert(m_meshes.back()->getTextures().end(), tmp.begin(), tmp.end());
-						m_meshes.back()->getReplaceTex().insert(m_meshes.back()->getReplaceTex().end(), tmp.size(), 0);
+						((vector<Texture2D>)m_meshes.back()->getTextures()).insert(m_meshes.back()->getTextures().end(), tmp.begin(), tmp.end());
+						((vector<Texture2D>)m_meshes.back()->getReplaceTextures()).resize(m_meshes.back()->getTextures().size());
 					}
 
 				//	indicieMap.clear();
@@ -241,11 +242,11 @@ bool MeshLoader::load(string path, string binPath)
 						if(inuv)
 							tmp2.uv = uvs[tmp[b].uv];
 
-						m_meshes.back()->getUnpackedData().push_back(tmp2);
-						m_meshes.back()->getIndicieData().push_back(indicieCount++);
+						((vector<Vertex3D>)m_meshes.back()->getUnpackedData()).push_back(tmp2);
+						((vector<uint>)m_meshes.back()->getIndicieData()).push_back(indicieCount++);
 					}
 					else//reacouring indicie
-						m_meshes.back()->getIndicieData().push_back(indicieMap[tmp[b]]);
+						((vector<uint>)m_meshes.back()->getIndicieData()).push_back(indicieMap[tmp[b]]);
 				}
 
 				//tmp.correct();
@@ -291,11 +292,11 @@ bool MeshLoader::load(string path, string binPath)
 							if(inuv)
 								tmp2.uv = uvs[tmp[b].uv];
 
-							m_meshes.back()->getUnpackedData().push_back(tmp2);
-							m_meshes.back()->getIndicieData().push_back(indicieCount++);
+							((vector<Vertex3D>)m_meshes.back()->getUnpackedData()).push_back(tmp2);
+							((vector<uint>)m_meshes.back()->getIndicieData()).push_back(indicieCount++);
 						}
 						else//reacouring indicie
-							m_meshes.back()->getIndicieData().push_back(indicieMap[tmp[b]]);
+							((vector<uint>)	m_meshes.back()->getIndicieData()).push_back(indicieMap[tmp[b]]);
 					}
 
 
@@ -386,7 +387,7 @@ bool MeshLoader::load(string path, string binPath)
 				bin.write((char*)&dataSize, sizeof(uint));
 				bin.write((char*)b.data(), dataSize);
 			}
-			m_meshes[a]->matNames.clear();
+			//m_meshes[a]->matNames.clear();
 
 			//Bounds Data 
 			bin.write((char*)&m_meshes[a]->top/*first bound*/, sizeof(Vec3) * 6);
@@ -426,7 +427,7 @@ bool MeshLoader::load(string path, string binPath)
 
 			//Mesh Name (size of name length + 1 then string)
 			bin.read((char*)&dataSize, sizeof(unsigned));
-			cstring name = new char[dataSize];
+			cstring name = new const char[dataSize];
 			bin.read((char*)(void*)name, dataSize);
 			m_meshes[a]->meshName = name;
 
@@ -453,18 +454,16 @@ bool MeshLoader::load(string path, string binPath)
 			{
 				static unsigned size;
 				bin.read((char*)&size, sizeof(unsigned));
-				cstring str = new char[size];
-				bin.read((char*)(void*)str, size);
+				std::unique_ptr<char>str(new char[size]);
+				bin.read((char*)str.get(), size);
 
 				for(auto& c : m_textures)
-					if(strcmp(str, c.first.c_str()) == 0)
+					if(std::string(str.get()) == c.first)
 					{
 						auto& tmp = c.second;//refernce original
 						m_meshes[a]->getTextures().insert(m_meshes[a]->getTextures().end(), tmp.begin(), tmp.end());
-						m_meshes[a]->getReplaceTex().insert(m_meshes[a]->getReplaceTex().end(), tmp.size(), 0);
+						m_meshes[a]->getReplaceTextures().resize(m_meshes[a]->getTextures().size());
 					}
-
-				delete str;
 			}
 
 			//bounds data
@@ -568,6 +567,7 @@ void MeshLoader::loadMaterials(cstring path)
 				string tmpStr(substr(path, "/") + str2);
 				m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
 				m_textures.back().second.back().type = TEXTURE_TYPE2D::DIFFUSE;
+				m_textures.back().second.back().name = m_textures.back().first.c_str();
 				//m_replaceTex.back().push_back(0);
 
 			}
@@ -582,6 +582,7 @@ void MeshLoader::loadMaterials(cstring path)
 				string tmpStr(substr(path, "/") + str2);
 				m_textures.back().second.push_back(ResourceManager::getTexture2D(tmpStr.c_str()));
 				m_textures.back().second.back().type = TEXTURE_TYPE2D::SPECULAR;
+				m_textures.back().second.back().name = m_textures.back().first.c_str();
 				//m_replaceTex.back().push_back(0);
 
 			}

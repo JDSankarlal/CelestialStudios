@@ -4,12 +4,12 @@
 //namespace fs = std::filesystem;
 
 using namespace util;
-Mesh::Mesh():Component("MESH")
+Mesh::Mesh(): Component(MESH)
 {
 
 }
 
-Mesh::Mesh(Mesh& mesh) : Component("MESH")
+Mesh::Mesh(Mesh& mesh) : Component(MESH)
 {
 	*this = mesh;
 }
@@ -17,7 +17,7 @@ Mesh::Mesh(Mesh& mesh) : Component("MESH")
 Mesh::~Mesh()
 {
 #if _DEBUG
-//	printf("Deleted Mesh\n");
+	//	printf("Deleted Mesh\n");
 #endif // _DEBUG
 
 	if(!ani)
@@ -35,7 +35,7 @@ bool Mesh::loadPrimitive(PrimitiveMesh* mesh)
 	m_unpackedData = (mesh->getData());
 	m_indicieData = (mesh->getIndices());
 	m_textures = {Texture2D(),Texture2D()};
-	m_replaceTex = {0,0};
+	m_replaceTex = m_textures;
 
 	m_textures[0].type = TEXTURE_TYPE2D::DIFFUSE;
 	m_textures[1].type = TEXTURE_TYPE2D::SPECULAR;
@@ -59,44 +59,38 @@ void Mesh::render(Shader& shader, bool enableTex)
 
 	bool textured = false;
 
-	int c = 0, e = 0;
+	int  b = 0;
 
 	if(enableTex)
-		for(auto& d : m_textures)
-		{
-			glActiveTexture(GL_TEXTURE0 + e);
-			if(d.type == TEXTURE_TYPE2D::DIFFUSE)
-				if(d.id || m_replaceTex[c])
+		for(uint a = 0; a < m_textures.size(); ++a)
+			if(m_textures[a].type == TEXTURE_TYPE2D::DIFFUSE)
+				if(m_textures[a].id || m_replaceTex[a].id)
 				{
 					textured = true;
-					glBindTexture(GL_TEXTURE_2D, m_replaceTex[c] ? m_replaceTex[c] : d.id);
-					shader.sendUniform("uTex", e++);
-
+					Texture2D::bindTexture(b, m_replaceTex[a].id ? m_replaceTex[a].id : m_textures[a].id);
+					shader.sendUniform("uTex", b++);
 				}
-			++c;
-		}
-
 
 	glUniform1i(shader.getUniformLocation("textured"), textured);
 
-
 	glBindVertexArray(m_vaoID);
+
 	// Index buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_elemID);
 
 	//Draw indicies
 	glDrawElements(
-		GL_TRIANGLES,      // mode
-		(GLsizei)m_indicieData.size(),    // count
-		GL_UNSIGNED_INT,   // data type
-		(void*)0           // element array buffer offset
+		GL_TRIANGLES,						// mode
+		(GLsizei)m_indicieData.size(),		// count
+		GL_UNSIGNED_INT,					// data type
+		(void*)0							// element array buffer offset
 	);
-	//glDrawArrays(GL_TRIANGLES, 0, m_numVerts[a]);
+
 	glBindVertexArray(0);
 
-	for(e; e >= 0; e--)
+	for(; b >= 0; b--)
 	{
-		glActiveTexture(GL_TEXTURE0 + e);
+		glActiveTexture(GL_TEXTURE0 + b);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		//glActiveTexture(0);
 	}
@@ -155,20 +149,13 @@ void Mesh::init()
 	glBindVertexArray(0);
 }
 
-void Mesh::replaceTexture(int index, GLuint tex)
+void Mesh::replaceTexture(int index, Texture2D tex)
 {
 	m_replaceTex[index] = tex;
 }
 
 void Mesh::editVerts(Mesh* verts1, Mesh* verts2)
 {
-
-	//m_vaoID.push_back(0);
-	//m_vboID.push_back({0,0});
-	//
-	//glGenVertexArrays(1, &m_vaoID.back());
-	//glGenBuffers(2, &m_vboID.back().first);
-
 	glBindVertexArray(m_vaoID);
 
 	glEnableVertexAttribArray(0);
@@ -197,29 +184,9 @@ void Mesh::editVerts(Mesh* verts1, Mesh* verts2)
 	//normals 2   attributes
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, norm));
 
-	////create indicies
-	//m_elemID.push_back({m_indicieData[a].first,0});
-	//glGenBuffers(1, &m_elemID[a].second);
-
-	////indicies 
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_elemID);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indicieData.size() * sizeof(unsigned), m_indicieData.data(), GL_STATIC_DRAW);
-
-
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
-
-//std::vector<std::vector<Vertex3D>>& Mesh::loadAni(std::string path)
-//{
-//	ani = true;
-//	static std::vector<std::vector<Vertex3D>> empty;
-//
-//	if(!load(path))return empty;
-//
-//	return m_unpackedData;
-//
-//}
 
 void Mesh::unload()
 {

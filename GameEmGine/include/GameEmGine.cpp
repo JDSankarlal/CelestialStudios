@@ -117,13 +117,13 @@ void GameEmGine::createNewWindow(std::string name, int width, int height, int x,
 
 
 	m_gBuff->initDepthTexture(getWindowWidth(), getWindowHeight());
-	m_gBuff->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F,GL_FLOAT);
-	m_gBuff->initColourTexture(1, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F,GL_FLOAT);
-	m_gBuff->initColourTexture(2, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F,GL_FLOAT);
-	m_gBuff->initColourTexture(3, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F,GL_FLOAT);
+	m_gBuff->initColourTexture(0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	m_gBuff->initColourTexture(1, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	m_gBuff->initColourTexture(2, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F, GL_FLOAT);
+	m_gBuff->initColourTexture(3, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA16F, GL_FLOAT);
 	m_gBuff->initColourTexture(4, getWindowWidth(), getWindowHeight(), GL_RGB, GL_RGB8);
 	m_gBuff->initColourTexture(5, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_RGBA8);
-	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_RED_INTEGER, GL_R32UI, GL_UNSIGNED_INT,GL_NEAREST);
+	m_gBuff->initColourTexture(6, getWindowWidth(), getWindowHeight(), GL_RED_INTEGER, GL_R32UI, GL_UNSIGNED_INT, GL_NEAREST);
 	if(!m_gBuff->checkFBO())
 	{
 		puts("FBO failed Creation");
@@ -307,6 +307,8 @@ void GameEmGine::fpsLimiter()
 	enter = true;
 }
 
+void GameEmGine::clearObjectList() { m_models.clear(); }
+
 void GameEmGine::setScene(Scene* scene)
 {
 	if(m_mainScene)
@@ -377,7 +379,7 @@ Model* GameEmGine::getMouseCollisionObject()
 
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + 6);
 
-	uint id = 0;
+	uint id = 50;
 	glReadPixels(int(mPos.x), int(mPos.y), 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &id);
 
 	m_gBuff->disable();
@@ -610,3 +612,32 @@ void GameEmGine::changeViewport(GLFWwindow*, int w, int h)
 	m_postBuffer->resizeColour(0, w, h);
 
 }
+
+#if FALSE
+
+class Test:public Scene
+{
+	void onSceneExit() {}
+
+	void init()
+	{
+		GameEmGine::addModel(new Model(new PrimitiveSphere(200, 200, 50, 20)));
+
+		GameEmGine::getMainCamera()->translate(0, 0, -500);
+	}
+
+	void update(double dt) { dt; }
+};
+
+int main()
+{
+	GameEmGine::init("Test", 1820, 980, 0, 0, 0, false);
+
+	Test test;
+
+	GameEmGine::setScene(&test);
+	GameEmGine::run();
+
+	return 0;
+}
+#endif // FALSE

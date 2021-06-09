@@ -2,13 +2,13 @@
 using namespace util;
 
 Camera::Camera(CAM_TYPE type, Vec3 size)
-	:Transformer("CAMERA"), m_scale(1), m_projMat(1), m_viewMat(1), m_cameraUpdate(true)
+	:Transformer(CAMERA), m_scale(1), m_projMat(1), m_viewMat(1), m_cameraUpdate(true)
 {
 	//m_position = new Coord3D{-.25,-.5,0};
 	init(size, type, nullptr);
 }
 Camera::Camera(ProjectionPeramiters* peram, Vec3 size)
-	: Transformer("CAMERA"), m_scale(1), m_projMat(1), m_viewMat(1), m_cameraUpdate(true)
+	: Transformer(CAMERA), m_scale(1), m_projMat(1), m_viewMat(1), m_cameraUpdate(true)
 {
 	init(size, peram ? peram->type : CAM_TYPE::NONE, peram);
 }
@@ -21,7 +21,7 @@ Camera::~Camera()
 
 void Camera::init(Vec3 size, CAM_TYPE type, ProjectionPeramiters* peram)
 {
-	Component::m_type = "CAMERA";
+	Component::m_type = CAMERA;
 
 	m_size = size;
 
@@ -128,7 +128,8 @@ bool Camera::update()
 
 
 		Transformer::scale(m_scale);
-		m_viewMat = m_worldTranslate * m_worldRotate * glm::inverse(m_localTranslate * m_localRotate);
+		m_viewMat = m_matricies.m_worldTranslate * m_matricies.m_worldRotate *
+			glm::inverse(m_matricies.m_localTranslate * m_matricies.m_localRotate);
 
 		m_cameraMat = m_projMat * m_viewMat;
 
@@ -330,13 +331,16 @@ void Camera::render(Shader* shader, const std::unordered_map<void*, Model*>& mod
 
 	Shader* shader2 = ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh");
 	for(auto& a : models2)
-		if(a.second->getCompType() == "TEXT")
+		switch(a.second->getCompType())
+		{
+		case TEXT:
 		{
 			Text* tmp = reclass(Text*, a.second);
 			if(trans == tmp->isTransparent())
 				tmp->render(*shader2, this);
 		}
-		else//if(a.second->getCompType() == "MODEL")
+		break;
+		case MODEL:
 		{
 			if(shadow)
 				if(!a.second->isCastingShadow())continue;
@@ -345,6 +349,13 @@ void Camera::render(Shader* shader, const std::unordered_map<void*, Model*>& mod
 					if(trans == a.second->isTransparent())
 						a.second->render(*shader, this);
 		}
+		break;
+		default:
+			break;
+		}
+
+	//if(a.second->getCompType() == "TEXT")
+	//else//if(a.second->getCompType() == "MODEL")
 
 }
 

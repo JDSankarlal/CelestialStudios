@@ -58,8 +58,8 @@ void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint format, GLint formatType, GLint filter, GLint wrap)
 {
 	if(!(width && height) ||
-	   (m_colorAttachments[index].width == (int)width &&
-	   m_colorAttachments[index].height == (int)height))return;
+	   (m_colorAttachments[index].size.width == (int)width &&
+	   m_colorAttachments[index].size.height == (int)height))return;
 
 	if(m_colorAttachments[index].id)
 	{
@@ -75,8 +75,8 @@ void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, 
 		m_internalFormat = format;
 		m_filter = filter;
 		m_wrap = wrap;
-		m_colorAttachments[index].width = width;
-		m_colorAttachments[index].height = height;
+		m_colorAttachments[index].size.width = width;
+		m_colorAttachments[index].size.height = height;
 
 		glBindTexture(GL_TEXTURE_2D, tmpAttachment);
 
@@ -305,7 +305,7 @@ void FrameBuffer::copySingleColourToBuffer(int w, int h, FrameBuffer* fbo, uint 
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + from);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + to);
 
-	glBlitFramebuffer(0, 0, m_colorAttachments[from].width, m_colorAttachments[from].height, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBlitFramebuffer(0, 0, m_colorAttachments[from].size.width, m_colorAttachments[from].size.height, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 	//glReadBuffer(GL_NONE);
 	//glDrawBuffer(GL_NONE);
@@ -428,12 +428,12 @@ void FrameBuffer::drawFullScreenQuad()
 
 uint FrameBuffer::getColourWidth(int index)
 {
-	return m_colorAttachments[index].width;
+	return m_colorAttachments[index].size.width;
 }
 
 uint FrameBuffer::getColourHeight(int index)
 {
-	return m_colorAttachments[index].height;
+	return m_colorAttachments[index].size.height;
 }
 
 unsigned FrameBuffer::getDepthWidth()

@@ -1,6 +1,7 @@
 #pragma once
 #include <EmGineAudioPlayer.h>
 #include <GameEmGine.h>
+#include <SceneManager.h> 
 #include <vector>
 #include <list>
 #include "Player.h"
@@ -11,8 +12,8 @@
 #include "Medic.h"
 #include "Tank.h"
 
-
 using std::vector;
+using std::list;
 
 class Game:public Scene
 {
@@ -57,6 +58,14 @@ public:
 		if(key == GLFW_KEY_TAB)
 			++(*(char*)&currentState) %= 2;//don't ask
 
+		if(key == 'S' && modifier == GLFW_MOD_CONTROL)
+		{
+			vector<Model*>tmp;
+			for(auto& a : GameEmGine::getObjectList())
+				tmp.push_back(a.second);
+			SceneManager::saveScene("GameScene.scene", tmp);
+		}
+
 		//changes fps limit
 		if(key == GLFW_KEY_KP_6)
 			GameEmGine::setFPSLimit(GameEmGine::getFPSLimit() + 5);
@@ -70,7 +79,7 @@ public:
 			printf("Full Screen: %s\n", full ? "true" : "false");
 		}
 
-		if(key == GLFW_KEY_SPACE) //changes the camera mode
+		if(key == GLFW_KEY_SPACE) //Changes the camera mode
 		{
 			static Camera::CAM_TYPE type = Camera::FRUSTUM;
 			GameEmGine::setCameraType(type = type == Camera::ORTHOGRAPHIC ? Camera::FRUSTUM : Camera::ORTHOGRAPHIC);
@@ -105,14 +114,13 @@ public:
 			if(curModel)
 				curModel->setColour(lastColour);
 
-			auto obj = std::find(mod.begin(), mod.end(), *GameEmGine::getMouseCollisionObject());
-			curModel = nullptr;
-			if(obj != mod.end())
-			{
-				curModel = &*obj;
+			curModel = GameEmGine::getMouseCollisionObject();
 
+			if(curModel)
+			{
 				if(curModel)
 					lastColour = curModel->getColour();
+
 				curModel->setColour(0, .65f, 0);
 			}
 		}
@@ -159,6 +167,8 @@ public:
 		static Transformer uniScaler;
 		uniScaler.scale(.5);
 
+	#if FALSE
+	#pragma region BULL SHIT!!!!!
 
 		//Building 1s
 		*std::next(mod.begin(), 4) = (Model("Models/Buildings/CashCorp/CashcorpBuildingWIP.obj"));
@@ -616,6 +626,14 @@ public:
 		(&*std::next(mod.begin(), 103))->scale(0.7f), (&*std::next(mod.begin(), 103))->translate(6.0f, 0.03f, 8.0f), (&*std::next(mod.begin(), 103))->rotate(Coord3D<>(0, 90, 0));
 		(&*std::next(mod.begin(), 104))->scale(0.7f), (&*std::next(mod.begin(), 104))->translate(12.0f, 0.03f, 8.0f), (&*std::next(mod.begin(), 104))->rotate(Coord3D<>(0, 90, 0));
 		(&*std::next(mod.begin(), 105))->scale(0.7f), (&*std::next(mod.begin(), 105))->translate(18.0f, 0.03f, 8.0f), (&*std::next(mod.begin(), 105))->rotate(Coord3D<>(0, 90, 0));
+	#pragma endregion
+	#endif // FALSE
+
+		SceneManager::loadScene("gamescene.scene", testSceneLoad);
+
+		GameEmGine::clearObjectList();
+		for(auto& a : testSceneLoad)
+			GameEmGine::addModel(&a);
 
 		//apply uniform transform
 		for(auto& a : mod)
@@ -1489,7 +1507,7 @@ private:
 		GAME,
 	}currentState;
 
-
+	list<Model> testSceneLoad;
 	std::list<Model> mod;
 	std::list<Light> lights;
 	bool fadein = true;

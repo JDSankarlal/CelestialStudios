@@ -20,7 +20,7 @@ class Animation;
 class Model: public Transformer
 {
 public:
-	Model():Transformer("MODEL") {};
+	Model():Transformer(MODEL) { m_ID = createID(); };
 	Model(Model& model, cstring tag = "");
 	Model(const Model& model, cstring tag = "");
 	Model(PrimitiveMesh* model, cstring tag = "");
@@ -92,9 +92,9 @@ public:
 
 	void addMesh(Mesh*);
 	Mesh* getMesh(uint index);
+	std::vector<std::shared_ptr<Mesh>>& getMeshList();
 	Shader* getShader();
 
-	void replaceTexture(int mesh, int index, GLuint tex);
 	void replaceTexture(int mesh, int index, Texture2D tex);
 
 	void enableTexture(bool enable);
@@ -108,54 +108,63 @@ public:
 	void print();
 	std::vector<util::Vec3> getBounds();
 	void boundingBoxUpdate();
+
+	struct ActivatorData
+	{
+		bool m_active = true;
+		bool m_useTex = true;
+		bool m_render = true;
+		bool m_transparent = false;
+		bool m_wireframe = false;
+		bool m_shadowCast = true;
+		bool m_enableBB = false;
+	};
+	struct BoundsData
+	{
+		util::Vec3
+			m_topLeftBack,
+			m_topRightBack,
+			m_topLeftFront,
+			m_topRightFront,
+			m_bottomLeftBack,
+			m_bottomRightBack,
+			m_bottomLeftFront,
+			m_bottomRightFront,
+			m_center;
+
+		util::Vec3 m_dimentions;
+		util::Vertex3D m_vertBBDat[12 * 3];
+
+	};
+
+	ActivatorData getActivatorData() { return m_activators; }
+	BoundsData getBoundsData() { return m_bounds; }
+	void setActivatorData(ActivatorData dat) { m_activators = dat; }
+	void setBoundsData(BoundsData dat) { m_bounds = dat; }
+
 protected:
-	bool m_active = true;
-	cstring m_tag;
+
+	cstring m_tag = nullptr;
 	util::ColourRGBA m_colour;
-	void meshCleanUp();
 
 private:
-	CompID createID();
 	void boundingBoxInit();
 	void drawBoundingBox();
 
-	bool m_useTex = true;
-	bool m_render = true;
-	bool m_transparent = false;
-	bool m_wireframe = false;
-	bool m_shadowCast = true;
+	ActivatorData m_activators;
 
-	std::unordered_map< std::string, Animation*>m_animations;
 	std::string m_animation;
+	std::unordered_map< std::string, Animation*>m_animations;
 	std::vector<std::shared_ptr<Mesh>> m_meshes;
 
-	Camera* m_camera;
+	Camera* m_camera = nullptr;
 
 	GLuint m_BBVaoID = 0, m_BBVboID = 0;
-	//Transformer m_transform;
 
-	util::Vec3
-		m_topLeftBack,
-		m_topRightBack,
-		m_topLeftFront,
-		m_topRightFront,
-		m_bottomLeftBack,
-		m_bottomRightBack,
-		m_bottomLeftFront,
-		m_bottomRightFront,
-		m_center;
+	BoundsData m_bounds;
 
-	float m_width, m_height, m_depth;
-	Shader* m_shader, * m_shaderBB;
-	util::Vertex3D m_vertBBDat[12 * 3];
+	Shader* m_shader = nullptr, * m_shaderBB = nullptr;
 
-	bool m_enableBB = false, m_copy = false;
-
-	//std::unordered_map<std::string, FrameBuffer*> m_frameBuffers;
-	//std::vector<Model*> m_children;
-	//Model* m_parent;
-	//std::vector <Texture2D> loadedTextures;
-	//std::string dir;
 
 
 

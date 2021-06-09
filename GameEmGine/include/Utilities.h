@@ -12,7 +12,9 @@
 #define reclass(a_class,a_val) (*(a_class*)&(a_val))
 typedef const char* cstring;
 typedef unsigned int   uint;
+typedef unsigned long   ulong;
 typedef unsigned short ushort;
+typedef unsigned char uchar;
 
 namespace util
 {
@@ -603,8 +605,12 @@ namespace util
 
 	};
 
-	typedef Coord3D<float> Vec3;
-	typedef Coord2D<float> Vec2;
+	typedef Coord3D<> Vec3;
+	typedef Coord2D<> Vec2;
+	typedef Coord3D<int> Vec3i;
+	typedef Coord2D<int> Vec2i;
+	typedef Coord3D<uint> Vec3ui;
+	typedef Coord2D<uint> Vec2ui;
 
 	struct ColourRGBA
 	{

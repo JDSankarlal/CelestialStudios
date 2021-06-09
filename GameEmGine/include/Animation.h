@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <ctime>
+#include <memory>
 #include "Model.h"
 #include "Shader.h"
 
@@ -40,7 +41,7 @@ public:
 private:
 	bool m_pause = 0, m_stop = 0, m_repeat = 0;
 
-	std::vector<Model*> m_frames;
+	std::vector<std::shared_ptr<Model>> m_frames;
 	//std::vector<std::vector<std::vector<Vertex3D>>> m_unpackedData;
 
 	bool init = false;

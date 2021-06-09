@@ -1,25 +1,18 @@
 #include "Animation.h"
 #include <filesystem>
 namespace fs = std::filesystem;
-
+using std::shared_ptr;
 
 Animation::Animation()
 {}
 
 Animation::~Animation()
-{
-	for(auto& a : m_frames)
-		if(a)
-			delete a,
-			a = nullptr;
-
-	m_frames.clear();
-}
+{}
 
 //adds model to the end of the frame list
 void Animation::addFrame(Model* frame, float speed)
 {
-	m_frames.push_back(new Model(*frame)), speed;
+	m_frames.push_back(shared_ptr<Model>(new Model(*frame))), speed;
 }
 
 //time between frames(will fix later)
@@ -47,7 +40,7 @@ void Animation::addDir(cstring dir)
 		for(auto& b : tmpPath)//wstring to sring
 			str += (char)b;
 
-		m_frames.push_back(new Model(str.c_str()));
+		m_frames.push_back(shared_ptr<Model>(new Model(str.c_str())));
 	}
 }
 
@@ -71,7 +64,7 @@ void Animation::update(Shader* shader, Model* mesh)
 			{
 				if(m_repeat)
 				{
-					mesh->editVerts(m_frames[m_frame = int(time / m_speed) % m_frames.size()], m_frames[m_frameNext = (m_frame + 1) % m_frames.size()]);
+					mesh->editVerts(m_frames[m_frame = int(time / m_speed) % m_frames.size()].get(), m_frames[m_frameNext = (m_frame + 1) % m_frames.size()].get());
 				}
 				else
 				{
@@ -79,9 +72,9 @@ void Animation::update(Shader* shader, Model* mesh)
 					m_frame = m_frame >= m_frames.size() - 1 ? unsigned((m_frames.size() - 2) % m_frames.size()) : m_frame;
 
 					if(m_frame < m_frames.size() - 2)
-						mesh->editVerts(m_frames[m_frame], m_frames[m_frameNext = (m_frame + 1) % m_frames.size()]);
+						mesh->editVerts(m_frames[m_frame].get(), m_frames[m_frameNext = (m_frame + 1) % m_frames.size()].get());
 					else
-						mesh->editVerts(m_frames[m_frame], m_frames[m_frameNext = m_frame]);
+						mesh->editVerts(m_frames[m_frame].get(), m_frames[m_frameNext = m_frame].get());
 				}
 
 			}
@@ -93,13 +86,13 @@ void Animation::update(Shader* shader, Model* mesh)
 			{
 				if(m_pause)
 				{
-					mesh->editVerts(m_frames[m_frame], m_frames[m_frame]);
+					mesh->editVerts(m_frames[m_frame].get(), m_frames[m_frame].get());
 					m_lastTime = time;
 				}
 				else
 					if(m_stop)
 					{
-						mesh->editVerts(m_frames[0], m_frames[0]);
+						mesh->editVerts(m_frames[0].get(), m_frames[0].get());
 						m_lastTime = time;
 					}
 			}

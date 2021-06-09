@@ -23,14 +23,14 @@ enum PRIMITIVE_TYPE
 
 struct PrimitiveMesh:public Transformer
 {
-	PrimitiveMesh():Transformer("PRIMITIVE MESH") {}
-	PrimitiveMesh(util::Vec3 dim, util::Vec3 offset = {}, util::Vec3 rot = {}):Transformer("PRIMITIVE MESH"),
+	PrimitiveMesh():Transformer(PRIMITIVE_MESH) {}
+	PrimitiveMesh(util::Vec3 dim, util::Vec3 offset = {}, util::Vec3 rot = {}):Transformer(PRIMITIVE_MESH),
 		m_dim(dim)
 	{
 		translate(offset);
 		rotate(rot);
 	}
-	PrimitiveMesh(float width, float height, float depth, util::Vec3 offset = {}, util::Vec3 rot = {}):Transformer("PRIMITIVE MESH"),
+	PrimitiveMesh(float width, float height, float depth, util::Vec3 offset = {}, util::Vec3 rot = {}):Transformer(PRIMITIVE_MESH),
 		m_dim({width,height,depth})
 	{
 		translate(offset);
@@ -438,7 +438,7 @@ private:
 	bool m_invert;
 };
 
-class Mesh:public Component
+class Mesh:public Component //(keep this here just in case)
 {
 public:
 	Mesh();
@@ -455,21 +455,21 @@ public:
 
 	void unload();
 
-	void replaceTexture(int index, GLuint tex);
+	void replaceTexture(int index, Texture2D tex);
 
 	util::Vec3 top = {}, bottom = {}, left = {}, right = {}, front = {}, back = {};
 	std::string meshName = "";
 	std::vector<std::string> matNames;
 
 	std::vector<util::Vertex3D>& getUnpackedData() { return m_unpackedData; }
-	std::vector<unsigned>& getIndicieData() { return m_indicieData; }
+	std::vector<uint>& getIndicieData() { return m_indicieData; }
 	std::vector<Texture2D>& getTextures() { return m_textures; }
 
-	std::vector<GLuint>& getReplaceTex() { return m_replaceTex; }
+	std::vector<Texture2D>& getReplaceTextures() { return m_replaceTex; }
 private:
 
 
-	std::vector<GLuint> m_replaceTex;
+	std::vector<Texture2D> m_replaceTex;
 
 	bool ani = false;
 
@@ -478,7 +478,7 @@ private:
 	GLuint m_elemID = 0;
 
 	std::vector<util::Vertex3D> m_unpackedData;
-	std::vector<unsigned> m_indicieData;
+	std::vector<uint> m_indicieData;
 	std::vector<Texture2D>m_textures;
 
 

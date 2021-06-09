@@ -122,6 +122,7 @@ public:
 	static void addCamera(Camera* camera);
 
 	static std::unordered_map<void*, Model*>& getObjectList();
+	static void clearObjectList();
 
 	static void setFPSLimit(short limit);
 	static short getFPSLimit();
@@ -151,6 +152,7 @@ private:
 	static void initShader();
 	static void calculateFPS();
 	static void fpsLimiter();
+
 
 
 	/*
