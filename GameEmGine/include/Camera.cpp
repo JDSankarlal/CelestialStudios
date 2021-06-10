@@ -329,7 +329,6 @@ void Camera::render(Shader* shader, const std::unordered_map<void*, Model*>& mod
 		shader->disable();
 	}
 
-	Shader* shader2 = ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh");
 	for(auto& a : models2)
 		switch(a.second->getCompType())
 		{
@@ -337,7 +336,7 @@ void Camera::render(Shader* shader, const std::unordered_map<void*, Model*>& mod
 		{
 			Text* tmp = reclass(Text*, a.second);
 			if(trans == tmp->isTransparent())
-				tmp->render(*shader2, this);
+				tmp->render(this);
 		}
 		break;
 		case MODEL:

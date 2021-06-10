@@ -187,17 +187,15 @@ void GameEmGine::run()
 
 			fps.setColour(1, 0, 0);
 			fps.setText(str);
-			fps.textSize(35);
+			fps.setTextSize(35);
 
 			fps.translate(0, fps.getHeight(), 0);
 			fps.rotate(180, 0, 0);
 
-			static std::unordered_map<void*, Model*> tmp;
-			tmp[&fps] = (Model*)&fps;
 
 			glClearDepth(1.f);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			cam.render(nullptr, tmp, true);
+			fps.render(&cam);
 
 			//glfwSetWindowTitle(m_window->getWindow(), (m_window->getTitle() + "--> " + str).c_str());
 		}
@@ -328,10 +326,10 @@ void GameEmGine::setScene(Scene* scene)
 	InputManager::mouseButtonReleasedCallback(scene->mouseReleased);
 	InputManager::mouseButtonAllCallback(scene->mouseInput);
 
-	customRenderCallback([&](FrameBuffer* gbuff, FrameBuffer* post, float dt)->void{if(m_mainScene->customPostEffects)m_mainScene->customPostEffects(gbuff, post, dt);  });
+	customRenderCallback([&](FrameBuffer* gbuff, FrameBuffer* post, float dt)->void { if(m_mainScene->customPostEffects)m_mainScene->customPostEffects(gbuff, post, dt); });
 
 	//m_render = scene->render;
-	m_gameLoop = [&](double a)->void {m_mainScene->update(a); };
+	m_gameLoop = [&](double a)->void { m_mainScene->update(a); };
 }
 
 void GameEmGine::setBackgroundColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)

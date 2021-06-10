@@ -20,48 +20,7 @@ void SceneManager::saveScene(cstring file, const vector<Model*>& models)
 	objSize = 0;
 	//Model data
 	for(auto& model : models)
-	{
 		objSize += sendModel(out, model);
-
-		//Amount of children
-		auto loc = out.tellp();
-		{
-			uint dat = 0;//testing this out
-			out.write((char*)&dat, sizeof(uint));
-		}
-
-
-		//Add Children (ONLY Models for now) (also assumes objects can be null)
-		uint count = 0;
-		for(auto& obj : model->getChildren())
-		{
-			if(!obj)
-				continue;//nullptr
-
-			//Child type
-			auto dat = obj->getCompType();
-			out.write((char*)&dat, sizeof(dat));
-			++count;
-			switch(obj->getCompType())
-			{
-			case Component::MODEL:
-				 sendModel(out, (Model*)obj);
-				break;
-				//TODO: add other objects
-			case Component::TEXT:
-				break;
-			default:
-				break;
-			}
-		}
-
-		//Actual amount of children
-		auto resume = out.tellp();
-		out.seekp(loc);
-		out.write((char*)&count, sizeof(uint));
-		out.seekp(resume);
-	}
-
 
 	auto resume = out.tellp();
 	out.seekp(begin);
@@ -86,47 +45,8 @@ void SceneManager::loadScene(cstring file, std::list<Model>& models)
 	//Model data
 	uint count = 0;
 	for(auto& model : models)
-	{
 		count += recvModel(in, &model);
 
-		//Amount of children
-		//loc = in.tellp();
-		in.read((char*)&objSize, sizeof(objSize));
-
-		//Add Children (ONLY Models for now) (also assumes no objects are null)
-		//count = 0;
-		for(uint a = 0; a < objSize; ++a)
-		{
-
-			//Child types
-			Component::COMP_TYPE dat;
-			in.read((char*)&dat, sizeof(dat));
-
-			switch(dat)
-			{
-			case Component::MODEL:
-			{
-				Model* tmp;
-				model.getChildren().push_back(tmp=new Model());
-				model.getChildren().back()->setParent(&model);
-				recvModel(in, (Model*)model.getChildren().back());
-				tmp;
-			}
-				break;
-				//TODO: add other objects
-			case Component::TEXT:
-				break;
-			default:
-				break;
-			}
-		}
-
-		////Actual amount of children
-		//resume = in.tellp();
-		//in.seekp(loc);
-		//in.write((char*)&count, sizeof(count));
-		//in.seekp(resume);}
-	}
 	in.close();
 
 }
@@ -338,22 +258,24 @@ bool SceneManager::sendModel(ofstream& out, Model* obj)
 
 	//TODO: Animations go here
 
+	//Mesh Data
+	{
+		//Ammount of Meshes (size of uint)
+		auto loc = out.tellp();
+		objSize = 0;
+		out.write((char*)&objSize, sizeof(objSize));
 
-	//Ammount of Meshes (size of uint)
-	auto loc = out.tellp();
-	objSize = (uint)obj->Model::getMeshList().size();
-	out.write((char*)&objSize, sizeof(objSize));
+		//Add Meshes
+		uint count = 0;
+		for(auto& mesh : obj->Model::getMeshList())
+			count += sendMesh(out, mesh.get());
 
-	//mesh Data
-	uint count = 0;
-	for(auto& mesh : obj->Model::getMeshList())
-		count += sendMesh(out, mesh.get());
-
-	//Actual amout of meshes
-	auto resume = out.tellp();
-	out.seekp(loc);
-	out.write((char*)&count, sizeof(count));
-	out.seekp(resume);
+		//Actual amout of meshes
+		auto resume = out.tellp();
+		out.seekp(loc);
+		out.write((char*)&count, sizeof(count));
+		out.seekp(resume);
+	}
 
 
 	//bounds Data
@@ -383,8 +305,46 @@ bool SceneManager::sendModel(ofstream& out, Model* obj)
 		out.write((char*)&dat, sizeof(dat));
 	}
 
+	//Child Data
+	{
+		//Amount of children
+		auto loc = out.tellp();
+		{
+			uint dat = 0;//testing this out
+			out.write((char*)&dat, sizeof(dat));
+		}
 
 
+		//Add Children (ONLY Models for now) (also assumes objects can be null)
+		uint count = 0;
+		for(auto& model : obj->getChildren())
+		{
+			if(!model)
+				continue;//nullptr
+			++count;
+
+			//Child type
+			auto dat = model->getCompType();
+			out.write((char*)&dat, sizeof(dat));
+			switch(obj->getCompType())
+			{
+			case Component::MODEL:
+				sendModel(out, (Model*)model);
+				break;
+				//TODO: add other objects
+			case Component::TEXT:
+				break;
+			default:
+				break;
+			}
+		}
+
+		//Actual amount of children
+		auto resume = out.tellp();
+		out.seekp(loc);
+		out.write((char*)&count, sizeof(uint));
+		out.seekp(resume);
+	}
 
 
 	return true;
@@ -399,11 +359,12 @@ bool SceneManager::recvModel(std::ifstream& in, Model* obj)
 	uint  objSize = 0;
 
 	//model tag (size of name length + 1 then string)
-	//objSize = strlen(obj->getTag()) + 1;
-	in.read((char*)&objSize, sizeof(objSize));
-	cstring tmp = new char[objSize];
-	in.read((char*)tmp, objSize);
-	obj->setTag(tmp);
+	{
+		in.read((char*)&objSize, sizeof(objSize));
+		cstring tmp = new char[objSize];
+		in.read((char*)tmp, objSize);
+		obj->setTag(tmp);
+	}
 
 	//colour Data
 	{
@@ -471,6 +432,37 @@ bool SceneManager::recvModel(std::ifstream& in, Model* obj)
 		obj->Transformer::setMatrixData(dat);
 	}
 
+	//Child Data
+	{
+		//Amount of children
+		in.read((char*)&objSize, sizeof(uint));
+
+
+		//Add Children (ONLY Models for now) (also assumes no objects are null)
+		for(uint a = 0; a < objSize; ++a)
+		{
+			//Child types
+			Component::COMP_TYPE dat;
+			in.read((char*)&dat, sizeof(dat));
+
+			switch(dat)
+			{
+			case Component::MODEL:
+			{
+				Model* tmp;
+				obj->getChildren().push_back(tmp = new Model());
+				tmp->setParent(obj);
+				recvModel(in, tmp);
+			}
+			break;
+			//TODO: add other objects
+			case Component::TEXT:
+				break;
+			default:
+				break;
+			}
+		}
+	}
 
 
 

@@ -25,19 +25,23 @@ public:
 
 	void setText(cstring text);
 
-	void textSize(short s);
+	std::string getText();
+
+	void setTextSize(short s);
 
 	void setColour(float r, float g, float b, float a = 1);
 
 	void setColour(util::ColourRGBA colour);
 
-	unsigned int size();
+	util::Vec2 getSize();
 
 	float getWidth();
 
 	float getHeight();
 
-	void render(Shader& s, Camera* cam, bool texture = false);
+
+
+	void render(Camera* cam, Shader* shader = nullptr, bool texture = false);
 
 	void toTexture(uint width = 720);
 
@@ -66,7 +70,7 @@ private:
 	std::string m_text = "";
 	unsigned int m_length = 0;
 	GLuint m_vaoID = 0, m_vboID = 0;
-	util::Vec3 m_size = {};
+	util::Vec2 m_size = {};
 
 	float m_initY = 0;
 };

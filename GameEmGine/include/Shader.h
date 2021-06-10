@@ -10,6 +10,7 @@ class Shader
 public:
 	Shader();
 	//Shader(Shader& shad);
+	//Shader(const Shader& shad);
 	~Shader();
 	
 	//compiles and links shaders

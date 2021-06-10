@@ -32,6 +32,7 @@ public:
 	void setType(CAM_TYPE type, ProjectionPeramiters* peram = nullptr);
 	void setType(ProjectionPeramiters* peram = nullptr);
 	bool update();
+	bool cull(Model*);
 
 	/*SET POSITION*/
 
@@ -51,7 +52,6 @@ public:
 	void rotateBy(util::Vec3 angles);
 	void rotateBy(float x, float y, float z);
 
-	bool cull(Model*);
 
 	/*Matricies*/
 	virtual const glm::mat4& getLocalRotationMatrix();

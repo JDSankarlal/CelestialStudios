@@ -1,17 +1,17 @@
 #include "FrameBuffer.h"
 
 using namespace util;
-GLuint FrameBuffer::m_fsQuadVAO_ID, FrameBuffer::m_fsQuadVBO_ID;
+GLuint m_fsQuadVAO_ID, m_fsQuadVBO_ID;
 
 FrameBuffer::FrameBuffer(unsigned numColorAttachments, std::string tag)
 {
 	m_tag = tag;
 	glGenFramebuffers(1, &m_fboID);
 	m_numColorAttachments = numColorAttachments;
+	m_depthAttachment = 0;
 
 	m_colorAttachments = new Texture2D[numColorAttachments];
 	memset(m_colorAttachments, 0, sizeof(Texture2D) * numColorAttachments);
-	m_depthAttachment = 0;
 
 	//Buffs is required as a parameter for glDrawBuffers()
 	m_buffs = new GLenum[numColorAttachments];
@@ -30,29 +30,29 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::initColourTexture(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint format, GLint formatType, GLint filter, GLint wrap)
 {
-	if(!m_colorAttachments[index].id)
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
-		//create colour texture
-		glGenTextures(1, &m_colorAttachments[index].id);
-		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+	if(m_colorAttachments[index].id)return;
 
-		resizeColour(index, width, height, internalFormat, format, formatType, filter, wrap);
-	}
+	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+	//create colour texture
+	glGenTextures(1, &m_colorAttachments[index].id);
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+
+	resizeColour(index, width, height, internalFormat, format, formatType, filter, wrap);
+
 }
 
 void FrameBuffer::initDepthTexture(unsigned width, unsigned height)
 {
-	if(!m_depthAttachment)
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
+	if(m_depthAttachment)return;
 
-		//create depth texture
-		glGenTextures(1, &m_depthAttachment);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_fboID);
 
-		resizeDepth(width, height);
-		glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-	}
+	//create depth texture
+	glGenTextures(1, &m_depthAttachment);
+
+	resizeDepth(width, height);
+	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+
 }
 
 void FrameBuffer::resizeColour(unsigned index, unsigned width, unsigned height, GLint internalFormat, GLint format, GLint formatType, GLint filter, GLint wrap)
@@ -375,6 +375,8 @@ GLuint FrameBuffer::getFrameBufferID()
 
 void FrameBuffer::initFullScreenQuad()
 {
+	if(m_fsQuadVAO_ID && m_fsQuadVBO_ID)return;
+
 	float vboData[] =
 	{
 		-1.0f,-1.0f,0.0f,

@@ -323,7 +323,7 @@ void Model::render(Shader& shader, Camera* cam)
 		//render the meshes
 		for(auto& a : m_meshes)
 			a->render(shader, m_activators.m_useTex);
-			//threads.push_back(std::thread([&](){a->render(shader, m_activators.m_useTex);}));//
+		//threads.push_back(std::thread([&](){a->render(shader, m_activators.m_useTex);}));//
 
 
 		if(m_activators.m_enableBB)
@@ -339,15 +339,14 @@ void Model::render(Shader& shader, Camera* cam)
 				break;
 			case TEXT:
 			{
-				shader2 = ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh");
-				reclass(Text*, a)->render(*shader2, cam);
+				reclass(Text*, a)->render(cam);
 			}
 			break;
 			default:
 				break;
 			}
 
-	//	for(auto& a : threads) a.join();//rejoin all loose threads
+		//	for(auto& a : threads) a.join();//rejoin all loose threads
 
 		resetUpdated();
 		if(m_activators.m_wireframe)

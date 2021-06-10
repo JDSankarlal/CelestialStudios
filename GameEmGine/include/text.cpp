@@ -26,8 +26,8 @@ Text::Text():Transformer(TEXT)
 
 }
 
-Text::Text(Text& text):Transformer(TEXT) { *this = text; create(text.m_font);  }
-Text::Text(const Text& text) : Transformer(TEXT) { *this = text; create(text.m_font);  }
+Text::Text(Text& text):Transformer(TEXT) { *this = text; create(text.m_font); }
+Text::Text(const Text& text) : Transformer(TEXT) { *this = text; create(text.m_font); }
 
 Text::Text(cstring font) : Transformer(TEXT)
 {
@@ -35,8 +35,7 @@ Text::Text(cstring font) : Transformer(TEXT)
 }
 
 Text::~Text()
-{
-}
+{}
 
 void Text::setText(cstring text)
 {
@@ -44,7 +43,12 @@ void Text::setText(cstring text)
 	testSize();
 }
 
-void Text::textSize(short s)
+std::string Text::getText()
+{
+	return m_text;
+}
+
+void Text::setTextSize(short s)
 {
 	scale(s * 0.020834f);// s / 48 = s * 0.020834f 
 	testSize();
@@ -60,9 +64,9 @@ void Text::setColour(ColourRGBA colour)
 	m_colour = colour;
 }
 
-unsigned int Text::size()
+Vec2 Text::getSize()
 {
-	return m_length;
+	return m_size;
 }
 
 float Text::getWidth()
@@ -94,7 +98,7 @@ void Text::renderInit()
 
 }
 
-void Text::render(Shader& s, Camera* cam, bool texture)
+void Text::render(Camera* cam, Shader* sad, bool texture)
 {
 	glEnable(GL_TEXTURE_2D);
 
@@ -106,6 +110,8 @@ void Text::render(Shader& s, Camera* cam, bool texture)
 
 	if(!m_vaoID || !m_vboID)
 		renderInit();
+
+	Shader& s = sad ? *sad : *ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh");
 
 	// Activate corresponding render state	
 	s.enable();
@@ -184,7 +190,7 @@ void Text::render(Shader& s, Camera* cam, bool texture)
 				reclass(Model*, a)->render(s, cam);
 				break;
 			case TEXT:
-				reclass(Text*, a)->render(s, cam);
+				reclass(Text*, a)->render(cam);
 				break;
 			}
 
@@ -238,7 +244,7 @@ void Text::toTexture(uint width)
 	m_initY = h;
 	auto a = m_colour;
 	setColour(1, 1, 1);
-	render(*ResourceManager::getShader("shaders/freetype.vtsh", "shaders/freetype.fmsh"), &cam, true);
+	render(&cam, nullptr, true);
 	setColour(a);
 	m_texture->disable();
 	scale(tmpSize);
@@ -273,7 +279,7 @@ void Text::testSize()
 		x += (ch.advance >> 6) * getScale().x; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 
-	m_size = {(x), ((h - ypos) * getScale().x),0};
+	m_size = {(x), ((h - ypos) * getScale().x)};
 }
 
 

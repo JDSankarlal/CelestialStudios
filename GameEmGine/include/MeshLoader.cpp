@@ -427,7 +427,7 @@ bool MeshLoader::load(string path, string binPath)
 
 			//Mesh Name (size of name length + 1 then string)
 			bin.read((char*)&dataSize, sizeof(unsigned));
-			cstring name = new const char[dataSize];
+			cstring name = new char[dataSize];
 			bin.read((char*)(void*)name, dataSize);
 			m_meshes[a]->meshName = name;
 

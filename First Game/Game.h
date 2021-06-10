@@ -39,6 +39,8 @@ public:
 		//printf("key PRESSED code: %d\n\n", key);
 	}
 
+	ColourRGBA lastColour;
+
 	//instance key is released
 	void keyInputReleased(int key, int modifier)
 	{
@@ -58,8 +60,23 @@ public:
 		if(key == GLFW_KEY_TAB)
 			++(*(char*)&currentState) %= 2;//don't ask
 
+		switch(currentState)
+		{
+		case CONTROL_STATE::CAMERA:
+			modeStr = "Camera";
+			break;
+		case CONTROL_STATE::LEVEL:
+			modeStr = "Level Edit";
+			break;
+		}
+
 		if(key == 'S' && modifier == GLFW_MOD_CONTROL)
 		{
+			//deselect
+			if(curModel)
+				curModel->setColour(lastColour);
+			curModel = nullptr;
+
 			vector<Model*>tmp;
 			for(auto& a : GameEmGine::getObjectList())
 				tmp.push_back(a.second);
@@ -107,7 +124,6 @@ public:
 		//	leftM = InputManager::getMousePosition();
 		//if(button == MOUSE_RIGHT_BUTTON)
 		//	rightM = InputManager::getMousePosition();
-		static ColourRGBA lastColour;
 
 		if(button == MOUSE_LEFT_BUTTON)
 		{
@@ -126,6 +142,7 @@ public:
 		}
 		if(button == MOUSE_RIGHT_BUTTON)
 		{
+			//deselect
 			if(curModel)
 				curModel->setColour(lastColour);
 			curModel = nullptr;
@@ -148,14 +165,52 @@ public:
 		//GameEmGine::m_modelShader->sendUniform("darken", 1);
 		mod.resize(132);//sets the initial size of the vector (if u add any more models, increase this number)
 
-		/// - Set Camera  - ///
+		/// ~ Set Camera  ~ ///
 		GameEmGine::setCameraType(Camera::FRUSTUM);
 		GameEmGine::getMainCamera()->translate({0,15.5f,-5});
 		GameEmGine::getMainCamera()->rotate({-45,0,0});
 
+		/// ~ Post Effects~ ///
+		Scene::customPostEffects = [&](FrameBuffer*, FrameBuffer* post, float)
+		{
+			post;
+
+			static Text mode;
+
+			static FrameBuffer screen(1, "Post Screen");
+			screen.initColourTexture(0, post->getColourWidth(0), post->getColourHeight(0));
+			screen.resizeColour(0, post->getColourWidth(0), post->getColourHeight(0));
+
+			OrthoPeramiters ortho{0,(float)GameEmGine::getWindowWidth(),(float)GameEmGine::getWindowHeight(),0,0,500};
+			Camera cam(&ortho);
+
+			if(!screen.checkFBO())
+			{
+				puts("FBO failed Creation");
+				system("pause");
+				return;
+			}
+
+			mode.setText(modeStr.c_str());
+			mode.setTextSize(50);
+			mode.rotate(180, 0, 0);
+
+			Vec2i offset{-5, int(-GameEmGine::getWindowHeight() + mode.getHeight() * 2)};
+			mode.translate(GameEmGine::getWindowSize() - mode.getSize() + offset);
+
+			post->copyColourToBuffer(screen.getColourWidth(0), screen.getColourHeight(0), &screen);
+
+
+			screen.enable();
+			mode.render(&cam);
+			screen.disable();
+
+			screen.copyColourToBuffer(post->getColourWidth(0), post->getColourHeight(0), post);
+
+		};
 
 		//GAME::setFPSLimit(60);
-		/// - Load mod into Scene - ///
+		/// ~ Load mod into Scene ~ ///
 
 		for(auto& a : mod)
 			if(a.getMesh(0))
@@ -627,13 +682,15 @@ public:
 		(&*std::next(mod.begin(), 104))->scale(0.7f), (&*std::next(mod.begin(), 104))->translate(12.0f, 0.03f, 8.0f), (&*std::next(mod.begin(), 104))->rotate(Coord3D<>(0, 90, 0));
 		(&*std::next(mod.begin(), 105))->scale(0.7f), (&*std::next(mod.begin(), 105))->translate(18.0f, 0.03f, 8.0f), (&*std::next(mod.begin(), 105))->rotate(Coord3D<>(0, 90, 0));
 	#pragma endregion
-	#endif // FALSE
 
+	#else
 		SceneManager::loadScene("gamescene.scene", testSceneLoad);
 
 		GameEmGine::clearObjectList();
 		for(auto& a : testSceneLoad)
 			GameEmGine::addModel(&a);
+
+	#endif // FALSE
 
 		//apply uniform transform
 		for(auto& a : mod)
@@ -660,9 +717,9 @@ public:
 			(*std::next(lights.begin(), a + 6)).setAttenuationQuadratic(1.f);
 		}
 
-		(*std::next(lights.begin(), 6)).setDiffuse({255,0,0,100});
-		(*std::next(lights.begin(), 7)).setDiffuse({0,0,255,100});
-		(*std::next(lights.begin(), 8)).setDiffuse({0,255,0,100});
+		(*std::next(lights.begin(), 6)).setDiffuse({255, 0, 0});
+		(*std::next(lights.begin(), 7)).setDiffuse({0, 0, 255});
+		(*std::next(lights.begin(), 8)).setDiffuse({0, 255, 0});
 		(*std::next(lights.begin(), 9)).setDiffuse({255,255,0});
 
 
@@ -675,16 +732,16 @@ public:
 		GameEmGine::getMainCamera()->rotate({-25,0,0});
 
 		/// key/mouse input ///
-		keyPressed = [&](int a, int b) {keyInputPressed(a, b); };
-		keyReleased = [&](int a, int b) {keyInputReleased(a, b); };
-		mouseReleased = [&](int a, int b) {mouseButtonReleased(a, b); };
+		keyPressed = [&](int a, int b) { keyInputPressed(a, b); };
+		keyReleased = [&](int a, int b) { keyInputReleased(a, b); };
+		mouseReleased = [&](int a, int b) { mouseButtonReleased(a, b); };
 
 		AudioPlayer::init();
 
 		audio.createAudioStream("Audio/potential mix (with beat).wav", "BG Music");
 
 		audio.setVolume(0.6f);
-		audio.play(true);
+		//audio.play(true);
 	}
 
 	void insertionSort(std::list<Minion*>& arr, Model* checker)
@@ -1506,6 +1563,7 @@ private:
 		LEVEL,
 		GAME,
 	}currentState;
+	std::string modeStr = "Camera";
 
 	list<Model> testSceneLoad;
 	std::list<Model> mod;

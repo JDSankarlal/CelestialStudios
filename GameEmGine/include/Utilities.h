@@ -216,13 +216,38 @@ namespace util
 		{
 			return {x + coord, y + coord};
 		}
+
+		template<class Y>
+		Coord2D operator+(Coord2D<Y> coord)
+		{
+			return {x + (T)coord.x, y + (T)coord.y};
+		}
+		template<class Y>
+		Coord2D operator+(Y coord)
+		{
+			return {x + (T)coord, y + (T)coord};
+		}
+
 		Coord2D operator-(Coord2D coord)
 		{
 			return {x - coord.x, y - coord.y};
-		}Coord2D operator-(T coord)
+		}
+		Coord2D operator-(T coord)
 		{
 			return {x - coord, y - coord};
 		}
+
+		template<class Y>
+		Coord2D operator-(Coord2D<Y> coord)
+		{
+			return {x - (T)coord.x, y - (T)coord.y};
+		}
+		template<class Y>
+		Coord2D operator-(Y coord)
+		{
+			return {x - (T)coord, y - (T)coord};
+		}
+
 		Coord2D operator/(Coord2D coord)
 		{
 			return {x / coord.x,y / coord.y};

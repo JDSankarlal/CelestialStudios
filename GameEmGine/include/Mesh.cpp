@@ -166,7 +166,7 @@ void Mesh::editVerts(Mesh* verts1, Mesh* verts2)
 
 	//UnpackedData 1
 	glBindBuffer(GL_ARRAY_BUFFER, m_vboID.first);
-	glBufferData(GL_ARRAY_BUFFER, verts1->m_unpackedData.size() * sizeof(Vertex3D), verts1->m_unpackedData.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, verts1->m_unpackedData.size() * sizeof(Vertex3D), verts1->m_unpackedData.data(), GL_DYNAMIC_DRAW);
 
 	//vertex 1   attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
@@ -177,7 +177,7 @@ void Mesh::editVerts(Mesh* verts1, Mesh* verts2)
 
 	//UnpackedData 2 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vboID.second);
-	glBufferData(GL_ARRAY_BUFFER, verts2->m_unpackedData.size() * sizeof(Vertex3D), verts2->m_unpackedData.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, verts2->m_unpackedData.size() * sizeof(Vertex3D), verts2->m_unpackedData.data(), GL_DYNAMIC_DRAW);
 
 	//vertex 2   attributes
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, coord));
