@@ -85,9 +85,9 @@ public:
 
 		//changes fps limit
 		if(key == GLFW_KEY_KP_6)
-			GameEmGine::setFPSLimit(GameEmGine::getFPSLimit() + 5);
-		if(key == GLFW_KEY_KP_4)
-			GameEmGine::setFPSLimit(GameEmGine::getFPSLimit() - 5);
+			GameEmGine::setFPSLimit(util::clamp<short>(0, 60, GameEmGine::getFPSLimit() + 5));
+		if(key == GLFW_KEY_KP_4)			   
+			GameEmGine::setFPSLimit(util::clamp<short>(0, 60, GameEmGine::getFPSLimit() - 5));
 
 		if(key == GLFW_KEY_F) //Toggles Full-screen
 		{
