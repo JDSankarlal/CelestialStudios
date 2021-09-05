@@ -36,7 +36,6 @@ public:
 	bool isActive();
 
 	bool collision2D(Model* k, util::Vec3 ignore);
-
 	bool collision3D(Model* k);
 
 	static bool collision2D(Model* l, Model* k, util::Vec3 ignore);
@@ -85,6 +84,8 @@ public:
 
 	cstring getTag();
 	void setTag(cstring tag);
+	cstring getPath();
+	void setPath(cstring path);
 
 	Animation* getAnimation(cstring tag);
 	Animation* getCurrentAnimation();
@@ -144,7 +145,8 @@ public:
 
 protected:
 
-	cstring m_tag = nullptr;
+	std::string m_path = "";
+	std::string m_tag = "";
 	util::ColourRGBA m_colour;
 
 private:
@@ -164,8 +166,4 @@ private:
 	BoundsData m_bounds;
 
 	Shader* m_shader = nullptr, * m_shaderBB = nullptr;
-
-
-
-
 };

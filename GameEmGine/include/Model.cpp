@@ -109,10 +109,13 @@ void Model::create(PrimitiveMesh* mesh, cstring tag)
 void Model::create(cstring path, cstring tag)
 {
 	m_ID = createID();
-
 	m_meshes.clear();
+
 	if(strlen(tag))
 		m_tag = tag;
+	if(strlen(path))
+		m_path = m_path;
+
 	if(loadModel(path))
 	{
 		m_shaderBB = ResourceManager::getShader("Shaders/BoundingBox.vtsh", "Shaders/BoundingBox.fmsh");
@@ -443,12 +446,22 @@ Vec3 Model::getCenter()
 
 cstring Model::getTag()
 {
-	return m_tag;
+	return m_tag.c_str();
 }
 
 void Model::setTag(cstring tag)
 {
 	m_tag = tag;
+}
+
+cstring Model::getPath()
+{
+	return m_path.c_str();
+}
+
+void Model::setPath(cstring path)
+{
+	m_path = path;
 }
 
 void Model::boundingBoxUpdate()
@@ -659,8 +672,8 @@ void Model::print()
 		"Width: %f\n"
 		"Height: %f\n"
 		"Depth: %f\n"
-		"Center: (%f, %f, %f)\n"
-		, m_tag, m_bounds.m_dimentions.width, m_bounds.m_dimentions.height, m_bounds.m_dimentions.depth, m_bounds.m_center.x, m_bounds.m_center.y, m_bounds.m_center.z);
+		"Center: (%f, %f, %f)\n\n"
+		, m_tag.c_str(), m_bounds.m_dimentions.width, m_bounds.m_dimentions.height, m_bounds.m_dimentions.depth, m_bounds.m_center.x, m_bounds.m_center.y, m_bounds.m_center.z);
 }
 
 std::vector<Vec3> Model::getBounds()

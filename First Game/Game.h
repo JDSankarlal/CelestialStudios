@@ -15,7 +15,7 @@
 using std::vector;
 using std::list;
 
-class Game:public Scene
+class Game :public Scene
 {
 public:
 	void onSceneExit() {}
@@ -66,7 +66,7 @@ public:
 			modeStr = "Camera";
 			break;
 		case CONTROL_STATE::LEVEL:
-			modeStr = "Level Edit";
+			modeStr = "Level Editing";
 			break;
 		}
 
@@ -82,11 +82,20 @@ public:
 				tmp.push_back(a.second);
 			SceneManager::saveScene("GameScene.scene", tmp);
 		}
+		if(key == 'L' && modifier == GLFW_MOD_CONTROL)
+		{
+			testSceneLoad.clear();
+			SceneManager::loadScene("gamescene.scene", testSceneLoad);
+
+			GameEmGine::clearObjectList();
+			for(auto& a : testSceneLoad)
+				GameEmGine::addModel(&a);
+		}
 
 		//changes fps limit
 		if(key == GLFW_KEY_KP_6)
 			GameEmGine::setFPSLimit(util::clamp<short>(0, 60, GameEmGine::getFPSLimit() + 5));
-		if(key == GLFW_KEY_KP_4)			   
+		if(key == GLFW_KEY_KP_4)
 			GameEmGine::setFPSLimit(util::clamp<short>(0, 60, GameEmGine::getFPSLimit() - 5));
 
 		if(key == GLFW_KEY_F) //Toggles Full-screen
@@ -116,7 +125,7 @@ public:
 		//printf("key RELEASED code: %d\n\n", key);
 	}
 
-
+	//instance mouse is released
 	void mouseButtonReleased(int button, int a_mod)
 	{
 		a_mod;
@@ -136,6 +145,13 @@ public:
 			{
 				if(curModel)
 					lastColour = curModel->getColour();
+
+				int count = 0;
+				for(auto beg = testSceneLoad.begin(); beg != testSceneLoad.end(); beg++, count++)
+					if(*beg == *curModel)
+						break;
+				printf("Object#: %d\n",count);
+				curModel->print();
 
 				curModel->setColour(0, .65f, 0);
 			}
@@ -187,7 +203,7 @@ public:
 			if(!screen.checkFBO())
 			{
 				puts("FBO failed Creation");
-				system("pause");
+				//system("pause");
 				return;
 			}
 
@@ -195,7 +211,7 @@ public:
 			mode.setTextSize(50);
 			mode.rotate(180, 0, 0);
 
-			Vec2i offset{-5, int(-GameEmGine::getWindowHeight() + mode.getHeight() * 2)};
+			Vec2i offset{-int(mode.getWidth() * 0.1f), int(-GameEmGine::getWindowHeight() + mode.getHeight() * 2)};
 			mode.translate(GameEmGine::getWindowSize() - mode.getSize() + offset);
 
 			post->copyColourToBuffer(screen.getColourWidth(0), screen.getColourHeight(0), &screen);
@@ -222,8 +238,8 @@ public:
 		static Transformer uniScaler;
 		uniScaler.scale(.5);
 
-	#if FALSE
-	#pragma region BULL SHIT!!!!!
+#if FALSE
+#pragma region BULL SHIT!!!!!
 
 		//Building 1s
 		*std::next(mod.begin(), 4) = (Model("Models/Buildings/CashCorp/CashcorpBuildingWIP.obj"));
@@ -681,16 +697,16 @@ public:
 		(&*std::next(mod.begin(), 103))->scale(0.7f), (&*std::next(mod.begin(), 103))->translate(6.0f, 0.03f, 8.0f), (&*std::next(mod.begin(), 103))->rotate(Coord3D<>(0, 90, 0));
 		(&*std::next(mod.begin(), 104))->scale(0.7f), (&*std::next(mod.begin(), 104))->translate(12.0f, 0.03f, 8.0f), (&*std::next(mod.begin(), 104))->rotate(Coord3D<>(0, 90, 0));
 		(&*std::next(mod.begin(), 105))->scale(0.7f), (&*std::next(mod.begin(), 105))->translate(18.0f, 0.03f, 8.0f), (&*std::next(mod.begin(), 105))->rotate(Coord3D<>(0, 90, 0));
-	#pragma endregion
+#pragma endregion
 
-	#else
+#else
 		SceneManager::loadScene("gamescene.scene", testSceneLoad);
 
 		GameEmGine::clearObjectList();
 		for(auto& a : testSceneLoad)
 			GameEmGine::addModel(&a);
 
-	#endif // FALSE
+#endif // FALSE
 
 		//apply uniform transform
 		for(auto& a : mod)
@@ -794,13 +810,13 @@ public:
 		if(m_left)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->translateBy(-moveSpd, 0, 0);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->translateBy(-moveSpd, 0, 0);
 				break;
@@ -808,13 +824,13 @@ public:
 		if(m_right)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->translateBy(moveSpd, 0, 0);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->translateBy(moveSpd, 0, 0);
 				break;
@@ -822,13 +838,13 @@ public:
 		if(m_fwd)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->translateBy(0, 0, moveSpd);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->translateBy(0, 0, moveSpd);
 				break;
@@ -836,13 +852,13 @@ public:
 		if(m_back)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->translateBy(0, 0, -moveSpd);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->translateBy(0, 0, -moveSpd);
 				break;
@@ -850,13 +866,13 @@ public:
 		if(m_up)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->translateBy(0, moveSpd, 0);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->translateBy(0, moveSpd, 0);
 				break;
@@ -864,13 +880,13 @@ public:
 		if(m_down)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->translateBy(0, -moveSpd, 0);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->translateBy(0, -moveSpd, 0);
 				break;
@@ -879,13 +895,13 @@ public:
 		if(rotLeft)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->rotateBy(0, -moveSpd, 0);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->rotateBy(0, -moveSpd, 0);
 				break;
@@ -893,13 +909,13 @@ public:
 		if(rotRight)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->rotateBy(0, moveSpd, 0);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->rotateBy(0, moveSpd, 0);
 				break;
@@ -907,14 +923,14 @@ public:
 		if(rotUp)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				//this is correct
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->rotateBy(moveSpd, 0, 0);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				//this is correct
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->rotateBy(moveSpd, 0, 0);
@@ -923,13 +939,13 @@ public:
 		if(rotDown)
 			switch(currentState)
 			{
-			case GAME:
+			case CONTROL_STATE::GAME:
 				break;
-			case LEVEL:
+			case CONTROL_STATE::LEVEL:
 				GameEmGine::getMainCamera()->enableFPSMode(false); if(!curModel)return;
 				curModel->rotateBy(-moveSpd, 0, 0);
 				break;
-			case CAMERA:
+			case CONTROL_STATE::CAMERA:
 				GameEmGine::getMainCamera()->enableFPSMode();
 				GameEmGine::getMainCamera()->rotateBy(-moveSpd, 0, 0);
 				break;
@@ -976,6 +992,7 @@ public:
 				count->setTransparent(true);
 				GameEmGine::addModel(count);
 				m_init = true;
+
 			}
 
 			count->translate(lerp(GameEmGine::getMainCamera()->getLocalPosition() + Coord3D<>{0, -5, 7}, GameEmGine::getMainCamera()->getLocalPosition() - Coord3D<>{0, 0, 0}, (time - countdownTimer) / 3.5f));
@@ -997,6 +1014,7 @@ public:
 				}
 			}
 		}
+
 
 		static std::list<Player*> players;
 		if(players.size() != 4)
@@ -1181,8 +1199,8 @@ public:
 				{
 
 					player->translateBy(((XinputController*)GameEmGine::getController(a))->getSticks()[LS].x * -move * 1.1f, 0,
-										((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y * move *
-										player->getLocalPosition().z < (*std::next(mod.begin(), 79 + b)).getLocalPosition().z ? -1 : 1 * 1.1f); //move player back
+						((XinputController*)GameEmGine::getController(a))->getSticks()[LS].y * move *
+						player->getLocalPosition().z < (*std::next(mod.begin(), 79 + b)).getLocalPosition().z ? -1 : 1 * 1.1f); //move player back
 
 				}
 
@@ -1251,104 +1269,233 @@ public:
 
 
 		/// - Train Car Movement - ///
-		//Train Sits in middle of map
-		if(0 <= (time - trainTimer) && 10 > (time - trainTimer))
 		{
 			(*std::next(mod.begin(), 123)).setColour({255, 0, 0});
 			(*std::next(mod.begin(), 124)).setColour({255, 0, 0});
+			bool isMoving = false;
+
+			//Train Sits in middle of map
+			if((trainTimer) < 10)
+			{
+				//do nothing
+			}
+			//Train warning
+			else if(trainTimer < 13)
+			{
+				//enter code here
+			}
+			//train leaves
+			else if(trainTimer < 20)
+			{
+				for(int t = 0; t < 7; t++)
+				{
+					auto train = &(*std::next(mod.begin(), 79 + t));
+					train->translate(
+						util::lerp(0.f, 20.f, util::catmull(0.f, 1.f, -.5f, .5f, 1.f - ((30 - trainTimer) / (30 - 20)))),
+						train->getLocalPosition().y,
+						train->getLocalPosition().z);
+				}
+			}
+			//train stays off screen
+			else if(trainTimer < 30)
+			{
+
+			}
+			//train comes back
+			else if(trainTimer < 30)
+			{
+
+			}
+			else
+			{
+				trainTimer = 0;
+			}
+
+
 			for(int t = 0; t < 7; t++)
 			{
 				if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
 				{
+					if(isMoving)
+						//damage the player and push them back
+						for(int a = 0; a < 4; a++)
+						{
+							player = (Player*)&(*std::next(mod.begin(), a));
+							if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
+							{
+								player->setHealth(player->getHealth() - 10);
+								player->translate(
+									abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+									0,
+									abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+							}
+						}
+					else
+						//stop the player from walking through
+						player->translate(
+							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+							0,
+							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
 
-					player->translate(
-						abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-						0,
-						abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
-
-					//if(player->getLocalPosition().z < (*std::next(mod.begin(),79 + t].getLocalPosition().z)
-					//	player->translate(player->getLocalPosition() + Coord3D<>(0.0f, 0.f, -0.1f));
-					//if(player->getLocalPosition().z > (*std::next(mod.begin(),79 + t].getLocalPosition().z)
-					//	player->translate(player->getLocalPosition() + Coord3D<>(0.0f, 0.f, 0.1f));
 				}
 			}
 			trainInit = false;
 		}
+		/*
 		//Train Moves off map
-		else if(10 <= (time - trainTimer) && 13 > (time - trainTimer))
-		{
-			for(int t = 0; t < 7; t++)
+			else if(10 <= (time - trainTimer) && 13 > (time - trainTimer))
 			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
-				for(int a = 0; a < 4; a++)
+				for(int t = 0; t < 7; t++)
 				{
-					player = (Player*)&(*std::next(mod.begin(), a));
-					if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
+					for(int a = 0; a < 4; a++)
 					{
-						player->setHealth(player->getHealth() - 10);
-						player->translate(
-							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-							0,
-							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						player = (Player*)&(*std::next(mod.begin(), a));
+						if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
+						{
+							player->setHealth(player->getHealth() - 10);
+							player->translate(
+								abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+								0,
+								abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						}
+					}
+				}
+				trainInit = false;
+			}
+			else if(13 <= (time - trainTimer) && 20 > (time - trainTimer))
+			{
+				if(!trainInit)
+				{
+					audio.createAudioStream("Audio/RailOff.wav", "Train Off");
+					audio.play();
+					trainInit = true;
+				}
+				(*std::next(mod.begin(), 123)).setColour({0, 255, 255});
+				(*std::next(mod.begin(), 124)).setColour({0, 255, 255});
+				for(int i = 99; i <= 105; i++)
+				{
+
+					(*std::next(mod.begin(), i)).translate((*std::next(mod.begin(), i)).getLocalPosition().x, -1.0f, (*std::next(mod.begin(), i)).getLocalPosition().z);
+				}
+
+				for(int t = 0; t < 7; t++)
+				{
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
+					for(int a = 0; a < 4; a++)
+					{
+						player = (Player*)&(*std::next(mod.begin(), a));
+						if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
+						{
+							player->setHealth(player->getHealth() - 10);
+							player->translate(
+								abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+								0,
+								abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						}
+					}
+				}
+
+			}
+			//Train stops
+			else if(20 <= (time - trainTimer) && 30 > (time - trainTimer))
+			{
+				for(int t = 0; t < 7; t++)
+				{
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
+				}
+				trainInit = false;
+			}
+			//Train moves back onto map
+			else if(30 <= (time - trainTimer) && 37 > (time - trainTimer))
+			{
+				for(int t = 0; t < 7; t++)
+				{
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+
+
+					for(int a = 0; a < 4; a++)
+					{
+						player = (Player*)&(*std::next(mod.begin(), a));
+						if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+						{
+							player->setHealth(player->getHealth() - 10);
+							player->translate(
+								abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+								0,
+								abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						}
+					}
+				}
+				trainInit = false;
+			}
+			// Tunnel starts blinking
+			else if(37 <= (time - trainTimer) && 37.5f > (time - trainTimer))
+			{
+				if(!trainInit)
+				{
+					audio.createAudioStream("Audio/RailOff.wav", "Train Off");
+					audio.play();
+					trainInit = true;
+				}
+
+				(*std::next(mod.begin(), 123)).setColour({255, 0, 0});
+				(*std::next(mod.begin(), 124)).setColour({255, 0, 0});
+				for(int i = 99; i <= 105; i++)
+				{
+					(*std::next(mod.begin(), i)).translate((*std::next(mod.begin(), i)).getLocalPosition().x, 0.03f, (*std::next(mod.begin(), i)).getLocalPosition().z);
+
+				}
+
+				for(int t = 0; t < 7; t++)
+				{
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+
+					for(int a = 0; a < 4; a++)
+					{
+						player = (Player*)&(*std::next(mod.begin(), a));
+						if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+						{
+							player->setHealth(player->getHealth() - 10);
+							player->translate(
+								abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+								0,
+								abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						}
 					}
 				}
 			}
-			trainInit = false;
-		}
-		else if(13 <= (time - trainTimer) && 20 > (time - trainTimer))
-		{
-			if(!trainInit)
+			else if(37.5f <= (time - trainTimer) && 38 > (time - trainTimer))
 			{
-				audio.createAudioStream("Audio/RailOff.wav", "Train Off");
-				audio.play();
-				trainInit = true;
-			}
-			(*std::next(mod.begin(), 123)).setColour({0, 255, 255});
-			(*std::next(mod.begin(), 124)).setColour({0, 255, 255});
-			for(int i = 99; i <= 105; i++)
-			{
-
-				(*std::next(mod.begin(), i)).translate((*std::next(mod.begin(), i)).getLocalPosition().x, -1.0f, (*std::next(mod.begin(), i)).getLocalPosition().z);
-			}
-
-			for(int t = 0; t < 7; t++)
-			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{0.2f, 0.f, 0.f});//Move train cars right
-				for(int a = 0; a < 4; a++)
+				(*std::next(mod.begin(), 123)).setColour({0, 255, 255});
+				(*std::next(mod.begin(), 124)).setColour({0, 255, 255});
+				for(int t = 0; t < 7; t++)
 				{
-					player = (Player*)&(*std::next(mod.begin(), a));
-					if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {false,true,false}))
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+
+
+					for(int a = 0; a < 4; a++)
 					{
-						player->setHealth(player->getHealth() - 10);
-						player->translate(
-							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-							0,
-							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						player = (Player*)&(*std::next(mod.begin(), a));
+						if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+						{
+							player->setHealth(player->getHealth() - 10);
+							player->translate(
+								abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+								0,
+								abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						}
 					}
 				}
+				trainInit = false;
 			}
-
-		}
-		//Train stops
-		else if(20 <= (time - trainTimer) && 30 > (time - trainTimer))
-		{
-			for(int t = 0; t < 7; t++)
+			else if(38 <= (time - trainTimer) && 38.5f > (time - trainTimer))
 			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{0.0f, 0.f, 0.f});//Stop Train cars
-			}
-			trainInit = false;
-		}
-		//Train moves back onto map
-		else if(30 <= (time - trainTimer) && 37 > (time - trainTimer))
-		{
-			for(int t = 0; t < 7; t++)
-			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-
-
-				for(int a = 0; a < 4; a++)
+				(*std::next(mod.begin(), 123)).setColour({255, 0, 0});
+				(*std::next(mod.begin(), 124)).setColour({255, 0, 0});
+				for(int t = 0; t < 7; t++)
 				{
-					player = (Player*)&(*std::next(mod.begin(), a));
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 					if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
 					{
 						player->setHealth(player->getHealth() - 10);
@@ -1358,162 +1505,90 @@ public:
 							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
 					}
 				}
+				trainInit = false;
 			}
-			trainInit = false;
-		}
-		// Tunnel starts blinking 
-		else if(37 <= (time - trainTimer) && 37.5f > (time - trainTimer))
-		{
-			if(!trainInit)
+			else if(38.5f <= (time - trainTimer) && 39 > (time - trainTimer))
 			{
-				audio.createAudioStream("Audio/RailOff.wav", "Train Off");
-				audio.play();
-				trainInit = true;
-			}
-
-			(*std::next(mod.begin(), 123)).setColour({255, 0, 0});
-			(*std::next(mod.begin(), 124)).setColour({255, 0, 0});
-			for(int i = 99; i <= 105; i++)
-			{
-				(*std::next(mod.begin(), i)).translate((*std::next(mod.begin(), i)).getLocalPosition().x, 0.03f, (*std::next(mod.begin(), i)).getLocalPosition().z);
-
-			}
-
-			for(int t = 0; t < 7; t++)
-			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-
-				for(int a = 0; a < 4; a++)
+				(*std::next(mod.begin(), 123)).setColour({0, 255, 255});
+				(*std::next(mod.begin(), 124)).setColour({0, 255, 255});
+				for(int t = 0; t < 7; t++)
 				{
-					player = (Player*)&(*std::next(mod.begin(), a));
-					if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+
+					for(int a = 0; a < 4; a++)
 					{
-						player->setHealth(player->getHealth() - 10);
-						player->translate(
-							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-							0,
-							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						player = (Player*)&(*std::next(mod.begin(), a));
+						if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+						{
+							player->setHealth(player->getHealth() - 10);
+							player->translate(
+								abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+								0,
+								abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						}
 					}
 				}
+				trainInit = false;
 			}
-		}
-		else if(37.5f <= (time - trainTimer) && 38 > (time - trainTimer))
-		{
-			(*std::next(mod.begin(), 123)).setColour({0, 255, 255});
-			(*std::next(mod.begin(), 124)).setColour({0, 255, 255});
-			for(int t = 0; t < 7; t++)
+			else if(39 <= (time - trainTimer) && 40 > (time - trainTimer))
 			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-
-
-				for(int a = 0; a < 4; a++)
+				(*std::next(mod.begin(), 123)).setColour({255, 0, 0});
+				(*std::next(mod.begin(), 124)).setColour({255, 0, 0});
+				for(int t = 0; t < 7; t++)
 				{
-					player = (Player*)&(*std::next(mod.begin(), a));
-					if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+					(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
+
+					for(int a = 0; a < 4; a++)
 					{
-						player->setHealth(player->getHealth() - 10);
-						player->translate(
-							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-							0,
-							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						player = (Player*)&(*std::next(mod.begin(), a));
+						if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+						{
+							player->setHealth(player->getHealth() - 10);
+							player->translate(
+								abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+								0,
+								abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						}
 					}
 				}
+				trainInit = false;
 			}
-			trainInit = false;
-		}
-		else if(38 <= (time - trainTimer) && 38.5f > (time - trainTimer))
-		{
-			(*std::next(mod.begin(), 123)).setColour({255, 0, 0});
-			(*std::next(mod.begin(), 124)).setColour({255, 0, 0});
-			for(int t = 0; t < 7; t++)
+			//Train stops on map
+			else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
 			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-				if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
-				{
-					player->setHealth(player->getHealth() - 10);
-					player->translate(
-						abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-						0,
-						abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
-				}
-			}
-			trainInit = false;
-		}
-		else if(38.5f <= (time - trainTimer) && 39 > (time - trainTimer))
-		{
-			(*std::next(mod.begin(), 123)).setColour({0, 255, 255});
-			(*std::next(mod.begin(), 124)).setColour({0, 255, 255});
-			for(int t = 0; t < 7; t++)
-			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
 
-				for(int a = 0; a < 4; a++)
+				for(int t = 0; t < 7; t++)
 				{
-					player = (Player*)&(*std::next(mod.begin(), a));
-					if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+					(*std::next(mod.begin(), 79 + t)).translate((*std::next(mod.begin(), 79 + t)).getLocalPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
+
+					for(int a = 0; a < 4; a++)
 					{
-						player->setHealth(player->getHealth() - 10);
-						player->translate(
-							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-							0,
-							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						player = (Player*)&(*std::next(mod.begin(), a));
+						if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
+						{
+							player->translate(
+								abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
+								0,
+								abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
+						}
+						trainTimer += time; //Reset Train timer so it all starts again.
 					}
 				}
+				trainTimer = time;
+				trainInit = false;
 			}
-			trainInit = false;
-		}
-		else if(39 <= (time - trainTimer) && 40 > (time - trainTimer))
-		{
-			(*std::next(mod.begin(), 123)).setColour({255, 0, 0});
-			(*std::next(mod.begin(), 124)).setColour({255, 0, 0});
-			for(int t = 0; t < 7; t++)
-			{
-				(*std::next(mod.begin(), 79 + t)).translateBy(Coord3D{-0.2f, 0.f, 0.f});//Move train cars back to the right
-
-				for(int a = 0; a < 4; a++)
-				{
-					player = (Player*)&(*std::next(mod.begin(), a));
-					if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
-					{
-						player->setHealth(player->getHealth() - 10);
-						player->translate(
-							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-							0,
-							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
-					}
-				}
-			}
-			trainInit = false;
-		}
-		//Train stops on map
-		else if(40 <= (time - trainTimer) && 50 > (time - trainTimer))
-		{
-
-			for(int t = 0; t < 7; t++)
-			{
-				(*std::next(mod.begin(), 79 + t)).translate((*std::next(mod.begin(), 79 + t)).getLocalPosition() + Coord3D{0.00f, 0.f, 0.f});//Stop Train cars on map
-
-				for(int a = 0; a < 4; a++)
-				{
-					player = (Player*)&(*std::next(mod.begin(), a));
-					if(Model::collision2D(&(*std::next(mod.begin(), 79 + t)), player, {0,1,0}))
-					{
-						player->translate(
-							abs(player->getLocalPosition().x) > (*std::next(mod.begin(), 79 + t)).getWidth() / 2 ? player->getLocalPosition().x < 0 ? -(*std::next(mod.begin(), 79 + t)).getWidth() / 2 : (*std::next(mod.begin(), 79 + t)).getWidth() / 2 : player->getLocalPosition().x,
-							0,
-							abs(player->getLocalPosition().z) >(*std::next(mod.begin(), 79 + t)).getDepth() / 2 ? player->getLocalPosition().z < 0 ? -(*std::next(mod.begin(), 79 + t)).getDepth() / 2 : (*std::next(mod.begin(), 79 + t)).getDepth() / 2 : player->getLocalPosition().z);
-					}
-					trainTimer += time; //Reset Train timer so it all starts again.
-				}
-			}
-			trainTimer = time;
-			trainInit = false;
-		}
+		*/
 
 
 		if(!pause)
 		{
+			//increase train counter
+			if(countdownCounter == 3)
+				trainTimer += (float)dt;
+			//keep boss active
 			CandyMan->setActive(true);
+
+			//keep players active
 			for(int a = 0; a < 4; a++)
 				(*(Player*)&(*std::next(mod.begin(), a))).setActive(true);
 		}
@@ -1557,7 +1632,7 @@ public:
 private:
 	bool m_init = false;
 
-	enum CONTROL_STATE:char
+	enum class CONTROL_STATE :char
 	{
 		CAMERA,
 		LEVEL,

@@ -48,6 +48,16 @@ namespace util
 		return tmp;
 	}
 
+	/// <summary>
+	/// Creates a Bezier curve
+	/// </summary>
+	/// <typeparam name="T">cool</typeparam>
+	/// <param name="p0: ">Start point</param>
+	/// <param name="t0: ">Control Start</param>
+	/// <param name="t1: ">Control End</param>
+	/// <param name="p1: ">End point</param>
+	/// <param name="t: ">Scaler</param>
+	/// <returns></returns>
 	template <typename T>
 	static inline T bezier(const T& p0, const T& t0, const T& t1, const T& p1, const float t)
 	{
@@ -58,6 +68,16 @@ namespace util
 			p0;
 	}
 
+	/// <summary>
+	/// Creates a catmull curve
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="p0: ">Start point</param>
+	/// <param name="p1: ">End Point</param>
+	/// <param name="p2: ">Control Start</param>
+	/// <param name="p3: ">Control End</param>
+	/// <param name="t: ">Scaler</param>
+	/// <returns></returns>
 	template <typename T>
 	static inline T catmull(T p0, T p1, T p2, T p3, float t)
 	{
